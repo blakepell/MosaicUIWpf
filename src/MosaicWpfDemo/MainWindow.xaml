@@ -269,24 +269,6 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
-                <!--  Drive ComboBox  -->
-                <mosaic:SideMenuItem
-                    ContentType="{x:Type views:ShellView}"
-                    ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/drive-48.png"
-                    Text="DriveComboBox">
-                    <mosaic:SideMenuItem.ParameterCollection>
-                        <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="DriveComboBox" />
-                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DriveComboBoxExample.xaml" />
-                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DriveComboBoxExample.xaml.cs" />
-                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:DriveComboBox}" />
-                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DriveComboBoxExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/drive-48.png" />
-                        </mosaic:SideMenuParameterCollection>
-                    </mosaic:SideMenuItem.ParameterCollection>
-                </mosaic:SideMenuItem>
-
                 <!--  GravatarImage  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

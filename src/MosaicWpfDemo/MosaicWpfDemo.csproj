@@ -85,13 +85,6 @@
       <Link>LinkedSources\ClipBorderExample.xaml.cs</Link>
     </EmbeddedResource>
 
-    <EmbeddedResource Include="Views\Examples\DriveComboBoxExample.xaml">
-      <Link>LinkedSources\DriveComboBoxExample.xaml</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Views\Examples\DriveComboBoxExample.xaml.cs">
-      <Link>LinkedSources\DriveComboBoxExample.xaml.cs</Link>
-    </EmbeddedResource>
-
     <EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">
       <Link>LinkedSources\HyperlinkExample.xaml</Link>
     </EmbeddedResource>

@@ -8,7 +8,5 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SearchBox/SearchBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FileSystem/DriveComboBox.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FileSystem/DirectoryListBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
