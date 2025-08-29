@@ -20,6 +20,7 @@
     <None Remove="Assets\home-48.png" />
     <None Remove="Assets\labeled-separator-96.png" />
     <None Remove="Assets\link-48.png" />
+    <None Remove="Assets\numbers-input-48.png" />
     <None Remove="Assets\password-48.png" />
     <None Remove="Assets\search-48.png" />
     <None Remove="Assets\stopwatch-48.png" />
@@ -49,6 +50,7 @@
     <Resource Include="Assets\home-48.png" />
     <Resource Include="Assets\labeled-separator-96.png" />
     <Resource Include="Assets\link-48.png" />
+    <Resource Include="Assets\numbers-input-48.png" />
     <Resource Include="Assets\password-48.png" />
     <Resource Include="Assets\search-48.png" />
     <Resource Include="Assets\stopwatch-48.png" />
@@ -153,6 +155,9 @@
   </ItemGroup>
     
   <ItemGroup>
+    <Compile Update="Views\Examples\NumericTextBoxExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Examples\StopwatchDisplayExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

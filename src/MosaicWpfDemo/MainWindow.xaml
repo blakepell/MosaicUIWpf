@@ -359,6 +359,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Numeric Text Box  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/numbers-input-48.png"
+                    Text="Numeric TextBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Numeric TextBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.NumericTextBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.NumericTextBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:NumericTextBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:NumericTextBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/numbers-input-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Tab Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
