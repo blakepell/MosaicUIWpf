@@ -48,10 +48,10 @@
                 x:Name="ButtonShowMilliseconds"
                 Width="125"
                 Height="25"
-                Visibility="Collapsed"
                 Margin="5,5,0,0"
                 Click="ButtonShowMilliseconds_OnClick"
-                Content="Show Milliseconds" />
+                Content="Show Milliseconds"
+                Visibility="Collapsed" />
 
         </StackPanel>
     </StackPanel>
