@@ -18,6 +18,12 @@ namespace Mosaic.UI.Wpf.Controls
     public class NumericTextBox : TextBox
     {
         /// <summary>
+        /// Gets or sets the number of decimal places to use for formatting numeric values.  A value of =1
+        /// indicates unlimited decimal places.
+        /// </summary>
+        public int DecimalPlaces { get; set; } = -1;
+
+        /// <summary>
         /// Regex to allow digits, minus sign, and decimal point.
         /// </summary>
         private static readonly Regex Regex = new("[^0-9.-]+");
@@ -97,6 +103,32 @@ namespace Mosaic.UI.Wpf.Controls
                     return;
                 }
             }
+
+            // A decimal can't be the first character.
+            if ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && CaretIndex == 0)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Enforce decimal places if set.
+            if (DecimalPlaces > 0 && (e.Key == Key.OemPeriod || e.Key == Key.Decimal || !char.IsControl((char)KeyInterop.VirtualKeyFromKey(e.Key))))
+            {
+                string? text = Text;
+                if (SelectionLength > 0)
+                {
+                    text = text.Remove(SelectionStart, SelectionLength);
+                }
+
+                text = text.Insert(CaretIndex, e.Key == Key.OemPeriod || e.Key == Key.Decimal ? "." : e.Key.ToString().Replace("D", "").Replace("NumPad", ""));
+                var parts = text.Split('.');
+
+                if (parts.Length > 1 && parts[1].Length > DecimalPlaces)
+                {
+                    e.Handled = true; // Disallow input that would exceed the decimal places.
+                }
+            }
+
         }
     }
 }

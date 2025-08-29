@@ -9,6 +9,10 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel Orientation="Vertical">
+        <TextBlock Text="Default" Margin="0,4,0,0"></TextBlock>
         <mosaic:NumericTextBox Padding="4" />
+
+        <TextBlock Text="2 Decimal Place Limit" Margin="0,4,0,0"></TextBlock>
+        <mosaic:NumericTextBox Padding="4" DecimalPlaces="2" Margin="0,4,0,0" />
     </StackPanel>
 </UserControl>
