@@ -11,8 +11,8 @@
                     <Border
                         Background="Transparent"
                         BorderBrush="{TemplateBinding AnimatedAccentBrush}"
-                        CornerRadius="5"
-                        BorderThickness="5,0,0,0">
+                        BorderThickness="5,0,0,0"
+                        CornerRadius="5">
                         <Border
                             Padding="10"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"

@@ -86,6 +86,8 @@ namespace MosaicWpfDemo.Views
             InitializeComponent();
             XamlEditor.Options.EnableHyperlinks = false;
             XamlEditor.Options.EnableEmailHyperlinks = false;
+            CSharpEditor.Options.EnableHyperlinks = false;
+            CSharpEditor.Options.EnableEmailHyperlinks = false;
         }
     }
 }
