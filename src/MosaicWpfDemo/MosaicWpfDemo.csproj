@@ -41,6 +41,7 @@
     <Resource Include="Assets\circle-48.png" />
     <Resource Include="Assets\collage-48.png" />
     <Resource Include="Assets\collage-96.png" />
+    <Resource Include="Assets\dashboard-48.png" />
     <Resource Include="Assets\drive-48.png" />
     <Resource Include="Assets\gravatar-48.png" />
     <Resource Include="Assets\home-48.png" />
@@ -92,6 +93,13 @@
       <Link>LinkedSources\HyperlinkExample.xaml.cs</Link>
     </EmbeddedResource>
 
+    <EmbeddedResource Include="Views\Examples\IndicatorPanelExample.xaml">
+      <Link>LinkedSources\IndicatorPanelExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\IndicatorPanelExample.xaml.cs">
+      <Link>LinkedSources\IndicatorPanelExample.xaml.cs</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="Views\Examples\GravatarImageExample.xaml">
       <Link>LinkedSources\GravatarImageExample.xaml</Link>
     </EmbeddedResource>
@@ -131,6 +139,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\GravatarImageExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\IndicatorPanelExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\SearchBoxExample.xaml.cs">
