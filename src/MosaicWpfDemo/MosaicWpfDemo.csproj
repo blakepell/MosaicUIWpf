@@ -23,6 +23,7 @@
     <None Remove="Assets\password-48.png" />
     <None Remove="Assets\search-48.png" />
     <None Remove="Assets\tab-control-48.png" />
+    <None Remove="Assets\text-48.png" />
     <None Remove="Assets\warning-48.png" />
     <None Remove="Assets\Xml.Dark.xshd" />
   </ItemGroup>
@@ -50,6 +51,7 @@
     <Resource Include="Assets\password-48.png" />
     <Resource Include="Assets\search-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
+    <Resource Include="Assets\text-48.png" />
     <Resource Include="Assets\warning-48.png" />
   </ItemGroup>
 
@@ -84,6 +86,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\ClipBorderExample.xaml.cs">
       <Link>LinkedSources\ClipBorderExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\EditableTextBlockExample.xaml">
+      <Link>LinkedSources\EditableTextBlockExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\EditableTextBlockExample.xaml.cs">
+      <Link>LinkedSources\EditableTextBlockExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">
@@ -135,6 +144,9 @@
   </ItemGroup>
     
   <ItemGroup>
+    <Compile Update="Views\Examples\EditableTextBlockExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Examples\AsteriskTextBlockExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
