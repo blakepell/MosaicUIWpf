@@ -395,6 +395,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SearchBox Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/stopwatch-48.png"
+                    Text="Stopwatch Display">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="StopWatch Display" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.StopwatchDisplayExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.StopwatchDisplayExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:StopwatchDisplay}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:StopwatchDisplayExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/stopwatch-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
 
