@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicWpfDemo", "MosaicWpfDemo.csproj", "{B401088A-AF79-FC14-7F73-F263BA4CCCE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B401088A-AF79-FC14-7F73-F263BA4CCCE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B401088A-AF79-FC14-7F73-F263BA4CCCE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B401088A-AF79-FC14-7F73-F263BA4CCCE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B401088A-AF79-FC14-7F73-F263BA4CCCE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {949610C5-D16E-4040-A151-AC69D120761C}
+	EndGlobalSection
+EndGlobal

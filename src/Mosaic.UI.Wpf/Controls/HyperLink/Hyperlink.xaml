@@ -1,0 +1,56 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <local:HyperlinkTextConverter x:Key="HyperlinkDisplayConverter" />
+    <local:HyperlinkToolTipConverter x:Key="HyperlinkToolTipConverter" />
+
+    <Style TargetType="{x:Type controls:Hyperlink}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Hyperlink}">
+                    <TextBlock
+                        Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource HyperlinkDisplayConverter}}"
+                        TextDecorations="Underline"
+                        TextTrimming="{Binding Path=TextTrimming, RelativeSource={RelativeSource TemplatedParent}}"
+                        TextWrapping="{Binding Path=TextWrapping, RelativeSource={RelativeSource TemplatedParent}}"
+                        ToolTip="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource HyperlinkToolTipConverter}}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="{Binding HoverBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <Setter Property="Cursor" Value="Hand" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="False">
+                                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="Gray" />
+                                        <Setter Property="TextDecorations" Value="{x:Null}" />
+                                        <Setter Property="Cursor" Value="Arrow" />
+                                    </Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding HasVisited, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                            <Condition Binding="{Binding ChangeVisitedLinkColor, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static mosaic:MosaicTheme.HyperLinkVisitedBrushKey}}" />
+                                    </MultiDataTrigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                        <TextBlock.InputBindings>
+                            <MouseBinding Command="{Binding OnClick, RelativeSource={RelativeSource TemplatedParent}}" MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

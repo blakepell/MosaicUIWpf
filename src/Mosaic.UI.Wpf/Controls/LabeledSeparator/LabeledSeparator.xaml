@@ -1,0 +1,246 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
+    <Style TargetType="{x:Type controls:LabeledSeparator}">
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:LabeledSeparator}">
+                    <Grid>
+                        <!--  Left Position: Label left, separator fills right  -->
+                        <Grid x:Name="LeftGrid" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Name="LeftLabel"
+                                Grid.Column="0"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                            <Border
+                                Grid.Column="1"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                        </Grid>
+                        <!--  Right Position: Separator fills left, label right  -->
+                        <Grid x:Name="RightGrid" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Grid.Column="0"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                            <TextBlock
+                                x:Name="RightLabel"
+                                Grid.Column="1"
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                        </Grid>
+                        <!--  Center Position: Label center, separators both sides  -->
+                        <Grid x:Name="HorizontalGrid">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Grid.Column="0"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                            <TextBlock
+                                x:Name="Label"
+                                Grid.Column="1"
+                                Margin="8,0,8,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                            <Border
+                                Grid.Column="2"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                        </Grid>
+                        <!--  AboveLeft Position: Label above left, separator below  -->
+                        <Grid x:Name="AboveLeftPanel">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,4"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                        </Grid>
+
+                        <!--  AboveCenter Position: Label above center, separator below  -->
+                        <Grid x:Name="AboveCenterPanel">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="0,0,0,4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                        </Grid>
+
+                        <!--  AboveRight Position: Label above right, separator below  -->
+                        <Grid x:Name="AboveRightPanel">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="0,0,0,4"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}" />
+                            <Border
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Height="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!--  Left  -->
+                        <Trigger Property="LabelPosition" Value="Left">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  Center  -->
+                        <Trigger Property="LabelPosition" Value="Center">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  Right  -->
+                        <Trigger Property="LabelPosition" Value="Right">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  AboveLeft  -->
+                        <Trigger Property="LabelPosition" Value="AboveLeft">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  AboveCenter  -->
+                        <Trigger Property="LabelPosition" Value="AboveCenter">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  AboveRight  -->
+                        <Trigger Property="LabelPosition" Value="AboveRight">
+                            <Setter TargetName="LeftGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RightGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="HorizontalGrid" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveLeftPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveCenterPanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="AboveRightPanel" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

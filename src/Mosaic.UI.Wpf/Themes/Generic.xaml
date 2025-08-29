@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <!--  Mosaic controls  -->
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/AsterikTextBlock/AsteriskTextBlock.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Avatar/Avatar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Badge/Badge.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/LabeledSeparator/LabeledSeparator.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SearchBox/SearchBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FileSystem/DriveComboBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FileSystem/DirectoryListBox.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

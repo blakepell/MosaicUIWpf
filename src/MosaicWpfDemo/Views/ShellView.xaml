@@ -1,0 +1,138 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Controls.Behaviors"
+    xmlns:behaviors1="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+    xmlns:controls="clr-namespace:MosaicWpfDemo.Controls"
+    xmlns:controls1="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Me"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="ContentBoxBorderStyle" TargetType="Border">
+            <Setter Property="Padding" Value="7" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Margin="19,9" Style="{StaticResource ContentBoxBorderStyle}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!--  Header at the top  -->
+            <controls:Header
+                Grid.Row="0"
+                ImageSource="{Binding ElementName=Me, Path=ImageSource}"
+                Text="{Binding ElementName=Me, Path=Title}" />
+
+            <!--  TabControl fills remaining space  -->
+            <Grid
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                <controls1:TabControl Margin="0,10,0,0">
+                    <controls1:TabItem Header="Example">
+                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}}">
+                            <ContentPresenter Margin="10" Content="{Binding ElementName=Me, Path=UserControl}" />
+                        </Grid>
+                    </controls1:TabItem>
+                    <controls1:TabItem Header="XAML">
+                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ToolBar Grid.Row="0">
+                                <Button Focusable="False">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:AvalonEditCopyBehavior TargetTextEditor="{Binding ElementName=XamlEditor}" />
+                                    </b:Interaction.Behaviors>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image
+                                            Width="18"
+                                            Height="18"
+                                            Source="/Assets/link-48.png"
+                                            ToolTip="Copy" />
+                                        <TextBlock Margin="4,0,4,0" Text="Copy" />
+                                    </StackPanel>
+                                </Button>
+                            </ToolBar>
+                            <avalonedit:TextEditor
+                                x:Name="XamlEditor"
+                                Grid.Row="1"
+                                FontFamily="Consolas"
+                                FontSize="13"
+                                IsReadOnly="True"
+                                ShowLineNumbers="True">
+                                <b:Interaction.Behaviors>
+                                    <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=XamlResourcePath}" />
+                                </b:Interaction.Behaviors>
+                            </avalonedit:TextEditor>
+                        </Grid>
+                    </controls1:TabItem>
+                    <controls1:TabItem Header="C#">
+                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <ToolBar Grid.Row="0">
+                                <Button Focusable="False">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:AvalonEditCopyBehavior TargetTextEditor="{Binding ElementName=CSharpEditor}" />
+                                    </b:Interaction.Behaviors>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image
+                                            Width="18"
+                                            Height="18"
+                                            Source="/Assets/link-48.png"
+                                            ToolTip="Copy" />
+                                        <TextBlock Margin="4,0,4,0" Text="Copy" />
+                                    </StackPanel>
+                                </Button>
+                            </ToolBar>
+
+                            <avalonedit:TextEditor
+                                x:Name="CSharpEditor"
+                                Grid.Row="1"
+                                FontFamily="Consolas"
+                                FontSize="13"
+                                IsReadOnly="True"
+                                ShowLineNumbers="True">
+                                <b:Interaction.Behaviors>
+                                    <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=CSharpResourcePath}" />
+                                </b:Interaction.Behaviors>
+                            </avalonedit:TextEditor>
+                        </Grid>
+                    </controls1:TabItem>
+                    <controls1:TabItem Header="Documentation">
+                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                            <avalonedit:TextEditor
+                                x:Name="DocumentationEditor"
+                                FontFamily="Consolas"
+                                FontSize="13"
+                                IsReadOnly="True"
+                                ShowLineNumbers="True">
+                                <b:Interaction.Behaviors>
+                                    <behaviors:ReflectionDocumentationBehavior Type="{Binding ElementName=Me, Path=DocumentationType}" />
+                                </b:Interaction.Behaviors>
+                            </avalonedit:TextEditor>
+                        </Grid>
+                    </controls1:TabItem>
+
+                </controls1:TabControl>
+
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

@@ -1,0 +1,264 @@
+<UserControl
+    x:Class="Mosaic.UI.Wpf.Controls.SideMenuItemControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
+    x:Name="Me"
+    d:DesignHeight="450"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <!--  Main Menu Item  -->
+        <Border
+            Height="36"
+            Cursor="Hand"
+            MouseLeftButtonDown="OnItemClick">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}}" />
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid>
+                <!--  Selection Indicator  -->
+                <Rectangle
+                    Width="3"
+                    HorizontalAlignment="Left"
+                    Fill="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentBrushKey}}"
+                    RenderTransformOrigin="0.5,0.5">
+                    <!--  Origin at the center for Y-scaling  -->
+                    <Rectangle.RenderTransform>
+                        <ScaleTransform ScaleY="0" />
+                    </Rectangle.RenderTransform>
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <!--  Default state for when the item is not selected  -->
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleY="0" />
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                    From="0"
+                                                    To="1"
+                                                    Duration="0:0:0.2" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
+
+                <!--  Non-Selected Border  -->
+                <Rectangle
+                    Width="1"
+                    HorizontalAlignment="Left"
+                    Fill="{DynamicResource {x:Static SystemColors.InactiveBorderBrushKey}}">
+                    <Rectangle.Visibility>
+                        <Binding ElementName="Me" Path="MenuItem.IsSelected">
+                            <Binding.Converter>
+                                <converters:InvertedBoolToVisibilityConverter />
+                            </Binding.Converter>
+                        </Binding>
+                    </Rectangle.Visibility>
+                </Rectangle>
+                <!--  Content  -->
+                <Grid>
+                    <Grid.Margin>
+                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type local:SideMenuItemControl}}">
+                            <Binding.Converter>
+                                <local:NestedItemMarginConverter />
+                            </Binding.Converter>
+                        </Binding>
+                    </Grid.Margin>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Header ContentPresenter  -->
+                    <Image
+                        Grid.Column="0"
+                        Width="24"
+                        Height="24"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Source="{Binding MenuItem.ImageSource, ElementName=Me}" />
+
+                    <ContentPresenter
+                        Grid.Column="1"
+                        Margin="0,0,5,0"
+                        VerticalAlignment="Center"
+                        Content="{Binding MenuItem.Header, ElementName=Me}" />
+
+                    <!--  Text  -->
+                    <TextBlock
+                        Grid.Column="2"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe UI Variable"
+                        FontSize="14"
+                        FontWeight="Normal"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundBrushKey}}"
+                        Text="{Binding MenuItem.Text, ElementName=Me}" />
+
+                    <!--  Expander  -->
+                    <ToggleButton
+                        Grid.Column="3"
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="OnExpanderClick"
+                        IsChecked="{Binding MenuItem.IsExpanded, ElementName=Me, Mode=TwoWay}"
+                        Visibility="{Binding MenuItem.HasChildren, ElementName=Me, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}">
+                        <ToggleButton.Template>
+                            <ControlTemplate TargetType="ToggleButton">
+                                <Border Background="{TemplateBinding Background}">
+                                    <Path
+                                        x:Name="ExpandPath"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M 0 0 L 4 4 L 8 0 Z"
+                                        RenderTransformOrigin="0.5,0.5">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Fill" Value="#666666" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="True">
+                                                        <Setter Property="Fill" Value="{Binding SideMenu.SelectedForeground, ElementName=Me}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="False">
+                                                        <Setter Property="Fill" Value="{Binding SideMenu.SelectedForeground, ElementName=Me}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                        <Path.RenderTransform>
+                                            <RotateTransform x:Name="ExpandRotateTransform" Angle="0" />
+                                        </Path.RenderTransform>
+                                    </Path>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetName="ExpandRotateTransform"
+                                                        Storyboard.TargetProperty="Angle"
+                                                        To="180"
+                                                        Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
+                                        <Trigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <DoubleAnimation
+                                                        Storyboard.TargetName="ExpandRotateTransform"
+                                                        Storyboard.TargetProperty="Angle"
+                                                        To="0"
+                                                        Duration="0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.ExitActions>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </ToggleButton.Template>
+                    </ToggleButton>
+                </Grid>
+            </Grid>
+        </Border>
+        <!--  Children Container for nested menu items  -->
+        <ItemsControl
+            x:Name="ChildrenContainer"
+            Margin="0,0,0,0"
+            ItemsSource="{Binding MenuItem.Children, ElementName=Me}">
+            <ItemsControl.Style>
+                <Style TargetType="ItemsControl">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleY="0" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MenuItem.IsExpanded, ElementName=Me}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimation
+                                            Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                            To="1"
+                                            Duration="0:0:0.3">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                            To="0"
+                                            Duration="0:0:0.3">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuadraticEase EasingMode="EaseIn" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.Style>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:SideMenuItem}">
+                    <local:SideMenuItemControl
+                        Margin="0,1,0,0"
+                        MenuItem="{Binding}"
+                        SideMenu="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:SideMenu}}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,33 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  MOSAIC CUSTOM COLORS  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundKey}" Color="#1C1C1C" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundKey}" Color="#FFFFFF" />
+
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColorKey}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.AccentColorKey}">#FF0078D7</Color>
+
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColor}">#FFCCCCCC</Color>
+
+    <!--  Hyperlink colors  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkBrushKey}" Color="#FF0A86F1" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverBrushKey}" Color="#FF0E6FBE" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedBrushKey}" Color="#252074" />
+
+    <!--  Sidebar colors  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}" Color="#FFD4EDF9" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentBrushKey}" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarForegroundBrushKey}" Color="#FF333333" />
+
+    <!--  Tab & TabItem  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemAccentBrushKey}" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}" Color="#FFF3F3F3" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBorderBrushKey}" Color="#FFCCCCCC" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemForegroundBrushKey}" Color="#FF333333" />
+
+</ResourceDictionary>

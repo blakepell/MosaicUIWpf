@@ -1,0 +1,162 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
+    <Style x:Key="{x:Type controls:SearchBox}" TargetType="{x:Type controls:SearchBox}">
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Padding" Value="5,4,0,0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Command="ApplicationCommands.Cut" />
+                    <MenuItem Command="ApplicationCommands.Copy" />
+                    <MenuItem Command="ApplicationCommands.Paste" />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SearchBox}">
+                    <Border
+                        x:Name="PART_Border"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                        BorderThickness=".9"
+                        SnapsToDevicePixels="True">
+                        <DockPanel x:Name="PART_DockPanel" Background="{TemplateBinding Background}">
+                            <!--  Width needs to be the same as the height to be proportional  -->
+                            <Border
+                                x:Name="PART_SearchBorder"
+                                Width="{Binding Path=ActualHeight, RelativeSource={RelativeSource Self}}"
+                                Height="{Binding Path=ActualHeight, ElementName=PART_DockPanel}"
+                                Margin="0,0,0,0"
+                                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                                CornerRadius="0"
+                                DockPanel.Dock="Right">
+                                <Grid>
+                                    <Viewbox Width="16" Height="16">
+                                        <Path Fill="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}">
+                                            <Path.LayoutTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                            </Path.LayoutTransform>
+                                            <Path.Data>
+                                                M1004.8 44.8l-268.8 268.8c-12.8 12.8-32 19.2-51.2 19.2 51.2 64 83.2 153.6 83.2 243.2 0 211.2-172.8 384-384 384s-384-172.8-384-384 172.8-384 384-384c89.6 0 179.2 32 243.2 89.6 0-19.2 0-38.4 19.2-51.2l268.8-268.8c12.8-12.8 32-19.2 44.8-19.2s32 6.4 44.8 19.2c25.6 19.2 25.6 57.6 0 83.2zM384 288c-160 0-288 128-288 288s128 288 288 288 288-128 288-288-128-288-288-288z
+                                            </Path.Data>
+                                            <Path.Style>
+                                                <Style>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasText, RelativeSource={RelativeSource TemplatedParent}}" Value="true">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            To="0"
+                                                                            Duration="0:0:0.25" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            To="1"
+                                                                            Duration="0:0:0.25" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.ExitActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                    </Viewbox>
+                                    <Viewbox Width="16" Height="16">
+                                        <Path Fill="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" Opacity="0">
+                                            <Path.LayoutTransform>
+                                                <ScaleTransform ScaleX="1" ScaleY="-1" />
+                                            </Path.LayoutTransform>
+                                            <Path.Data>
+                                                M966.4 761.6l-140.8 140.8-313.6-320-313.6 320-140.8-140.8 320-313.6-320-313.6 140.8-140.8 313.6 320 313.6-320 140.8 140.8-320 313.6z
+                                            </Path.Data>
+                                            <Path.Style>
+                                                <Style>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasText, RelativeSource={RelativeSource TemplatedParent}}" Value="true">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            To="1"
+                                                                            Duration="0:0:0.25" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation
+                                                                            Storyboard.TargetProperty="Opacity"
+                                                                            To="0"
+                                                                            Duration="0:0:0.25" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.ExitActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                    </Viewbox>
+                                </Grid>
+                            </Border>
+                            <!--  Watermark TextBlock  -->
+                            <TextBlock
+                                x:Name="WatermarkTextBlock"
+                                Margin="3,0,0,0"
+                                Padding="5,0,0,0"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="Gray"
+                                Text="{Binding Watermark, RelativeSource={RelativeSource TemplatedParent}}"
+                                Visibility="Collapsed" />
+
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Height="{TemplateBinding Height}"
+                                Margin="0,0,0,0"
+                                Padding="5,4,0,0"
+                                Panel.ZIndex="1" />
+                        </DockPanel>
+
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="False">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveBorderBrush}}" />
+                        </Trigger>
+                        <!--  Watermark Trigger  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Text" Value="" />
+                                <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="WatermarkTextBlock" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

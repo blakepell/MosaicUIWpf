@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.LabeledSeparatorExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    mc:Ignorable="d">
+    <StackPanel Margin="5" Orientation="Vertical">
+
+        <mosaic:LabeledSeparator
+            Margin="0,0,0,0"
+            LabelPosition="AboveLeft"
+            Text="Above Left" />
+        <mosaic:LabeledSeparator
+            Margin="0,10,0,0"
+            LabelPosition="AboveCenter"
+            Text="Above Center" />
+        <mosaic:LabeledSeparator
+            Margin="0,10,0,0"
+            LabelPosition="AboveRight"
+            Text="Above Right" />
+        <mosaic:LabeledSeparator
+            Margin="0,15,0,0"
+            LabelPosition="Left"
+            Text="Left" />
+        <mosaic:LabeledSeparator
+            Margin="0,10,0,0"
+            LabelPosition="Center"
+            Text="Center" />
+        <mosaic:LabeledSeparator
+            Margin="0,10,0,0"
+            LabelPosition="Right"
+            Text="Right" />
+    </StackPanel>
+</UserControl>

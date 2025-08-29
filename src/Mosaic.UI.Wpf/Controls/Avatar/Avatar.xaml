@@ -1,0 +1,52 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls">
+
+    <local:AvatarTemplateSelector x:Key="AvatarTemplateSelector">
+        <local:AvatarTemplateSelector.ImageTemplate>
+            <DataTemplate>
+                <Image Source="{Binding}" />
+            </DataTemplate>
+        </local:AvatarTemplateSelector.ImageTemplate>
+        <local:AvatarTemplateSelector.TextTemplate>
+            <DataTemplate>
+                <TextBlock SnapsToDevicePixels="True" Text="{Binding}" />
+            </DataTemplate>
+        </local:AvatarTemplateSelector.TextTemplate>
+        <local:AvatarTemplateSelector.FrameworkElementTemplate>
+            <DataTemplate>
+                <ContentPresenter Content="{Binding}" />
+            </DataTemplate>
+        </local:AvatarTemplateSelector.FrameworkElementTemplate>
+    </local:AvatarTemplateSelector>
+
+    <Style TargetType="{x:Type local:Avatar}">
+        <Setter Property="Width" Value="48" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="ContentTemplateSelector" Value="{StaticResource AvatarTemplateSelector}" />
+        <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:Avatar}">
+                    <local:ClipBorder
+                        x:Name="AvatarBorder"
+                        Padding="{TemplateBinding Control.Padding}"
+                        Background="{TemplateBinding Control.Background}"
+                        BorderBrush="{TemplateBinding Control.BorderBrush}"
+                        BorderThickness="{TemplateBinding Control.BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Decorator>
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding ContentControl.Content}"
+                                ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}"
+                                ContentTemplateSelector="{StaticResource AvatarTemplateSelector}" />
+                        </Decorator>
+                    </local:ClipBorder>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

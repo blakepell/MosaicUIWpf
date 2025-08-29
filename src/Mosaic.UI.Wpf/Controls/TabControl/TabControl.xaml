@@ -1,0 +1,232 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+    <Style TargetType="{x:Type controls:TabControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:TabControl}">
+                    <Grid KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TabPanel
+                            Name="HeaderPanel"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,0,0"
+                            Panel.ZIndex="1"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}"
+                            IsItemsHost="True"
+                            KeyboardNavigation.TabIndex="1" />
+                        <!--  The .9 is weird on the border thickness but fixes a weird double pixel border on 4k monitors  -->
+                        <Border
+                            Name="Border"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}"
+                            BorderThickness="1,1,1,1"
+                            CornerRadius="0"
+                            KeyboardNavigation.DirectionalNavigation="Contained"
+                            KeyboardNavigation.TabIndex="2"
+                            KeyboardNavigation.TabNavigation="Local">
+                            <ContentPresenter
+                                Name="PART_SelectedContentHost"
+                                Margin="0,0,0,0"
+                                ContentSource="SelectedContent" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="controls:TabItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:TabItem">
+                    <Border
+                        Name="OuterBorder"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}"
+                        BorderThickness="1,1,1,1">
+                        <Grid>
+                            <Border
+                                Name="Border"
+                                Margin="0,0,0,0"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}"
+                                BorderThickness="0,0,0,0"
+                                CornerRadius="0,0,0,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentPresenter
+                                        x:Name="ContentSite"
+                                        Margin="15,6,15,6"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        ContentSource="Header" />
+                                </StackPanel>
+                            </Border>
+
+                            <!--  Top indicator border  -->
+                            <Border
+                                Name="TopBorder"
+                                Height="1"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}" />
+
+                            <!--  Bottom indicator border  -->
+                            <Border
+                                Name="BottomBorder"
+                                Height="0"
+                                VerticalAlignment="Bottom"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}" />
+
+                            <!--  Top selection indicator  -->
+                            <Border
+                                Name="TopSelectionIndicator"
+                                Height="2"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemAccentBrushKey}}"
+                                RenderTransformOrigin="0.5,0.5"
+                                Visibility="Collapsed">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="0" />
+                                </Border.RenderTransform>
+                            </Border>
+
+                            <!--  Bottom selection indicator  -->
+                            <Border
+                                Name="BottomSelectionIndicator"
+                                Height="2"
+                                VerticalAlignment="Bottom"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemAccentBrushKey}}"
+                                RenderTransformOrigin="0.5,0.5"
+                                Visibility="Collapsed">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="0" />
+                                </Border.RenderTransform>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="True">
+                            <Setter TargetName="ContentSite" Property="TextElement.FontFamily" Value="Segoe UI" />
+                            <Setter TargetName="ContentSite" Property="TextElement.FontSize" Value="14" />
+                            <Setter TargetName="ContentSite" Property="TextElement.FontWeight" Value="Bold" />
+                        </Trigger>
+
+                        <!--  Handle indicator placement  -->
+                        <Trigger Property="ActiveIndicatorPlacement" Value="Top">
+                            <Setter TargetName="TopSelectionIndicator" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="BottomSelectionIndicator" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="ActiveIndicatorPlacement" Value="Bottom">
+                            <Setter TargetName="TopSelectionIndicator" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="BottomSelectionIndicator" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--  Selected state  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="ActiveIndicatorPlacement" Value="Top" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            <Setter TargetName="TopBorder" Property="Visibility" Value="Collapsed" />
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="TopSelectionIndicator"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1"
+                                            Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.EnterActions>
+                            <MultiTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="TopSelectionIndicator"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="0"
+                                            Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.ExitActions>
+                        </MultiTrigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="ActiveIndicatorPlacement" Value="Bottom" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            <Setter TargetName="BottomBorder" Property="Visibility" Value="Collapsed" />
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="BottomSelectionIndicator"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="1"
+                                            Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.EnterActions>
+                            <MultiTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="BottomSelectionIndicator"
+                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                            To="0"
+                                            Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.ExitActions>
+                        </MultiTrigger>
+
+                        <!--  Not selected state  -->
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                        </Trigger>
+
+                        <!--  Mouse over styling (selected)  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition SourceName="ContentSite" Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
+                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+
+                        <!--  Mouse over styling (not selected)  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
+                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

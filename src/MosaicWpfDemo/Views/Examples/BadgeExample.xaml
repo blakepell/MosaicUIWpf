@@ -1,0 +1,77 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.BadgeExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <controls:Badge Background="CornflowerBlue" Text="Info" />
+            <controls:Badge
+                Margin="5,0,0,0"
+                Background="#FEB806"
+                Foreground="Black"
+                Text="Warning" />
+            <controls:Badge
+                Margin="5,0,0,0"
+                Background="Maroon"
+                Foreground="White"
+                Text="Error" />
+            <controls:Badge
+                Margin="5,0,0,0"
+                Background="Red"
+                BorderBrush="white"
+                BorderThickness="2"
+                Foreground="White"
+                Text="Critical" />
+        </StackPanel>
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <controls:Badge
+                Width="75"
+                Background="CornflowerBlue"
+                Text="Info" />
+            <controls:Badge
+                Width="75"
+                Margin="5,0,0,0"
+                Background="#FEB806"
+                Foreground="Black"
+                Text="Warning" />
+            <controls:Badge
+                Width="75"
+                Margin="5,0,0,0"
+                Background="Maroon"
+                Foreground="White"
+                Text="Error" />
+            <controls:Badge
+                Width="75"
+                Margin="5,0,0,0"
+                Background="Red"
+                BorderBrush="white"
+                BorderThickness="2"
+                Foreground="White"
+                Text="Critical" />
+        </StackPanel>
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <controls:Badge
+                Margin="0,0,0,0"
+                Background="Green"
+                Foreground="White">
+                <controls:Badge.Content>
+                    <controls:Hyperlink
+                        Margin="0,0,10,0"
+                        Foreground="White"
+                        HoverBrush="LightGray"
+                        NavigateUri="https://www.apexgate.net"
+                        Text="(Hosted content controls inside the badge) https://www.apexgate.net" />
+                </controls:Badge.Content>
+            </controls:Badge>
+        </StackPanel>
+
+    </StackPanel>
+
+</UserControl>

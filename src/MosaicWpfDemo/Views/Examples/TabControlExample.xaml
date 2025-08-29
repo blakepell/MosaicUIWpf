@@ -1,0 +1,21 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.TabControlExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <mosaic:TabControl Margin="0,10,0,0" ActiveIndicatorPlacement="Bottom">
+        <mosaic:TabItem Header="Tab 1">
+            <TextBlock Margin="5" Text="This is the content of tab 1." />
+        </mosaic:TabItem>
+        <mosaic:TabItem Header="Tab 2">
+            <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                <TextBlock Margin="5" Text="This is the content of tab 2." />
+            </Grid>
+        </mosaic:TabItem>
+    </mosaic:TabControl>
+</UserControl>

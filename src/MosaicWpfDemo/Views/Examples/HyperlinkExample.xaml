@@ -1,0 +1,58 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.HyperlinkExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    FontSize="15"
+    mc:Ignorable="d">
+    <b:Interaction.Behaviors>
+        <behaviors:FrameworkElementZoomFontSizeOnMouseWheelBehavior MaxFontSize="48.0" />
+    </b:Interaction.Behaviors>
+
+    <StackPanel Orientation="Vertical">
+        <!--  Default Theme  -->
+        <mosaic:Hyperlink NavigateUri="https://www.blakepell.com" Text="https://www.blakepell.com" />
+
+        <!--  Brushes that are bound to the DataContext  -->
+        <mosaic:Hyperlink
+            Foreground="{Binding HyperlinkForeground}"
+            HoverBrush="{Binding HyperlinkHover}"
+            NavigateUri="https://www.apexgate.net"
+            Text="https://www.apexgate.net" />
+
+        <!--  Brushes that are specified  -->
+        <mosaic:Hyperlink
+            Foreground="Green"
+            HoverBrush="Lime"
+            NavigateUri="https://www.github.com/blakepell"
+            Text="Blake's GitHub" />
+
+        <!--  Executes a command when clicked, automation properties also setup  -->
+        <mosaic:Hyperlink
+            AutomationProperties.HelpText="Activates the hello command"
+            AutomationProperties.Name="Say hello"
+            Command="{Binding HelloCommand}"
+            CommandParameter="Hello!"
+            Text="Say hello" />
+
+        <!--  Executes a command when clicked, automation properties also setup  -->
+        <mosaic:Hyperlink
+            AutomationProperties.HelpText="Activates the hello command"
+            AutomationProperties.Name="Say hello"
+            ChangeVisitedLinkColor="False"
+            Command="{Binding HelloCommand}"
+            CommandParameter="Hello!"
+            Text="Say hello (visited link color disabled)" />
+
+        <!--  Falls back to displaying the text of the URL  -->
+        <mosaic:Hyperlink NavigateUri="https://stackoverflow.com/users/1238310/b-pell" />
+
+        <!--  Disabled link  -->
+        <mosaic:Hyperlink IsEnabled="False" NavigateUri="https://www.microsoft.com (this is disabled)" />
+
+    </StackPanel>
+</UserControl>
