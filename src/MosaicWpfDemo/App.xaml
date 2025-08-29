@@ -2,6 +2,7 @@
     x:Class="WpfDemo.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic"
     xmlns:wpf="clr-namespace:Mosaic.UI.Wpf;assembly=Mosaic.UI.Wpf"
     Startup="App_OnStartup"
     StartupUri="MainWindow.xaml">
