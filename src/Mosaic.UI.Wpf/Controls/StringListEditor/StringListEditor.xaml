@@ -1,0 +1,110 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
+    x:Name="StringListEditorControl">
+
+    <Style TargetType="{x:Type controls:StringListEditor}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:StringListEditor}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="32" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            x:Name="TextKeyword"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding TextBoxMargin}"
+                            Padding="4,0,0,0"
+                            VerticalContentAlignment="Center"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderThickness=".9,.9,0,.9"
+                            FocusVisualStyle="{x:Null}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                            MaxLength="{TemplateBinding MaxLength}">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                            <b:Interaction.Behaviors>
+                                <behaviors:TextBoxClearTextOnEscapeBehavior />
+                            </b:Interaction.Behaviors>
+                        </TextBox>
+
+                        <Button
+                            x:Name="ButtonAdd"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderThickness=".9,.9,.9,.9">
+                            <Button.Content>
+                                <Image Source="../../Assets/vs-add-16.png" />
+                            </Button.Content>
+                        </Button>
+
+                        <!--  Background needs to be the same as the textbox  -->
+                        <ListBox
+                            x:Name="ListItems"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Height="200"
+                            Margin="{TemplateBinding ListBoxMargin}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderThickness=".9,0,.9,.9"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                            ItemsSource="{TemplateBinding Items}">
+                            <b:Interaction.Behaviors>
+                                <behaviors:ItemsControlAutoScrollBehavior />
+                            </b:Interaction.Behaviors>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button
+                                            Margin="0,0,5,0"
+                                            Command="{Binding DeleteItemCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:StringListEditor}}}"
+                                            CommandParameter="{Binding}">
+                                            <Button.Content>
+                                                <Image
+                                                    Width="14"
+                                                    Height="14"
+                                                    Source="../../Assets/vs-delete-16.png" />
+                                            </Button.Content>
+                                        </Button>
+
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

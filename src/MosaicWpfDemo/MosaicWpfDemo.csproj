@@ -20,6 +20,7 @@
     <None Remove="Assets\home-48.png" />
     <None Remove="Assets\labeled-separator-96.png" />
     <None Remove="Assets\link-48.png" />
+    <None Remove="Assets\list-48.png" />
     <None Remove="Assets\numbers-input-48.png" />
     <None Remove="Assets\password-48.png" />
     <None Remove="Assets\search-48.png" />
@@ -50,6 +51,7 @@
     <Resource Include="Assets\home-48.png" />
     <Resource Include="Assets\labeled-separator-96.png" />
     <Resource Include="Assets\link-48.png" />
+    <Resource Include="Assets\list-48.png" />
     <Resource Include="Assets\numbers-input-48.png" />
     <Resource Include="Assets\password-48.png" />
     <Resource Include="Assets\search-48.png" />
@@ -127,6 +129,13 @@
       <Link>LinkedSources\GravatarImageExample.xaml.cs</Link>
     </EmbeddedResource>
 
+    <EmbeddedResource Include="Views\Examples\StringListEditorExample.xaml">
+      <Link>LinkedSources\StringListEditorExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\StringListEditorExample.xaml.cs">
+      <Link>LinkedSources\StringListEditorExample.xaml.cs</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="Views\Examples\LabeledSeparatorExample.xaml">
       <Link>LinkedSources\LabeledSeparatorExample.xaml</Link>
     </EmbeddedResource>
@@ -162,6 +171,9 @@
   </ItemGroup>
     
   <ItemGroup>
+    <Compile Update="Views\Examples\StringListEditorExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Examples\NumericTextBoxExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

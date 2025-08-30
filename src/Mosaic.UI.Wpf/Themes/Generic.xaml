@@ -10,6 +10,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/LabeledSeparator/LabeledSeparator.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SearchBox/SearchBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/StopwatchDisplay/StopwatchDisplay.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/StringListEditor/StringListEditor.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

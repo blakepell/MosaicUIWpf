@@ -7,8 +7,6 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:shared="http://schemas.actiprosoftware.com/winfx/xaml/shared"
-    xmlns:themes="http://schemas.actiprosoftware.com/winfx/xaml/themes"
     x:Name="SideMenuInstance"
     d:DesignHeight="450"
     d:DesignWidth="300"
