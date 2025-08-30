@@ -197,6 +197,24 @@
                     ImageSource="pack://application:,,,/Assets/collage-48.png"
                     Text="About" />
 
+                <!--  AdaptiveImage  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/color-swatch-48.png"
+                    Text="AdaptiveImage">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="AdaptiveImage" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AdaptiveImageExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AdaptiveImageExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AdaptiveImage}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AdaptiveImageExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/color-swatch-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  AsteriskTextBlock  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

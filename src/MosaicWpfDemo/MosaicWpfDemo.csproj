@@ -14,6 +14,7 @@
     <None Remove="Assets\circle-48.png" />
     <None Remove="Assets\collage-48.png" />
     <None Remove="Assets\collage-96.png" />
+    <None Remove="Assets\color-swatch-48.png" />
     <None Remove="Assets\CSharp.Dark.xshd" />
     <None Remove="Assets\drive-48.png" />
     <None Remove="Assets\gravatar-48.png" />
@@ -27,6 +28,7 @@
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
     <None Remove="Assets\text-48.png" />
+    <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\warning-48.png" />
     <None Remove="Assets\Xml.Dark.xshd" />
   </ItemGroup>
@@ -45,6 +47,7 @@
     <Resource Include="Assets\circle-48.png" />
     <Resource Include="Assets\collage-48.png" />
     <Resource Include="Assets\collage-96.png" />
+    <Resource Include="Assets\color-swatch-48.png" />
     <Resource Include="Assets\dashboard-48.png" />
     <Resource Include="Assets\drive-48.png" />
     <Resource Include="Assets\gravatar-48.png" />
@@ -58,6 +61,7 @@
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
     <Resource Include="Assets\text-48.png" />
+    <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\warning-48.png" />
   </ItemGroup>
 
@@ -71,6 +75,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml.cs">
       <Link>LinkedSources\AsteriskTextBlockExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\AdaptiveImageExample.xaml">
+      <Link>LinkedSources\AdaptiveImageExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\AdaptiveImageExample.xaml.cs">
+      <Link>LinkedSources\AdaptiveImageExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\AvatarExample.xaml">
@@ -171,6 +182,9 @@
   </ItemGroup>
     
   <ItemGroup>
+    <Compile Update="Views\Examples\AdaptiveImageExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Examples\StringListEditorExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
