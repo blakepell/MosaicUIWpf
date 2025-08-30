@@ -449,6 +449,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ShadowPanel Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/black-and-white-48.png"
+                    Text="ShadowPanel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ShadowPanel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ShadowPanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ShadowPanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ShadowPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ShadowPanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/stopwatch-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  StringListEditor Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
