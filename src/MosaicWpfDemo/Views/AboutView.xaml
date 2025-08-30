@@ -32,6 +32,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -88,6 +89,20 @@
                         FontSize="12"
                         NavigateUri="https://www.blakepell.com"
                         Text="https://www.blakepell.com" />
+
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="20,-4,0,0"
+                        FontSize="12"
+                        Text="" />
+                    <controls:Hyperlink
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="20,0,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/blakepell/MosaicUIWpf"
+                        Text="https://github.com/blakepell/MosaicUIWpf" />
                 </Grid>
 
                 <TextBlock
