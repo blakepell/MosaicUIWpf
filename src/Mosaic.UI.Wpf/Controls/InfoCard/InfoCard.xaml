@@ -4,10 +4,10 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
-    <Style TargetType="{x:Type controls:IndicatorPanel}">
+    <Style TargetType="{x:Type controls:InfoCard}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:IndicatorPanel}">
+                <ControlTemplate TargetType="{x:Type controls:InfoCard}">
                     <Border
                         Background="Transparent"
                         BorderBrush="{TemplateBinding AnimatedAccentBrush}"

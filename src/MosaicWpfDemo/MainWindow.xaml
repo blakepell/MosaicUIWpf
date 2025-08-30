@@ -328,14 +328,14 @@
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/dashboard-48.png"
-                    Text="Indicator Panel">
+                    Text="InfoCard">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="Indicator Panel" />
-                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.IndicatorPanelExample.xaml" />
-                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.IndicatorPanelExample.xaml.cs" />
-                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:IndicatorPanel}" />
-                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:IndicatorPanelExample}" />
+                            <mosaic:SideMenuParameter Key="Title" Value="InfoCard" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.InfoCardExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.InfoCardExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:InfoCard}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:InfoCardExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dashboard-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>

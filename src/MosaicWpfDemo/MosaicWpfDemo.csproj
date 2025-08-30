@@ -113,11 +113,11 @@
       <Link>LinkedSources\HyperlinkExample.xaml.cs</Link>
     </EmbeddedResource>
 
-    <EmbeddedResource Include="Views\Examples\IndicatorPanelExample.xaml">
-      <Link>LinkedSources\IndicatorPanelExample.xaml</Link>
+    <EmbeddedResource Include="Views\Examples\InfoCardExample.xaml">
+      <Link>LinkedSources\InfoCardExample.xaml</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="Views\Examples\IndicatorPanelExample.xaml.cs">
-      <Link>LinkedSources\IndicatorPanelExample.xaml.cs</Link>
+    <EmbeddedResource Include="Views\Examples\InfoCardExample.xaml.cs">
+      <Link>LinkedSources\InfoCardExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\GravatarImageExample.xaml">
@@ -132,6 +132,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\LabeledSeparatorExample.xaml.cs">
       <Link>LinkedSources\LabeledSeparatorExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\NumericTextBoxExample.xaml">
+      <Link>LinkedSources\NumericTextBoxExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\NumericTextBoxExample.xaml.cs">
+      <Link>LinkedSources\NumericTextBoxExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\TabControlExample.xaml">
@@ -170,7 +177,7 @@
     <Compile Update="Views\Examples\GravatarImageExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Examples\IndicatorPanelExample.xaml.cs">
+    <Compile Update="Views\Examples\InfoCardExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\SearchBoxExample.xaml.cs">

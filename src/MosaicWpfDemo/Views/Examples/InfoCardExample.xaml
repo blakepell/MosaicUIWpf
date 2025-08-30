@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="MosaicWpfDemo.Views.Examples.IndicatorPanelExample"
+    x:Class="MosaicWpfDemo.Views.Examples.InfoCardExample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,23 +8,23 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <mosaic:IndicatorPanel
-        x:Name="IndicatorPanel"
+    <mosaic:InfoCard
+        x:Name="InfoCard"
         Title="Indexed Files"
         Width="300"
         Height="100"
         Margin="0,12,0,0"
         HorizontalAlignment="Left"
         VerticalAlignment="Top">
-        <mosaic:IndicatorPanel.HeaderContent>
+        <mosaic:InfoCard.HeaderContent>
             <Button
                 Width="100"
                 HorizontalAlignment="Right"
                 Click="ButtonChangeAccent_OnClick"
                 Content="Change Accent" />
-        </mosaic:IndicatorPanel.HeaderContent>
-        <mosaic:IndicatorPanel.Content>
+        </mosaic:InfoCard.HeaderContent>
+        <mosaic:InfoCard.Content>
             <TextBlock FontSize="36" Text="41,991" />
-        </mosaic:IndicatorPanel.Content>
-    </mosaic:IndicatorPanel>
+        </mosaic:InfoCard.Content>
+    </mosaic:InfoCard>
 </UserControl>

@@ -6,7 +6,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Badge/Badge.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/EditableTextBlock/EditableTextBlock.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/IndicatorPanel/IndicatorPanel.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/InfoCard/InfoCard.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/LabeledSeparator/LabeledSeparator.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SearchBox/SearchBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/StopwatchDisplay/StopwatchDisplay.xaml" />

@@ -13,42 +13,42 @@ using System.Windows.Media;
 
 namespace MosaicWpfDemo.Views.Examples
 {
-    public partial class IndicatorPanelExample
+    public partial class InfoCardExample
     {
-        public IndicatorPanelExample()
+        public InfoCardExample()
         {
             InitializeComponent();
         }
 
         private void ButtonChangeAccent_OnClick(object sender, RoutedEventArgs e)
         {
-            if (IndicatorPanel.AccentBrush == Brushes.CornflowerBlue)
+            if (InfoCard.AccentBrush == Brushes.CornflowerBlue)
             {
-                IndicatorPanel.AccentBrush = Brushes.Green;
+                InfoCard.AccentBrush = Brushes.Green;
                 return;
             }
 
-            if (IndicatorPanel.AccentBrush == Brushes.Green)
+            if (InfoCard.AccentBrush == Brushes.Green)
             {
-                IndicatorPanel.AccentBrush = Brushes.Orange;
+                InfoCard.AccentBrush = Brushes.Orange;
                 return;
             }
 
-            if (IndicatorPanel.AccentBrush == Brushes.Orange)
+            if (InfoCard.AccentBrush == Brushes.Orange)
             {
-                IndicatorPanel.AccentBrush = Brushes.Red;
+                InfoCard.AccentBrush = Brushes.Red;
                 return;
             }
 
-            if (IndicatorPanel.AccentBrush == Brushes.Red)
+            if (InfoCard.AccentBrush == Brushes.Red)
             {
-                IndicatorPanel.AccentBrush = Brushes.Transparent;
+                InfoCard.AccentBrush = Brushes.Transparent;
                 return;
             }
 
-            if (IndicatorPanel.AccentBrush == Brushes.Transparent)
+            if (InfoCard.AccentBrush == Brushes.Transparent)
             {
-                IndicatorPanel.AccentBrush = Brushes.CornflowerBlue;
+                InfoCard.AccentBrush = Brushes.CornflowerBlue;
                 return;
             }
         }

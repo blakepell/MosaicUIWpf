@@ -17,7 +17,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// <summary>
     /// An info card with a highlight color on the left hand side.
     /// </summary>
-    public class IndicatorPanel : ContentControl
+    public class InfoCard : ContentControl
     {
         /// <summary>
         /// Identifies the <see cref="AccentBrush"/> dependency property.
@@ -25,7 +25,7 @@ namespace Mosaic.UI.Wpf.Controls
         public static readonly DependencyProperty AccentBrushProperty = DependencyProperty.Register(
             nameof(AccentBrush),
             typeof(Brush),
-            typeof(IndicatorPanel),
+            typeof(InfoCard),
             new PropertyMetadata(Brushes.CornflowerBlue, OnAccentBrushChanged));
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Read-only AnimatedAccentBrush used by the template (this is what is actually shown and animated).
         /// </summary>
         private static readonly DependencyPropertyKey AnimatedAccentBrushPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(AnimatedAccentBrush), typeof(Brush), typeof(IndicatorPanel), new PropertyMetadata(default(Brush)));
+            DependencyProperty.RegisterReadOnly(nameof(AnimatedAccentBrush), typeof(Brush), typeof(InfoCard), new PropertyMetadata(default(Brush)));
 
         /// <summary>
         /// Identifies the <see cref="AnimatedAccentBrush"/> dependency property.
@@ -64,7 +64,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="Title"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
-            nameof(Title), typeof(string), typeof(IndicatorPanel), new PropertyMetadata("Info"));
+            nameof(Title), typeof(string), typeof(InfoCard), new PropertyMetadata("Info"));
 
         /// <summary>
         /// Gets or sets the title associated with the object that is hosted on the upper left hand
@@ -80,7 +80,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="HeaderContent"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty HeaderContentProperty =
-            DependencyProperty.Register(nameof(HeaderContent), typeof(object), typeof(IndicatorPanel));
+            DependencyProperty.Register(nameof(HeaderContent), typeof(object), typeof(InfoCard));
 
         /// <summary>
         /// Gets or sets the content displayed in the header.
@@ -95,7 +95,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="FooterContent"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty FooterContentProperty =
-            DependencyProperty.Register(nameof(FooterContent), typeof(object), typeof(IndicatorPanel));
+            DependencyProperty.Register(nameof(FooterContent), typeof(object), typeof(InfoCard));
 
         /// <summary>
         /// Gets or sets the content displayed in the footer of the control.
@@ -110,7 +110,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="SeparatorVisibility"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SeparatorVisibilityProperty = DependencyProperty.Register(
-            nameof(SeparatorVisibility), typeof(Visibility), typeof(IndicatorPanel), new PropertyMetadata(Visibility.Visible));
+            nameof(SeparatorVisibility), typeof(Visibility), typeof(InfoCard), new PropertyMetadata(Visibility.Visible));
 
         /// <summary>
         /// Gets or sets the visibility of the separator element.
@@ -122,17 +122,17 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Initializes the <see cref="IndicatorPanel"/> class and overrides the default style key metadata.
+        /// Initializes the <see cref="InfoCard"/> class and overrides the default style key metadata.
         /// </summary>
-        static IndicatorPanel()
+        static InfoCard()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(IndicatorPanel), new FrameworkPropertyMetadata(typeof(IndicatorPanel)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(InfoCard), new FrameworkPropertyMetadata(typeof(InfoCard)));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IndicatorPanel"/> class.
+        /// Initializes a new instance of the <see cref="InfoCard"/> class.
         /// </summary>
-        public IndicatorPanel()
+        public InfoCard()
         {
             // Initialize the internal animation brush with the starting AccentBrush color.
             var startColor = GetColorFromBrush(AccentBrush);
@@ -146,7 +146,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private static void OnAccentBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is not IndicatorPanel panel)
+            if (d is not InfoCard panel)
             {
                 return;
             }
