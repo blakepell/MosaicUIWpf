@@ -194,7 +194,7 @@
     <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Background" Color="#FF264F78" />
     <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Border" Color="#FF007ACC" />
 
-    <!-- SCROLLBAR -->
+    <!--  SCROLLBAR  -->
     <SolidColorBrush x:Key="ScrollBar.Static.Background" Color="#FF3C3C3C" />
     <SolidColorBrush x:Key="ScrollBar.Static.Border" Color="#FF3C3C3C" />
     <SolidColorBrush x:Key="ScrollBar.Static.Glyph" Color="#FF999999" />

@@ -23,6 +23,11 @@ namespace Mosaic.UI.Wpf
         public static string Theme = "Dark";
 
         /// <summary>
+        /// Event that is raised when the theme changes.
+        /// </summary>
+        public static event EventHandler<string> ThemeChanged;
+
+        /// <summary>
         /// Gets or sets a thread-safe collection of cached resource dictionaries, keyed by their identifiers.
         /// </summary>
         private static ConcurrentDictionary<string, ResourceDictionary> CachedResources { get; set; }
@@ -125,6 +130,8 @@ namespace Mosaic.UI.Wpf
                 }
             }
 
+            // Notify subscribers about the theme change
+            ThemeChanged?.Invoke(null, themeName);
         }
     }
 }

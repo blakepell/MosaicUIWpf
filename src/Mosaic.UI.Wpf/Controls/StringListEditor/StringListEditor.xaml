@@ -62,7 +62,7 @@
                             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9,.9,.9,.9">
                             <Button.Content>
-                                <Image Source="../../Assets/vs-add-16.png" />
+                                <controls:AdaptiveImage Source="../../Assets/vs-add-16.png" />
                             </Button.Content>
                         </Button>
 
@@ -90,7 +90,7 @@
                                             Command="{Binding DeleteItemCommand, RelativeSource={RelativeSource AncestorType={x:Type controls:StringListEditor}}}"
                                             CommandParameter="{Binding}">
                                             <Button.Content>
-                                                <Image
+                                                <controls:AdaptiveImage
                                                     Width="14"
                                                     Height="14"
                                                     Source="../../Assets/vs-delete-16.png" />
