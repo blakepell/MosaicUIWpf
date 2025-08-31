@@ -449,7 +449,7 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
-                <!--  SearchBox Control  -->
+                <!--  Stopwatch Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
@@ -463,6 +463,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:StopwatchDisplay}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:StopwatchDisplayExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/stopwatch-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Shield Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/shield-48.png"
+                    Text="Shield">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Shield" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ShieldExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ShieldExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:Shield}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ShieldExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/shield-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

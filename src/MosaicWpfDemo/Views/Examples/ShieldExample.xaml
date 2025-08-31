@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ShieldExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Margin="10" Orientation="Vertical">
+        <!--  Basic Shield Example  -->
+        <mosaic:Shield
+            Margin="0,5"
+            Label="Mosaic.UI.Wpf"
+            ValueBackgroundBrush="CornflowerBlue"
+            ValueForegroundBrush="White"
+            Value="{Binding Version}" />
+
+        <!--  Another Shield with different colors  -->
+        <mosaic:Shield
+            Margin="0,5"
+            Label="Build Status"
+            ValueBackgroundBrush="Green"
+            ValueForegroundBrush="White"
+            Value="Passing" />
+
+        <!--  Shield with different background and corner radius  -->
+        <mosaic:Shield
+            Margin="0,5"
+            CornerRadius="2"
+            Label="License"
+            ValueBackgroundBrush="Orange"
+            ValueForegroundBrush="White"
+            Value="MIT" />
+
+    </StackPanel>
+</UserControl>

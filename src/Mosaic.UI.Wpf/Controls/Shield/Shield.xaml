@@ -1,0 +1,44 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
+
+    <controls:ShieldCornerRadiusConverter x:Key="CornerRadiusConverter" />
+
+    <Style TargetType="{x:Type controls:Shield}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Shield}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            Grid.Column="0"
+                            Background="#555"
+                            Padding="2"
+                            CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource CornerRadiusConverter}, ConverterParameter=Left}">
+                            <TextBlock
+                                Margin="4,0"
+                                VerticalAlignment="Center"
+                                Foreground="White"
+                                Text="{TemplateBinding Label}" />
+                        </Border>
+                        <Border
+                            Grid.Column="1"
+                            Background="{TemplateBinding ValueBackgroundBrush}"
+                            Padding="2"
+                            CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource CornerRadiusConverter}, ConverterParameter=Right}">
+                            <ContentPresenter
+                                Margin="4,0"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Value}"
+                                TextElement.Foreground="{TemplateBinding ValueForegroundBrush}" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

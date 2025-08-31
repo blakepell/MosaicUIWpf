@@ -29,6 +29,7 @@
     <None Remove="Assets\penny-heads.png" />
     <None Remove="Assets\penny-tails.png" />
     <None Remove="Assets\search-48.png" />
+    <None Remove="Assets\shield-48.png" />
     <None Remove="Assets\start-half-empty-48.png" />
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
@@ -67,6 +68,7 @@
     <Resource Include="Assets\penny-heads.png" />
     <Resource Include="Assets\penny-tails.png" />
     <Resource Include="Assets\search-48.png" />
+    <Resource Include="Assets\shield-48.png" />
     <Resource Include="Assets\start-half-empty-48.png" />
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
@@ -92,6 +94,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\ShadowPanelExample.xaml.cs">
       <Link>LinkedSources\ShadowPanelExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\ShieldExample.xaml">
+      <Link>LinkedSources\ShieldExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\ShieldExample.xaml.cs">
+      <Link>LinkedSources\ShieldExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\AdaptiveImageExample.xaml">
@@ -213,6 +222,9 @@
     
   <ItemGroup>
     <Compile Update="Views\Examples\AdaptiveImageExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\ShieldExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ShadowPanelExample.xaml.cs">
