@@ -305,6 +305,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  FlipPanel  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/flip-48.png"
+                    Text="FlipPanel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="FlipPanel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.FlipPanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FlipPanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:FlipPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FlipPanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  GravatarImage  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

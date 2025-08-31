@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MosaicWpfDemo.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -109,7 +110,8 @@
                     Margin="9,10,0,0"
                     FontSize="18"
                     Text="Third Party Library Usage" />
-                <Separator Height=".9" Margin="10,3,0,0" />
+                <Separator Height=".9" Margin="10,3,0,0"
+                           Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -135,11 +137,13 @@
                         Margin="20,5,0,0"
                         FontSize="12"
                         Text="Argus.Core" />
-                    <TextBlock
+
+                    <controls:Hyperlink
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="20,5,0,0"
                         FontSize="12"
+                        NavigateUri="https://github.com/blakepell/ArgusFramework"
                         Text="https://github.com/blakepell/ArgusFramework" />
 
                     <TextBlock
@@ -148,11 +152,13 @@
                         Margin="20,5,0,0"
                         FontSize="12"
                         Text="CommunityToolkit.Mvvm" />
-                    <TextBlock
+
+                    <controls:Hyperlink
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="20,5,0,0"
                         FontSize="12"
+                        NavigateUri="https://github.com/CommunityToolkit"
                         Text="https://github.com/CommunityToolkit" />
 
                     <TextBlock
@@ -161,11 +167,13 @@
                         Margin="20,5,0,0"
                         FontSize="12"
                         Text="Microsoft.Xaml.Behaviors.Wpf" />
-                    <TextBlock
+
+                    <controls:Hyperlink
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="20,5,0,0"
                         FontSize="12"
+                        NavigateUri="https://github.com/microsoft/XamlBehaviorsWpf"
                         Text="https://github.com/microsoft/XamlBehaviorsWpf" />
 
                     <TextBlock
@@ -174,16 +182,59 @@
                         Margin="20,5,0,0"
                         FontSize="12"
                         Text="AvalonEdit" />
-                    <TextBlock
+
+                    <controls:Hyperlink
                         Grid.Row="3"
                         Grid.Column="1"
                         Margin="20,5,0,0"
                         FontSize="12"
+                        NavigateUri="https://github.com/icsharpcode/AvalonEdit"
                         Text="https://github.com/icsharpcode/AvalonEdit" />
-
                 </Grid>
+
+                <TextBlock
+                    Margin="9,10,0,0"
+                    FontSize="18"
+                    Text="Attributions" />
+                <Separator
+                    Height=".9"
+                    Margin="10,3,0,0"
+                    Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+
+                <Grid Margin="20,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="210" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="Icons by Icons8" />
+                    <controls:Hyperlink
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://icons8.com"
+                        Text="https://icons8.com" />
+                </Grid>
+
             </StackPanel>
         </Border>
     </DockPanel>
-
 </UserControl>

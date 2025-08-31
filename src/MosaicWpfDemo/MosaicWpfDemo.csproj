@@ -18,6 +18,7 @@
     <None Remove="Assets\color-swatch-48.png" />
     <None Remove="Assets\CSharp.Dark.xshd" />
     <None Remove="Assets\drive-48.png" />
+    <None Remove="Assets\flip-48.png" />
     <None Remove="Assets\gravatar-48.png" />
     <None Remove="Assets\home-48.png" />
     <None Remove="Assets\labeled-separator-96.png" />
@@ -25,6 +26,8 @@
     <None Remove="Assets\list-48.png" />
     <None Remove="Assets\numbers-input-48.png" />
     <None Remove="Assets\password-48.png" />
+    <None Remove="Assets\penny-heads.png" />
+    <None Remove="Assets\penny-tails.png" />
     <None Remove="Assets\search-48.png" />
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
@@ -52,6 +55,7 @@
     <Resource Include="Assets\color-swatch-48.png" />
     <Resource Include="Assets\dashboard-48.png" />
     <Resource Include="Assets\drive-48.png" />
+    <Resource Include="Assets\flip-48.png" />
     <Resource Include="Assets\gravatar-48.png" />
     <Resource Include="Assets\home-48.png" />
     <Resource Include="Assets\labeled-separator-96.png" />
@@ -59,6 +63,8 @@
     <Resource Include="Assets\list-48.png" />
     <Resource Include="Assets\numbers-input-48.png" />
     <Resource Include="Assets\password-48.png" />
+    <Resource Include="Assets\penny-heads.png" />
+    <Resource Include="Assets\penny-tails.png" />
     <Resource Include="Assets\search-48.png" />
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
@@ -184,6 +190,12 @@
       <Link>LinkedSources\SearchBoxExample.xaml.cs</Link>
     </EmbeddedResource>
 
+    <EmbeddedResource Include="Views\Examples\FlipPanelExample.xaml">
+      <Link>LinkedSources\FlipPanelExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\FlipPanelExample.xaml.cs">
+      <Link>LinkedSources\FlipPanelExample.xaml.cs</Link>
+    </EmbeddedResource>
   </ItemGroup>
   
   <ItemGroup>
