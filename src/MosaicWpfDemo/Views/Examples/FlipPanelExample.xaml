@@ -44,18 +44,18 @@
             <!--  Horizontal Flip Example  -->
             <mosaic:FlipPanel
                 x:Name="FlipPanelCoin"
-                MouseDown="FlipPanelCoin_OnMouseDown"
                 Width="128"
                 Height="128"
                 Margin="20"
                 Cursor="Hand"
-                Direction="Horizontal">
+                Direction="Horizontal"
+                MouseDown="FlipPanelCoin_OnMouseDown">
                 <mosaic:FlipPanel.FrontContent>
-                    <Image Source="pack://application:,,,/MosaicWpfDemo;component/Assets/penny-heads.png"></Image>
+                    <Image Source="pack://application:,,,/MosaicWpfDemo;component/Assets/penny-heads.png" />
                 </mosaic:FlipPanel.FrontContent>
 
                 <mosaic:FlipPanel.BackContent>
-                    <Image Source="pack://application:,,,/MosaicWpfDemo;component/Assets/penny-tails.png"></Image>
+                    <Image Source="pack://application:,,,/MosaicWpfDemo;component/Assets/penny-tails.png" />
                 </mosaic:FlipPanel.BackContent>
             </mosaic:FlipPanel>
 

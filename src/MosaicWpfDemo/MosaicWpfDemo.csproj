@@ -29,6 +29,7 @@
     <None Remove="Assets\penny-heads.png" />
     <None Remove="Assets\penny-tails.png" />
     <None Remove="Assets\search-48.png" />
+    <None Remove="Assets\start-half-empty-48.png" />
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
     <None Remove="Assets\text-48.png" />
@@ -66,6 +67,7 @@
     <Resource Include="Assets\penny-heads.png" />
     <Resource Include="Assets\penny-tails.png" />
     <Resource Include="Assets\search-48.png" />
+    <Resource Include="Assets\start-half-empty-48.png" />
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
     <Resource Include="Assets\text-48.png" />
@@ -196,6 +198,13 @@
     <EmbeddedResource Include="Views\Examples\FlipPanelExample.xaml.cs">
       <Link>LinkedSources\FlipPanelExample.xaml.cs</Link>
     </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\SymbolRatingExample.xaml">
+      <Link>LinkedSources\SymbolRatingExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\SymbolRatingExample.xaml.cs">
+      <Link>LinkedSources\SymbolRatingExample.xaml.cs</Link>
+    </EmbeddedResource>
   </ItemGroup>
   
   <ItemGroup>
@@ -231,6 +240,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\SearchBoxExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\SymbolRatingExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

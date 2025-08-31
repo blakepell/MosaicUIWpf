@@ -503,6 +503,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SymbolRating Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/start-half-empty-48.png"
+                    Text="SymbolRating">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="SymbolRating" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SymbolRatingExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SymbolRatingExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SymbolRating}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SymbolRatingExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/start-half-empty-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
 
