@@ -234,6 +234,20 @@
                         FontSize="12"
                         NavigateUri="https://icons8.com"
                         Text="https://icons8.com" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="Chat Bubbles" />
+                    <controls:Hyperlink
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/SamKr/ChatBubbles"
+                        Text="https://github.com/SamKr/ChatBubbles" />
                 </Grid>
 
             </StackPanel>

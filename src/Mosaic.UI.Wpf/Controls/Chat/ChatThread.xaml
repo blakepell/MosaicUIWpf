@@ -1,0 +1,131 @@
+﻿<UserControl
+    x:Class="Mosaic.UI.Wpf.Controls.ChatThread"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <controls:StringFormatConverter x:Key="StringFormatConverter" />
+
+        <Style x:Key="TextBlockStyle" TargetType="TextBox">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="#0A86F1" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="IsReadOnly" Value="True" />
+        </Style>
+
+        <Style x:Key="TimestampStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <!--  Me under you  -->
+        <DataTemplate x:Key="SentTemplateA">
+            <Grid Margin="30,10,5,0" controls:GridUtils.RowDefinitions=",,">
+                <Rectangle Grid.RowSpan="2" Fill="#0A86F1" />
+                <TextBox Style="{DynamicResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Style="{DynamicResource TimestampStyle}"
+                    Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
+                <Path
+                    Grid.Row="2"
+                    Margin="0,-1,5,0"
+                    HorizontalAlignment="Right"
+                    Data="m 0,0 l 16,0 l 0,16 l -16,-16"
+                    Fill="#0A86F1" />
+            </Grid>
+        </DataTemplate>
+        <!--  You under me  -->
+        <DataTemplate x:Key="ReceivedTemplateB">
+            <Grid Margin="5,0,30,0" controls:GridUtils.RowDefinitions=",,">
+                <Path
+                    Margin="5,0,0,-1"
+                    HorizontalAlignment="Left"
+                    Data="m 0,0 l 0,16 l 16,0 l -16,-16"
+                    Fill="#0A86F1" />
+                <Rectangle
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Fill="#0A86F1" />
+                <TextBox
+                    Grid.Row="1"
+                    Style="{StaticResource TextBlockStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Style="{StaticResource TimestampStyle}"
+                    Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
+            </Grid>
+        </DataTemplate>
+        <!--  You under you  -->
+        <DataTemplate x:Key="ReceivedTemplateC">
+            <Grid Margin="5,15,30,0" controls:GridUtils.RowDefinitions=",,">
+                <Path
+                    Margin="5,0,0,-1"
+                    HorizontalAlignment="Left"
+                    Data="m 0,0 l 0,16 l 16,0 l -16,-16"
+                    Fill="#0A86F1" />
+                <Rectangle
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Fill="#0A86F1" />
+                <TextBox
+                    Grid.Row="1"
+                    Style="{StaticResource TextBlockStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Style="{StaticResource TimestampStyle}"
+                    Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
+            </Grid>
+        </DataTemplate>
+        <!--  Me under me  -->
+        <DataTemplate x:Key="SentTemplateD">
+            <Grid Margin="30,25,5,0" controls:GridUtils.RowDefinitions=",,">
+                <Rectangle Grid.RowSpan="2" Fill="#0A86F1" />
+                <TextBox Style="{StaticResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Style="{StaticResource TimestampStyle}"
+                    Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
+                <Path
+                    Grid.Row="2"
+                    Margin="0,-1,5,0"
+                    HorizontalAlignment="Right"
+                    Data="m 0,0 l 16,0 l 0,16 l -16,-16"
+                    Fill="#0A86F1" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <ScrollViewer
+        x:Name="MessagesScrollViewer"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        CanContentScroll="True"
+        ClipToBounds="True"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <ItemsControl ItemsSource="{Binding}">
+            <ItemsControl.ItemTemplateSelector>
+                <local:MessageTemplateSelector
+                    ReceivedTemplateB="{StaticResource ReceivedTemplateB}"
+                    ReceivedTemplateC="{StaticResource ReceivedTemplateC}"
+                    SentTemplateA="{StaticResource SentTemplateA}"
+                    SentTemplateD="{StaticResource SentTemplateD}" />
+            </ItemsControl.ItemTemplateSelector>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

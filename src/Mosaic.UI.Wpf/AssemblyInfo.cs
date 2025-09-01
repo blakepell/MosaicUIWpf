@@ -19,8 +19,8 @@ using System.Windows.Markup;
                                                 // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsPrefix("http://schemas.apexgate.com/wpf/mosaic-ui", "mosaic")]
-[assembly: XmlnsDefinition("http://schemas.apexgate.com/wpf/mosaic-ui", "Mosaic.UI.Wpf.Controls")]
-[assembly: XmlnsDefinition("http://schemas.apexgate.com/wpf/mosaic-ui", "Mosaic.UI.Wpf.Converters")]
-[assembly: XmlnsDefinition("http://schemas.apexgate.com/wpf/mosaic-ui", "Mosaic.UI.Wpf.Behaviors")]
-[assembly: XmlnsDefinition("http://schemas.apexgate.com/wpf/mosaic-ui", "Mosaic.UI.Wpf.Themes")]
+[assembly: XmlnsPrefix("http://schemas.apexgate.net/wpf/mosaic-ui", "mosaic")]
+[assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Controls")]
+[assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Converters")]
+[assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Behaviors")]
+[assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Themes")]

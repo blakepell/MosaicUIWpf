@@ -201,6 +201,24 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/bug-48.png"
+                    Text="Debug">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Debug" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DebugExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DebugExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AdaptiveImage}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DebugExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/bug-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  AdaptiveImage  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
                     ImageSource="/Assets/color-swatch-48.png"
                     Text="AdaptiveImage">
                     <mosaic:SideMenuItem.ParameterCollection>
@@ -265,6 +283,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:Badge}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:BadgeExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/badge-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  ChatThread  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/chat-48.png"
+                    Text="ChatThread">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ChatThread" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ChatThreadExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ChatThreadExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ChatThread}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ChatThreadExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/circle-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

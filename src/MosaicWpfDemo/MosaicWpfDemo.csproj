@@ -12,6 +12,8 @@
     <None Remove="Assets\avatar.jpg" />
     <None Remove="Assets\badge-48.png" />
     <None Remove="Assets\black-and-white-48.png" />
+    <None Remove="Assets\bug-48.png" />
+    <None Remove="Assets\chat-48.png" />
     <None Remove="Assets\circle-48.png" />
     <None Remove="Assets\collage-48.png" />
     <None Remove="Assets\collage-96.png" />
@@ -51,6 +53,8 @@
     <Resource Include="Assets\avatar.jpg" />
     <Resource Include="Assets\badge-48.png" />
     <Resource Include="Assets\black-and-white-48.png" />
+    <Resource Include="Assets\bug-48.png" />
+    <Resource Include="Assets\chat-48.png" />
     <Resource Include="Assets\circle-48.png" />
     <Resource Include="Assets\collage-48.png" />
     <Resource Include="Assets\collage-96.png" />
@@ -129,6 +133,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\StopwatchDisplayExample.xaml.cs">
       <Link>LinkedSources\StopwatchDisplayExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\ChatThreadExample.xaml">
+      <Link>LinkedSources\ChatThreadExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\ChatThreadExample.xaml.cs">
+      <Link>LinkedSources\ChatThreadExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\ClipBorderExample.xaml">
@@ -222,6 +233,12 @@
     
   <ItemGroup>
     <Compile Update="Views\Examples\AdaptiveImageExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\DebugExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ShieldExample.xaml.cs">

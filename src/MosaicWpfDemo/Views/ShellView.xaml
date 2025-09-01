@@ -21,7 +21,11 @@
         </Style>
     </UserControl.Resources>
 
-    <Border Margin="19,9" Style="{StaticResource ContentBoxBorderStyle}">
+    <!--  Override the style's VerticalAlignment to allow the Border to stretch  -->
+    <Border
+        Margin="19,9"
+        VerticalAlignment="Stretch"
+        Style="{StaticResource ContentBoxBorderStyle}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -39,14 +43,21 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
-                <controls1:TabControl Margin="0,10,0,0">
-                    <controls1:TabItem Header="Example">
-                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}}">
-                            <ContentPresenter Margin="10" Content="{Binding ElementName=Me, Path=UserControl}" />
-                        </Grid>
+                <controls1:TabControl Margin="0,10,0,0" VerticalAlignment="Stretch">
+                    <controls1:TabItem
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Header="Example">
+                        <ContentPresenter
+                            Margin="10"
+                            VerticalAlignment="Stretch"
+                            Content="{Binding ElementName=Me, Path=UserControl}" />
                     </controls1:TabItem>
-                    <controls1:TabItem Header="XAML">
-                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                    <controls1:TabItem
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Header="XAML">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -79,8 +90,11 @@
                             </avalonedit:TextEditor>
                         </Grid>
                     </controls1:TabItem>
-                    <controls1:TabItem Header="C#">
-                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                    <controls1:TabItem
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Header="C#">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -115,8 +129,11 @@
                             </avalonedit:TextEditor>
                         </Grid>
                     </controls1:TabItem>
-                    <controls1:TabItem Header="Documentation">
-                        <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                    <controls1:TabItem
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Header="Documentation">
+                        <Grid>
                             <avalonedit:TextEditor
                                 x:Name="DocumentationEditor"
                                 FontFamily="Consolas"

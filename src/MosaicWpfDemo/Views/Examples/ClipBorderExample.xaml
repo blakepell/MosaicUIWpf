@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
-    xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
