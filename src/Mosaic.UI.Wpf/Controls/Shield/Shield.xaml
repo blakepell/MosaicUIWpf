@@ -16,8 +16,8 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Grid.Column="0"
-                            Background="#555"
                             Padding="2"
+                            Background="#555"
                             CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource CornerRadiusConverter}, ConverterParameter=Left}">
                             <TextBlock
                                 Margin="4,0"
@@ -27,8 +27,8 @@
                         </Border>
                         <Border
                             Grid.Column="1"
-                            Background="{TemplateBinding ValueBackgroundBrush}"
                             Padding="2"
+                            Background="{TemplateBinding ValueBackgroundBrush}"
                             CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource CornerRadiusConverter}, ConverterParameter=Right}">
                             <ContentPresenter
                                 Margin="4,0"

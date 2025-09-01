@@ -9,6 +9,7 @@
  */
 
 using System.Windows.Data;
+using System.Windows.Markup;
 
 // ReSharper disable CheckNamespace
 
@@ -17,8 +18,16 @@ namespace Mosaic.UI.Wpf.Controls
     /// <summary>
     /// Converter to determine if a symbol should be highlighted.
     /// </summary>
-    public class SymbolStateConverter : IMultiValueConverter
+    public class SymbolStateConverter : MarkupExtension, IMultiValueConverter
     {
+        /// <summary>
+        /// Returns the current instance of the markup extension.
+        /// </summary>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (values.Length < 4 || values[0] is not int symbolIndex || values[1] is not int selectedCount || values[2] is not int hoveredIndex || values[3] is not bool isHoverPreviewEnabled)

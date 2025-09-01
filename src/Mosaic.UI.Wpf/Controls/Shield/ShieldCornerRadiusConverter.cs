@@ -10,6 +10,7 @@
 
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Markup;
 
 // ReSharper disable CheckNamespace
 
@@ -18,8 +19,16 @@ namespace Mosaic.UI.Wpf.Controls
     /// <summary>
     /// Converts a CornerRadius and position parameter into a selective CornerRadius for use with the shield control.
     /// </summary>
-    public class ShieldCornerRadiusConverter : IValueConverter
+    public class ShieldCornerRadiusConverter : MarkupExtension, IValueConverter
     {
+        /// <summary>
+        /// Returns the current instance of the markup extension.
+        /// </summary>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
         /// <summary>
         /// Converts a CornerRadius to a selective CornerRadius based on position.
         /// </summary>

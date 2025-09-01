@@ -9,6 +9,7 @@
  */
 
 using System.Windows.Data;
+using System.Windows.Markup;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -19,8 +20,16 @@ namespace Mosaic.UI.Wpf.Controls
     /// <remarks>This converter calculates the left margin for a nested item in a hierarchical structure. The
     /// margin is determined by the item's nesting level within parent containers named "ChildrenContainer". The base
     /// margin is 3 pixels, with an additional 20 pixels added for each level of nesting.</remarks>
-    public class NestedItemMarginConverter : IValueConverter
+    public class NestedItemMarginConverter : MarkupExtension, IValueConverter
     {
+        /// <summary>
+        /// Returns the current instance of the markup extension.
+        /// </summary>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+
         /// <summary>
         /// Provides a singleton instance of the <see cref="NestedItemMarginConverter"/> class.
         /// </summary>

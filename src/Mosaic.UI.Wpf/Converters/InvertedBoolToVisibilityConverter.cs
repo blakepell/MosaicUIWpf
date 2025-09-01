@@ -14,9 +14,8 @@ using System.Windows.Markup;
 
 namespace Mosaic.UI.Wpf.Converters
 {
-
     /// <summary>
-    /// Converts a inverted boolean value into a configurable value of type <seealso cref="Visibility"/>.
+    /// Converts an inverted boolean value into a configurable value of type <seealso cref="Visibility"/>.
     /// </summary>
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public sealed class InvertedBoolToVisibilityConverter : MarkupExtension, IValueConverter
