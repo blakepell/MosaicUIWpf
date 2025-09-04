@@ -13,8 +13,8 @@ If you find this project interesting or useful, give it a star.
 
 ## Dark Theme
 
-![Dark Theme](./docs/images/screen-tab1.png)
+![Dark Theme](./docs/images/screen-chat1.png)
 
 ## Light Theme
 
-![Light Theme](./docs/images/screen-tab2.png)
+![Light Theme](./docs/images/screen-chat2.png)
