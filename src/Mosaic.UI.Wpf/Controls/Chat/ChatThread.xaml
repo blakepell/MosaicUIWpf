@@ -13,8 +13,8 @@
         <controls:StringFormatConverter x:Key="StringFormatConverter" />
 
         <Style x:Key="TextBlockStyle" TargetType="TextBox">
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="Background" Value="#0A86F1" />
+            <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
+            <Setter Property="Background" Value="{Binding BackgroundBrush}" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="FontSize" Value="14" />
@@ -23,15 +23,18 @@
         </Style>
 
         <Style x:Key="TimestampStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="FontSize" Value="12" />
         </Style>
 
         <!--  Me under you  -->
         <DataTemplate x:Key="SentTemplateA">
-            <Grid Margin="30,10,5,0" controls:GridUtils.RowDefinitions=",,">
-                <Rectangle Grid.RowSpan="2" Fill="#0A86F1" />
+            <Grid
+                Margin="30,10,5,0"
+                controls:GridUtils.RowDefinitions=",,"
+                d:DataContext="{controls:Message}">
+                <Rectangle Grid.RowSpan="2" Fill="{Binding BackgroundBrush}" />
                 <TextBox Style="{DynamicResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="1"
@@ -42,21 +45,24 @@
                     Margin="0,-1,5,0"
                     HorizontalAlignment="Right"
                     Data="m 0,0 l 16,0 l 0,16 l -16,-16"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
             </Grid>
         </DataTemplate>
         <!--  You under me  -->
         <DataTemplate x:Key="ReceivedTemplateB">
-            <Grid Margin="5,0,30,0" controls:GridUtils.RowDefinitions=",,">
+            <Grid
+                Margin="5,0,30,0"
+                controls:GridUtils.RowDefinitions=",,"
+                d:DataContext="{controls:Message}">
                 <Path
                     Margin="5,0,0,-1"
                     HorizontalAlignment="Left"
                     Data="m 0,0 l 0,16 l 16,0 l -16,-16"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
                 <Rectangle
                     Grid.Row="1"
                     Grid.RowSpan="2"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
                 <TextBox
                     Grid.Row="1"
                     Style="{StaticResource TextBlockStyle}"
@@ -69,16 +75,19 @@
         </DataTemplate>
         <!--  You under you  -->
         <DataTemplate x:Key="ReceivedTemplateC">
-            <Grid Margin="5,15,30,0" controls:GridUtils.RowDefinitions=",,">
+            <Grid
+                Margin="5,15,30,0"
+                controls:GridUtils.RowDefinitions=",,"
+                d:DataContext="{controls:Message}">
                 <Path
                     Margin="5,0,0,-1"
                     HorizontalAlignment="Left"
                     Data="m 0,0 l 0,16 l 16,0 l -16,-16"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
                 <Rectangle
                     Grid.Row="1"
                     Grid.RowSpan="2"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
                 <TextBox
                     Grid.Row="1"
                     Style="{StaticResource TextBlockStyle}"
@@ -91,8 +100,11 @@
         </DataTemplate>
         <!--  Me under me  -->
         <DataTemplate x:Key="SentTemplateD">
-            <Grid Margin="30,25,5,0" controls:GridUtils.RowDefinitions=",,">
-                <Rectangle Grid.RowSpan="2" Fill="#0A86F1" />
+            <Grid
+                Margin="30,25,5,0"
+                controls:GridUtils.RowDefinitions=",,"
+                d:DataContext="{controls:Message}">
+                <Rectangle Grid.RowSpan="2" Fill="{Binding BackgroundBrush}" />
                 <TextBox Style="{StaticResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="1"
@@ -103,7 +115,7 @@
                     Margin="0,-1,5,0"
                     HorizontalAlignment="Right"
                     Data="m 0,0 l 16,0 l 0,16 l -16,-16"
-                    Fill="#0A86F1" />
+                    Fill="{Binding BackgroundBrush}" />
             </Grid>
         </DataTemplate>
     </UserControl.Resources>
