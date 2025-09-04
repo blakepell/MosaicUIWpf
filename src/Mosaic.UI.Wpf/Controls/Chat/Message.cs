@@ -8,6 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Mosaic.UI.Wpf.Cache;
+using Mosaic.UI.Wpf.Json;
+
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
@@ -45,5 +48,25 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         [ObservableProperty]
         private DateTime _timestamp;
+
+        /// <summary>
+        /// Gets or sets the background color.
+        /// </summary>
+        /// <remarks>
+        /// System.Text.Json converter provided so the message brushes can be serialized/deserialized.
+        /// </remarks>
+        [JsonConverter(typeof(SolidColorBrushJsonConverter))]
+        [ObservableProperty]
+        private Brush _backgroundBrush = ColorPaletteCache.GetBrush("#0A86F1");
+
+        /// <summary>
+        /// Gets or sets the foreground color used for rendering.
+        /// </summary>
+        /// <remarks>
+        /// System.Text.Json converter provided so the message brushes can be serialized/deserialized.
+        /// </remarks>
+        [JsonConverter(typeof(SolidColorBrushJsonConverter))]
+        [ObservableProperty]
+        private Brush _foregroundBrush = Brushes.White;
     }
 }
