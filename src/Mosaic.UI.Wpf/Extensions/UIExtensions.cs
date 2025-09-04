@@ -17,6 +17,8 @@ namespace Mosaic.UI.Wpf.Extensions
     /// </summary>
     public static class UIExtensions
     {
+        #region IsVisible Attached Property
+
         /// <summary>
         /// Gets the IsVisible attached property.
         /// </summary>
@@ -60,5 +62,54 @@ namespace Mosaic.UI.Wpf.Extensions
                 element.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+        #endregion
+
+        #region IsVisibleIfNotNullOrEmpty Attached Property
+
+        /// <summary>
+        /// Gets the IsVisibleIfNotNullOrEmpty attached property (string).
+        /// </summary>
+        public static string GetIsVisibleIfNotNullOrEmpty(FrameworkElement element)
+        {
+            return (string)element.GetValue(IsVisibleIfNotNullOrEmptyProperty);
+        }
+
+        /// <summary>
+        /// Sets the IsVisibleIfNotNullOrEmpty attached property (string).
+        /// </summary>
+        public static void SetIsVisibleIfNotNullOrEmpty(FrameworkElement element, string value)
+        {
+            element.SetValue(IsVisibleIfNotNullOrEmptyProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the IsVisibleIfNotNullOrEmpty attached property.
+        /// </summary>
+        public static readonly DependencyProperty IsVisibleIfNotNullOrEmptyProperty =
+            DependencyProperty.RegisterAttached("IsVisibleIfNotNullOrEmpty", typeof(string), typeof(UIExtensions), new PropertyMetadata(null, OnIsVisibleIfNotNullOrEmptyChanged));
+
+        /// <summary>
+        /// Handles changes to the <see cref="IsVisibleIfNotNullOrEmpty"/> dependency property.
+        /// </summary>
+        /// <remarks>
+        /// Updates the <see cref="FrameworkElement.Visibility"/> property based on whether the bound string is non-null and non-empty.
+        /// Sets Visibility.Visible when the string is not null or empty; otherwise Visibility.Collapsed.
+        /// 
+        /// Usage Example:
+        /// extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding SomeString}"
+        /// </remarks>
+        /// <param name="d">The dependency object on which the property value has changed. Must be a <see cref="FrameworkElement"/>.</param>
+        /// <param name="e">The event data containing information about the property change, including the old and new values.</param>
+        private static void OnIsVisibleIfNotNullOrEmptyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is FrameworkElement element)
+            {
+                var str = e.NewValue as string;
+                element.Visibility = !string.IsNullOrEmpty(str) ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 }
