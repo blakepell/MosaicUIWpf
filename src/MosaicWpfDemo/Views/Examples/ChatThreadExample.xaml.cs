@@ -97,14 +97,14 @@ namespace MosaicWpfDemo.Views.Examples
                             break;
                     }
 
-                    msg += $"\r\n\r\nI delayed {delayMs:N0}ms before responding.";
+                    msg += $"\r\nI delayed {delayMs:N0}ms before responding.";
 
                     this.Messages.Add(new Message()
                     {
                         Direction = MessageDirection.Received,
                         Text = msg,
                         Timestamp = DateTime.Now,
-                        From = Environment.UserName,
+                        From = "System",
                         PreviousMessageDirection = this.Messages.Count > 0 ? this.Messages[^1].Direction : MessageDirection.Received
                     });
 

@@ -4,16 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:Mosaic.UI.Wpf.Extensions"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:extensions="clr-namespace:Mosaic.UI.Wpf.Extensions"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
         <controls:StringFormatConverter x:Key="StringFormatConverter" />
 
-        <Style x:Key="TextBlockStyle" TargetType="TextBox">
+        <Style x:Key="ReadOnlyTextBoxStyle" TargetType="TextBox">
             <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
             <Setter Property="Background" Value="{Binding BackgroundBrush}" />
             <Setter Property="Margin" Value="5" />
@@ -23,7 +23,7 @@
             <Setter Property="IsReadOnly" Value="True" />
         </Style>
 
-        <Style x:Key="TimestampStyle" TargetType="TextBlock">
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="FontSize" Value="12" />
@@ -32,18 +32,27 @@
         <!--  Me under you  -->
         <DataTemplate x:Key="SentTemplateA">
             <Grid
-                extensions:UIExtensions.IsVisible="{Binding IsVisible}"
                 Margin="30,10,5,0"
-                controls:GridUtils.RowDefinitions=",,"
-                d:DataContext="{controls:Message}">
-                <Rectangle Grid.RowSpan="2" Fill="{Binding BackgroundBrush}" />
-                <TextBox Style="{DynamicResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                controls:GridUtils.RowDefinitions=",,,,"
+                d:DataContext="{controls:Message}"
+                extensions:UIExtensions.IsVisible="{Binding IsVisible}">
+                <Rectangle Grid.Row="0" 
+                           Grid.RowSpan="4" Fill="{Binding BackgroundBrush}" />
                 <TextBlock
                     Grid.Row="1"
-                    Style="{DynamicResource TimestampStyle}"
+                    extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
+                    Style="{StaticResource TextBlockStyle}">
+                    <Run Text="{Binding From, FallbackValue='Unknown'}" />
+                    <Run Text="says:" />
+                </TextBlock>
+                <TextBox Grid.Row="2"
+                    Style="{DynamicResource ReadOnlyTextBoxStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Style="{DynamicResource TextBlockStyle}"
                     Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
                 <Path
-                    Grid.Row="2"
+                    Grid.Row="4"
                     Margin="0,-1,5,0"
                     HorizontalAlignment="Right"
                     Data="m 0,0 l 16,0 l 0,16 l -16,-16"
@@ -53,70 +62,94 @@
         <!--  You under me  -->
         <DataTemplate x:Key="ReceivedTemplateB">
             <Grid
-                extensions:UIExtensions.IsVisible="{Binding IsVisible}"
                 Margin="5,0,30,0"
-                controls:GridUtils.RowDefinitions=",,"
-                d:DataContext="{controls:Message}">
+                controls:GridUtils.RowDefinitions=",,,,"
+                d:DataContext="{controls:Message}"
+                extensions:UIExtensions.IsVisible="{Binding IsVisible}">
                 <Path
+                    Grid.Row="0"
                     Margin="5,0,0,-1"
                     HorizontalAlignment="Left"
                     Data="m 0,0 l 0,16 l 16,0 l -16,-16"
                     Fill="{Binding BackgroundBrush}" />
                 <Rectangle
                     Grid.Row="1"
-                    Grid.RowSpan="2"
+                    Grid.RowSpan="4"
                     Fill="{Binding BackgroundBrush}" />
-                <TextBox
-                    Grid.Row="1"
-                    Style="{StaticResource TextBlockStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="2"
-                    Style="{StaticResource TimestampStyle}"
+                    extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
+                    Style="{StaticResource TextBlockStyle}">
+                    <Run Text="{Binding From, FallbackValue='Unknown'}" />
+                    <Run Text="says:" />
+                </TextBlock>
+                <TextBox
+                    Grid.Row="3"
+                    Style="{StaticResource ReadOnlyTextBoxStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Style="{StaticResource TextBlockStyle}"
                     Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
             </Grid>
         </DataTemplate>
         <!--  You under you  -->
         <DataTemplate x:Key="ReceivedTemplateC">
             <Grid
-                extensions:UIExtensions.IsVisible="{Binding IsVisible}"
                 Margin="5,15,30,0"
-                controls:GridUtils.RowDefinitions=",,"
-                d:DataContext="{controls:Message}">
+                controls:GridUtils.RowDefinitions=",,,,"
+                d:DataContext="{controls:Message}"
+                extensions:UIExtensions.IsVisible="{Binding IsVisible}">
                 <Path
+                    Grid.Row="0"
                     Margin="5,0,0,-1"
                     HorizontalAlignment="Left"
                     Data="m 0,0 l 0,16 l 16,0 l -16,-16"
                     Fill="{Binding BackgroundBrush}" />
                 <Rectangle
                     Grid.Row="1"
-                    Grid.RowSpan="2"
+                    Grid.RowSpan="4"
                     Fill="{Binding BackgroundBrush}" />
-                <TextBox
-                    Grid.Row="1"
-                    Style="{StaticResource TextBlockStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="2"
-                    Style="{StaticResource TimestampStyle}"
+                    extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
+                    Style="{StaticResource TextBlockStyle}">
+                    <Run Text="{Binding From, FallbackValue='Unknown'}" />
+                    <Run Text="says:" />
+                </TextBlock>
+                <TextBox
+                    Grid.Row="3"
+                    Style="{StaticResource ReadOnlyTextBoxStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Style="{StaticResource TextBlockStyle}"
                     Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
             </Grid>
         </DataTemplate>
         <!--  Me under me  -->
         <DataTemplate x:Key="SentTemplateD">
             <Grid
-                extensions:UIExtensions.IsVisible="{Binding IsVisible}"
                 Margin="30,25,5,0"
-                controls:GridUtils.RowDefinitions=",,"
-                d:DataContext="{controls:Message}">
-                <Rectangle Grid.RowSpan="2" Fill="{Binding BackgroundBrush}" />
-                <TextBox Style="{StaticResource TextBlockStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                controls:GridUtils.RowDefinitions=",,,,"
+                d:DataContext="{controls:Message}"
+                extensions:UIExtensions.IsVisible="{Binding IsVisible}">
+                <Rectangle Grid.Row="0"  Grid.RowSpan="4" Fill="{Binding BackgroundBrush}" />
                 <TextBlock
                     Grid.Row="1"
-                    Style="{StaticResource TimestampStyle}"
+                    extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
+                    Style="{StaticResource TextBlockStyle}">
+                    <Run Text="{Binding From, FallbackValue='Unknown'}" />
+                    <Run Text="says:" />
+                </TextBlock>
+                <TextBox Grid.Row="2"
+                    Style="{StaticResource ReadOnlyTextBoxStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Style="{StaticResource TextBlockStyle}"
                     Text="{Binding Path=Timestamp, Converter={StaticResource StringFormatConverter}, ConverterParameter='ddd, h:mm tt'}" />
                 <Path
-                    Grid.Row="2"
+                    Grid.Row="4"
                     Margin="0,-1,5,0"
                     HorizontalAlignment="Right"
                     Data="m 0,0 l 16,0 l 0,16 l -16,-16"
