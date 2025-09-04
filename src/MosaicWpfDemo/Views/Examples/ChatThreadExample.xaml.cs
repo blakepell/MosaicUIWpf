@@ -31,6 +31,16 @@ namespace MosaicWpfDemo.Views.Examples
                 Text = "This is the first message in the thread, respond using the text box below to add more content.",
                 Timestamp = DateTime.Now
             });
+
+            Messages.Add(new()
+            {
+                PreviousMessageDirection = MessageDirection.Received,
+                Direction = MessageDirection.Received,
+                From = "System",
+                Text = "This message is being put into the list, but is listed as not visible.",
+                IsVisible = false,
+                Timestamp = DateTime.Now
+            });
         }
 
         private async void CommandTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)

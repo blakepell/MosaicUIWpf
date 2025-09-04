@@ -20,6 +20,16 @@ namespace Mosaic.UI.Wpf.Controls
     public partial class Message : ObservableObject
     {
         /// <summary>
+        /// Gets the unique identifier for this instance.
+        /// </summary>
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// Gets or sets an object that contains data associated with this message instance.
+        /// </summary>
+        public object? Tag { get; set; }
+
+        /// <summary>
         /// Gets or sets the direction of the message.
         /// </summary>
         [ObservableProperty]
@@ -48,6 +58,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         [ObservableProperty]
         private DateTime _timestamp;
+
+        /// <summary>
+        /// Gets or sets if the message is visible in the UI.
+        /// </summary>
+        [ObservableProperty]
+        private bool _isVisible = true;
 
         /// <summary>
         /// Gets or sets the background color.
