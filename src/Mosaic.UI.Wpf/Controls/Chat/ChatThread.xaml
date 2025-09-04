@@ -36,8 +36,10 @@
                 controls:GridUtils.RowDefinitions=",,,,"
                 d:DataContext="{controls:Message}"
                 extensions:UIExtensions.IsVisible="{Binding IsVisible}">
-                <Rectangle Grid.Row="0" 
-                           Grid.RowSpan="4" Fill="{Binding BackgroundBrush}" />
+                <Rectangle
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Fill="{Binding BackgroundBrush}" />
                 <TextBlock
                     Grid.Row="1"
                     extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
@@ -45,8 +47,10 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox Grid.Row="2"
-                    Style="{DynamicResource ReadOnlyTextBoxStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBox
+                    Grid.Row="2"
+                    Style="{DynamicResource ReadOnlyTextBoxStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="3"
                     Style="{DynamicResource TextBlockStyle}"
@@ -134,7 +138,10 @@
                 controls:GridUtils.RowDefinitions=",,,,"
                 d:DataContext="{controls:Message}"
                 extensions:UIExtensions.IsVisible="{Binding IsVisible}">
-                <Rectangle Grid.Row="0"  Grid.RowSpan="4" Fill="{Binding BackgroundBrush}" />
+                <Rectangle
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Fill="{Binding BackgroundBrush}" />
                 <TextBlock
                     Grid.Row="1"
                     extensions:UIExtensions.IsVisibleIfNotNullOrEmpty="{Binding From}"
@@ -142,8 +149,10 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox Grid.Row="2"
-                    Style="{StaticResource ReadOnlyTextBoxStyle}" Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <TextBox
+                    Grid.Row="2"
+                    Style="{StaticResource ReadOnlyTextBoxStyle}"
+                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
                 <TextBlock
                     Grid.Row="3"
                     Style="{StaticResource TextBlockStyle}"

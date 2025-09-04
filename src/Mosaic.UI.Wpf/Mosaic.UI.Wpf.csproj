@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <AssemblyVersion>2025.8.29.1</AssemblyVersion>
-    <FileVersion>2025.8.29.1</FileVersion>
-    <PackageVersion>2025.8.29.1</PackageVersion>
+    <AssemblyVersion>2025.9.4.1</AssemblyVersion>
+    <FileVersion>2025.9.4.1</FileVersion>
+    <PackageVersion>2025.9.4.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
