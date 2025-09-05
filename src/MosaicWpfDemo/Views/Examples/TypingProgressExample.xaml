@@ -26,7 +26,10 @@
             VerticalAlignment="Top"
             DataContext="{Binding Messages}" />
 
-        <chat:TypingProgress x:Name="TypingProgress" Grid.Row="1" IsEnabled="True" />
+        <chat:TypingProgress
+            x:Name="TypingProgress"
+            Grid.Row="1"
+            IsEnabled="True" />
 
         <!--  Row 1: pinned to bottom  -->
         <TextBox
