@@ -50,8 +50,8 @@
                     <mosaic:ColorPicker
                         x:Name="BoundColorPicker"
                         Width="250"
-                        CornerRadius="0"
                         HorizontalAlignment="Left"
+                        CornerRadius="0"
                         SelectedBrush="{Binding DemoBackgroundBrush, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
 
                     <Rectangle

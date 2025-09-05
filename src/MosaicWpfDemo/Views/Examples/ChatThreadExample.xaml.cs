@@ -10,13 +10,25 @@
 
 using Mosaic.UI.Wpf.Controls;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using Mosaic.UI.Wpf.Cache;
 
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class ChatThreadExample
     {
         public ObservableCollection<Message> Messages { get; set; } = new();
+
+        public static readonly DependencyProperty SelectedBackgroundBrushProperty = DependencyProperty.Register(
+            nameof(SelectedBackgroundBrush), typeof(Brush), typeof(ChatThreadExample), new PropertyMetadata(ColorPaletteCache.GetBrush("#FF1976D2")));
+
+        public Brush SelectedBackgroundBrush
+        {
+            get => (Brush)GetValue(SelectedBackgroundBrushProperty);
+            set => SetValue(SelectedBackgroundBrushProperty, value);
+        }
 
         public ChatThreadExample()
         {
@@ -27,6 +39,7 @@ namespace MosaicWpfDemo.Views.Examples
             {
                 PreviousMessageDirection = MessageDirection.Received,
                 Direction = MessageDirection.Received,
+                BackgroundBrush = this.SelectedBackgroundBrush,
                 From = "System",
                 Text = "This is the first message in the thread, respond using the text box below to add more content.",
                 Timestamp = DateTime.Now
@@ -36,6 +49,7 @@ namespace MosaicWpfDemo.Views.Examples
             {
                 PreviousMessageDirection = MessageDirection.Received,
                 Direction = MessageDirection.Received,
+                BackgroundBrush = this.SelectedBackgroundBrush,
                 From = "System",
                 Text = "This message is being put into the list, but is listed as not visible.",
                 IsVisible = false,
@@ -60,6 +74,7 @@ namespace MosaicWpfDemo.Views.Examples
                     {
                         Direction = MessageDirection.Sent,
                         Text = CommandTextBox.Text,
+                        BackgroundBrush = this.SelectedBackgroundBrush,
                         Timestamp = DateTime.Now,
                         From = Environment.UserName,
                         PreviousMessageDirection = this.Messages.Count > 0 ? this.Messages[^1].Direction : MessageDirection.Received
@@ -103,6 +118,7 @@ namespace MosaicWpfDemo.Views.Examples
                     {
                         Direction = MessageDirection.Received,
                         Text = msg,
+                        BackgroundBrush = this.SelectedBackgroundBrush,
                         Timestamp = DateTime.Now,
                         From = "System",
                         PreviousMessageDirection = this.Messages.Count > 0 ? this.Messages[^1].Direction : MessageDirection.Received
@@ -111,6 +127,18 @@ namespace MosaicWpfDemo.Views.Examples
                     ChatThread.ScrollConversationToEnd();
 
                     break;
+            }
+        }
+
+        private void ColorPicker_OnColorChanged(object? sender, ColorChangedEventArgs e)
+        {
+            // Sets the background brush so I can be used with all new messages.
+            this.SelectedBackgroundBrush = e.Brush;
+
+            // Sets the background brush on all existing messages.
+            foreach (var msg in this.Messages)
+            {
+                msg.BackgroundBrush = e.Brush;
             }
         }
     }

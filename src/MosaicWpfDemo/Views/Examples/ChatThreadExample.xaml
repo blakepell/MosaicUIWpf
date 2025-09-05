@@ -7,19 +7,29 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Me"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,4"
+            Orientation="Vertical">
+            <TextBlock Margin="0,0,0,4" Text="Background Accent:" />
+            <local:ColorPicker ColorChanged="ColorPicker_OnColorChanged" SelectedBrush="{Binding SelectedBrush, ElementName=Me, FallbackValue='#0A86F1'}" />
+        </StackPanel>
+
         <!--  Row 0: fill remaining space and scroll when content overflows  -->
         <chat:ChatThread
             x:Name="ChatThread"
-            Grid.Row="0"
+            Grid.Row="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             DataContext="{Binding Messages}" />
@@ -27,7 +37,7 @@
         <!--  Row 1: pinned to bottom  -->
         <TextBox
             x:Name="CommandTextBox"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="0,20,0,0"
             Padding="5"
             BorderBrush="#38383B"
