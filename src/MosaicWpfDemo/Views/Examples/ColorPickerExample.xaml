@@ -1,0 +1,175 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ColorPickerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        CanContentScroll="True"
+        ClipToBounds="True"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Margin="20" Orientation="Vertical">
+            <!--  Basic Color Picker  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Basic Color Picker">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,5" Text="Select a color:" />
+                    <mosaic:ColorPicker
+                        x:Name="BasicColorPicker"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        ColorChanged="ColorPicker_ColorChanged" />
+
+                    <TextBlock
+                        x:Name="BasicColorText"
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="Selected: #000000" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Bound Color Picker  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Data Bound Color Picker">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,5" Text="This color picker is bound to a brush:" />
+                    <mosaic:ColorPicker
+                        x:Name="BoundColorPicker"
+                        Width="250"
+                        CornerRadius="0"
+                        HorizontalAlignment="Left"
+                        SelectedBrush="{Binding DemoBackgroundBrush, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" />
+
+                    <Rectangle
+                        x:Name="DemoRectangle"
+                        Width="200"
+                        Height="100"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Left"
+                        Fill="{Binding DemoBackgroundBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Stroke="Gray"
+                        StrokeThickness="1" />
+
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        FontStyle="Italic"
+                        Text="The CornerRadius of this instance is set to 0.  You can enter a hex value or choose a preset Fluent color." />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Predefined Color Picker  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Color Picker with Initial Value">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,5" Text="This color picker starts with a blue color:" />
+                    <mosaic:ColorPicker
+                        x:Name="PresetColorPicker"
+                        Width="250"
+                        HorizontalAlignment="Left"
+                        HexValue="#2196F3" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Multiple Color Pickers for Comparison  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Multiple Color Pickers">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,10" Text="Compare different colors side by side:" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Grid.Row="0" Grid.Column="0">
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontWeight="Bold"
+                                Text="Primary Color" />
+                            <mosaic:ColorPicker
+                                x:Name="PrimaryColorPicker"
+                                Width="180"
+                                HexValue="#FF5722" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="0" Grid.Column="2">
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontWeight="Bold"
+                                Text="Secondary Color" />
+                            <mosaic:ColorPicker
+                                x:Name="SecondaryColorPicker"
+                                Width="180"
+                                HexValue="#4CAF50" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="0" Grid.Column="4">
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                FontWeight="Bold"
+                                Text="Accent Color" />
+                            <mosaic:ColorPicker
+                                x:Name="AccentColorPicker"
+                                Width="180"
+                                HexValue="#9C27B0" />
+                        </StackPanel>
+
+                        <!--  Color preview rectangles  -->
+                        <Rectangle
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Width="180"
+                            Height="40"
+                            Fill="{Binding SelectedBrush, ElementName=PrimaryColorPicker}"
+                            Stroke="Gray"
+                            StrokeThickness="1" />
+
+                        <Rectangle
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Width="180"
+                            Height="40"
+                            Fill="{Binding SelectedBrush, ElementName=SecondaryColorPicker}"
+                            Stroke="Gray"
+                            StrokeThickness="1" />
+
+                        <Rectangle
+                            Grid.Row="2"
+                            Grid.Column="4"
+                            Width="180"
+                            Height="40"
+                            Fill="{Binding SelectedBrush, ElementName=AccentColorPicker}"
+                            Stroke="Gray"
+                            StrokeThickness="1" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

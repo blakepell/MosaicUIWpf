@@ -2490,11 +2490,12 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4" />
 
+                        <!--  marker  -->
                         <Border
                             Grid.Row="1"
                             Grid.RowSpan="3"
                             Grid.ColumnSpan="4"
-                            BorderBrush="White"
+                            BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4">
                             <Border.OpacityMask>
@@ -2505,15 +2506,6 @@
                                 </MultiBinding>
                             </Border.OpacityMask>
 
-                            <Border
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="3">
-                                <Border
-                                    BorderBrush="White"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="2" />
-                            </Border>
                         </Border>
 
                         <Border

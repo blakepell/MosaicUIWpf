@@ -8,8 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
-
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class NumericTextBoxExample

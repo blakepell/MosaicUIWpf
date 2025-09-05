@@ -10,10 +10,7 @@
 
 using Mosaic.UI.Wpf.Controls;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
-using Mosaic.UI.Wpf.Controls;
 
 namespace MosaicWpfDemo.Views.Examples
 {

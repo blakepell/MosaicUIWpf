@@ -323,6 +323,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ColorPicker  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/color-mode-48.png"
+                    Text="ColorPicker">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ColorPicker" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ColorPickerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ColorPickerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ColorPicker}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ColorPickerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/circle-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  EditableTextBlock  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
