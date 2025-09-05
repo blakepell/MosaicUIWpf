@@ -16,6 +16,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!--  Row 0: fill remaining space and scroll when content overflows  -->
@@ -45,5 +46,15 @@
                 <local:TextBoxClearTextOnEscapeBehavior />
             </i:Interaction.Behaviors>
         </TextBox>
+
+        <StackPanel Grid.Row="3">
+            <local:ToggleSwitch OnBackgroundBrush="Green" />
+
+            <!--  Another themed example  -->
+            <!--<local:ToggleSwitch
+                IsOn="True"
+                Width="75" Height="32"/>-->
+
+        </StackPanel>
     </Grid>
 </UserControl>
