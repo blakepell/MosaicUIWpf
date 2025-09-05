@@ -37,6 +37,7 @@
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
     <None Remove="Assets\text-48.png" />
+    <None Remove="Assets\typing-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\warning-48.png" />
     <None Remove="Assets\Xml.Dark.xshd" />
@@ -79,6 +80,7 @@
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
     <Resource Include="Assets\text-48.png" />
+    <Resource Include="Assets\typing-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\warning-48.png" />
   </ItemGroup>
@@ -214,6 +216,13 @@
       <Link>LinkedSources\TabControlExample.xaml.cs</Link>
     </EmbeddedResource>
 
+    <EmbeddedResource Include="Views\Examples\TypingProgressExample.xaml">
+      <Link>LinkedSources\TypingProgressExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\TypingProgressExample.xaml.cs">
+      <Link>LinkedSources\TypingProgressExample.xaml.cs</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="Views\Examples\SearchBoxExample.xaml">
       <Link>LinkedSources\SearchBoxExample.xaml</Link>
     </EmbeddedResource>
@@ -245,6 +254,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\TypingProgressExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\DebugExample.xaml.cs">

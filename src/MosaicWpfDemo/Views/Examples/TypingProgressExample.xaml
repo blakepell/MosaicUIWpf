@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="MosaicWpfDemo.Views.Examples.DebugExample"
+    x:Class="MosaicWpfDemo.Views.Examples.TypingProgressExample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:chat="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
@@ -26,10 +26,7 @@
             VerticalAlignment="Top"
             DataContext="{Binding Messages}" />
 
-        <chat:TypingProgress
-            x:Name="TypingProgress"
-            Grid.Row="1"
-            IsEnabled="True" />
+        <chat:TypingProgress x:Name="TypingProgress" Grid.Row="1" IsEnabled="True" />
 
         <!--  Row 1: pinned to bottom  -->
         <TextBox

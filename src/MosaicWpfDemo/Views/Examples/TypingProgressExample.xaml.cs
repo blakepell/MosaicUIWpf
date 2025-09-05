@@ -14,12 +14,11 @@ using System.Windows.Input;
 
 namespace MosaicWpfDemo.Views.Examples
 {
-    public partial class DebugExample
+    public partial class TypingProgressExample
     {
         public ObservableCollection<Message> Messages { get; set; } = new();
 
-
-        public DebugExample()
+        public TypingProgressExample()
         {
             this.DataContext = this;
             InitializeComponent();
@@ -29,11 +28,10 @@ namespace MosaicWpfDemo.Views.Examples
                 PreviousMessageDirection = MessageDirection.Received,
                 Direction = MessageDirection.Received,
                 From = "System",
-                Text = "This is the first message in the thread, respond using the text box below to add more content.",
+                Text = "Type a message into the command box and press enter, then you will see a typing progress indicator show while I formulate my response.",
                 Timestamp = DateTime.Now
             });
         }
-
 
         private async void CommandTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -63,8 +61,6 @@ namespace MosaicWpfDemo.Views.Examples
 
                     // Generate a random number between 1 and 5
                     var random = new Random();
-                    int randomNumber = random.Next(1, 6);
-                    string msg = string.Empty;
 
                     TypingProgress.IsRunning = true;
 
@@ -73,33 +69,12 @@ namespace MosaicWpfDemo.Views.Examples
 
                     TypingProgress.IsRunning = false;
 
-                    switch (randomNumber)
-                    {
-                        case 1:
-                            msg = "Cool cool.";
-                            break;
-                        case 2:
-                            msg = "If you say so.";
-                            break;
-                        case 3:
-                            msg = "Say that again?";
-                            break;
-                        case 4:
-                            msg = "Interesting...";
-                            break;
-                        case 5:
-                            msg = "Ok.";
-                            break;
-                    }
-
-                    msg += $"\r\n\r\nI delayed {delayMs:N0}ms before responding.";
-
                     this.Messages.Add(new Message()
                     {
                         Direction = MessageDirection.Received,
-                        Text = msg,
+                        Text = "I am done typing now.",
                         Timestamp = DateTime.Now,
-                        From = Environment.UserName,
+                        From = "System",
                         PreviousMessageDirection = this.Messages.Count > 0 ? this.Messages[^1].Direction : MessageDirection.Received
                     });
 

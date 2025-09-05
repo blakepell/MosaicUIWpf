@@ -485,6 +485,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  TypingProgress Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/typing-48.png"
+                    Text="TypingProgress">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="TypingProgress" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.TypingProgressExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.TypingProgressExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:TypingProgress}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TypingProgressExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/typing-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  SearchBox Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
