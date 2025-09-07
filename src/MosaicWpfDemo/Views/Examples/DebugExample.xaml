@@ -59,6 +59,8 @@
             <local:ToggleSwitch
                 Margin="0,6,0,0"
                 CornerRadius="0"
+                BorderBrush="Gray"
+                BorderThickness=".9"
                 OffBackgroundBrush="Red"
                 OnBackgroundBrush="Green" />
 

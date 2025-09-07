@@ -4,7 +4,8 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
 
     <Style TargetType="{x:Type controls:ToggleSwitch}">
-        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Background" Value="#0078D7" />
         <Setter Property="Foreground" Value="#FFFFFF" />
         <Setter Property="Focusable" Value="True" />
@@ -18,6 +19,8 @@
                         HorizontalAlignment="Left"
                         Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
                         <Canvas Background="{TemplateBinding Background}" SnapsToDevicePixels="False">
                             <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
@@ -52,8 +55,6 @@
                                 Height="20"
                                 Margin="4"
                                 Background="{TemplateBinding Foreground}" />
-
-
                         </Canvas>
                     </controls:ClipBorder>
                 </ControlTemplate>
