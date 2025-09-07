@@ -1,6 +1,4 @@
 ﻿using System.Windows.Media.Animation;
-using System.Windows.Input;
-using Mosaic.UI.Wpf.Cache;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -69,13 +67,12 @@ namespace Mosaic.UI.Wpf.Controls
 
         #endregion
 
-
         static ToggleSwitch()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
-            FocusableProperty.OverrideMetadata(typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(true));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+            FocusableProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(true));
+            WidthProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(60.0));
+            HeightProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(28.0));
         }
 
         public ToggleSwitch()
