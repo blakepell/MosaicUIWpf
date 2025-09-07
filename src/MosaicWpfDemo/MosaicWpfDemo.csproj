@@ -37,6 +37,7 @@
     <None Remove="Assets\stopwatch-48.png" />
     <None Remove="Assets\tab-control-48.png" />
     <None Remove="Assets\text-48.png" />
+    <None Remove="Assets\toggle-48.png" />
     <None Remove="Assets\typing-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\warning-48.png" />
@@ -80,6 +81,7 @@
     <Resource Include="Assets\stopwatch-48.png" />
     <Resource Include="Assets\tab-control-48.png" />
     <Resource Include="Assets\text-48.png" />
+    <Resource Include="Assets\toggle-48.png" />
     <Resource Include="Assets\typing-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\warning-48.png" />
@@ -254,6 +256,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\ToggleSwitchExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\TypingProgressExample.xaml.cs">

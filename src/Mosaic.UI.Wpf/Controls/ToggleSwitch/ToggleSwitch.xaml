@@ -18,9 +18,9 @@
                         Height="{TemplateBinding Height}"
                         HorizontalAlignment="Left"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Canvas Background="{TemplateBinding Background}" SnapsToDevicePixels="False">
                             <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
@@ -45,16 +45,15 @@
                                     VerticalAlignment="Center"
                                     Text="{TemplateBinding OffText}"
                                     TextTrimming="CharacterEllipsis" />
-
                             </Grid>
 
                             <Border
                                 x:Name="PART_Thumb"
-                                CornerRadius="{TemplateBinding CornerRadius}"
                                 Width="24"
                                 Height="20"
                                 Margin="4"
-                                Background="{TemplateBinding Foreground}" />
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
                         </Canvas>
                     </controls:ClipBorder>
                 </ControlTemplate>

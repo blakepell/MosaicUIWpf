@@ -1,0 +1,44 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ToggleSwitchExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Margin="10" Orientation="Vertical">
+        <TextBlock Margin="0,0,0,6" Text="Default Toggle Switch" />
+        <mosaic:ToggleSwitch HorizontalAlignment="Left" OnBackgroundBrush="Green" />
+
+        <TextBlock Margin="0,6,0,6" Text="Toggle Switch with a Corner Radius" />
+        <mosaic:ToggleSwitch
+            HorizontalAlignment="Left"
+            CornerRadius="4"
+            OnBackgroundBrush="Green"
+            ToolTip="Audio Enhancements" />
+
+        <TextBlock Margin="0,6,0,0" Text="Toggle Switch with a custom on and off brushes set.  The IsOn property is data bound in this example." />
+        <TextBlock Margin="0,0,0,6">
+            <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}">IsOn = </Run>
+            <Run Text="{Binding IsOn}" Foreground="CornflowerBlue"></Run>
+        </TextBlock>
+
+        <mosaic:ToggleSwitch
+            HorizontalAlignment="Left"
+            CornerRadius="0"
+            IsOn="{Binding IsOn}"
+            OffBackgroundBrush="Red"
+            OnBackgroundBrush="Green" />
+
+        <TextBlock Margin="0,6,0,6" Text="Toggle switch with no labels." />
+        <mosaic:ToggleSwitch
+            Margin="0,6,0,0"
+            HorizontalAlignment="Left"
+            OffText=""
+            OnBackgroundBrush="CornflowerBlue"
+            OnText="" />
+    </StackPanel>
+</UserControl>
