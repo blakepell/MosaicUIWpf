@@ -130,6 +130,14 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(OffBackgroundBrushProperty, value);
         }
 
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(ToggleSwitch), new PropertyMetadata(default(CornerRadius)));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
         #endregion
 
         /// <summary>

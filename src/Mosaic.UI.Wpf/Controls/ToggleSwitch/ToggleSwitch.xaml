@@ -12,41 +12,50 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:ToggleSwitch}">
-                    <Canvas Background="{TemplateBinding Background}" SnapsToDevicePixels="False">
+                    <controls:ClipBorder
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        HorizontalAlignment="Left"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Canvas Background="{TemplateBinding Background}" SnapsToDevicePixels="False">
+                            <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50*" />
+                                    <ColumnDefinition Width="50*" />
+                                </Grid.ColumnDefinitions>
 
-                        <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50*" />
-                                <ColumnDefinition Width="50*" />
-                            </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="PART_OnTextBlock"
+                                    Grid.Column="0"
+                                    Margin="6,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding OnText}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Name="PART_OffTextBlock"
+                                    Grid.Column="1"
+                                    Margin="0,0,6,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding OffText}"
+                                    TextTrimming="CharacterEllipsis" />
 
-                            <TextBlock
-                                x:Name="PART_OnTextBlock"
-                                Grid.Column="0"
-                                Margin="6,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                TextTrimming="CharacterEllipsis"
-                                Text="{TemplateBinding OnText}" />
-                            <TextBlock
-                                x:Name="PART_OffTextBlock"
-                                Grid.Column="1"
-                                Margin="0,0,6,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                TextTrimming="CharacterEllipsis"
-                                Text="{TemplateBinding OffText}" />
+                            </Grid>
 
-                        </Grid>
+                            <Border
+                                x:Name="PART_Thumb"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Width="24"
+                                Height="20"
+                                Margin="4"
+                                Background="{TemplateBinding Foreground}" />
 
-                        <Border
-                            x:Name="PART_Thumb"
-                            Width="24"
-                            Height="20"
-                            Margin="4"
-                            Background="{TemplateBinding Foreground}" />
 
-                    </Canvas>
+                        </Canvas>
+                    </controls:ClipBorder>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

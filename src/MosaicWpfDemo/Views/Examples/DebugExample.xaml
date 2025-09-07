@@ -51,6 +51,18 @@
             <local:ToggleSwitch OnBackgroundBrush="Green" />
 
             <local:ToggleSwitch
+                Margin="0,6,0,0"
+                CornerRadius="4"
+                OnBackgroundBrush="Green"
+                ToolTip="Audio Enhancements" />
+
+            <local:ToggleSwitch
+                Margin="0,6,0,0"
+                CornerRadius="0"
+                OffBackgroundBrush="Red"
+                OnBackgroundBrush="Green" />
+
+            <local:ToggleSwitch
                 Width="100"
                 Margin="0,6,0,0"
                 OffText="DISABLED"
