@@ -3,14 +3,20 @@
 namespace Mosaic.UI.Wpf.Controls
 {
     [TemplatePart(Name = PartThumb, Type = typeof(Border))]
+    [TemplatePart(Name = PartOnTextBlock, Type = typeof(TextBlock))]
+    [TemplatePart(Name = PartOffTextBlock, Type = typeof(TextBlock))]
     public class ToggleSwitch : Control
     {
         #region Private Fields
 
         private const string PartThumb = "PART_Thumb";
+        private const string PartOnTextBlock = "PART_OnTextBlock";
+        private const string PartOffTextBlock = "PART_OffTextBlock";
 
         private Border? _thumb;
         private Canvas? _canvasParent;
+        private TextBlock? _onTextBlock;
+        private TextBlock? _offTextBlock;
 
         #endregion
 
@@ -53,16 +59,16 @@ namespace Mosaic.UI.Wpf.Controls
 
         public Brush OnBackgroundBrush
         {
-            get { return (Brush)GetValue(OnBackgroundBrushProperty); }
-            set { SetValue(OnBackgroundBrushProperty, value); }
+            get => (Brush)GetValue(OnBackgroundBrushProperty);
+            set => SetValue(OnBackgroundBrushProperty, value);
         }
 
         public static readonly DependencyProperty OffBackgroundBrushProperty = DependencyProperty.Register(nameof(OffBackgroundBrush), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.DarkGray));
 
         public Brush OffBackgroundBrush
         {
-            get { return (Brush)GetValue(OffBackgroundBrushProperty); }
-            set { SetValue(OffBackgroundBrushProperty, value); }
+            get => (Brush)GetValue(OffBackgroundBrushProperty);
+            set => SetValue(OffBackgroundBrushProperty, value);
         }
 
         #endregion
@@ -78,6 +84,21 @@ namespace Mosaic.UI.Wpf.Controls
         public ToggleSwitch()
         {
             Cursor = Cursors.Hand;
+        }
+
+        private void RefreshUI()
+        {
+            this.Background = IsOn ? OnBackgroundBrush : OffBackgroundBrush;
+
+            if (_onTextBlock != null)
+            {
+                _onTextBlock.Visibility = IsOn ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (_offTextBlock != null)
+            {
+                _offTextBlock.Visibility = IsOn ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
 
         public override void OnApplyTemplate()
@@ -104,12 +125,18 @@ namespace Mosaic.UI.Wpf.Controls
                 _canvasParent.SizeChanged += OnCanvasSizeChanged;
             }
 
+            _onTextBlock = GetTemplateChild(PartOnTextBlock) as TextBlock;
+            _offTextBlock = GetTemplateChild(PartOffTextBlock) as TextBlock;
+
             // Handle clicks anywhere on the control
             this.MouseLeftButtonDown -= OnMouseLeftButtonDown;
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
 
             // Set initial position without animation
-            UpdateThumbPosition(false);
+            this.UpdateThumbPosition(false);
+
+            // Refresh colors, etc.
+            this.RefreshUI();
         }
 
         private void OnThumbLoaded(object? sender, RoutedEventArgs e)
@@ -129,14 +156,7 @@ namespace Mosaic.UI.Wpf.Controls
             IsOn = !IsOn;
             e.Handled = true;
 
-            if (IsOn)
-            {
-                this.Background = OnBackgroundBrush;
-            }
-            else
-            {
-                this.Background = OffBackgroundBrush;
-            }
+            this.RefreshUI();
         }
 
         private void UpdateThumbPosition(bool animate)

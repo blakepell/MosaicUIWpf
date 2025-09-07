@@ -50,10 +50,12 @@
         <StackPanel Grid.Row="3">
             <local:ToggleSwitch OnBackgroundBrush="Green" />
 
-            <!--  Another themed example  -->
-            <!--<local:ToggleSwitch
-                IsOn="True"
-                Width="75" Height="32"/>-->
+            <local:ToggleSwitch
+                Width="100"
+                Margin="0,6,0,0"
+                OffText="DISABLED"
+                OnBackgroundBrush="CornflowerBlue"
+                OnText="ENABLED" />
 
         </StackPanel>
     </Grid>
