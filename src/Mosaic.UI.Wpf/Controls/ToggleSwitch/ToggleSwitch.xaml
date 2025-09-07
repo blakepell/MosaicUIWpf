@@ -26,6 +26,7 @@
                                 Margin="6,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
                                 Text="{TemplateBinding OnText}" />
                             <TextBlock
                                 x:Name="PART_OffTextBlock"
@@ -33,6 +34,7 @@
                                 Margin="0,0,6,0"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
+                                TextTrimming="CharacterEllipsis"
                                 Text="{TemplateBinding OffText}" />
 
                         </Grid>
