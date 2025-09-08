@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryUrl>https://github.com/blakepell/MosaicUIWpf</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>wpf;controls;control library</PackageTags>
+    <Title>Mosaic UI for WPF</Title>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\avatar-48.png" />

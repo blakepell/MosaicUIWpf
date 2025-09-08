@@ -16,7 +16,13 @@
     <PackageProjectUrl>https://github.com/blakepell/MosaicUIWpf</PackageProjectUrl>
     <Copyright>2025</Copyright>
     <Description>Mosaic UI for WPF Control Library</Description>
-    <PackageTags>wpf;controls</PackageTags>
+    <PackageTags>mosaic;wpf;controls</PackageTags>
+    <PackageId>MosaicUIWpf</PackageId>
+    <License>MIT</License>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>collage-48.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Authors>Blake Pell</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\docs\images\collage-48.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="Controls\AdaptiveImage\AdaptiveImage.cs" />
   </ItemGroup>
 
