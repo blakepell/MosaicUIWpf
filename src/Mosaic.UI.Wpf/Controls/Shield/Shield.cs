@@ -53,7 +53,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Identifies the <see cref="ValueBackgroundBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueBackgroundBrushProperty = DependencyProperty.Register(nameof(ValueBackgroundBrush), typeof(Brush), typeof(Shield), new PropertyMetadata(default(Brush)));
+        public static readonly DependencyProperty ValueBackgroundBrushProperty = DependencyProperty.Register(
+            nameof(ValueBackgroundBrush), typeof(Brush), typeof(Shield), new FrameworkPropertyMetadata(Brushes.DodgerBlue));
 
         /// <summary>
         /// Gets or sets the background brush used to render the value area.
@@ -68,7 +69,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="ValueForegroundBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ValueForegroundBrushProperty = DependencyProperty.Register(
-            nameof(ValueForegroundBrush), typeof(Brush), typeof(Shield), new PropertyMetadata(default(Brush)));
+            nameof(ValueForegroundBrush), typeof(Brush), typeof(Shield), new FrameworkPropertyMetadata(Brushes.White));
 
         /// <summary>
         /// Gets or sets the brush used to paint the foreground of the value display.

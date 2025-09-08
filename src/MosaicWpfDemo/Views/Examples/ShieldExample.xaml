@@ -34,5 +34,11 @@
             ValueForegroundBrush="White"
             Value="MIT" />
 
+        <!--  Default Properties  -->
+        <mosaic:Shield
+            Margin="0,5"
+            Label="Mosaic.UI.Wpf"
+            Value="{Binding Version}" />
+
     </StackPanel>
 </UserControl>
