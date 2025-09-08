@@ -177,7 +177,7 @@
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Auto">
 
-        <ItemsControl ItemsSource="{Binding}">
+        <ItemsControl ItemsSource="{Binding Messages}">
             <ItemsControl.ItemTemplateSelector>
                 <local:MessageTemplateSelector
                     ReceivedTemplateB="{StaticResource ReceivedTemplateB}"

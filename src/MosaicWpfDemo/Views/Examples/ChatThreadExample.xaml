@@ -23,7 +23,7 @@
             Margin="0,0,0,4"
             Orientation="Vertical">
             <TextBlock Margin="0,0,0,4" Text="Background Accent:" />
-            <local:ColorPicker ColorChanged="ColorPicker_OnColorChanged" SelectedBrush="{Binding SelectedBrush, ElementName=Me, FallbackValue='#0A86F1'}" />
+            <local:ColorPicker ColorChanged="ColorPicker_OnColorChanged" SelectedBrush="{Binding SelectedBackgroundBrush, ElementName=Me, FallbackValue='#0A86F1'}" />
         </StackPanel>
 
         <!--  Row 0: fill remaining space and scroll when content overflows  -->
@@ -32,7 +32,7 @@
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            DataContext="{Binding Messages}" />
+            Messages="{Binding Messages}" />
 
         <!--  Row 1: pinned to bottom  -->
         <TextBox

@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Collections.ObjectModel;
 using System.Windows.Media.Animation;
 
 namespace Mosaic.UI.Wpf.Controls
@@ -42,6 +43,23 @@ namespace Mosaic.UI.Wpf.Controls
         #endregion
 
         #region Dependency Properties
+
+        /// <summary>
+        /// Identifies the <see cref="Messages"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MessagesProperty = DependencyProperty.Register(
+            nameof(Messages), typeof(ObservableCollection<Message>), typeof(ChatThread), new PropertyMetadata(new ObservableCollection<Message>()));
+
+        /// <summary>
+        /// Gets or sets the collection of messages.
+        /// </summary>
+        /// <remarks>Changes to the collection will automatically update any bindings to this property, as
+        /// it uses an <see cref="ObservableCollection{T}"/>.</remarks>
+        public ObservableCollection<Message> Messages
+        {
+            get => (ObservableCollection<Message>)GetValue(MessagesProperty);
+            set => SetValue(MessagesProperty, value);
+        }
 
         /// <summary>
         /// Identifies the <see cref="VerticalOffset"/> dependency property.
@@ -90,7 +108,6 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public ChatThread()
         {
-            this.DataContext = this;
             InitializeComponent();
 
             _scrollViewerScrollToEndAnim = new DoubleAnimation()
