@@ -4,6 +4,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/AsterikTextBlock/AsteriskTextBlock.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Avatar/Avatar.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Badge/Badge.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/BindablePasswordBox/BindablePasswordBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/EditableTextBlock/EditableTextBlock.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FlipPanel/FlipPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />

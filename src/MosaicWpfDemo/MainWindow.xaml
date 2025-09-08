@@ -273,6 +273,24 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/password-lock-48.png"
+                    Text="BindablePasswordBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="BindablePasswordBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.BindablePasswordBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.BindablePasswordBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:BindablePasswordBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:BindablePasswordBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/password-lock-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Badge  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
                     ImageSource="/Assets/badge-48.png"
                     Text="Badge">
                     <mosaic:SideMenuItem.ParameterCollection>

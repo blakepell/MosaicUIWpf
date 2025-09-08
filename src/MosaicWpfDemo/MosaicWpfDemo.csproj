@@ -73,6 +73,7 @@
     <Resource Include="Assets\list-48.png" />
     <Resource Include="Assets\numbers-input-48.png" />
     <Resource Include="Assets\password-48.png" />
+    <Resource Include="Assets\password-lock-48.png" />
     <Resource Include="Assets\penny-heads.png" />
     <Resource Include="Assets\penny-tails.png" />
     <Resource Include="Assets\search-48.png" />
@@ -132,6 +133,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\BadgeExample.xaml.cs">
       <Link>LinkedSources\BadgeExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\BindablePasswordBoxExample.xaml">
+      <Link>LinkedSources\BindablePasswordBoxExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\BindablePasswordBoxExample.xaml.cs">
+      <Link>LinkedSources\BindablePasswordBoxExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\StopwatchDisplayExample.xaml">
@@ -253,6 +261,9 @@
     
   <ItemGroup>
     <Compile Update="Views\Examples\AdaptiveImageExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\BindablePasswordBoxExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
