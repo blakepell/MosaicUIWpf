@@ -4,30 +4,32 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <!--  MOSAIC CUSTOM COLORS  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundKey}" Color="#1C1C1C" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundKey}" Color="#FFFFFF" />
-
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColorKey}}" />
     <Color x:Key="{x:Static themes:MosaicTheme.AccentColorKey}">#FF0078D7</Color>
 
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColor}">#FFCCCCCC</Color>
+    <!--  Control colors  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColorKey}">#1C1C1C</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColorKey}">#FFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundColorKey}">#EEEEEE</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColorKey}">#FFCCCCCC</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderHoverColorKey}">#FF7EB4EA</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderFocusColorKey}">#FF569DE5</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSelectionColorKey}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextInactiveSelectionColorKey}">#FF0078D7</Color>
 
     <!--  Hyperlink colors  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkBrushKey}" Color="#FF0A86F1" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverBrushKey}" Color="#FF0E6FBE" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedBrushKey}" Color="#252074" />
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColorKey}">#FF0A86F1</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColorKey}">#FF0E6FBE</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedColorKey}">#252074</Color>
 
     <!--  Sidebar colors  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}" Color="#FFD4EDF9" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentBrushKey}" Color="#FF0078D7" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarForegroundBrushKey}" Color="#FF333333" />
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColorKey}">#FFD4EDF9</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentColorKey}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarForegroundColorKey}">#FF333333</Color>
 
-    <!--  Tab & TabItem  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemAccentBrushKey}" Color="#FF0078D7" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}" Color="#FFF3F3F3" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBorderBrushKey}" Color="#FFCCCCCC" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemForegroundBrushKey}" Color="#FF333333" />
+    <!--  Tab & TabItem colors  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColorKey}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColorKey}">#FFF3F3F3</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColorKey}">#FFCCCCCC</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColorKey}">#FF333333</Color>
 
 </ResourceDictionary>

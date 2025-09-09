@@ -1,20 +1,22 @@
 ﻿<wpf:MosaicApp
-    x:Class="WpfDemo.App"
+    x:Class="LanChat.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic"
-    xmlns:viewModels="clr-namespace:MosaicWpfDemo.Common"
+    xmlns:local="clr-namespace:LanChat"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:vm="clr-namespace:LanChat.Common"
     xmlns:wpf="clr-namespace:Mosaic.UI.Wpf;assembly=Mosaic.UI.Wpf"
-    x:TypeArguments="viewModels:AppSettings,viewModels:AppViewModel"
+    x:TypeArguments="vm:AppSettings, vm:AppViewModel"
+    Exit="App_OnExit"
     Startup="App_OnStartup"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml" />
+                <!--<ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml" />-->
+                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

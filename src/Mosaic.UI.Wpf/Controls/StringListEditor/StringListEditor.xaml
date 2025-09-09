@@ -29,7 +29,7 @@
                             Padding="4,0,0,0"
                             VerticalContentAlignment="Center"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
                             BorderThickness=".9,.9,0,.9"
                             FocusVisualStyle="{x:Null}"
                             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
@@ -59,7 +59,7 @@
                             x:Name="ButtonAdd"
                             Grid.Row="0"
                             Grid.Column="1"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
                             BorderThickness=".9,.9,.9,.9">
                             <Button.Content>
                                 <controls:AdaptiveImage Source="../../Assets/vs-add-16.png" />
@@ -75,7 +75,7 @@
                             Height="200"
                             Margin="{TemplateBinding ListBoxMargin}"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
                             BorderThickness=".9,0,.9,.9"
                             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
                             ItemsSource="{TemplateBinding Items}">

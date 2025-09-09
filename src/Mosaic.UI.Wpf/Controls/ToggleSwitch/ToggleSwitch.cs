@@ -69,6 +69,13 @@ namespace Mosaic.UI.Wpf.Controls
         {
             var ts = (ToggleSwitch)d;
             ts?.UpdateThumbPosition(true);
+            ts?.RefreshUI();
+
+            // Raise the Changed event for subscribers
+            if (ts != null)
+            {
+                ts.OnChanged(new ToggleSwitchChangedEventArgs((bool)e.NewValue));
+            }
         }
 
         /// <summary>
@@ -130,8 +137,15 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(OffBackgroundBrushProperty, value);
         }
 
-        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(nameof(CornerRadius), typeof(CornerRadius), typeof(ToggleSwitch), new PropertyMetadata(default(CornerRadius)));
+        /// <summary>
+        /// Identifies the <see cref="CornerRadius"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+            nameof(CornerRadius), typeof(CornerRadius), typeof(ToggleSwitch), new PropertyMetadata(default(CornerRadius)));
 
+        /// <summary>
+        /// Gets or sets the radius of the corners for the element.
+        /// </summary>
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
@@ -139,6 +153,38 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         #endregion
+
+        // Changed event and supporting EventArgs
+        /// <summary>
+        /// Raised when the IsOn property changes.
+        /// </summary>
+        public event EventHandler<ToggleSwitchChangedEventArgs>? Changed;
+
+        /// <summary>
+        /// Protected virtual method to allow derived classes to handle or intercept the Changed event.
+        /// </summary>
+        /// <param name="e">Event args containing the new IsOn value.</param>
+        protected virtual void OnChanged(ToggleSwitchChangedEventArgs e)
+        {
+            Changed?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// EventArgs for the Changed event.
+        /// </summary>
+        public sealed class ToggleSwitchChangedEventArgs : EventArgs
+        {
+            /// <summary>
+            /// Gets IsOn property
+            /// </summary>
+            public bool IsOn { get; }
+
+            /// <inheritdoc />
+            public ToggleSwitchChangedEventArgs(bool isOn)
+            {
+                IsOn = isOn;
+            }
+        }
 
         /// <summary>
         /// Initializes static members of the <see cref="ToggleSwitch"/> class.

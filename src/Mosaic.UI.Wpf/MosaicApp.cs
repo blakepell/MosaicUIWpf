@@ -319,72 +319,45 @@ namespace Mosaic.UI.Wpf
         /// <param name="themeName">The name of the theme to apply. Supported values are <see langword="Light"/> and <see langword="Dark"/>.</param>
         public static void ChangeTheme(string themeName)
         {
-            Application.Current.Resources.MergedDictionaries.Clear();
+            var mergedDictionaries = Application.Current.Resources.MergedDictionaries;
 
+            // Find and remove existing theme and brush dictionaries
+            var toRemove = new List<ResourceDictionary>();
+            foreach (var dict in mergedDictionaries)
+            {
+                if (dict.Source != null)
+                {
+                    var source = dict.Source.ToString();
+                    if (source.Contains("/Light.xaml") ||
+                        source.Contains("/Dark.xaml") ||
+                        source.Contains("aero2.normalcolor.xaml") ||
+                        source.Contains("aero2.darkcolor.xaml") ||
+                        source.Contains("/Brushes.xaml")) // Also remove Brushes.xaml
+                    {
+                        toRemove.Add(dict);
+                    }
+                }
+            }
+
+            foreach (var dict in toRemove)
+            {
+                mergedDictionaries.Remove(dict);
+            }
+
+            // 1. Add the new theme-specific COLOR dictionary
             if (themeName == "Light")
             {
-                if (CachedResources.TryGetValue("Light", out var cachedResource1))
-                {
-                    Application.Current.Resources.MergedDictionaries.Add(cachedResource1);
-                }
-                else
-                {
-                    var dict = new ResourceDictionary()
-                    {
-                        Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light.xaml")
-                    };
-
-                    CachedResources.TryAdd("Light", dict);
-                    Application.Current.Resources.MergedDictionaries.Add(dict);
-                }
-
-                if (CachedResources.TryGetValue("aero2.normalcolor.xaml", out var cachedResource2))
-                {
-                    Application.Current.Resources.MergedDictionaries.Add(cachedResource2);
-                }
-                else
-                {
-                    var dict = new ResourceDictionary
-                    {
-                        Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml")
-                    };
-
-                    CachedResources.TryAdd("aero2.normalcolor.xaml", dict);
-                    Application.Current.Resources.MergedDictionaries.Add(dict);
-                }
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light.xaml") });
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml") });
             }
-            else if (themeName == "Dark")
+            else // Dark
             {
-                if (CachedResources.TryGetValue("Dark", out var cachedResource1))
-                {
-                    Application.Current.Resources.MergedDictionaries.Add(cachedResource1);
-                }
-                else
-                {
-                    var dict = new ResourceDictionary()
-                    {
-                        Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml")
-                    };
-
-                    CachedResources.TryAdd("Dark", dict);
-                    Application.Current.Resources.MergedDictionaries.Add(dict);
-                }
-
-                if (CachedResources.TryGetValue("aero2.darkcolor.xaml", out var cachedResource2))
-                {
-                    Application.Current.Resources.MergedDictionaries.Add(cachedResource2);
-                }
-                else
-                {
-                    var dict = new ResourceDictionary
-                    {
-                        Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml")
-                    };
-
-                    CachedResources.TryAdd("aero2.darkcolor.xaml", dict);
-                    Application.Current.Resources.MergedDictionaries.Add(dict);
-                }
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml") });
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml") });
             }
+
+            // 2. Re-add the BRUSH dictionary. This forces DynamicResource to re-evaluate against the new colors.
+            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml") });
 
             // Notify subscribers about the theme change
             MosaicApp.OnThemeChanged(themeName);

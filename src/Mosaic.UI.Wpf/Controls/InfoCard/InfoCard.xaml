@@ -16,7 +16,7 @@
                         <Border
                             Padding="10"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
                             BorderThickness=".9"
                             CornerRadius="5"
                             Opacity="{TemplateBinding Opacity}">
@@ -34,7 +34,7 @@
                                 <Separator
                                     Height=".9"
                                     Margin="0,5,0,0"
-                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
                                     DockPanel.Dock="Top"
                                     Visibility="{TemplateBinding SeparatorVisibility}" />
 

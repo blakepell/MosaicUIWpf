@@ -11,54 +11,50 @@
     <StackPanel Orientation="Vertical">
         <TextBlock Margin="0,10" Text="Default 5-star rating:" />
         <mosaic:SymbolRating />
-        
+
         <TextBlock Margin="0,10" Text="3 stars selected:" />
         <mosaic:SymbolRating SelectedCount="3" />
-        
+
         <TextBlock Margin="0,10" Text="Larger symbols (30px):" />
         <mosaic:SymbolRating SelectedCount="4" SymbolSize="30" />
-        
+
         <TextBlock Margin="0,10" Text="Custom colors:" />
-        <mosaic:SymbolRating 
-            SelectedCount="5"
+        <mosaic:SymbolRating
+            HoverBrush="Pink"
             SelectedBrush="Red"
-            UnselectedBrush="Silver"
-            HoverBrush="Pink" />
-        
+            SelectedCount="5"
+            UnselectedBrush="Silver" />
+
         <TextBlock Margin="0,10" Text="10 stars with heart symbols:" />
-        <mosaic:SymbolRating 
+        <mosaic:SymbolRating
             Count="10"
-            SelectedCount="7"
-            Symbol="♥"
             HoverBrush="LightPink"
             SelectedBrush="HotPink"
+            SelectedCount="7"
+            Symbol="♥"
             UnselectedBrush="LightGray" />
-            
+
         <TextBlock Margin="0,10" Text="Without deselect option:" />
-        <mosaic:SymbolRating 
-            SelectedCount="2"
-            ShowDeselectOption="False" />
+        <mosaic:SymbolRating SelectedCount="2" ShowDeselectOption="False" />
 
         <TextBlock Margin="0,10" Text="Bound to property (Current: {Binding CurrentRating}):" />
         <mosaic:SymbolRating SelectedCount="{Binding CurrentRating, Mode=TwoWay}" />
 
         <TextBlock Margin="0,10" Text="Custom colors with hover preview:" />
-        <mosaic:SymbolRating 
-            SelectedCount="2"
+        <mosaic:SymbolRating
+            HoverBrush="Cyan"
             SelectedBrush="Blue"
-            UnselectedBrush="Silver"
-            HoverBrush="Cyan" />
+            SelectedCount="2"
+            UnselectedBrush="Silver" />
 
         <TextBlock Margin="0,10" Text="Without hover preview:" />
-        <mosaic:SymbolRating 
-            SelectedCount="2"
-            IsHoverPreviewEnabled="False" />
-            
+        <mosaic:SymbolRating IsHoverPreviewEnabled="False" SelectedCount="2" />
+
         <TextBlock Margin="0,10" Text="Hover test - 1 selected, hover shows preview:" />
-        <mosaic:SymbolRating 
-            SelectedCount="1"
+        <mosaic:SymbolRating
+            HoverBrush="Yellow"
             SelectedBrush="Green"
-            UnselectedBrush="LightGray"
-            HoverBrush="Yellow" />
+            SelectedCount="1"
+            UnselectedBrush="LightGray" />
     </StackPanel>
 </UserControl>
