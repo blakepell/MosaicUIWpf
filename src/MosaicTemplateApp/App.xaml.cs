@@ -1,5 +1,5 @@
 ﻿/*
- * Mosaic UI for WPF
+ * MosaicTemplateApp
  *
  * @project lead      : Blake Pell
  * @website           : https://www.blakepell.com
@@ -9,16 +9,28 @@
  */
 
 using Mosaic.UI.Wpf;
+using MosaicTemplateApp.Common;
 using System.Windows;
-using MosaicWpfDemo.Common;
 
-namespace WpfDemo
+namespace MosaicTemplateApp
 {
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
     public partial class App : MosaicApp<AppSettings, AppViewModel>
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            ChangeTheme("Dark");
+            base.OnStartup(e);
+
+            ChangeTheme("Light");
+        }
+
+        private void App_OnExit(object sender, ExitEventArgs e)
+        {
+            // Call the shared exit.
+            base.OnExit(e);
         }
     }
+
 }

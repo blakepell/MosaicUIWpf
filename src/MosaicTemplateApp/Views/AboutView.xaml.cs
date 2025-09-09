@@ -1,5 +1,5 @@
 ﻿/*
- * Mosaic UI for WPF
+ * MosaicTemplateApp
  *
  * @project lead      : Blake Pell
  * @website           : https://www.blakepell.com
@@ -8,17 +8,13 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using Mosaic.UI.Wpf;
-using System.Windows;
-using MosaicWpfDemo.Common;
-
-namespace WpfDemo
+namespace MosaicTemplateApp.Views
 {
-    public partial class App : MosaicApp<AppSettings, AppViewModel>
+    public partial class AboutView
     {
-        private void App_OnStartup(object sender, StartupEventArgs e)
+        public AboutView()
         {
-            ChangeTheme("Dark");
+            InitializeComponent();
         }
     }
 }

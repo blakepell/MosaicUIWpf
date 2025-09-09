@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicWpfDemo", "src\Mosaic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DemoApps", "DemoApps", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicTemplateApp", "src\MosaicTemplateApp\MosaicTemplateApp.csproj", "{5200EF9E-B506-4FF4-85D2-47571F16371F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +25,17 @@ Global
 		{B7595BB6-881C-9AE3-CBC2-E80183ED15EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7595BB6-881C-9AE3-CBC2-E80183ED15EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7595BB6-881C-9AE3-CBC2-E80183ED15EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5200EF9E-B506-4FF4-85D2-47571F16371F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5200EF9E-B506-4FF4-85D2-47571F16371F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5200EF9E-B506-4FF4-85D2-47571F16371F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5200EF9E-B506-4FF4-85D2-47571F16371F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B7595BB6-881C-9AE3-CBC2-E80183ED15EB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5200EF9E-B506-4FF4-85D2-47571F16371F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E6C723F-B8D3-4245-A4FD-B44794B89E84}
