@@ -1,0 +1,96 @@
+﻿<UserControl
+    x:Class="MosaicWpfDemo.Controls.ColorThemeGallery"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="700"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!--  A flat, chrome-less button to make each swatch clickable  -->
+        <Style x:Key="SwatchButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Swatch cell template: a clickable block with overlay text  -->
+        <DataTemplate x:Key="SwatchTemplate" DataType="{x:Type local:SwatchItem}">
+            <Button
+                Command="{Binding CopyCommand}"
+                CommandParameter="{Binding}"
+                Style="{StaticResource SwatchButtonStyle}"
+                ToolTip="{Binding CopyTooltip}">
+                <Grid
+                    Width="140"
+                    Height="84"
+                    Background="{Binding Brush}">
+                    <!--  Border outline for visibility on very light shades  -->
+                    <Border BorderBrush="#33000000" BorderThickness="1" />
+                    <Grid>
+                        <!--  Overlay block  -->
+                        <StackPanel
+                            Margin="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextElement.FontSize="12"
+                            TextElement.FontWeight="SemiBold"
+                            TextElement.Foreground="{Binding OverlayForeground}">
+                            <TextBlock Text="{Binding DisplayKey}" TextAlignment="Center" />
+                            <TextBlock
+                                Opacity="0.9"
+                                Text="{Binding Hex}"
+                                TextAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <!--  A row (palette) template: palette name on the left, shades in a 10-col grid  -->
+        <DataTemplate x:Key="PaletteRowTemplate" DataType="{x:Type local:PaletteRow}">
+            <StackPanel Margin="0,8,0,16">
+                <TextBlock
+                    Margin="4,0,0,6"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource Control.Foreground.Brush}"
+                    Text="{Binding Name}" />
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemTemplate="{StaticResource SwatchTemplate}" ItemsSource="{Binding Shades}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="10" Rows="1" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <!--  Outer scroll handles many palette rows; inner scroll lets a row overflow horizontally  -->
+    <ScrollViewer
+        Padding="12"
+        HorizontalScrollBarVisibility="Auto"
+        VerticalScrollBarVisibility="Auto">
+        <DockPanel LastChildFill="True">
+            <TextBlock
+                Margin="0,0,0,12"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource Control.Foreground.Brush}"
+                Text="Click a swatch to copy {DynamicResource …} for the Brush key. Shades (50–900) are side-by-side." />
+            <ItemsControl ItemTemplate="{StaticResource PaletteRowTemplate}" ItemsSource="{Binding Palettes}" />
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>

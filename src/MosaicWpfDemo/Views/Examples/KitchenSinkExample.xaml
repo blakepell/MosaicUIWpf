@@ -5,44 +5,66 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <!--  Native  -->
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
-  <Grid Margin="12">
-    <StackPanel VerticalAlignment="Top" Orientation="Vertical">
-      <TextBlock
-          Margin="0,0,0,8"
-          FontSize="18"
-          FontWeight="SemiBold"
-          Text="Kitchen Sink Example page" />
-      <!--  Blank example surface: add controls here  -->
-      <Border
-          MinHeight="300"
-          Padding="6"
-          Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
-          BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
-          BorderThickness="1"
-          CornerRadius="4">
-        <StackPanel Orientation="Vertical">
-          <StackPanel Orientation="Vertical">
-            <TextBlock Margin="0,0,0,0" Text="Username:" />
-            <TextBox Width="250" Margin="0,4,0,0" HorizontalAlignment="Left" />
-          </StackPanel>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--  Native  -->
+                <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="12">
+        <StackPanel VerticalAlignment="Top" Orientation="Vertical">
+            <TextBlock
+                Margin="0,0,0,8"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="Kitchen Sink Example page" />
+            <!--  Blank example surface: add controls here  -->
+            <Border
+                MinHeight="300"
+                Padding="6"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundKey}}"
+                BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="0,0,0,0" Text="Username:" />
+                        <TextBox
+                            Width="250"
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Left" />
+                    </StackPanel>
 
-          <CheckBox Margin="4,4,0,0">
-            <TextBlock Text="Enabled"></TextBlock>
-          </CheckBox>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="0,0,0,0" Text="Account Type:" />
+                        <ComboBox>
+                            <ComboBoxItem>User</ComboBoxItem>
+                            <ComboBoxItem>Admin</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
 
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="0,0,0,0" Text="Enter username:" />
+                        <ComboBox IsEditable="True">
+                            <ComboBoxItem>bpell</ComboBoxItem>
+                            <ComboBoxItem>isaac</ComboBoxItem>
+                            <ComboBoxItem>lucy</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+
+                    <CheckBox Margin="4,4,0,0">
+                        <TextBlock Text="Enabled" />
+                    </CheckBox>
+
+                </StackPanel>
+            </Border>
         </StackPanel>
-      </Border>
-    </StackPanel>
-  </Grid>
+    </Grid>
 </UserControl>

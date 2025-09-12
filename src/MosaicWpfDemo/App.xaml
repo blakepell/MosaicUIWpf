@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark2.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

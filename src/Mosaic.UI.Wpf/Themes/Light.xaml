@@ -34,17 +34,27 @@
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColorKey}">#FF333333</Color>
 
     <!--  CheckBox colors  -->
-    <SolidColorBrush x:Key="CheckBox.Border.Normal" Color="#FF707070" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Border.Hot" Color="#FF26A0DA" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Border.Pressed" Color="#FF2C628B" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Border.Disabled" Color="#FFADB2B5" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Background.Normal" Color="#FFFFFFFF" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Background.Hot" Color="#FFFFFFFF" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Background.Pressed" Color="#FFFFFFFF" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Background.Disabled" Color="#FFFFFFFF" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Mark.Normal" Color="#FF202020" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Mark.Hot" Color="#FF26A0DA" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Mark.Pressed" Color="#FF2C628B" po:Freeze="True"/>
-    <SolidColorBrush x:Key="CheckBox.Mark.Disabled" Color="#FFADB2B5" po:Freeze="True"/>
+    <SolidColorBrush x:Key="CheckBox.Border.Normal" po:Freeze="True" Color="#FF707070" />
+    <SolidColorBrush x:Key="CheckBox.Border.Hot" po:Freeze="True" Color="#FF26A0DA" />
+    <SolidColorBrush x:Key="CheckBox.Border.Pressed" po:Freeze="True" Color="#FF2C628B" />
+    <SolidColorBrush x:Key="CheckBox.Border.Disabled" po:Freeze="True" Color="#FFADB2B5" />
+    <SolidColorBrush x:Key="CheckBox.Background.Normal" po:Freeze="True" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="CheckBox.Background.Hot" po:Freeze="True" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="CheckBox.Background.Pressed" po:Freeze="True" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="CheckBox.Background.Disabled" po:Freeze="True" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="CheckBox.Mark.Normal" po:Freeze="True" Color="#FF202020" />
+    <SolidColorBrush x:Key="CheckBox.Mark.Hot" po:Freeze="True" Color="#FF26A0DA" />
+    <SolidColorBrush x:Key="CheckBox.Mark.Pressed" po:Freeze="True" Color="#FF2C628B" />
+    <SolidColorBrush x:Key="CheckBox.Mark.Disabled" po:Freeze="True" Color="#FFADB2B5" />
+
+    <!-- ComboBox -->
+    <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColorKey}}" />
+    <SolidColorBrush x:Key="ComboBox.Static.Border" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#1F26A0DA" />
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#a826A0Da" />
+    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="#FFC4E5F6" />
+    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF2C628B" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF4F4F4" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFADB2B5" />
 
 </ResourceDictionary>

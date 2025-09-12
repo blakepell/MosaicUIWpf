@@ -1,0 +1,442 @@
+﻿<!--  DarkTheme.xaml  -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        =========================================================
+        NEUTRAL (Gray) — 10 shades (light -> dark)
+        =========================================================
+    -->
+    <!--  Colors  -->
+    <Color x:Key="Neutral.50.Color">#FFF5F5F5</Color>
+    <Color x:Key="Neutral.100.Color">#FFE5E5E5</Color>
+    <Color x:Key="Neutral.200.Color">#FFCCCCCC</Color>
+    <Color x:Key="Neutral.300.Color">#FFB3B3B3</Color>
+    <Color x:Key="Neutral.400.Color">#FF9E9E9E</Color>
+    <Color x:Key="Neutral.500.Color">#FF858585</Color>
+    <Color x:Key="Neutral.600.Color">#FF6B6B6B</Color>
+    <Color x:Key="Neutral.700.Color">#FF515151</Color>
+    <Color x:Key="Neutral.800.Color">#FF3C3C3C</Color>
+    <Color x:Key="Neutral.900.Color">#FF1E1E1E</Color>
+
+    <!--  Brushes  -->
+    <SolidColorBrush x:Key="Neutral.50.Brush" Color="{DynamicResource Neutral.50.Color}" />
+    <SolidColorBrush x:Key="Neutral.100.Brush" Color="{DynamicResource Neutral.100.Color}" />
+    <SolidColorBrush x:Key="Neutral.200.Brush" Color="{DynamicResource Neutral.200.Color}" />
+    <SolidColorBrush x:Key="Neutral.300.Brush" Color="{DynamicResource Neutral.300.Color}" />
+    <SolidColorBrush x:Key="Neutral.400.Brush" Color="{DynamicResource Neutral.400.Color}" />
+    <SolidColorBrush x:Key="Neutral.500.Brush" Color="{DynamicResource Neutral.500.Color}" />
+    <SolidColorBrush x:Key="Neutral.600.Brush" Color="{DynamicResource Neutral.600.Color}" />
+    <SolidColorBrush x:Key="Neutral.700.Brush" Color="{DynamicResource Neutral.700.Color}" />
+    <SolidColorBrush x:Key="Neutral.800.Brush" Color="{DynamicResource Neutral.800.Color}" />
+    <SolidColorBrush x:Key="Neutral.900.Brush" Color="{DynamicResource Neutral.900.Color}" />
+
+    <!--
+        =========================================================
+        BLUE — 10 shades (light -> dark)
+        (Accent defaults map to Blue.600)
+        =========================================================
+    -->
+    <Color x:Key="Blue.50.Color">#FFE6F2FF</Color>
+    <Color x:Key="Blue.100.Color">#FFCCE6FF</Color>
+    <Color x:Key="Blue.200.Color">#FF99CCFF</Color>
+    <Color x:Key="Blue.300.Color">#FF66B2FF</Color>
+    <Color x:Key="Blue.400.Color">#FF3399FF</Color>
+    <Color x:Key="Blue.500.Color">#FF007ACC</Color>
+    <Color x:Key="Blue.600.Color">#FF0E639C</Color>
+    <Color x:Key="Blue.700.Color">#FF094771</Color>
+    <Color x:Key="Blue.800.Color">#FF053251</Color>
+    <Color x:Key="Blue.900.Color">#FF021E34</Color>
+
+    <SolidColorBrush x:Key="Blue.50.Brush" Color="{DynamicResource Blue.50.Color}" />
+    <SolidColorBrush x:Key="Blue.100.Brush" Color="{DynamicResource Blue.100.Color}" />
+    <SolidColorBrush x:Key="Blue.200.Brush" Color="{DynamicResource Blue.200.Color}" />
+    <SolidColorBrush x:Key="Blue.300.Brush" Color="{DynamicResource Blue.300.Color}" />
+    <SolidColorBrush x:Key="Blue.400.Brush" Color="{DynamicResource Blue.400.Color}" />
+    <SolidColorBrush x:Key="Blue.500.Brush" Color="{DynamicResource Blue.500.Color}" />
+    <SolidColorBrush x:Key="Blue.600.Brush" Color="{DynamicResource Blue.600.Color}" />
+    <SolidColorBrush x:Key="Blue.700.Brush" Color="{DynamicResource Blue.700.Color}" />
+    <SolidColorBrush x:Key="Blue.800.Brush" Color="{DynamicResource Blue.800.Color}" />
+    <SolidColorBrush x:Key="Blue.900.Brush" Color="{DynamicResource Blue.900.Color}" />
+
+    <!--
+        =========================================================
+        INDIGO
+        =========================================================
+    -->
+    <Color x:Key="Indigo.50.Color">#FFEAEFFF</Color>
+    <Color x:Key="Indigo.100.Color">#FFC7D4FF</Color>
+    <Color x:Key="Indigo.200.Color">#FFA3B8FF</Color>
+    <Color x:Key="Indigo.300.Color">#FF809CFF</Color>
+    <Color x:Key="Indigo.400.Color">#FF5C80FF</Color>
+    <Color x:Key="Indigo.500.Color">#FF3A66FF</Color>
+    <Color x:Key="Indigo.600.Color">#FF2E50CC</Color>
+    <Color x:Key="Indigo.700.Color">#FF223B99</Color>
+    <Color x:Key="Indigo.800.Color">#FF17286B</Color>
+    <Color x:Key="Indigo.900.Color">#FF0E1A44</Color>
+
+    <SolidColorBrush x:Key="Indigo.50.Brush" Color="{DynamicResource Indigo.50.Color}" />
+    <SolidColorBrush x:Key="Indigo.100.Brush" Color="{DynamicResource Indigo.100.Color}" />
+    <SolidColorBrush x:Key="Indigo.200.Brush" Color="{DynamicResource Indigo.200.Color}" />
+    <SolidColorBrush x:Key="Indigo.300.Brush" Color="{DynamicResource Indigo.300.Color}" />
+    <SolidColorBrush x:Key="Indigo.400.Brush" Color="{DynamicResource Indigo.400.Color}" />
+    <SolidColorBrush x:Key="Indigo.500.Brush" Color="{DynamicResource Indigo.500.Color}" />
+    <SolidColorBrush x:Key="Indigo.600.Brush" Color="{DynamicResource Indigo.600.Color}" />
+    <SolidColorBrush x:Key="Indigo.700.Brush" Color="{DynamicResource Indigo.700.Color}" />
+    <SolidColorBrush x:Key="Indigo.800.Brush" Color="{DynamicResource Indigo.800.Color}" />
+    <SolidColorBrush x:Key="Indigo.900.Brush" Color="{DynamicResource Indigo.900.Color}" />
+
+    <!--
+        =========================================================
+        PURPLE
+        =========================================================
+    -->
+    <Color x:Key="Purple.50.Color">#FFF2E8FF</Color>
+    <Color x:Key="Purple.100.Color">#FFDCC2FF</Color>
+    <Color x:Key="Purple.200.Color">#FFC49CFF</Color>
+    <Color x:Key="Purple.300.Color">#FFA975FF</Color>
+    <Color x:Key="Purple.400.Color">#FF8D4DFF</Color>
+    <Color x:Key="Purple.500.Color">#FF7133FF</Color>
+    <Color x:Key="Purple.600.Color">#FF5C28CC</Color>
+    <Color x:Key="Purple.700.Color">#FF442099</Color>
+    <Color x:Key="Purple.800.Color">#FF31166D</Color>
+    <Color x:Key="Purple.900.Color">#FF200E48</Color>
+
+    <SolidColorBrush x:Key="Purple.50.Brush" Color="{DynamicResource Purple.50.Color}" />
+    <SolidColorBrush x:Key="Purple.100.Brush" Color="{DynamicResource Purple.100.Color}" />
+    <SolidColorBrush x:Key="Purple.200.Brush" Color="{DynamicResource Purple.200.Color}" />
+    <SolidColorBrush x:Key="Purple.300.Brush" Color="{DynamicResource Purple.300.Color}" />
+    <SolidColorBrush x:Key="Purple.400.Brush" Color="{DynamicResource Purple.400.Color}" />
+    <SolidColorBrush x:Key="Purple.500.Brush" Color="{DynamicResource Purple.500.Color}" />
+    <SolidColorBrush x:Key="Purple.600.Brush" Color="{DynamicResource Purple.600.Color}" />
+    <SolidColorBrush x:Key="Purple.700.Brush" Color="{DynamicResource Purple.700.Color}" />
+    <SolidColorBrush x:Key="Purple.800.Brush" Color="{DynamicResource Purple.800.Color}" />
+    <SolidColorBrush x:Key="Purple.900.Brush" Color="{DynamicResource Purple.900.Color}" />
+
+    <!--
+        =========================================================
+        PINK / MAGENTA
+        =========================================================
+    -->
+    <Color x:Key="Pink.50.Color">#FFFDEBFF</Color>
+    <Color x:Key="Pink.100.Color">#FFF6C2FF</Color>
+    <Color x:Key="Pink.200.Color">#FFEF9AFF</Color>
+    <Color x:Key="Pink.300.Color">#FFE36EFF</Color>
+    <Color x:Key="Pink.400.Color">#FFD645FF</Color>
+    <Color x:Key="Pink.500.Color">#FFC026FF</Color>
+    <Color x:Key="Pink.600.Color">#FF9B1DCC</Color>
+    <Color x:Key="Pink.700.Color">#FF74159A</Color>
+    <Color x:Key="Pink.800.Color">#FF521067</Color>
+    <Color x:Key="Pink.900.Color">#FF350A44</Color>
+
+    <SolidColorBrush x:Key="Pink.50.Brush" Color="{DynamicResource Pink.50.Color}" />
+    <SolidColorBrush x:Key="Pink.100.Brush" Color="{DynamicResource Pink.100.Color}" />
+    <SolidColorBrush x:Key="Pink.200.Brush" Color="{DynamicResource Pink.200.Color}" />
+    <SolidColorBrush x:Key="Pink.300.Brush" Color="{DynamicResource Pink.300.Color}" />
+    <SolidColorBrush x:Key="Pink.400.Brush" Color="{DynamicResource Pink.400.Color}" />
+    <SolidColorBrush x:Key="Pink.500.Brush" Color="{DynamicResource Pink.500.Color}" />
+    <SolidColorBrush x:Key="Pink.600.Brush" Color="{DynamicResource Pink.600.Color}" />
+    <SolidColorBrush x:Key="Pink.700.Brush" Color="{DynamicResource Pink.700.Color}" />
+    <SolidColorBrush x:Key="Pink.800.Brush" Color="{DynamicResource Pink.800.Color}" />
+    <SolidColorBrush x:Key="Pink.900.Brush" Color="{DynamicResource Pink.900.Color}" />
+
+    <!--
+        =========================================================
+        RED
+        =========================================================
+    -->
+    <Color x:Key="Red.50.Color">#FFFFEAE9</Color>
+    <Color x:Key="Red.100.Color">#FFFFC9C7</Color>
+    <Color x:Key="Red.200.Color">#FFFFA8A4</Color>
+    <Color x:Key="Red.300.Color">#FFFF8782</Color>
+    <Color x:Key="Red.400.Color">#FFF96A64</Color>
+    <Color x:Key="Red.500.Color">#FFED4741</Color>
+    <Color x:Key="Red.600.Color">#FFC93838</Color>
+    <Color x:Key="Red.700.Color">#FF992B2B</Color>
+    <Color x:Key="Red.800.Color">#FF6E2020</Color>
+    <Color x:Key="Red.900.Color">#FF4A1515</Color>
+
+    <SolidColorBrush x:Key="Red.50.Brush" Color="{DynamicResource Red.50.Color}" />
+    <SolidColorBrush x:Key="Red.100.Brush" Color="{DynamicResource Red.100.Color}" />
+    <SolidColorBrush x:Key="Red.200.Brush" Color="{DynamicResource Red.200.Color}" />
+    <SolidColorBrush x:Key="Red.300.Brush" Color="{DynamicResource Red.300.Color}" />
+    <SolidColorBrush x:Key="Red.400.Brush" Color="{DynamicResource Red.400.Color}" />
+    <SolidColorBrush x:Key="Red.500.Brush" Color="{DynamicResource Red.500.Color}" />
+    <SolidColorBrush x:Key="Red.600.Brush" Color="{DynamicResource Red.600.Color}" />
+    <SolidColorBrush x:Key="Red.700.Brush" Color="{DynamicResource Red.700.Color}" />
+    <SolidColorBrush x:Key="Red.800.Brush" Color="{DynamicResource Red.800.Color}" />
+    <SolidColorBrush x:Key="Red.900.Brush" Color="{DynamicResource Red.900.Color}" />
+
+    <!--
+        =========================================================
+        ORANGE
+        =========================================================
+    -->
+    <Color x:Key="Orange.50.Color">#FFFFF2E6</Color>
+    <Color x:Key="Orange.100.Color">#FFFFD9B3</Color>
+    <Color x:Key="Orange.200.Color">#FFFFBF80</Color>
+    <Color x:Key="Orange.300.Color">#FFFFA64D</Color>
+    <Color x:Key="Orange.400.Color">#FFFF8C1A</Color>
+    <Color x:Key="Orange.500.Color">#FFFF6F00</Color>
+    <Color x:Key="Orange.600.Color">#FFD95F00</Color>
+    <Color x:Key="Orange.700.Color">#FFB34D00</Color>
+    <Color x:Key="Orange.800.Color">#FF8C3C00</Color>
+    <Color x:Key="Orange.900.Color">#FF662B00</Color>
+
+    <SolidColorBrush x:Key="Orange.50.Brush" Color="{DynamicResource Orange.50.Color}" />
+    <SolidColorBrush x:Key="Orange.100.Brush" Color="{DynamicResource Orange.100.Color}" />
+    <SolidColorBrush x:Key="Orange.200.Brush" Color="{DynamicResource Orange.200.Color}" />
+    <SolidColorBrush x:Key="Orange.300.Brush" Color="{DynamicResource Orange.300.Color}" />
+    <SolidColorBrush x:Key="Orange.400.Brush" Color="{DynamicResource Orange.400.Color}" />
+    <SolidColorBrush x:Key="Orange.500.Brush" Color="{DynamicResource Orange.500.Color}" />
+    <SolidColorBrush x:Key="Orange.600.Brush" Color="{DynamicResource Orange.600.Color}" />
+    <SolidColorBrush x:Key="Orange.700.Brush" Color="{DynamicResource Orange.700.Color}" />
+    <SolidColorBrush x:Key="Orange.800.Brush" Color="{DynamicResource Orange.800.Color}" />
+    <SolidColorBrush x:Key="Orange.900.Brush" Color="{DynamicResource Orange.900.Color}" />
+
+    <!--
+        =========================================================
+        YELLOW
+        =========================================================
+    -->
+    <Color x:Key="Yellow.50.Color">#FFFFF9E5</Color>
+    <Color x:Key="Yellow.100.Color">#FFFFEEB8</Color>
+    <Color x:Key="Yellow.200.Color">#FFFFE38A</Color>
+    <Color x:Key="Yellow.300.Color">#FFFFD85C</Color>
+    <Color x:Key="Yellow.400.Color">#FFFFCC2E</Color>
+    <Color x:Key="Yellow.500.Color">#FFFFBF00</Color>
+    <Color x:Key="Yellow.600.Color">#FFD9A100</Color>
+    <Color x:Key="Yellow.700.Color">#FFB38300</Color>
+    <Color x:Key="Yellow.800.Color">#FF8C6500</Color>
+    <Color x:Key="Yellow.900.Color">#FF664800</Color>
+
+    <SolidColorBrush x:Key="Yellow.50.Brush" Color="{DynamicResource Yellow.50.Color}" />
+    <SolidColorBrush x:Key="Yellow.100.Brush" Color="{DynamicResource Yellow.100.Color}" />
+    <SolidColorBrush x:Key="Yellow.200.Brush" Color="{DynamicResource Yellow.200.Color}" />
+    <SolidColorBrush x:Key="Yellow.300.Brush" Color="{DynamicResource Yellow.300.Color}" />
+    <SolidColorBrush x:Key="Yellow.400.Brush" Color="{DynamicResource Yellow.400.Color}" />
+    <SolidColorBrush x:Key="Yellow.500.Brush" Color="{DynamicResource Yellow.500.Color}" />
+    <SolidColorBrush x:Key="Yellow.600.Brush" Color="{DynamicResource Yellow.600.Color}" />
+    <SolidColorBrush x:Key="Yellow.700.Brush" Color="{DynamicResource Yellow.700.Color}" />
+    <SolidColorBrush x:Key="Yellow.800.Brush" Color="{DynamicResource Yellow.800.Color}" />
+    <SolidColorBrush x:Key="Yellow.900.Brush" Color="{DynamicResource Yellow.900.Color}" />
+
+    <!--
+        =========================================================
+        LIME
+        =========================================================
+    -->
+    <Color x:Key="Lime.50.Color">#FFF3FEE7</Color>
+    <Color x:Key="Lime.100.Color">#FFE1FCC0</Color>
+    <Color x:Key="Lime.200.Color">#FFCCF99A</Color>
+    <Color x:Key="Lime.300.Color">#FFAEF06B</Color>
+    <Color x:Key="Lime.400.Color">#FF8FE53D</Color>
+    <Color x:Key="Lime.500.Color">#FF73D223</Color>
+    <Color x:Key="Lime.600.Color">#FF5AA717</Color>
+    <Color x:Key="Lime.700.Color">#FF427C11</Color>
+    <Color x:Key="Lime.800.Color">#FF2D550B</Color>
+    <Color x:Key="Lime.900.Color">#FF1C3606</Color>
+
+    <SolidColorBrush x:Key="Lime.50.Brush" Color="{DynamicResource Lime.50.Color}" />
+    <SolidColorBrush x:Key="Lime.100.Brush" Color="{DynamicResource Lime.100.Color}" />
+    <SolidColorBrush x:Key="Lime.200.Brush" Color="{DynamicResource Lime.200.Color}" />
+    <SolidColorBrush x:Key="Lime.300.Brush" Color="{DynamicResource Lime.300.Color}" />
+    <SolidColorBrush x:Key="Lime.400.Brush" Color="{DynamicResource Lime.400.Color}" />
+    <SolidColorBrush x:Key="Lime.500.Brush" Color="{DynamicResource Lime.500.Color}" />
+    <SolidColorBrush x:Key="Lime.600.Brush" Color="{DynamicResource Lime.600.Color}" />
+    <SolidColorBrush x:Key="Lime.700.Brush" Color="{DynamicResource Lime.700.Color}" />
+    <SolidColorBrush x:Key="Lime.800.Brush" Color="{DynamicResource Lime.800.Color}" />
+    <SolidColorBrush x:Key="Lime.900.Brush" Color="{DynamicResource Lime.900.Color}" />
+
+    <!--
+        =========================================================
+        GREEN
+        =========================================================
+    -->
+    <Color x:Key="Green.50.Color">#FFEDFDF2</Color>
+    <Color x:Key="Green.100.Color">#FFC8F5D8</Color>
+    <Color x:Key="Green.200.Color">#FFA4EDBF</Color>
+    <Color x:Key="Green.300.Color">#FF7DE4A4</Color>
+    <Color x:Key="Green.400.Color">#FF55DA88</Color>
+    <Color x:Key="Green.500.Color">#FF2DCF6B</Color>
+    <Color x:Key="Green.600.Color">#FF1FA857</Color>
+    <Color x:Key="Green.700.Color">#FF177D42</Color>
+    <Color x:Key="Green.800.Color">#FF0F5730</Color>
+    <Color x:Key="Green.900.Color">#FF093B22</Color>
+
+    <SolidColorBrush x:Key="Green.50.Brush" Color="{DynamicResource Green.50.Color}" />
+    <SolidColorBrush x:Key="Green.100.Brush" Color="{DynamicResource Green.100.Color}" />
+    <SolidColorBrush x:Key="Green.200.Brush" Color="{DynamicResource Green.200.Color}" />
+    <SolidColorBrush x:Key="Green.300.Brush" Color="{DynamicResource Green.300.Color}" />
+    <SolidColorBrush x:Key="Green.400.Brush" Color="{DynamicResource Green.400.Color}" />
+    <SolidColorBrush x:Key="Green.500.Brush" Color="{DynamicResource Green.500.Color}" />
+    <SolidColorBrush x:Key="Green.600.Brush" Color="{DynamicResource Green.600.Color}" />
+    <SolidColorBrush x:Key="Green.700.Brush" Color="{DynamicResource Green.700.Color}" />
+    <SolidColorBrush x:Key="Green.800.Brush" Color="{DynamicResource Green.800.Color}" />
+    <SolidColorBrush x:Key="Green.900.Brush" Color="{DynamicResource Green.900.Color}" />
+
+    <!--
+        =========================================================
+        TEAL
+        =========================================================
+    -->
+    <Color x:Key="Teal.50.Color">#FFE6FFFA</Color>
+    <Color x:Key="Teal.100.Color">#FFB2FFF0</Color>
+    <Color x:Key="Teal.200.Color">#FF80FFE6</Color>
+    <Color x:Key="Teal.300.Color">#FF4DFFDB</Color>
+    <Color x:Key="Teal.400.Color">#FF1AEFD0</Color>
+    <Color x:Key="Teal.500.Color">#FF00D6BA</Color>
+    <Color x:Key="Teal.600.Color">#FF00B39A</Color>
+    <Color x:Key="Teal.700.Color">#FF008C77</Color>
+    <Color x:Key="Teal.800.Color">#FF006B5A</Color>
+    <Color x:Key="Teal.900.Color">#FF00483D</Color>
+
+    <SolidColorBrush x:Key="Teal.50.Brush" Color="{DynamicResource Teal.50.Color}" />
+    <SolidColorBrush x:Key="Teal.100.Brush" Color="{DynamicResource Teal.100.Color}" />
+    <SolidColorBrush x:Key="Teal.200.Brush" Color="{DynamicResource Teal.200.Color}" />
+    <SolidColorBrush x:Key="Teal.300.Brush" Color="{DynamicResource Teal.300.Color}" />
+    <SolidColorBrush x:Key="Teal.400.Brush" Color="{DynamicResource Teal.400.Color}" />
+    <SolidColorBrush x:Key="Teal.500.Brush" Color="{DynamicResource Teal.500.Color}" />
+    <SolidColorBrush x:Key="Teal.600.Brush" Color="{DynamicResource Teal.600.Color}" />
+    <SolidColorBrush x:Key="Teal.700.Brush" Color="{DynamicResource Teal.700.Color}" />
+    <SolidColorBrush x:Key="Teal.800.Brush" Color="{DynamicResource Teal.800.Color}" />
+    <SolidColorBrush x:Key="Teal.900.Brush" Color="{DynamicResource Teal.900.Color}" />
+
+    <!--
+        =========================================================
+        CYAN
+        =========================================================
+    -->
+    <Color x:Key="Cyan.50.Color">#FFE6FFFB</Color>
+    <Color x:Key="Cyan.100.Color">#FFBFF7F3</Color>
+    <Color x:Key="Cyan.200.Color">#FF99EFEA</Color>
+    <Color x:Key="Cyan.300.Color">#FF66E0DB</Color>
+    <Color x:Key="Cyan.400.Color">#FF33D1CC</Color>
+    <Color x:Key="Cyan.500.Color">#FF00BFB3</Color>
+    <Color x:Key="Cyan.600.Color">#FF009E99</Color>
+    <Color x:Key="Cyan.700.Color">#FF007F7A</Color>
+    <Color x:Key="Cyan.800.Color">#FF005F5C</Color>
+    <Color x:Key="Cyan.900.Color">#FF003F3D</Color>
+
+    <SolidColorBrush x:Key="Cyan.50.Brush" Color="{DynamicResource Cyan.50.Color}" />
+    <SolidColorBrush x:Key="Cyan.100.Brush" Color="{DynamicResource Cyan.100.Color}" />
+    <SolidColorBrush x:Key="Cyan.200.Brush" Color="{DynamicResource Cyan.200.Color}" />
+    <SolidColorBrush x:Key="Cyan.300.Brush" Color="{DynamicResource Cyan.300.Color}" />
+    <SolidColorBrush x:Key="Cyan.400.Brush" Color="{DynamicResource Cyan.400.Color}" />
+    <SolidColorBrush x:Key="Cyan.500.Brush" Color="{DynamicResource Cyan.500.Color}" />
+    <SolidColorBrush x:Key="Cyan.600.Brush" Color="{DynamicResource Cyan.600.Color}" />
+    <SolidColorBrush x:Key="Cyan.700.Brush" Color="{DynamicResource Cyan.700.Color}" />
+    <SolidColorBrush x:Key="Cyan.800.Brush" Color="{DynamicResource Cyan.800.Color}" />
+    <SolidColorBrush x:Key="Cyan.900.Brush" Color="{DynamicResource Cyan.900.Color}" />
+
+    <!--
+        =========================================================
+        ACCENT / SELECTION / SURFACES (VS Dark inspired)
+        =========================================================
+    -->
+    <!--  Accent (default blue family)  -->
+    <Color x:Key="Accent.Color">#FF0E639C</Color>
+    <!--  Blue.600-ish  -->
+    <SolidColorBrush x:Key="Accent.Brush" Color="{DynamicResource Accent.Color}" />
+    <Color x:Key="Accent.Light.Color">#FF3399FF</Color>
+    <!--  Blue.400  -->
+    <SolidColorBrush x:Key="Accent.Light.Brush" Color="{DynamicResource Accent.Light.Color}" />
+    <Color x:Key="Accent.Dark.Color">#FF094771</Color>
+    <!--  Blue.700  -->
+    <SolidColorBrush x:Key="Accent.Dark.Brush" Color="{DynamicResource Accent.Dark.Color}" />
+
+    <!--  Selection (editor/list-like)  -->
+    <Color x:Key="Selection.Active.Background.Color">#FF264F78</Color>
+    <SolidColorBrush x:Key="Selection.Active.Background.Brush" Color="{DynamicResource Selection.Active.Background.Color}" />
+    <Color x:Key="Selection.Inactive.Background.Color">#FF3A3D41</Color>
+    <SolidColorBrush x:Key="Selection.Inactive.Background.Brush" Color="{DynamicResource Selection.Inactive.Background.Color}" />
+    <Color x:Key="Selection.Foreground.Color">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="Selection.Foreground.Brush" Color="{DynamicResource Selection.Foreground.Color}" />
+
+    <!--  Surfaces / Windows  -->
+    <Color x:Key="Window.Background.Color">#FF1E1E1E</Color>
+    <!--  VS dark window  -->
+    <SolidColorBrush x:Key="Window.Background.Brush" Color="{DynamicResource Window.Background.Color}" />
+    <Color x:Key="Surface.Background.Color">#FF252526</Color>
+    <!--  panels/tool windows  -->
+    <SolidColorBrush x:Key="Surface.Background.Brush" Color="{DynamicResource Surface.Background.Color}" />
+    <Color x:Key="Surface.Border.Color">#FF3C3C3C</Color>
+    <SolidColorBrush x:Key="Surface.Border.Brush" Color="{DynamicResource Surface.Border.Color}" />
+
+    <!--  Defaults for generic controls (re-use these keys everywhere)  -->
+    <Color x:Key="Control.Background.Color">#FF1E1E1E</Color>
+    <SolidColorBrush x:Key="Control.Background.Brush" Color="{DynamicResource Control.Background.Color}" />
+
+    <Color x:Key="Control.Foreground.Color">#FFD4D4D4</Color>
+    <SolidColorBrush x:Key="Control.Foreground.Brush" Color="{DynamicResource Control.Foreground.Color}" />
+
+    <Color x:Key="Control.Border.Color">#FF3C3C3C</Color>
+    <SolidColorBrush x:Key="Control.Border.Brush" Color="{DynamicResource Control.Border.Color}" />
+
+    <Color x:Key="Control.Disabled.Background.Color">#FF2A2A2A</Color>
+    <SolidColorBrush x:Key="Control.Disabled.Background.Brush" Color="{DynamicResource Control.Disabled.Background.Color}" />
+    <Color x:Key="Control.Disabled.Foreground.Color">#FF858585</Color>
+    <SolidColorBrush x:Key="Control.Disabled.Foreground.Brush" Color="{DynamicResource Control.Disabled.Foreground.Color}" />
+    <Color x:Key="Control.Disabled.Border.Color">#FF3C3C3C</Color>
+    <SolidColorBrush x:Key="Control.Disabled.Border.Brush" Color="{DynamicResource Control.Disabled.Border.Color}" />
+
+    <Color x:Key="Control.Hover.Background.Color">#FF2A2A2A</Color>
+    <SolidColorBrush x:Key="Control.Hover.Background.Brush" Color="{DynamicResource Control.Hover.Background.Color}" />
+    <Color x:Key="Control.Pressed.Background.Color">#FF333333</Color>
+    <SolidColorBrush x:Key="Control.Pressed.Background.Brush" Color="{DynamicResource Control.Pressed.Background.Color}" />
+
+    <Color x:Key="Control.Focus.Border.Color">#FF0E639C</Color>
+    <!--  match Accent  -->
+    <SolidColorBrush x:Key="Control.Focus.Border.Brush" Color="{DynamicResource Control.Focus.Border.Color}" />
+
+    <!--  Hyperlinks / Info / Status (semantic aliases)  -->
+    <Color x:Key="Link.Foreground.Color">#FF3399FF</Color>
+    <!--  Blue.400  -->
+    <SolidColorBrush x:Key="Link.Foreground.Brush" Color="{DynamicResource Link.Foreground.Color}" />
+    <Color x:Key="Info.Color">#FF3399FF</Color>
+    <!--  Blue.400  -->
+    <SolidColorBrush x:Key="Info.Brush" Color="{DynamicResource Info.Color}" />
+    <Color x:Key="Success.Color">#FF2DCF6B</Color>
+    <!--  Green.500  -->
+    <SolidColorBrush x:Key="Success.Brush" Color="{DynamicResource Success.Color}" />
+    <Color x:Key="Warning.Color">#FFFF8C1A</Color>
+    <!--  Orange.400  -->
+    <SolidColorBrush x:Key="Warning.Brush" Color="{DynamicResource Warning.Color}" />
+    <Color x:Key="Danger.Color">#FFED4741</Color>
+    <!--  Red.500  -->
+    <SolidColorBrush x:Key="Danger.Brush" Color="{DynamicResource Danger.Color}" />
+
+    <!--
+        =========================================================
+        OPTIONAL CONTROL-SPECIFIC ALIASES (still reusing Control.*)
+        Example: point control styles at these instead of raw colors
+        =========================================================
+    -->
+    <SolidColorBrush x:Key="Button.Background.Brush" Color="{DynamicResource Control.Background.Color}" />
+    <SolidColorBrush x:Key="Button.Foreground.Brush" Color="{DynamicResource Control.Foreground.Color}" />
+    <SolidColorBrush x:Key="Button.Border.Brush" Color="{DynamicResource Control.Border.Color}" />
+    <SolidColorBrush x:Key="Button.Hover.Background.Brush" Color="{DynamicResource Control.Hover.Background.Color}" />
+    <SolidColorBrush x:Key="Button.Pressed.Background.Brush" Color="{DynamicResource Control.Pressed.Background.Color}" />
+    <SolidColorBrush x:Key="Button.Focus.Border.Brush" Color="{DynamicResource Control.Focus.Border.Color}" />
+
+    <SolidColorBrush x:Key="TextBox.Background.Brush" Color="{DynamicResource Control.Background.Color}" />
+    <SolidColorBrush x:Key="TextBox.Foreground.Brush" Color="{DynamicResource Control.Foreground.Color}" />
+    <SolidColorBrush x:Key="TextBox.Border.Brush" Color="{DynamicResource Control.Border.Color}" />
+    <SolidColorBrush x:Key="TextBox.Selection.Background.Brush" Color="{DynamicResource Selection.Active.Background.Color}" />
+    <SolidColorBrush x:Key="TextBox.Selection.Foreground.Brush" Color="{DynamicResource Selection.Foreground.Color}" />
+
+    <SolidColorBrush x:Key="ListItem.Selected.Background.Brush" Color="{DynamicResource Selection.Active.Background.Color}" />
+    <SolidColorBrush x:Key="ListItem.SelectedInactive.Background.Brush" Color="{DynamicResource Selection.Inactive.Background.Color}" />
+    <SolidColorBrush x:Key="ListItem.Selected.Foreground.Brush" Color="{DynamicResource Selection.Foreground.Color}" />
+
+    <!--
+        =========================================================
+        REMAINING VIBRANT PALETTES
+        (Define after aliases for organization)
+        =========================================================
+    -->
+
+    <!--  OR keep palettes grouped up here; continuing…  -->
+
+    <!--  Done earlier: Blue, Indigo, Purple, Pink, Red, Orange, Yellow, Lime, Green, Teal, Cyan  -->
+
+</ResourceDictionary>

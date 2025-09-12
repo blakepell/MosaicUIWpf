@@ -2,6 +2,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TextBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
-
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ComboBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
