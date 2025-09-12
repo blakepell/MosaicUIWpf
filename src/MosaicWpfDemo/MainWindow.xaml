@@ -251,6 +251,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Kitchen Sink (new)  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/collage-48.png"
+                    Text="Kitchen Sink">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Kitchen Sink" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ShadowPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:KitchenSinkExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Avatar  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
