@@ -60,18 +60,13 @@
             ItemsSource="{Binding ChatServer.Clients.AsObservable}"
             SelectionMode="Single"
             VirtualizingStackPanel.IsVirtualizing="False">
-            <ListView.Resources>
-                <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-                        <!--  AeroLite  -->
-                        <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/aerolite.normalcolor.xaml" />-->
-                    </ResourceDictionary.MergedDictionaries>
-                </ResourceDictionary>
-            </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <!--  Type  -->
-                    <GridViewColumn Width="100" Header="Username">
+                    <GridViewColumn Width="100">
+                        <GridViewColumnHeader>
+                            Username
+                        </GridViewColumnHeader>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Username}" />
@@ -83,7 +78,7 @@
                     <GridViewColumn Width="125" Header="Connected At">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ConnectedAt}" />
+                                <TextBlock Text="{Binding ConnectedAt, Converter={x:Static mosaic:DateTimeDisplayConverter.Instance}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -92,7 +87,7 @@
                     <GridViewColumn Width="125" Header="Last Activity">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding LastActivity}" />
+                                <TextBlock Text="{Binding LastActivity, Converter={x:Static mosaic:DateTimeDisplayConverter.Instance}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
