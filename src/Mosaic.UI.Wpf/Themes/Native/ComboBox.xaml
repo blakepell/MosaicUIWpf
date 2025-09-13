@@ -154,11 +154,11 @@
             <Border
                 x:Name="border"
                 Margin="{TemplateBinding BorderThickness}"
-                Background="{DynamicResource TextBox.Static.Background}">
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}">
                 <TextBox
-                    Padding="1"
                     x:Name="PART_EditableTextBox"
                     Margin="{TemplateBinding Padding}"
+                    Padding="1"
                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                     IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
