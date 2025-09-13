@@ -71,6 +71,14 @@
                             Margin="0,0,0,6"
                             HorizontalAlignment="Left"
                             FontSize="13"
+                            Text="Server" />
+                        <ComboBox x:Name="ServerAddress" SelectedValue="127.0.0.1" Margin="0,0,0,6" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextBackgroundKey}}">
+                            <ComboBoxItem>127.0.0.1</ComboBoxItem>
+                        </ComboBox>
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            HorizontalAlignment="Left"
+                            FontSize="13"
                             Text="Username" />
                         <TextBox
                             x:Name="UsernameTextBox"

@@ -1776,9 +1776,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <SolidColorBrush x:Key="ListBorder" Color="#FFCCCCCC" />
-
-
 
     <Style x:Key="{x:Type ListBox}" TargetType="{x:Type ListBox}">
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
@@ -1821,9 +1820,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
 
     <SolidColorBrush x:Key="Item.Static.Background" Color="#FFFCFCFC" />
     <SolidColorBrush x:Key="Item.Static.Border" Color="#FFFCFCFC" />

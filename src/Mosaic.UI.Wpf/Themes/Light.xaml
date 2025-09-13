@@ -34,20 +34,56 @@
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColorKey}">#FF333333</Color>
 
     <!--  CheckBox colors  -->
-    <SolidColorBrush x:Key="CheckBox.Border.Normal" po:Freeze="True" Color="#FF707070" />
-    <SolidColorBrush x:Key="CheckBox.Border.Hot" po:Freeze="True" Color="#FF26A0DA" />
-    <SolidColorBrush x:Key="CheckBox.Border.Pressed" po:Freeze="True" Color="#FF2C628B" />
-    <SolidColorBrush x:Key="CheckBox.Border.Disabled" po:Freeze="True" Color="#FFADB2B5" />
-    <SolidColorBrush x:Key="CheckBox.Background.Normal" po:Freeze="True" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="CheckBox.Background.Hot" po:Freeze="True" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="CheckBox.Background.Pressed" po:Freeze="True" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="CheckBox.Background.Disabled" po:Freeze="True" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="CheckBox.Mark.Normal" po:Freeze="True" Color="#FF202020" />
-    <SolidColorBrush x:Key="CheckBox.Mark.Hot" po:Freeze="True" Color="#FF26A0DA" />
-    <SolidColorBrush x:Key="CheckBox.Mark.Pressed" po:Freeze="True" Color="#FF2C628B" />
-    <SolidColorBrush x:Key="CheckBox.Mark.Disabled" po:Freeze="True" Color="#FFADB2B5" />
+    <SolidColorBrush
+        x:Key="CheckBox.Border.Normal"
+        po:Freeze="True"
+        Color="#FF707070" />
+    <SolidColorBrush
+        x:Key="CheckBox.Border.Hot"
+        po:Freeze="True"
+        Color="#FF26A0DA" />
+    <SolidColorBrush
+        x:Key="CheckBox.Border.Pressed"
+        po:Freeze="True"
+        Color="#FF2C628B" />
+    <SolidColorBrush
+        x:Key="CheckBox.Border.Disabled"
+        po:Freeze="True"
+        Color="#FFADB2B5" />
+    <SolidColorBrush
+        x:Key="CheckBox.Background.Normal"
+        po:Freeze="True"
+        Color="#FFFFFFFF" />
+    <SolidColorBrush
+        x:Key="CheckBox.Background.Hot"
+        po:Freeze="True"
+        Color="#FFFFFFFF" />
+    <SolidColorBrush
+        x:Key="CheckBox.Background.Pressed"
+        po:Freeze="True"
+        Color="#FFFFFFFF" />
+    <SolidColorBrush
+        x:Key="CheckBox.Background.Disabled"
+        po:Freeze="True"
+        Color="#FFFFFFFF" />
+    <SolidColorBrush
+        x:Key="CheckBox.Mark.Normal"
+        po:Freeze="True"
+        Color="#FF202020" />
+    <SolidColorBrush
+        x:Key="CheckBox.Mark.Hot"
+        po:Freeze="True"
+        Color="#FF26A0DA" />
+    <SolidColorBrush
+        x:Key="CheckBox.Mark.Pressed"
+        po:Freeze="True"
+        Color="#FF2C628B" />
+    <SolidColorBrush
+        x:Key="CheckBox.Mark.Disabled"
+        po:Freeze="True"
+        Color="#FFADB2B5" />
 
-    <!-- ComboBox -->
+    <!--  ComboBox  -->
     <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColorKey}}" />
     <SolidColorBrush x:Key="ComboBox.Static.Border" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
     <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#1F26A0DA" />
@@ -56,5 +92,39 @@
     <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF2C628B" />
     <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF4F4F4" />
     <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFADB2B5" />
+
+    <!--  ListView / GridView brushes (light theme)  -->
+    <SolidColorBrush x:Key="ListBorder" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
+    <SolidColorBrush x:Key="Item.Static.Background" Color="Transparent" />
+    <SolidColorBrush x:Key="Item.Static.Border" Color="Transparent" />
+    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#E6F2FF" />
+    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF005A9E" />
+    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#CCCCCC" />
+    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#999999" />
+
+    <SolidColorBrush x:Key="GridViewColumnHeader.Background" Color="#F9F9F9" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.BorderBrush" Color="#E1E1E1" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.MouseOver.Border" Color="#FF0078D7" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.MouseOver.Background" Color="#E6F2FF" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.Pressed.Border" Color="#FF005A9E" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.Pressed.Background" Color="#CCCCCC" />
+    <SolidColorBrush x:Key="GridViewColumnHeader.FloatingOverlayBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="GridViewColumnHeaderGripper.LineBrush" Color="#E1E1E1" />
+    <SolidColorBrush x:Key="ScrollBar.SeparatorBrush" Color="#F9F9F9" />
+
+    <!--  ListBox brushes (light theme)  -->
+    <!--
+    <SolidColorBrush x:Key="ListBorder" Color="#FFCCCCCC" />
+
+    <SolidColorBrush x:Key="Item.Static.Background" Color="#FFFCFCFC" />
+    <SolidColorBrush x:Key="Item.Static.Border" Color="#FFFCFCFC" />
+    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#FFF2F7FD" />
+    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#FFB8D6FB" />
+    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FFDCEBFE" />
+    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF84ACDD" />
+    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA" />-->
 
 </ResourceDictionary>

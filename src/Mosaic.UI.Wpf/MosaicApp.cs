@@ -332,7 +332,9 @@ namespace Mosaic.UI.Wpf
                         source.Contains("/Dark.xaml") ||
                         source.Contains("aero2.normalcolor.xaml") ||
                         source.Contains("aero2.darkcolor.xaml") ||
-                        source.Contains("/Brushes.xaml")) // Also remove Brushes.xaml
+                        source.Contains("/Brushes.xaml") ||
+                        source.Contains("/Generic.xaml") ||
+                        source.Contains("/Native.xaml")) // Also remove Generic.xaml and Native.xaml
                     {
                         toRemove.Add(dict);
                     }
@@ -344,20 +346,30 @@ namespace Mosaic.UI.Wpf
                 mergedDictionaries.Remove(dict);
             }
 
-            // 1. Add the new theme-specific COLOR dictionary
+            // Load resources in correct order: aero2 first, then our theme colors to override
             if (themeName == "Light")
             {
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light.xaml") });
+                // 1. Load aero2 base styles first
                 mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml") });
+                // 2. Load our theme colors to override aero2 where needed
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light.xaml") });
             }
             else // Dark
             {
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml") });
+                // 1. Load aero2 base styles first
                 mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml") });
+                // 2. Load our theme colors to override aero2 where needed
+                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml") });
             }
 
-            // 2. Re-add the BRUSH dictionary. This forces DynamicResource to re-evaluate against the new colors.
+            // 3. Re-add the BRUSH dictionary
             mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml") });
+            
+            // 4. Re-add the custom control dictionaries
+            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml") });
+            
+            // 5. Re-add the native control dictionaries LAST so they can use the theme brushes
+            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml") });
 
             // Notify subscribers about the theme change
             MosaicApp.OnThemeChanged(themeName);

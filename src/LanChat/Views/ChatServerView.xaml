@@ -55,7 +55,7 @@
             AllowDrop="True"
             AlternationCount="2"
             BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrushKey}}"
-            BorderThickness=".9,.9,0,.9"
+            BorderThickness=".9,.9,.9,.9"
             FontSize="12"
             ItemsSource="{Binding ChatServer.Clients.AsObservable}"
             SelectionMode="Single"
@@ -64,7 +64,7 @@
                 <ResourceDictionary>
                     <ResourceDictionary.MergedDictionaries>
                         <!--  AeroLite  -->
-                        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/aerolite.normalcolor.xaml" />
+                        <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/aerolite.normalcolor.xaml" />-->
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
             </ListView.Resources>
