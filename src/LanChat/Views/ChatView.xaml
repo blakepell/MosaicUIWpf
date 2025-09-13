@@ -59,14 +59,6 @@
                     CornerRadius="6"
                     Effect="{x:Null}">
                     <StackPanel>
-                        <StackPanel.Resources>
-                            <ResourceDictionary>
-                                <ResourceDictionary.MergedDictionaries>
-                                    <!--  AeroLite  -->
-                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TextBox.xaml" />
-                                </ResourceDictionary.MergedDictionaries>
-                            </ResourceDictionary>
-                        </StackPanel.Resources>
                         <TextBlock
                             Margin="0,0,0,6"
                             HorizontalAlignment="Left"
