@@ -125,7 +125,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{DynamicResource GridViewColumnHeader.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GridViewColumnHeader.BorderBrush}" />
-        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="BorderThickness" Value="0,0,0,0" />
         <Setter Property="Padding" Value="6,6,6,6" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
         <Setter Property="Template">
