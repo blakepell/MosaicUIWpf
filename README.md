@@ -8,7 +8,11 @@ WPF is a great, mature technology that will be with us for a long time now that'
 
 If you find this project interesting or useful, please give it a star.
 
-**Note**: There will be frequent changes to the styles in the initial part of this project.
+> Note: Expect frequent updates to the styling system during the early stages of this project.
+> I’m currently exploring various theming patterns through a process of experimentation. I've concluded that customizing the default control templates for native WPF controls is necessary; these will be provided in a separate ResourceDictionary.
+> Previously, I overrode SystemColors, but this approach proved too invasive—particularly for applications aiming to coexist with other UI frameworks without conflict.  Also, there are many stock controls that use static resources or hard coded colors so SystemColors gets you some of the way there, but not all of the way
+
+A final note, if you have a useful reusable (mostly) compartmentalized control you want to share and be creditted for, feel free to put in a pull request and I'll look at it.
 
 ## Dark Theme
 
