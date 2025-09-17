@@ -7,6 +7,7 @@
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}"></Setter>
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -59,9 +60,6 @@
                 </MultiTrigger.Conditions>
                 <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.InactiveSelectionBackgroundBrush}}" />
             </MultiTrigger>
-            <Trigger Property="IsSelectionActive" Value="True">
-                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
-            </Trigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
