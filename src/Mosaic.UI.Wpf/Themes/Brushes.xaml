@@ -54,7 +54,7 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundColor}}" />
 
-    <!-- Button (moved: colors are defined per-theme; brushes bind to those colors) -->
+    <!--  Button (moved: colors are defined per-theme; brushes bind to those colors)  -->
     <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource Button.Static.BackgroundColor}" />
     <SolidColorBrush x:Key="Button.Static.Border" Color="{DynamicResource Button.Static.BorderColor}" />
     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="{DynamicResource Button.MouseOver.BackgroundColor}" />
