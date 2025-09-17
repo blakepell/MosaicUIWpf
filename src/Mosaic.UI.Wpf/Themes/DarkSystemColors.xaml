@@ -1,0 +1,96 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  SYSTEM COLORS  -->
+
+    <!--  ActiveBorder  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ActiveBorderBrushKey}" Color="#FF38383B" />
+    <Color x:Key="{x:Static SystemColors.ActiveBorderColorKey}">#FF38383B</Color>
+    <!--  ActiveCaption  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ActiveCaptionBrushKey}" Color="#FF3A96DD" />
+    <Color x:Key="{x:Static SystemColors.ActiveCaptionColorKey}">#FF3A96DD</Color>
+    <!--  ActiveCaptionText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ActiveCaptionTextBrushKey}" Color="#FFFFFFFF" />
+    <Color x:Key="{x:Static SystemColors.ActiveCaptionTextColorKey}">#FFFFFFFF</Color>
+    <!--  AppWorkspace  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.AppWorkspaceBrushKey}" Color="#FF2E2E31" />
+    <Color x:Key="{x:Static SystemColors.AppWorkspaceColorKey}">#FF2E2E31</Color>
+    <!--  Control  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FF2D2D30" />
+    <Color x:Key="{x:Static SystemColors.ControlColorKey}">#FF2D2D30</Color>
+    <!--  ControlDark  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkBrushKey}" Color="#FF232325" />
+    <Color x:Key="{x:Static SystemColors.ControlDarkColorKey}">#FF232325</Color>
+    <!--  ControlDarkDark  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlDarkDarkBrushKey}" Color="#FF18181A" />
+    <Color x:Key="{x:Static SystemColors.ControlDarkDarkColorKey}">#FF18181A</Color>
+    <!--  ControlLight  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlLightBrushKey}" Color="#FF37373A" />
+    <Color x:Key="{x:Static SystemColors.ControlLightColorKey}">#FF37373A</Color>
+    <!--  ControlLightLight  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlLightLightBrushKey}" Color="#FF46464A" />
+    <Color x:Key="{x:Static SystemColors.ControlLightLightColorKey}">#FF46464A</Color>
+    <!--  ControlText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#FFF7F7F7" />
+    <Color x:Key="{x:Static SystemColors.ControlTextColorKey}">#FFF7F7F7</Color>
+    <!--  Desktop  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.DesktopBrushKey}" Color="#FF232325" />
+    <Color x:Key="{x:Static SystemColors.DesktopColorKey}">#FF232325</Color>
+    <!--  GradientActiveCaption  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.GradientActiveCaptionBrushKey}" Color="#FF50D9F7" />
+    <Color x:Key="{x:Static SystemColors.GradientActiveCaptionColorKey}">#FF50D9F7</Color>
+    <!--  GradientInactiveCaption  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.GradientInactiveCaptionBrushKey}" Color="#FF295A6D" />
+    <Color x:Key="{x:Static SystemColors.GradientInactiveCaptionColorKey}">#FF295A6D</Color>
+    <!--  GrayText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="#FF77777B" />
+    <Color x:Key="{x:Static SystemColors.GrayTextColorKey}">#FF77777B</Color>
+    <!--  Highlight  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF3399FF" />
+    <Color x:Key="{x:Static SystemColors.HighlightColorKey}">#FF3399FF</Color>
+    <!--  HighlightText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFFFF" />
+    <Color x:Key="{x:Static SystemColors.HighlightTextColorKey}">#FFFFFFFF</Color>
+    <!--  HotTrack  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.HotTrackBrushKey}" Color="#FFF13AC5" />
+    <Color x:Key="{x:Static SystemColors.HotTrackColorKey}">#FFF13AC5</Color>
+    <!--  InactiveBorder  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveBorderBrushKey}" Color="#FF38383B" />
+    <Color x:Key="{x:Static SystemColors.InactiveBorderColorKey}">#FF38383B</Color>
+    <!--  InactiveCaption  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveCaptionBrushKey}" Color="#FF3B4050" />
+    <Color x:Key="{x:Static SystemColors.InactiveCaptionColorKey}">#FF3B4050</Color>
+    <!--  InactiveCaptionText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveCaptionTextBrushKey}" Color="#FFCCCCCC" />
+    <Color x:Key="{x:Static SystemColors.InactiveCaptionTextColorKey}">#FFCCCCCC</Color>
+    <!--  Info  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InfoBrushKey}" Color="#FF3E3E42" />
+    <Color x:Key="{x:Static SystemColors.InfoColorKey}">#FF3E3E42</Color>
+    <!--  InfoText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.InfoTextBrushKey}" Color="#FFB2F0FF" />
+    <Color x:Key="{x:Static SystemColors.InfoTextColorKey}">#FFB2F0FF</Color>
+    <!--  Menu  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#FF28282B" />
+    <Color x:Key="{x:Static SystemColors.MenuColorKey}">#FF28282B</Color>
+    <!--  MenuBar  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#FF232325" />
+    <Color x:Key="{x:Static SystemColors.MenuBarColorKey}">#FF232325</Color>
+    <!--  MenuHighlight  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrushKey}" Color="#FF25BFFF" />
+    <Color x:Key="{x:Static SystemColors.MenuHighlightColorKey}">#FF25BFFF</Color>
+    <!--  MenuText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#FFF7F7F7" />
+    <Color x:Key="{x:Static SystemColors.MenuTextColorKey}">#FFF7F7F7</Color>
+    <!--  ScrollBar  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ScrollBarBrushKey}" Color="#FF343437" />
+    <Color x:Key="{x:Static SystemColors.ScrollBarColorKey}">#FF343437</Color>
+    <!--  Window  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#FF232325" />
+    <Color x:Key="{x:Static SystemColors.WindowColorKey}">#FF232325</Color>
+    <!--  WindowFrame  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowFrameBrushKey}" Color="#FF1A1A1B" />
+    <Color x:Key="{x:Static SystemColors.WindowFrameColorKey}">#FF1A1A1B</Color>
+    <!--  WindowText  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#FFF7F7F7" />
+    <Color x:Key="{x:Static SystemColors.WindowTextColorKey}">#FFF7F7F7</Color>
+
+</ResourceDictionary>

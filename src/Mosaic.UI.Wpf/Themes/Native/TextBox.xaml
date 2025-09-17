@@ -2,10 +2,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+    
     <Style x:Key="{x:Type TextBoxBase}" TargetType="{x:Type TextBoxBase}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -35,10 +36,10 @@
                             <Setter TargetName="border" Property="Opacity" Value="0.56" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderHoverBrushKey}}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="true">
-                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderFocusBrushKey}}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -56,12 +57,11 @@
                     <Condition Property="IsInactiveSelectionHighlightEnabled" Value="true" />
                     <Condition Property="IsSelectionActive" Value="false" />
                 </MultiTrigger.Conditions>
-                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextInactiveSelectionBrushKey}}" />
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.InactiveSelectionBackgroundBrush}}" />
             </MultiTrigger>
             <Trigger Property="IsSelectionActive" Value="True">
-                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSelectionBrushKey}}" />
+                <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
             </Trigger>
         </Style.Triggers>
     </Style>
-
 </ResourceDictionary>

@@ -7,12 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="Mosaic UI WPF Demo"
     Width="1000"
     Height="600"
     AllowsTransparency="False"
-    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-    Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen"
@@ -26,7 +27,7 @@
             <Setter Property="Height" Value="36" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -39,10 +40,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlHoverBackgroundBrush}}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlPressedBackgroundBrush}}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -53,7 +54,7 @@
             x:Key="CloseButtonStyle"
             BasedOn="{StaticResource TitleBarButtonStyle}"
             TargetType="Button">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -105,7 +106,7 @@
             Padding="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            Background="{DynamicResource {x:Static SystemColors.WindowBrush}}"
+            Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
             MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <DockPanel Height="35" LastChildFill="True">
                 <!--  System Buttons (Right)  -->
@@ -123,7 +124,8 @@
                             <DataTemplate>
                                 <Viewbox Width="16" Height="16">
                                     <Canvas Width="512" Height="512">
-                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" 
+                                              Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
                                     </Canvas>
                                 </Viewbox>
                             </DataTemplate>
@@ -178,7 +180,7 @@
                         FontFamily="Segoe UI"
                         FontSize="12"
                         FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+                        Foreground="{DynamicResource {x:Static  theme:MosaicTheme.WindowForegroundBrush}}"
                         Text="Mosaic UI WPF Demo" />
                 </Border>
             </DockPanel>

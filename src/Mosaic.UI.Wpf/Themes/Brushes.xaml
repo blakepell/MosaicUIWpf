@@ -1,34 +1,68 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
-    <!--  MOSAIC CUSTOM BRUSHES  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBackgroundKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderHoverBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderHoverColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderFocusBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderFocusColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextSelectionBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSelectionColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextInactiveSelectionBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextInactiveSelectionColorKey}}" />
+    <!--  General Accents  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SelectionBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SelectionForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.InactiveSelectionBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.InactiveSelectionBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.PlaceholderTextBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextColor}}" />
 
-    <!--  Hyperlink brushes  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkHoverColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkVisitedColorKey}}" />
+    <!--  Status / Semantics  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.InfoBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.InfoColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SuccessBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SuccessColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WarningBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.WarningColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ErrorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ErrorColor}}" />
 
-    <!--  Sidebar brushes  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarForegroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundColorKey}}" />
+    <!--  Window  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundColor}}" />
 
-    <!--  Tab & TabItem brushes  -->
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemAccentBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBorderBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderColorKey}}" />
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemForegroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundColorKey}}" />
+    <!--  Control  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlSelectedBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlPressedBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderColor}}" />
+
+    <!--  Hyperlink  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkHoverColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkVisitedColor}}" />
+
+    <!--  Tab & TabItem  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundColor}}" />
+
+    <!--  Sidebar  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundColor}}" />
+
+    <!-- Button (moved: colors are defined per-theme; brushes bind to those colors) -->
+    <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource Button.Static.BackgroundColor}" />
+    <SolidColorBrush x:Key="Button.Static.Border" Color="{DynamicResource Button.Static.BorderColor}" />
+    <SolidColorBrush x:Key="Button.MouseOver.Background" Color="{DynamicResource Button.MouseOver.BackgroundColor}" />
+    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="{DynamicResource Button.MouseOver.BorderColor}" />
+    <SolidColorBrush x:Key="Button.Pressed.Background" Color="{DynamicResource Button.Pressed.BackgroundColor}" />
+    <SolidColorBrush x:Key="Button.Pressed.Border" Color="{DynamicResource Button.Pressed.BorderColor}" />
+    <SolidColorBrush x:Key="Button.Disabled.Background" Color="{DynamicResource Button.Disabled.BackgroundColor}" />
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="{DynamicResource Button.Disabled.BorderColor}" />
+    <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="{DynamicResource Button.Disabled.ForegroundColor}" />
 
 </ResourceDictionary>

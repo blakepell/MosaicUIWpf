@@ -34,6 +34,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Themes\Native\aero2.darkcolor.xaml" />
+    <Page Remove="Themes\Native\aero2.normalcolor.xaml" />
+    <Page Remove="Themes\Native\aerolite.normalcolor.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\docs\images\collage-48.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>

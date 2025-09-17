@@ -17,7 +17,7 @@
                 Margin="0,0,10,0"
                 HorizontalAlignment="Left"
                 Background="CornflowerBlue"
-                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
                 BorderThickness="2"
                 CornerRadius="10">
                 <TextBlock

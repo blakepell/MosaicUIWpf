@@ -22,7 +22,7 @@
 
         <TextBlock Margin="0,6,0,0" Text="Toggle Switch with a custom on and off brushes set.  The IsOn property is data bound in this example." />
         <TextBlock Margin="0,0,0,6">
-            <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}">IsOn =</Run>
+            <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}">IsOn =</Run>
             <Run Foreground="CornflowerBlue" Text="{Binding IsOn}" />
         </TextBlock>
 

@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
 
-    <Style x:Key="OptionMarkEmptyFocusVisual">
+    <!--<Style x:Key="OptionMarkEmptyFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -126,5 +126,5 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 </ResourceDictionary>

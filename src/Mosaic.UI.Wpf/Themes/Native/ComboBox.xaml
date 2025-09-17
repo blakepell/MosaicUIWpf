@@ -1,11 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
-    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
-    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
-    xmlns:themes1="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.AeroLite">
-
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+    <!--
     <Style x:Key="ComboBoxFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -22,8 +19,8 @@
     </Style>
 
     <Style x:Key="ComboBoxEditableTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="AllowDrop" Value="true" />
         <Setter Property="MinWidth" Value="0" />
@@ -36,7 +33,7 @@
                 <ControlTemplate TargetType="{x:Type TextBox}">
                     <ScrollViewer
                         x:Name="PART_ContentHost"
-                        Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
                         Focusable="false"
                         HorizontalScrollBarVisibility="Hidden"
                         VerticalScrollBarVisibility="Hidden" />
@@ -71,7 +68,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Data="M 0,0 C0,0 3.5,4 3.5,4 3.5,4 7,0 7,0 7,0 0,0 0,0 z"
-                                Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+                                Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
                         </Border>
                     </Border>
 
@@ -154,7 +151,7 @@
             <Border
                 x:Name="border"
                 Margin="{TemplateBinding BorderThickness}"
-                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}">
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}">
                 <TextBox
                     x:Name="PART_EditableTextBox"
                     Margin="{TemplateBinding Padding}"
@@ -170,7 +167,7 @@
                 <Setter TargetName="border" Property="Opacity" Value="0.56" />
             </Trigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="true">
-                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
             </Trigger>
             <Trigger SourceName="PART_Popup" Property="HasDropShadow" Value="true">
                 <Setter TargetName="shadow" Property="Margin" Value="0,0,5,5" />
@@ -341,4 +338,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+    -->
 </ResourceDictionary>

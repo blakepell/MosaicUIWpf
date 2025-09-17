@@ -23,10 +23,10 @@
                     <Setter Property="Background" Value="Transparent" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}}" />
+                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
                         </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrushKey}}" />
+                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -36,7 +36,7 @@
                 <Rectangle
                     Width="3"
                     HorizontalAlignment="Left"
-                    Fill="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentBrushKey}}"
+                    Fill="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentBrush}}"
                     RenderTransformOrigin="0.5,0.5">
                     <!--  Origin at the center for Y-scaling  -->
                     <Rectangle.RenderTransform>
@@ -123,7 +123,7 @@
                         FontFamily="Segoe UI Variable"
                         FontSize="14"
                         FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundBrushKey}}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundBrush}}"
                         Text="{Binding MenuItem.Text, ElementName=Me}" />
 
                     <!--  Expander  -->

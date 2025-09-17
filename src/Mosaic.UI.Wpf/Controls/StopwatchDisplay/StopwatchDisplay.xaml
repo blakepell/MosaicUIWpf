@@ -26,7 +26,7 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="FontSize" Value="14" />
     </Style>
 </ResourceDictionary>

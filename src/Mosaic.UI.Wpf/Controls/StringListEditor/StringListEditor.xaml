@@ -28,11 +28,11 @@
                             Margin="{TemplateBinding TextBoxMargin}"
                             Padding="4,0,0,0"
                             VerticalContentAlignment="Center"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9,.9,0,.9"
                             FocusVisualStyle="{x:Null}"
-                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             MaxLength="{TemplateBinding MaxLength}">
                             <TextBox.Style>
                                 <Style TargetType="TextBox">
@@ -59,7 +59,7 @@
                             x:Name="ButtonAdd"
                             Grid.Row="0"
                             Grid.Column="1"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9,.9,.9,.9">
                             <Button.Content>
                                 <controls:AdaptiveImage Source="../../Assets/vs-add-16.png" />
@@ -74,10 +74,10 @@
                             Grid.ColumnSpan="2"
                             Height="200"
                             Margin="{TemplateBinding ListBoxMargin}"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9,0,.9,.9"
-                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             ItemsSource="{TemplateBinding Items}">
                             <b:Interaction.Behaviors>
                                 <behaviors:ItemsControlAutoScrollBehavior />

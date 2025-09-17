@@ -5,14 +5,15 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:theme="clr-namespace:Mosaic.UI.Wpf.Themes"
     d:DesignHeight="32"
     d:DesignWidth="200"
     mc:Ignorable="d">
 
     <Border
         x:Name="PART_MainBorder"
-        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-        BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+        Background="{DynamicResource {x:Static theme:MosaicTheme.ControlTextBackgroundBrush}}"
+        BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
         BorderThickness="1"
         CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource AncestorType=UserControl}}">
         <Grid>
@@ -28,7 +29,7 @@
                 Grid.Column="0"
                 Margin="4"
                 Background="{Binding SelectedBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                BorderBrush="{DynamicResource {x:Static  theme:MosaicTheme.AccentBorderBrush}}"
                 BorderThickness="1"
                 CornerRadius="2" />
 
@@ -41,7 +42,7 @@
                 Background="Transparent"
                 BorderThickness="0"
                 FontFamily="Consolas"
-                Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}"
                 Text="{Binding HexValue, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=Explicit}"
                 ToolTip="Enter hex color value (e.g., #FF0000)" />
 
@@ -59,7 +60,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Data="M 0 0 L 4 4 L 8 0 Z"
-                    Fill="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                    Fill="{DynamicResource {x:Static  theme:MosaicTheme.ControlTextForegroundBrush}}" />
             </Button>
 
             <!--  Popup for color selection  -->
@@ -74,8 +75,8 @@
                 <Border
                     Width="{Binding ElementName=PART_MainBorder, Path=ActualWidth}"
                     MaxHeight="300"
-                    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                    BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                    Background="{DynamicResource {x:Static  theme:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static  theme:MosaicTheme.AccentBorderBrush}}"
                     BorderThickness="1"
                     CornerRadius="2">
                     <ScrollViewer
@@ -108,7 +109,7 @@
                                                 </Border>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlHoverBackgroundBrush}}" />
                                                     </Trigger>
                                                 </ControlTemplate.Triggers>
                                             </ControlTemplate>
@@ -128,7 +129,7 @@
                                                 Width="20"
                                                 Height="16"
                                                 Background="{Binding Brush}"
-                                                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"
+                                                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                                                 BorderThickness="1"
                                                 CornerRadius="2" />
 
@@ -136,7 +137,7 @@
                                             <TextBlock
                                                 Grid.Column="2"
                                                 VerticalAlignment="Center"
-                                                Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                                                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}"
                                                 Text="{Binding Name}" />
 
                                             <!--  Hex value  -->
@@ -145,7 +146,7 @@
                                                 VerticalAlignment="Center"
                                                 FontFamily="Consolas"
                                                 FontSize="10"
-                                                Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                                                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}"
                                                 Text="{Binding HexValue}" />
                                         </Grid>
                                     </Button>

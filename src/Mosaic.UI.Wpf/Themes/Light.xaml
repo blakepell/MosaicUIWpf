@@ -5,126 +5,66 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <!--  MOSAIC CUSTOM COLORS  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.AccentColorKey}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.AccentColor}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.AccentBorderColor}">#FF005A9E</Color>
 
-    <!--  Control colors  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColorKey}">#1C1C1C</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColorKey}">#FFFFFF</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundColorKey}">#EEEEEE</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColorKey}">#FFCCCCCC</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderHoverColorKey}">#FF7EB4EA</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderFocusColorKey}">#FF569DE5</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSelectionColorKey}">#FF0078D7</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextInactiveSelectionColorKey}">#FF0078D7</Color>
+    <!--  Selection  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.SelectionBackgroundColor}">#FFCCE5FF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SelectionForegroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBackgroundColor}">#FFF0F0F0</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBorderColor}">#FFCCCCCC</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.PlaceholderTextColor}">#FF767676</Color>
 
-    <!--  Hyperlink colors  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColorKey}">#FF0A86F1</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColorKey}">#FF0E6FBE</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedColorKey}">#252074</Color>
+    <!--  Status / Semantics  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.InfoColor}">#FF0178D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SuccessColor}">#FF107C10</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.WarningColor}">#FFFFB900</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ErrorColor}">#FFD13438</Color>
 
-    <!--  Sidebar colors  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColorKey}">#FFD4EDF9</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentColorKey}">#FF0078D7</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.SidebarForegroundColorKey}">#FF333333</Color>
+    <!--  Window  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.WindowBackgroundColor}">#EFF0F1</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.WindowForegroundColor}">#3F4041</Color>
 
-    <!--  Tab & TabItem colors  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColorKey}">#FFFFFFFF</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColorKey}">#FFF3F3F3</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColorKey}">#FFCCCCCC</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColorKey}">#FF333333</Color>
+    <!--  Control  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundColor}">#FFF8F8F8</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlForegroundColor}">#FF333333</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColor}">#FFCCCCCC</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlSelectedBorderColor}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundColor}">#E2E2E2</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderColor}">#FFBEE6FD</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FF333333</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#D3D4D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBorderColor}">#FF005A9E</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBackgroundColor}">#FFF2F2F2</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundColor}">#FF9E9E9E</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderColor}">#FFE0E0E0</Color>
 
-    <!--  CheckBox colors  -->
-    <SolidColorBrush
-        x:Key="CheckBox.Border.Normal"
-        po:Freeze="True"
-        Color="#FF707070" />
-    <SolidColorBrush
-        x:Key="CheckBox.Border.Hot"
-        po:Freeze="True"
-        Color="#FF26A0DA" />
-    <SolidColorBrush
-        x:Key="CheckBox.Border.Pressed"
-        po:Freeze="True"
-        Color="#FF2C628B" />
-    <SolidColorBrush
-        x:Key="CheckBox.Border.Disabled"
-        po:Freeze="True"
-        Color="#FFADB2B5" />
-    <SolidColorBrush
-        x:Key="CheckBox.Background.Normal"
-        po:Freeze="True"
-        Color="#FFFFFFFF" />
-    <SolidColorBrush
-        x:Key="CheckBox.Background.Hot"
-        po:Freeze="True"
-        Color="#FFFFFFFF" />
-    <SolidColorBrush
-        x:Key="CheckBox.Background.Pressed"
-        po:Freeze="True"
-        Color="#FFFFFFFF" />
-    <SolidColorBrush
-        x:Key="CheckBox.Background.Disabled"
-        po:Freeze="True"
-        Color="#FFFFFFFF" />
-    <SolidColorBrush
-        x:Key="CheckBox.Mark.Normal"
-        po:Freeze="True"
-        Color="#FF202020" />
-    <SolidColorBrush
-        x:Key="CheckBox.Mark.Hot"
-        po:Freeze="True"
-        Color="#FF26A0DA" />
-    <SolidColorBrush
-        x:Key="CheckBox.Mark.Pressed"
-        po:Freeze="True"
-        Color="#FF2C628B" />
-    <SolidColorBrush
-        x:Key="CheckBox.Mark.Disabled"
-        po:Freeze="True"
-        Color="#FFADB2B5" />
+    <!--  Hyperlink  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColor}">#FF0A86F1</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColor}">#FF0E6FBE</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedColor}">#FF252074</Color>
 
-    <!--  ComboBox  -->
-    <SolidColorBrush x:Key="ComboBox.Static.Background" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColorKey}}" />
-    <SolidColorBrush x:Key="ComboBox.Static.Border" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#1F26A0DA" />
-    <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#a826A0Da" />
-    <SolidColorBrush x:Key="ComboBox.Pressed.Background" Color="#FFC4E5F6" />
-    <SolidColorBrush x:Key="ComboBox.Pressed.Border" Color="#FF2C628B" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF4F4F4" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFADB2B5" />
+    <!--  Tab & TabItem  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FFF3F3F3</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColor}">#FFCCCCCC</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColor}">#FF333333</Color>
 
-    <!--  ListView / GridView brushes (light theme)  -->
-    <SolidColorBrush x:Key="ListBorder" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColorKey}}" />
-    <SolidColorBrush x:Key="Item.Static.Background" Color="Transparent" />
-    <SolidColorBrush x:Key="Item.Static.Border" Color="Transparent" />
-    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#E6F2FF" />
-    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#FF0078D7" />
-    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FF0078D7" />
-    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF005A9E" />
-    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#CCCCCC" />
-    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#999999" />
+    <!--  Sidebar  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FFD4EDF9</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentColor}">#FF0078D7</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SidebarForegroundColor}">#FF333333</Color>
 
-    <SolidColorBrush x:Key="GridViewColumnHeader.Background" Color="#F9F9F9" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.BorderBrush" Color="#E1E1E1" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.MouseOver.Border" Color="#FF0078D7" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.MouseOver.Background" Color="#E6F2FF" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.Pressed.Border" Color="#FF005A9E" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.Pressed.Background" Color="#CCCCCC" />
-    <SolidColorBrush x:Key="GridViewColumnHeader.FloatingOverlayBrush" Color="#FF000000" />
-    <SolidColorBrush x:Key="GridViewColumnHeaderGripper.LineBrush" Color="#E1E1E1" />
-    <SolidColorBrush x:Key="ScrollBar.SeparatorBrush" Color="#F9F9F9" />
-
-    <!--  ListBox brushes (light theme)  -->
-    <!--
-    <SolidColorBrush x:Key="ListBorder" Color="#FFCCCCCC" />
-
-    <SolidColorBrush x:Key="Item.Static.Background" Color="#FFFCFCFC" />
-    <SolidColorBrush x:Key="Item.Static.Border" Color="#FFFCFCFC" />
-    <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#FFF2F7FD" />
-    <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#FFB8D6FB" />
-    <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FFDCEBFE" />
-    <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF84ACDD" />
-    <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FFF2F2F2" />
-    <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA" />-->
+    <!-- Button (colors only; brushes are provided by Brushes.xaml) -->
+    <Color x:Key="Button.Static.BackgroundColor">#FFDDDDDD</Color>
+    <Color x:Key="Button.Static.BorderColor">#FF707070</Color>
+    <Color x:Key="Button.MouseOver.BackgroundColor">#FFBEE6FD</Color>
+    <Color x:Key="Button.MouseOver.BorderColor">#FF3C7FB1</Color>
+    <Color x:Key="Button.Pressed.BackgroundColor">#FFC4E5F6</Color>
+    <Color x:Key="Button.Pressed.BorderColor">#FF2C628B</Color>
+    <Color x:Key="Button.Disabled.BackgroundColor">#FFF4F4F4</Color>
+    <Color x:Key="Button.Disabled.BorderColor">#FFADB2B5</Color>
+    <Color x:Key="Button.Disabled.ForegroundColor">#FF838383</Color>
 
 </ResourceDictionary>

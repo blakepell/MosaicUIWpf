@@ -15,8 +15,8 @@
                         CornerRadius="5">
                         <Border
                             Padding="10"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9"
                             CornerRadius="5"
                             Opacity="{TemplateBinding Opacity}">
@@ -26,7 +26,7 @@
                                         FontFamily="{TemplateBinding FontFamily}"
                                         FontSize="14"
                                         FontWeight="SemiBold"
-                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                                         Text="{TemplateBinding Title}" />
                                     <ContentPresenter Content="{TemplateBinding HeaderContent}" />
                                 </DockPanel>
@@ -34,7 +34,7 @@
                                 <Separator
                                     Height=".9"
                                     Margin="0,5,0,0"
-                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                                     DockPanel.Dock="Top"
                                     Visibility="{TemplateBinding SeparatorVisibility}" />
 

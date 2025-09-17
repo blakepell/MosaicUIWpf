@@ -85,7 +85,7 @@ namespace Mosaic.UI.Wpf.Controls
         public BindablePasswordBox()
         {
             // Set our resource for the default binding.  The caller is welcome to override it.
-            SetResourceReference(BorderBrushProperty, MosaicTheme.ControlBorderBrushKey);
+            SetResourceReference(BorderBrushProperty, MosaicTheme.ControlBorderBrush);
 
             // Set default binding for Password property to allow two-way binding in XAML without extra code.
             Unloaded += BindablePasswordBox_Unloaded;

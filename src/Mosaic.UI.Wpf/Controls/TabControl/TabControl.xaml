@@ -21,7 +21,7 @@
                             Grid.Column="0"
                             Margin="0,0,0,0"
                             Panel.ZIndex="1"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrush}}"
                             IsItemsHost="True"
                             KeyboardNavigation.TabIndex="1" />
                         <!--  The .9 is weird on the border thickness but fixes a weird double pixel border on 4k monitors  -->
@@ -30,7 +30,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="0"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrush}}"
                             BorderThickness="1,1,1,1"
                             CornerRadius="0"
                             KeyboardNavigation.DirectionalNavigation="Contained"
@@ -52,13 +52,13 @@
                 <ControlTemplate TargetType="controls:TabItem">
                     <Border
                         Name="OuterBorder"
-                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrush}}"
                         BorderThickness="1,1,1,1">
                         <Grid>
                             <Border
                                 Name="Border"
                                 Margin="0,0,0,0"
-                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrush}}"
                                 BorderThickness="0,0,0,0"
                                 CornerRadius="0,0,0,0">
                                 <StackPanel Orientation="Horizontal">
@@ -76,21 +76,21 @@
                                 Name="TopBorder"
                                 Height="1"
                                 VerticalAlignment="Top"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}" />
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrush}}" />
 
                             <!--  Bottom indicator border  -->
                             <Border
                                 Name="BottomBorder"
                                 Height="0"
                                 VerticalAlignment="Bottom"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrushKey}}" />
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrush}}" />
 
                             <!--  Top selection indicator  -->
                             <Border
                                 Name="TopSelectionIndicator"
                                 Height="2"
                                 VerticalAlignment="Top"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemAccentBrushKey}}"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
                                 RenderTransformOrigin="0.5,0.5"
                                 Visibility="Collapsed">
                                 <Border.RenderTransform>
@@ -103,7 +103,7 @@
                                 Name="BottomSelectionIndicator"
                                 Height="2"
                                 VerticalAlignment="Bottom"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemAccentBrushKey}}"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
                                 RenderTransformOrigin="0.5,0.5"
                                 Visibility="Collapsed">
                                 <Border.RenderTransform>
@@ -136,8 +136,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="ActiveIndicatorPlacement" Value="Top" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
-                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrush}}" />
                             <Setter TargetName="TopBorder" Property="Visibility" Value="Collapsed" />
                             <MultiTrigger.EnterActions>
                                 <BeginStoryboard>
@@ -168,8 +168,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="ActiveIndicatorPlacement" Value="Bottom" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
-                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrush}}" />
                             <Setter TargetName="BottomBorder" Property="Visibility" Value="Collapsed" />
                             <MultiTrigger.EnterActions>
                                 <BeginStoryboard>
@@ -197,8 +197,8 @@
 
                         <!--  Not selected state  -->
                         <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrushKey}}" />
-                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundBrush}}" />
+                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrush}}" />
                         </Trigger>
 
                         <!--  Mouse over styling (selected)  -->
@@ -208,8 +208,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
-                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
-                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}" />
+                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrush}}" />
                             </MultiTrigger.Setters>
                         </MultiTrigger>
 
@@ -220,8 +220,8 @@
                                 <Condition Property="IsSelected" Value="False" />
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
-                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrushKey}}" />
-                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrushKey}}" />
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}" />
+                                <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundBrush}}" />
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>

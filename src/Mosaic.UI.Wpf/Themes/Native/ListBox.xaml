@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!--  ListBorder is provided by theme dictionaries (Light/Dark)  -->
+    <!--
 
     <Style x:Key="{x:Type ListBox}" TargetType="{x:Type ListBox}">
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
@@ -43,7 +44,9 @@
         </Setter>
     </Style>
 
+    -->
     <!--  Item brushes are provided by theme dictionaries (Light/Dark)  -->
+    <!--
 
     <Style TargetType="{x:Type ListBoxItem}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -101,4 +104,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+    -->
 </ResourceDictionary>

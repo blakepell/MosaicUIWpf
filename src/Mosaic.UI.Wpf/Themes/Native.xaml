@@ -2,9 +2,11 @@
     <ResourceDictionary.MergedDictionaries>
         <!--  Themes of Native Controls  -->
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TextBox.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Button.xaml" />
+
+        <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ComboBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListBox.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />-->
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

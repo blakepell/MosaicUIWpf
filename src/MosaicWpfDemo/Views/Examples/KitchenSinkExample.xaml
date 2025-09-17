@@ -28,8 +28,8 @@
             <Border
                 MinHeight="300"
                 Padding="6"
-                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundKey}}"
-                BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                 BorderThickness="1"
                 CornerRadius="4">
                 <StackPanel Orientation="Vertical">

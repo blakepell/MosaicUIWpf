@@ -9,6 +9,7 @@
  */
 
 using CommunityToolkit.Mvvm.Input;
+using Mosaic.UI.Wpf.Themes;
 
 // ReSharper disable CheckNamespace
 
@@ -191,14 +192,14 @@ namespace Mosaic.UI.Wpf.Controls
         public Hyperlink()
         {
             // Set default Foreground to the dynamic resource for HyperLinkBrushKey
-            if (Application.Current.TryFindResource("HyperLinkBrush") != null)
+            if (Application.Current.TryFindResource(MosaicTheme.HyperLinkBrush) != null)
             {
-                SetResourceReference(ForegroundProperty, "HyperLinkBrush");
+                SetResourceReference(ForegroundProperty, MosaicTheme.HyperLinkBrush);
             }
             
-            if (Application.Current.TryFindResource("HyperLinkHoverBrush") != null)
+            if (Application.Current.TryFindResource(MosaicTheme.HyperLinkHoverBrush) != null)
             {
-                SetResourceReference(HoverBrushProperty, "HyperLinkHoverBrush");
+                SetResourceReference(HoverBrushProperty, MosaicTheme.HyperLinkHoverBrush);
             }
         }
 

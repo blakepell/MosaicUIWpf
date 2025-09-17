@@ -350,14 +350,14 @@ namespace Mosaic.UI.Wpf
             if (themeName == "Light")
             {
                 // 1. Load aero2 base styles first
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml") });
+                //mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml") });
                 // 2. Load our theme colors to override aero2 where needed
                 mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light.xaml") });
             }
             else // Dark
             {
                 // 1. Load aero2 base styles first
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml") });
+                //mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml") });
                 // 2. Load our theme colors to override aero2 where needed
                 mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml") });
             }

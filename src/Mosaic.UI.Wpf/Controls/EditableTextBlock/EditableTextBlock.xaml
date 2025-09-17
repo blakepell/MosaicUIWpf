@@ -4,7 +4,7 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <Style TargetType="{x:Type controls:EditableTextBlock}">
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:EditableTextBlock}">
@@ -29,8 +29,8 @@
                             Grid.Row="0"
                             Padding="{TemplateBinding TextBoxPadding}"
                             VerticalAlignment="Center"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             Text="{Binding Mode=TwoWay, Path=Text, RelativeSource={RelativeSource AncestorType={x:Type controls:EditableTextBlock}}}"
                             Visibility="Collapsed" />
                     </Grid>

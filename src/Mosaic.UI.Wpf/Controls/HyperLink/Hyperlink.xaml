@@ -39,7 +39,7 @@
                                             <Condition Binding="{Binding HasVisited, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
                                             <Condition Binding="{Binding ChangeVisitedLinkColor, RelativeSource={RelativeSource TemplatedParent}}" Value="True" />
                                         </MultiDataTrigger.Conditions>
-                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static mosaic:MosaicTheme.HyperLinkVisitedBrushKey}}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static mosaic:MosaicTheme.HyperLinkVisitedBrush}}" />
                                     </MultiDataTrigger>
 
                                 </Style.Triggers>
