@@ -30,11 +30,15 @@
             ImageSource="pack://application:,,/Assets/collage-48.png"
             Text="Server Options" />
 
-        <StackPanel Grid.Row="1" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel
+            Grid.Row="1"
+            Grid.Column="3"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
             <TextBlock
                 Margin="0,0,8,0"
-                VerticalAlignment="Center"
                 HorizontalAlignment="Right"
+                VerticalAlignment="Center"
                 FontSize="16">
                 Server:
             </TextBlock>

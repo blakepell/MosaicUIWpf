@@ -6,11 +6,11 @@
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
-    xmlns:views="clr-namespace:MosaicWpfDemo.Views"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:views="clr-namespace:MosaicWpfDemo.Views"
     Title="Mosaic UI WPF Demo"
     Width="1000"
-    Height="600"
+    Height="700"
     AllowsTransparency="False"
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
@@ -124,8 +124,7 @@
                             <DataTemplate>
                                 <Viewbox Width="16" Height="16">
                                     <Canvas Width="512" Height="512">
-                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" 
-                                              Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
                                     </Canvas>
                                 </Viewbox>
                             </DataTemplate>
@@ -180,7 +179,7 @@
                         FontFamily="Segoe UI"
                         FontSize="12"
                         FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static  theme:MosaicTheme.WindowForegroundBrush}}"
+                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
                         Text="Mosaic UI WPF Demo" />
                 </Border>
             </DockPanel>

@@ -56,7 +56,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentColor}">#FF0078D7</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarForegroundColor}">#FF333333</Color>
 
-    <!-- Button (colors only; brushes are provided by Brushes.xaml) -->
+    <!--  Button (colors only; brushes are provided by Brushes.xaml)  -->
     <Color x:Key="Button.Static.BackgroundColor">#FFDDDDDD</Color>
     <Color x:Key="Button.Static.BorderColor">#FF707070</Color>
     <Color x:Key="Button.MouseOver.BackgroundColor">#FFBEE6FD</Color>

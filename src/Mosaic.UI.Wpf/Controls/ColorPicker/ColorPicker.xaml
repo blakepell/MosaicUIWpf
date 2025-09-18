@@ -29,7 +29,7 @@
                 Grid.Column="0"
                 Margin="4"
                 Background="{Binding SelectedBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                BorderBrush="{DynamicResource {x:Static  theme:MosaicTheme.AccentBorderBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBorderBrush}}"
                 BorderThickness="1"
                 CornerRadius="2" />
 
@@ -60,7 +60,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Data="M 0 0 L 4 4 L 8 0 Z"
-                    Fill="{DynamicResource {x:Static  theme:MosaicTheme.ControlTextForegroundBrush}}" />
+                    Fill="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}" />
             </Button>
 
             <!--  Popup for color selection  -->
@@ -75,8 +75,8 @@
                 <Border
                     Width="{Binding ElementName=PART_MainBorder, Path=ActualWidth}"
                     MaxHeight="300"
-                    Background="{DynamicResource {x:Static  theme:MosaicTheme.ControlBackgroundBrush}}"
-                    BorderBrush="{DynamicResource {x:Static  theme:MosaicTheme.AccentBorderBrush}}"
+                    Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBorderBrush}}"
                     BorderThickness="1"
                     CornerRadius="2">
                     <ScrollViewer

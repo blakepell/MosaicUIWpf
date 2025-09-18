@@ -5,10 +5,10 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <ResourceDictionary.MergedDictionaries>
         <!--  Mosaic controls  -->
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/DarkSystemColors.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/SystemColors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-        <!--  MOSAIC CUSTOM COLORS  -->
+    <!--  MOSAIC CUSTOM COLORS  -->
     <Color x:Key="{x:Static themes:MosaicTheme.AccentColor}">#FF0078D7</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.AccentBorderColor}">#FF005A9E</Color>
 
@@ -60,7 +60,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedAccentColor}">#FF0078D7</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarForegroundColor}">#FFF1F1F1</Color>
 
-    <!-- Button (colors only; brushes are provided by Brushes.xaml) -->
+    <!--  Button (colors only; brushes are provided by Brushes.xaml)  -->
     <Color x:Key="Button.Static.BackgroundColor">#FF2D2D30</Color>
     <Color x:Key="Button.Static.BorderColor">#FF3A3A3C</Color>
     <Color x:Key="Button.MouseOver.BackgroundColor">#FF3A96DD</Color>

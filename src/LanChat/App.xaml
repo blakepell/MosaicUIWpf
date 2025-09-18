@@ -13,7 +13,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml" />
