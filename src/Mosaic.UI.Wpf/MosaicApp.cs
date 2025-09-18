@@ -330,6 +330,7 @@ namespace Mosaic.UI.Wpf
                     var source = dict.Source.ToString();
                     if (source.Contains("/Themes/Light.xaml") ||
                         source.Contains("/Themes/Dark.xaml") ||
+                        source.Contains("SystemColors.xaml") ||
                         source.Contains("aero2.normalcolor.xaml") ||
                         source.Contains("aero2.darkcolor.xaml") ||
                         source.Contains("/Brushes.xaml") ||
