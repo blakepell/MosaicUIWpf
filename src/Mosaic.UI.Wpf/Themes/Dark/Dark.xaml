@@ -71,4 +71,22 @@
     <Color x:Key="Button.Disabled.BorderColor">#FF232325</Color>
     <Color x:Key="Button.Disabled.ForegroundColor">#FF77777B</Color>
 
+    <!--  ScrollBar  -->
+    <SolidColorBrush x:Key="ScrollBar.Static.Background" Color="#FF3C3C3C" />
+    <SolidColorBrush x:Key="ScrollBar.Static.Border" Color="#FF3C3C3C" />
+    <SolidColorBrush x:Key="ScrollBar.Static.Glyph" Color="#FF999999" />
+    <SolidColorBrush x:Key="ScrollBar.Static.Thumb" Color="#FF686868" />
+    <SolidColorBrush x:Key="ScrollBar.MouseOver.Background" Color="#FF404040" />
+    <SolidColorBrush x:Key="ScrollBar.MouseOver.Border" Color="#FF404040" />
+    <SolidColorBrush x:Key="ScrollBar.MouseOver.Glyph" Color="#FFCCCCCC" />
+    <SolidColorBrush x:Key="ScrollBar.MouseOver.Thumb" Color="#FF9E9E9E" />
+    <SolidColorBrush x:Key="ScrollBar.Pressed.Background" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="ScrollBar.Pressed.Border" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="ScrollBar.Pressed.Thumb" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="ScrollBar.Pressed.Glyph" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ScrollBar.Disabled.Background" Color="#FF3C3C3C" />
+    <SolidColorBrush x:Key="ScrollBar.Disabled.Border" Color="#FF3C3C3C" />
+    <SolidColorBrush x:Key="ScrollBar.Disabled.Glyph" Color="#FF656565" />
+    <SolidColorBrush x:Key="ScrollBar.Disabled.Thumb" Color="#FF3C3C3C" />
+
 </ResourceDictionary>

@@ -3,6 +3,8 @@
         <!--  Themes of Native Controls  -->
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TextBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Button.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ScrollBar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ScrollViewer.xaml" />
 
         <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ComboBox.xaml" />
