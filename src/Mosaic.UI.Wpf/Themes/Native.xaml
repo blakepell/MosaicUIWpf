@@ -7,8 +7,9 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ScrollViewer.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ComboBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />
 
         <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />-->
+        -->
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
