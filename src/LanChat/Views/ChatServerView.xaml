@@ -58,7 +58,7 @@
             Margin="0,5,0,0"
             AllowDrop="True"
             AlternationCount="2"
-            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrushKey}}"
+            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
             BorderThickness=".9,.9,.9,.9"
             FontSize="12"
             ItemsSource="{Binding ChatServer.Clients.AsObservable}"

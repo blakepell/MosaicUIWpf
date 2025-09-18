@@ -223,11 +223,11 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="25"
-            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundKey}}"
-            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrushKey}}"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
             BorderThickness="0,.9,0,0"
             FocusManager.IsFocusScope="True"
-            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundKey}}">
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>

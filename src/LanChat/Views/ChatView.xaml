@@ -55,7 +55,7 @@
                 <Border
                     Width="360"
                     Padding="16"
-                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundKey}}"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
                     CornerRadius="6"
                     Effect="{x:Null}">
                     <StackPanel>
@@ -67,7 +67,7 @@
                         <ComboBox
                             x:Name="ServerAddress"
                             Margin="0,0,0,6"
-                            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextBackgroundKey}}">
+                            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextBackgroundBrush}}">
                             <ComboBoxItem IsSelected="True">127.0.0.1</ComboBoxItem>
                         </ComboBox>
                         <TextBlock
