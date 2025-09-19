@@ -15,6 +15,7 @@ using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using System.Windows.Forms;
 
 namespace LanChat.Common
 {
@@ -91,6 +92,13 @@ namespace LanChat.Common
         [ObservableProperty]
         [property: Browsable(true)]
         private int _port = 4000;
+
+        [property: Category("Network")]
+        [property: DisplayName("Server Name")]
+        [property: Description("The name of your chat server that will be seen on discovery requests.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private string _serverName = "Chat Server";
 
         /// <summary>
         /// The view state information for a given window.

@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using Argus.Memory;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LanChat.Common;
 using Mosaic.UI.Wpf.Collections;
 
 namespace LanChat.Network;
@@ -176,7 +178,8 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
                             {
                                 try
                                 {
-                                    var respPayload = new { IsChatServer = true, Name = _options.Name };
+                                    var appSettings = AppServices.GetRequiredService<AppSettings>();
+                                    var respPayload = new { IsChatServer = true, ServerName = appSettings.ServerName, Name = _options.Name };
                                     var respEnv = MessageEnvelope.Create(respPayload, typeName: "DiscoveryResponse");
                                     var bytes = JsonSerializer.SerializeToUtf8Bytes(respEnv, MessageEnvelope.DefaultJsonOptions);
                                     // Send only to the requesting client

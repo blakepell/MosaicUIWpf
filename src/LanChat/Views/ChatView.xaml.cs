@@ -15,6 +15,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
+using System.Linq;
+using ServerInfo = LanChat.Common.SeverInfo;
 
 namespace LanChat.Views
 {
@@ -24,8 +26,7 @@ namespace LanChat.Views
         private string _username = Environment.UserName;
         private bool _isReconnecting;
 
-        public ObservableCollection<string> ServerList { get; set; } = new();
-
+        public ObservableCollection<ServerInfo> ServerList { get; set; } = new();
         public ObservableCollection<Message> Messages { get; set; } = new();
 
         private CancellationTokenSource? _discoverCts;
@@ -229,7 +230,17 @@ namespace LanChat.Views
 
             // Connect to server
             var vm2 = AppServices.GetRequiredService<AppViewModel>();
-            await _chatClient.ConnectAsync(vm2.AppSettings.IpAddress, vm2.AppSettings.Port);
+
+            // Prefer the selected server in the ComboBox; fallback to settings
+            string host = vm2.AppSettings.IpAddress;
+            int port = vm2.AppSettings.Port;
+            if (ServerAddress != null && ServerAddress.SelectedItem is ServerInfo selected)
+            {
+                host = selected.IpAddress;
+                port = selected.Port;
+            }
+
+            await _chatClient.ConnectAsync(host, port);
 
             // Login with username
             await _chatClient.LoginAsync(_username);
@@ -300,7 +311,8 @@ namespace LanChat.Views
                     .Select(ip => ip.ToString())
                     .ToList();
 
-                var found = new List<string>();
+                // Changed to hold discovered ServerInfo entries
+                var found = new List<ServerInfo>();
 
                 // Improved scan: for each local IP, try the /24 subnet but perform a lightweight discovery handshake
                 var tasks = new List<Task>();
@@ -324,7 +336,7 @@ namespace LanChat.Views
                     for (int i = 1; i < 255; i++)
                     {
                         var candidate = $"{prefix}.{i}";
-                        if (found.Contains(candidate))
+                        if (found.Any(f => f.IpAddress == candidate))
                         {
                             continue;
                         }
@@ -380,11 +392,28 @@ namespace LanChat.Views
                                             var doc = JsonSerializer.Deserialize<JsonElement>(respEnv.Value.Json, MessageEnvelope.DefaultJsonOptions);
                                             if (doc.ValueKind == JsonValueKind.Object && doc.TryGetProperty("isChatServer", out var prop) && prop.GetBoolean())
                                             {
+                                                var serverName = candidate;
+                                                if (doc.ValueKind == JsonValueKind.Object && doc.TryGetProperty("serverName", out var name) && name.ValueKind == JsonValueKind.String)
+                                                {
+                                                    var nameStr = name.GetString();
+                                                    if (!string.IsNullOrWhiteSpace(nameStr))
+                                                    {
+                                                        serverName = nameStr!;
+                                                    }
+                                                }
+
+                                                var info = new ServerInfo
+                                                {
+                                                    IpAddress = candidate,
+                                                    Port = port,
+                                                    ServerName = serverName,
+                                                };
+
                                                 lock (found)
                                                 {
-                                                    if (!found.Contains(candidate))
+                                                    if (!found.Any(f => f.IpAddress == candidate))
                                                     {
-                                                        found.Add(candidate);
+                                                        found.Add(info);
                                                     }
                                                 }
                                             }
@@ -434,11 +463,18 @@ namespace LanChat.Views
                 // Merge results into the ServerList on the UI thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    foreach (var ip in found.OrderBy(x => x))
+                    foreach (var info in found.OrderBy(x => x.IpAddress))
                     {
-                        if (!ServerList.Contains(ip))
+                        if (!ServerList.Any(s => s.IpAddress == info.IpAddress))
                         {
-                            ServerList.Add(ip);
+                            ServerList.Add(info);
+                        }
+                        else
+                        {
+                            // update LastSeen/Name if already present
+                            var existing = ServerList.First(s => s.IpAddress == info.IpAddress);
+                            existing.ServerName = info.ServerName;
+                            existing.Port = info.Port;
                         }
                     }
 
