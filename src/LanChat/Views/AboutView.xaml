@@ -60,7 +60,7 @@
                         Grid.Column="1"
                         Margin="20,1,0,0"
                         FontSize="12"
-                        Text="2025.09.08.1" />
+                        Text="2025.09.20.1" />
 
                     <TextBlock
                         Grid.Row="2"
