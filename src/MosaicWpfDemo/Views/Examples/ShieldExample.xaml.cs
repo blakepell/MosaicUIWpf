@@ -9,6 +9,7 @@
  */
 
 using System.Windows;
+using System.Windows.Input;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -36,6 +37,11 @@ namespace MosaicWpfDemo.Views.Examples
 
             // Get the version number of Mosaic.UI.Wpf from the shield control.
             this.Version = typeof(Mosaic.UI.Wpf.Controls.Shield).Assembly.GetName().Version?.ToString() ?? "No Version Info Available";
+        }
+
+        private void MitShield_OnPreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            MessageBox.Show("You clicked the MIT shield.");
         }
     }
 }

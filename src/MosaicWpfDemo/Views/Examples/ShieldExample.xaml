@@ -32,7 +32,9 @@
             Label="License"
             ValueBackgroundBrush="Orange"
             ValueForegroundBrush="White"
-            Value="MIT" />
+            Value="MIT"
+            Cursor="Hand"
+            PreviewMouseDoubleClick="MitShield_OnPreviewMouseDoubleClick" />
 
         <!--  Default Properties  -->
         <mosaic:Shield
