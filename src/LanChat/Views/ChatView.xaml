@@ -69,8 +69,7 @@
                             x:Name="ServerAddress"
                             IsEditable="True"
                             ItemsSource="{Binding ServerList}"
-                            Margin="0,0,0,6"
-                            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextBackgroundBrush}}">
+                            Margin="0,0,0,6">
                         </ComboBox>
                         <TextBlock
                             Margin="0,0,0,6"
