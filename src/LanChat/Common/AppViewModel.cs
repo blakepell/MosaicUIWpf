@@ -42,6 +42,12 @@ namespace LanChat.Common
         private string _statusText = "Ready";
 
         /// <summary>
+        /// Gets or sets the local IP address associated with the current instance.
+        /// </summary>
+        [ObservableProperty]
+        private string _lanIpAddress = "";
+
+        /// <summary>
         /// Gets or sets the number of users currently connected.
         /// </summary>
         [ObservableProperty]

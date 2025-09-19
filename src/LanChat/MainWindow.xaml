@@ -234,8 +234,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -249,7 +249,9 @@
             </StatusBarItem>
             <StatusBarItem Grid.Column="1" />
             <StatusBarItem Grid.Column="2" />
-            <StatusBarItem Grid.Column="3" />
+            <StatusBarItem Grid.Column="3">
+                <mosaic:Shield Label="Server IP:" ValueBackgroundBrush="#03467A" ValueForegroundBrush="White" Value="{Binding LanIpAddress, FallbackValue='127.0.0.1'}" />
+            </StatusBarItem>
             <StatusBarItem Grid.Column="4">
                 <mosaic:Shield
                     Label="Chat:"

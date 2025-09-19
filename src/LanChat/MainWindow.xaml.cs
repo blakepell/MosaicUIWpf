@@ -27,6 +27,26 @@ namespace LanChat
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             TestSideMenu.SelectByIndex(0);
+
+            var vm = AppServices.GetRequiredService<AppViewModel>();
+
+            var ips = Argus.Network.Utilities.GetLocalIpAddresses();
+
+            foreach (var ipAddress in ips)
+            {
+                if (ipAddress.ToString().StartsWith("192"))
+                {
+                    vm.LanIpAddress = ipAddress.ToString();
+                    return;
+                }
+                else if (ipAddress.ToString().StartsWith("172"))
+                {
+                    vm.LanIpAddress = ipAddress.ToString();
+                    return;
+                }
+            }
+
+            vm.LanIpAddress = "127.0.0.1";
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
