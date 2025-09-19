@@ -190,4 +190,25 @@
     <SolidColorBrush x:Key="GridViewColumnHeaderGripper.LineBrush" Color="#6F6F73" />
     <SolidColorBrush x:Key="ScrollBar.SeparatorBrush" Color="#2D2D30" />
 
+    <!--  ToolBar (Visual Studio Dark palette)  -->
+    <SolidColorBrush x:Key="ToolBarDarkFill" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarDisabledFill" Color="#3F3F46" />
+    <SolidColorBrush x:Key="ToolBarDisabledBorder" Color="#3F3F46" />
+    <SolidColorBrush x:Key="ToolBarSeparatorFill" Color="#3A3A3C" />
+    <SolidColorBrush x:Key="ToolBarButtonHover" Color="#0E639C" />
+    <SolidColorBrush x:Key="ToolBarButtonHoverBorder" Color="#007ACC" />
+    <SolidColorBrush x:Key="ToolBarButtonChecked" Color="#094771" />
+    <SolidColorBrush x:Key="ToolBarButtonPressed" Color="#007ACC" />
+    <SolidColorBrush x:Key="ToolBarButtonPressedBorder" Color="#005A9E" />
+    <SolidColorBrush x:Key="ToolBarMenuBorder" Color="#3F3F46" />
+    <SolidColorBrush x:Key="ToolBarSubMenuBackground" Color="#252526" />
+    <SolidColorBrush x:Key="ToolBarMenuCheckFill" Color="#0E639C" />
+    <SolidColorBrush x:Key="ToolBarOpenHeaderBackground" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarTrayBackground" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarHorizontalBackground" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarVerticalBackground" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarGripper" Color="#3F3F46" />
+    <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#2D2D30" />
+    <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#2D2D30" />
+
 </ResourceDictionary>

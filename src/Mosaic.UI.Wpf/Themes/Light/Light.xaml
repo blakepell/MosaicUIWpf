@@ -85,7 +85,7 @@
     <SolidColorBrush x:Key="ScrollBar.Disabled.Glyph" Color="#BFBFBF" />
     <SolidColorBrush x:Key="ScrollBar.Disabled.Thumb" Color="#F0F0F0" />
 
-    <!-- ComboBox -->
+    <!--  ComboBox  -->
     <LinearGradientBrush x:Key="ComboBox.Static.Background" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#FFF0F0F0" />
         <GradientStop Offset="1.0" Color="#FFE5E5E5" />
@@ -133,7 +133,7 @@
     <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent" />
     <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent" />
 
-    <!-- ComboBoxItem -->
+    <!--  ComboBoxItem  -->
     <SolidColorBrush x:Key="ComboBoxItem.Items.Hover.Background" Color="#1F26A0DA" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.Hover.Border" Color="#A826A0DA" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.Selected.Background" Color="#3D26A0DA" />
@@ -146,7 +146,7 @@
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Background" Color="#5426A0DA" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Border" Color="#FF26A0DA" />
 
-    <!-- ListBox -->
+    <!--  ListBox  -->
     <SolidColorBrush x:Key="Item.Static.Background" Color="#FFFCFCFC" />
     <SolidColorBrush x:Key="Item.Static.Border" Color="#FFFCFCFC" />
     <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#1F26A0DA" />
@@ -185,5 +185,26 @@
     <SolidColorBrush x:Key="GridViewColumnHeader.FloatingOverlayBrush" Color="#FF000000" />
     <SolidColorBrush x:Key="GridViewColumnHeaderGripper.LineBrush" Color="#E1E1E1" />
     <SolidColorBrush x:Key="ScrollBar.SeparatorBrush" Color="#F9F9F9" />
+
+    <!--  ToolBar  -->
+    <SolidColorBrush x:Key="ToolBarDarkFill" Color="#99CCFF" />
+    <SolidColorBrush x:Key="ToolBarDisabledFill" Color="#F7F7F7" />
+    <SolidColorBrush x:Key="ToolBarDisabledBorder" Color="#B5B2B5" />
+    <SolidColorBrush x:Key="ToolBarSeparatorFill" Color="#C6C7C6" />
+    <SolidColorBrush x:Key="ToolBarButtonHover" Color="#BEE6FD" />
+    <SolidColorBrush x:Key="ToolBarButtonHoverBorder" Color="#3C7FB1" />
+    <SolidColorBrush x:Key="ToolBarButtonChecked" Color="#C4E5F6" />
+    <SolidColorBrush x:Key="ToolBarButtonPressed" Color="#C4E5F6" />
+    <SolidColorBrush x:Key="ToolBarButtonPressedBorder" Color="#2C628B" />
+    <SolidColorBrush x:Key="ToolBarMenuBorder" Color="#808080" />
+    <SolidColorBrush x:Key="ToolBarSubMenuBackground" Color="#FDFDFD" />
+    <SolidColorBrush x:Key="ToolBarMenuCheckFill" Color="#E6F0FA" />
+    <SolidColorBrush x:Key="ToolBarOpenHeaderBackground" Color="#FFFBFF" />
+    <SolidColorBrush x:Key="ToolBarTrayBackground" Color="#FDFDFD" />
+    <SolidColorBrush x:Key="ToolBarHorizontalBackground" Color="#FFFBFF" />
+    <SolidColorBrush x:Key="ToolBarVerticalBackground" Color="#FFFBFF" />
+    <SolidColorBrush x:Key="ToolBarGripper" Color="#C6C3C6" />
+    <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#DDDDDD" />
+    <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#DDDDDD" />
 
 </ResourceDictionary>
