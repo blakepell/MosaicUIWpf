@@ -19,12 +19,37 @@ namespace LanChat.Views
         private string _username = Environment.UserName;
         private bool _isReconnecting;
 
+        public ObservableCollection<string> ServerList { get; set; } = new();
+
         public ObservableCollection<Message> Messages { get; set; } = new();
 
         public ChatView()
         {
             this.DataContext = this;
             InitializeComponent();
+        }
+
+        private void ChatView_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            foreach (var ip in Argus.Network.Utilities.GetLocalIpAddresses().OrderBy(ip => ip.ToString()))
+            {
+                string ipAddress = ip.ToString();
+
+                if (!ServerList.Contains(ipAddress))
+                {
+                    ServerList.Add(ipAddress);
+                }
+            }
+
+            if (!ServerList.Contains("127.0.0.1"))
+            {
+                ServerList.Add("127.0.0.1");
+            }
+
+            if (ServerList.Count > 0)
+            {
+                ServerAddress.SelectedIndex = 0;
+            }
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -160,7 +185,7 @@ namespace LanChat.Views
             _chatClient.EnvelopeReceived += (s, e) =>
             {
                 // Handle system messages
-                if (!string.IsNullOrEmpty(e.Envelope.TypeName) && 
+                if (!string.IsNullOrEmpty(e.Envelope.TypeName) &&
                     string.Equals(e.Envelope.TypeName, "SystemMessage", StringComparison.OrdinalIgnoreCase))
                 {
                     var payload = e.Envelope.Deserialize<SystemMessagePayload>();
@@ -189,7 +214,7 @@ namespace LanChat.Views
                         var payload = e.Envelope.Deserialize<ChatMessagePayload>();
 
                         var from = payload?.DisplayName ?? payload?.Sender ?? "Unknown";
-                        
+
                         // Determine message direction
                         MessageDirection direction = MessageDirection.Received;
                         if (payload?.Sender == _username)
@@ -263,7 +288,7 @@ namespace LanChat.Views
         }
 
         /// <summary>
-        /// Adds a message to the collection and updates the chat thread view.`
+        /// Adds a message to the collection and updates the chat thread view.` 
         /// </summary>
         /// <remarks>This method ensures that the operation is performed on the UI thread. After adding
         /// the message, the chat thread view is scrolled to the end.</remarks>
