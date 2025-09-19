@@ -5,14 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
-    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:LanChat.Views"
     Title=""
     Width="1000"
     Height="600"
     AllowsTransparency="False"
-    Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-    Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen"
@@ -26,7 +26,7 @@
             <Setter Property="Height" Value="36" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -39,10 +39,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlHoverBackgroundBrush}}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlPressedBackgroundBrush}}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -53,7 +53,7 @@
             x:Key="CloseButtonStyle"
             BasedOn="{StaticResource TitleBarButtonStyle}"
             TargetType="Button">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -106,7 +106,7 @@
             Padding="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            Background="{DynamicResource {x:Static SystemColors.WindowBrush}}"
+            Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
             MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
             <DockPanel Height="35" LastChildFill="True">
                 <!--  System Buttons (Right)  -->
@@ -124,7 +124,7 @@
                             <DataTemplate>
                                 <Viewbox Width="16" Height="16">
                                     <Canvas Width="512" Height="512">
-                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
                                     </Canvas>
                                 </Viewbox>
                             </DataTemplate>
@@ -179,7 +179,7 @@
                         FontFamily="Segoe UI"
                         FontSize="12"
                         FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
+                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
                         Text="LanChat" />
                 </Border>
             </DockPanel>
@@ -223,11 +223,11 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="25"
-            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
-            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+            Background="{DynamicResource {x:Static theme:MosaicTheme.ControlTextBackgroundBrush}}"
+            BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
             BorderThickness="0,.9,0,0"
             FocusManager.IsFocusScope="True"
-            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}">
+            Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -255,14 +255,14 @@
             <StatusBarItem Grid.Column="4">
                 <mosaic:Shield
                     Label="Chat:"
-                    ValueBackgroundBrush="{Binding ChatClient.IsConnected, FallbackValue='#901336', Converter={x:Static themes:BoolToBrushConverter.Instance}, ConverterParameter='#0D5F33,#901336'}"
-                    Value="{Binding ChatClient.IsConnected, FallbackValue='Not Connected', Converter={x:Static themes:BoolToLabelConverter.Instance}, ConverterParameter='Connected,Not Connected'}" />
+                    ValueBackgroundBrush="{Binding ChatClient.IsConnected, FallbackValue='#901336', Converter={x:Static theme:BoolToBrushConverter.Instance}, ConverterParameter='#0D5F33,#901336'}"
+                    Value="{Binding ChatClient.IsConnected, FallbackValue='Not Connected', Converter={x:Static theme:BoolToLabelConverter.Instance}, ConverterParameter='Connected,Not Connected'}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="5">
                 <mosaic:Shield
                     Label="Server:"
-                    ValueBackgroundBrush="{Binding ChatServer.IsListening, FallbackValue='#901336', Converter={x:Static themes:BoolToBrushConverter.Instance}, ConverterParameter='#0D5F33,#901336'}"
-                    Value="{Binding ChatServer.IsListening, FallbackValue='Off', Converter={x:Static themes:BoolToLabelConverter.Instance}, ConverterParameter='On,Off'}" />
+                    ValueBackgroundBrush="{Binding ChatServer.IsListening, FallbackValue='#901336', Converter={x:Static theme:BoolToBrushConverter.Instance}, ConverterParameter='#0D5F33,#901336'}"
+                    Value="{Binding ChatServer.IsListening, FallbackValue='Off', Converter={x:Static theme:BoolToLabelConverter.Instance}, ConverterParameter='On,Off'}" />
             </StatusBarItem>
             <!--<Separator Grid.Column="6" Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />-->
             <StatusBarItem Grid.Column="6">
@@ -270,7 +270,7 @@
                     Margin="0,0,6,0"
                     Label="Server Connected Users:"
                     ValueBackgroundBrush="#03467A"
-                    Visibility="{Binding ChatServer.IsListening, Converter={x:Static themes:BoolToVisibilityConverter.Instance}}"
+                    Visibility="{Binding ChatServer.IsListening, Converter={x:Static theme:BoolToVisibilityConverter.Instance}}"
                     Value="{Binding UsersConnected}" />
             </StatusBarItem>
 
