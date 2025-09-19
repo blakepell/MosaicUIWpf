@@ -170,7 +170,26 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
                     case MessageKind.JsonEnvelope:
                         {
                             var env = JsonSerializer.Deserialize<MessageEnvelope>(payload, MessageEnvelope.DefaultJsonOptions);
-                            
+
+                            // Handle discovery requests from lightweight scanners
+                            if (!string.IsNullOrEmpty(env.TypeName) && string.Equals(env.TypeName, "DiscoveryRequest", StringComparison.OrdinalIgnoreCase))
+                            {
+                                try
+                                {
+                                    var respPayload = new { IsChatServer = true, Name = _options.Name };
+                                    var respEnv = MessageEnvelope.Create(respPayload, typeName: "DiscoveryResponse");
+                                    var bytes = JsonSerializer.SerializeToUtf8Bytes(respEnv, MessageEnvelope.DefaultJsonOptions);
+                                    // Send only to the requesting client
+                                    await user.SendAsync(MessageKind.JsonEnvelope, bytes, ct).ConfigureAwait(false);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Error?.Invoke(this, new ErrorEventArgs { Exception = ex, ClientId = id });
+                                }
+
+                                break; // don't broadcast
+                            }
+
                             // Handle login/announce messages
                             if (!string.IsNullOrEmpty(env.TypeName) && string.Equals(env.TypeName, "Login", StringComparison.OrdinalIgnoreCase))
                             {

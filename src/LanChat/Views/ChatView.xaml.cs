@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace LanChat.Views
 {
@@ -276,7 +277,7 @@ namespace LanChat.Views
             // Toggle discovery
             if (_discoverCts != null)
             {
-                await _discoverCts.CancelAsync();
+                _discoverCts.Cancel();
                 _discoverCts = null;
                 DiscoverButton.Content = "Discover";
                 DiscoverButton.IsEnabled = true;
@@ -301,23 +302,32 @@ namespace LanChat.Views
 
                 var found = new List<string>();
 
-                // Simple scan: for each local IP, try the /24 subnet
+                // Improved scan: for each local IP, try the /24 subnet but perform a lightweight discovery handshake
                 var tasks = new List<Task>();
                 var sem = new SemaphoreSlim(50); // limit concurrency
 
                 foreach (var local in localIps)
                 {
-                    if (ct.IsCancellationRequested) break;
+                    if (ct.IsCancellationRequested)
+                    {
+                        break;
+                    }
 
                     var parts = local.Split('.');
-                    if (parts.Length != 4) continue;
+                    if (parts.Length != 4)
+                    {
+                        continue;
+                    }
 
                     var prefix = string.Join('.', parts[0], parts[1], parts[2]);
 
                     for (int i = 1; i < 255; i++)
                     {
                         var candidate = $"{prefix}.{i}";
-                        if (found.Contains(candidate)) continue;
+                        if (found.Contains(candidate))
+                        {
+                            continue;
+                        }
 
                         await sem.WaitAsync(ct);
                         tasks.Add(Task.Run(async () =>
@@ -326,18 +336,63 @@ namespace LanChat.Views
                             {
                                 using var tcp = new TcpClient();
                                 var connectTask = tcp.ConnectAsync(candidate, port);
-                                var delay = Task.Delay(300, ct); // 300ms timeout
+                                var delay = Task.Delay(300, ct); // 300ms timeout for connect
                                 var completed = await Task.WhenAny(connectTask, delay);
-                                if (completed == connectTask && tcp.Connected)
+                                if (completed != connectTask || !tcp.Connected)
                                 {
-                                    lock (found)
+                                    return; // not open
+                                }
+
+                                // Connected — perform a quick discovery handshake
+                                try
+                                {
+                                    using var stream = tcp.GetStream();
+                                    // Send a discovery request envelope
+                                    var reqEnv = MessageEnvelope.Create(new { }, typeName: "DiscoveryRequest");
+                                    var reqBytes = JsonSerializer.SerializeToUtf8Bytes(reqEnv, MessageEnvelope.DefaultJsonOptions);
+                                    await Framing.WriteAsync(stream, MessageKind.JsonEnvelope, reqBytes, ct).ConfigureAwait(false);
+
+                                    // Wait for a short response
+                                    var readTask = Framing.ReadAsync(stream, ct).AsTask();
+                                    var readDelay = Task.Delay(400, ct);
+                                    var done = await Task.WhenAny(readTask, readDelay);
+                                    if (done != readTask)
                                     {
-                                        if (!found.Contains(candidate))
+                                        return; // no timely response
+                                    }
+
+                                    var (kind, payload) = await readTask.ConfigureAwait(false);
+                                    if (kind != MessageKind.JsonEnvelope)
+                                    {
+                                        return;
+                                    }
+
+                                    var respEnv = JsonSerializer.Deserialize<MessageEnvelope?>(payload, MessageEnvelope.DefaultJsonOptions);
+                                    if (respEnv is null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(respEnv.Value.TypeName) && string.Equals(respEnv.Value.TypeName, "DiscoveryResponse", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        try
                                         {
-                                            found.Add(candidate);
+                                            var doc = JsonSerializer.Deserialize<JsonElement>(respEnv.Value.Json, MessageEnvelope.DefaultJsonOptions);
+                                            if (doc.ValueKind == JsonValueKind.Object && doc.TryGetProperty("isChatServer", out var prop) && prop.GetBoolean())
+                                            {
+                                                lock (found)
+                                                {
+                                                    if (!found.Contains(candidate))
+                                                    {
+                                                        found.Add(candidate);
+                                                    }
+                                                }
+                                            }
                                         }
+                                        catch { /* ignore malformed */ }
                                     }
                                 }
+                                catch { /* ignore */ }
                             }
                             catch { /* ignore */ }
                             finally
@@ -353,27 +408,28 @@ namespace LanChat.Views
                             {
                                 await Task.WhenAll(tasks.ToArray());
                             }
-                            catch
-                            {
+                            catch { /* ignore */ }
 
-                            }
                             tasks.Clear();
                         }
 
-                        if (ct.IsCancellationRequested) break;
+                        if (ct.IsCancellationRequested)
+                        {
+                            break;
+                        }
                     }
 
-                    if (ct.IsCancellationRequested) break;
+                    if (ct.IsCancellationRequested)
+                    {
+                        break;
+                    }
                 }
 
                 try
                 {
                     await Task.WhenAll(tasks.ToArray());
-                }
-                catch
-                {
-
-                }
+                } 
+                catch { /* ignore */ }
 
                 // Merge results into the ServerList on the UI thread
                 Application.Current.Dispatcher.Invoke(() =>
