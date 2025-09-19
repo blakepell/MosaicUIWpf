@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Text;
+using System.Net;
 using System.Net.Sockets;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -18,24 +19,50 @@ namespace LanChat.Network
             Tcp.NoDelay = true;
             ConnectedAt = DateTime.Now;
             LastActivity = DateTime.Now;
+
+            try
+            {
+                if (tcp?.Client?.RemoteEndPoint is IPEndPoint remote)
+                {
+                    IpAddress = remote.Address.ToString();
+                }
+                else
+                {
+                    IpAddress = tcp?.Client?.RemoteEndPoint?.ToString() ?? "n/a";
+                }
+            }
+            catch
+            {
+                IpAddress = "n/a";
+            }
         }
 
-        /// <summary>Unique identifier for this user.</summary>
+        /// <summary>
+        /// Unique identifier for this user.
+        /// </summary>
         [ObservableProperty]
         private Guid _id;
 
-        /// <summary>The TCP connection for this user.</summary>
+        /// <summary>
+        /// The TCP connection for this user.
+        /// </summary>
         public TcpClient Tcp { get; }
 
-        /// <summary>Username provided during login.</summary>
+        /// <summary>
+        /// Username provided during login.
+        /// </summary>
         [ObservableProperty]
         private string _username = string.Empty;
 
-        /// <summary>When this user connected to the server.</summary>
+        /// <summary>
+        /// When this user connected to the server.
+        /// </summary>
         [ObservableProperty]
         private DateTime _connectedAt;
 
-        /// <summary>Last time this user sent a message or was active.</summary>\
+        /// <summary>
+        /// Last time this user sent a message or was active.
+        /// </summary>
         [ObservableProperty]
         private DateTime _lastActivity;
 
@@ -44,6 +71,12 @@ namespace LanChat.Network
         /// </summary>
         [ObservableProperty] 
         private int _messagesSent = 0;
+
+        /// <summary>
+        /// Gets or sets the IP address associated with the object.
+        /// </summary>
+        [ObservableProperty]
+        public string _ipAddress = "n/a";
 
         /// <summary>
         /// Get display name for this user (username or fallback).

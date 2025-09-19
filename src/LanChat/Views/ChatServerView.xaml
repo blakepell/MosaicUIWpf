@@ -105,6 +105,15 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
+                    <!--  IP Address  -->
+                    <GridViewColumn Width="100" Header="IP Address">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding IpAddress}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                 </GridView>
             </ListView.View>
         </ListView>
