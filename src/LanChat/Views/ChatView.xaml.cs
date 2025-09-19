@@ -10,6 +10,10 @@ using LanChat.Network;
 using Mosaic.UI.Wpf.Cache;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Extensions;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LanChat.Views
 {
@@ -23,33 +27,12 @@ namespace LanChat.Views
 
         public ObservableCollection<Message> Messages { get; set; } = new();
 
+        private CancellationTokenSource? _discoverCts;
+
         public ChatView()
         {
             this.DataContext = this;
             InitializeComponent();
-        }
-
-        private void ChatView_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            foreach (var ip in Argus.Network.Utilities.GetLocalIpAddresses().OrderBy(ip => ip.ToString()))
-            {
-                string ipAddress = ip.ToString();
-
-                if (!ServerList.Contains(ipAddress))
-                {
-                    ServerList.Add(ipAddress);
-                }
-            }
-
-            if (!ServerList.Contains("127.0.0.1"))
-            {
-                ServerList.Add("127.0.0.1");
-            }
-
-            if (ServerList.Count > 0)
-            {
-                ServerAddress.SelectedIndex = 0;
-            }
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -244,7 +227,8 @@ namespace LanChat.Views
             };
 
             // Connect to server
-            await _chatClient.ConnectAsync(vm.AppSettings.IpAddress, vm.AppSettings.Port);
+            var vm2 = AppServices.GetRequiredService<AppViewModel>();
+            await _chatClient.ConnectAsync(vm2.AppSettings.IpAddress, vm2.AppSettings.Port);
 
             // Login with username
             await _chatClient.LoginAsync(_username);
@@ -284,6 +268,139 @@ namespace LanChat.Views
                         });
                     }
                     break;
+            }
+        }
+
+        private async void DiscoverServers_Click(object sender, RoutedEventArgs e)
+        {
+            // Toggle discovery
+            if (_discoverCts != null)
+            {
+                await _discoverCts.CancelAsync();
+                _discoverCts = null;
+                DiscoverButton.Content = "Discover";
+                DiscoverButton.IsEnabled = true;
+                return;
+            }
+
+            DiscoverButton.IsEnabled = false;
+            DiscoverButton.Content = "Scanning...";
+
+            _discoverCts = new CancellationTokenSource();
+            var ct = _discoverCts.Token;
+
+            try
+            {
+                var vm = AppServices.GetRequiredService<AppViewModel>();
+                int port = vm.AppSettings.Port;
+
+                var localIps = Argus.Network.Utilities.GetLocalIpAddresses()
+                    .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    .Select(ip => ip.ToString())
+                    .ToList();
+
+                var found = new List<string>();
+
+                // Simple scan: for each local IP, try the /24 subnet
+                var tasks = new List<Task>();
+                var sem = new SemaphoreSlim(50); // limit concurrency
+
+                foreach (var local in localIps)
+                {
+                    if (ct.IsCancellationRequested) break;
+
+                    var parts = local.Split('.');
+                    if (parts.Length != 4) continue;
+
+                    var prefix = string.Join('.', parts[0], parts[1], parts[2]);
+
+                    for (int i = 1; i < 255; i++)
+                    {
+                        var candidate = $"{prefix}.{i}";
+                        if (found.Contains(candidate)) continue;
+
+                        await sem.WaitAsync(ct);
+                        tasks.Add(Task.Run(async () =>
+                        {
+                            try
+                            {
+                                using var tcp = new TcpClient();
+                                var connectTask = tcp.ConnectAsync(candidate, port);
+                                var delay = Task.Delay(300, ct); // 300ms timeout
+                                var completed = await Task.WhenAny(connectTask, delay);
+                                if (completed == connectTask && tcp.Connected)
+                                {
+                                    lock (found)
+                                    {
+                                        if (!found.Contains(candidate))
+                                        {
+                                            found.Add(candidate);
+                                        }
+                                    }
+                                }
+                            }
+                            catch { /* ignore */ }
+                            finally
+                            {
+                                sem.Release();
+                            }
+                        }, ct));
+
+                        if (tasks.Count > 0 && tasks.Count % 200 == 0)
+                        {
+                            // periodically await to avoid memory buildup
+                            try
+                            {
+                                await Task.WhenAll(tasks.ToArray());
+                            }
+                            catch
+                            {
+
+                            }
+                            tasks.Clear();
+                        }
+
+                        if (ct.IsCancellationRequested) break;
+                    }
+
+                    if (ct.IsCancellationRequested) break;
+                }
+
+                try
+                {
+                    await Task.WhenAll(tasks.ToArray());
+                }
+                catch
+                {
+
+                }
+
+                // Merge results into the ServerList on the UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var ip in found.OrderBy(x => x))
+                    {
+                        if (!ServerList.Contains(ip))
+                        {
+                            ServerList.Add(ip);
+                        }
+                    }
+
+                    if (ServerList.Count > 0 && ServerAddress.SelectedIndex < 0)
+                    {
+                        ServerAddress.SelectedIndex = 0;
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                // canceled
+            }
+            finally
+            {
+                DiscoverButton.Content = "Discover";
+                DiscoverButton.IsEnabled = true;
+                _discoverCts = null;
             }
         }
 
