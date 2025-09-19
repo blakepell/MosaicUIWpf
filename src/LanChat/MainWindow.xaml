@@ -250,7 +250,11 @@
             <StatusBarItem Grid.Column="1" />
             <StatusBarItem Grid.Column="2" />
             <StatusBarItem Grid.Column="3">
-                <mosaic:Shield Label="Server IP:" ValueBackgroundBrush="#03467A" ValueForegroundBrush="White" Value="{Binding LanIpAddress, FallbackValue='127.0.0.1'}" />
+                <mosaic:Shield
+                    Label="Lan IP Address:"
+                    ValueBackgroundBrush="#03467A"
+                    ValueForegroundBrush="White"
+                    Value="{Binding LanIpAddress, FallbackValue='127.0.0.1'}" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="4">
                 <mosaic:Shield
