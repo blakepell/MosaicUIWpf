@@ -8,6 +8,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ComboBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/GroupBox.xaml" />
 
         <!--<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
         -->
