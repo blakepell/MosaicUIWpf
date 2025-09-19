@@ -190,7 +190,7 @@
     <SolidColorBrush x:Key="GridViewColumnHeaderGripper.LineBrush" Color="#6F6F73" />
     <SolidColorBrush x:Key="ScrollBar.SeparatorBrush" Color="#2D2D30" />
 
-    <!--  ToolBar (Visual Studio Dark palette)  -->
+    <!--  ToolBar  -->
     <SolidColorBrush x:Key="ToolBarDarkFill" Color="#2D2D30" />
     <SolidColorBrush x:Key="ToolBarDisabledFill" Color="#3F3F46" />
     <SolidColorBrush x:Key="ToolBarDisabledBorder" Color="#3F3F46" />

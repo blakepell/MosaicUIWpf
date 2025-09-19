@@ -11,7 +11,7 @@
                     <Rectangle
                         Margin="4,4,21,4"
                         SnapsToDevicePixels="true"
-                        Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                        Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                         StrokeDashArray="1 2"
                         StrokeThickness="1" />
                 </ControlTemplate>
@@ -115,8 +115,8 @@
                     Color="Transparent">
                     <Border
                         x:Name="dropDownBorder"
-                        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                        BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1">
                         <ScrollViewer x:Name="DropDownScrollViewer">
                             <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
@@ -212,8 +212,8 @@
                     Color="Transparent">
                     <Border
                         x:Name="dropDownBorder"
-                        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-                        BorderBrush="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1">
                         <ScrollViewer x:Name="DropDownScrollViewer">
                             <Grid x:Name="grid" RenderOptions.ClearTypeHint="Enabled">
@@ -279,12 +279,11 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-
     <Style TargetType="{x:Type ComboBox}">
         <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual}" />
         <Setter Property="Background" Value="{DynamicResource ComboBox.Static.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ComboBox.Static.Border}" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
