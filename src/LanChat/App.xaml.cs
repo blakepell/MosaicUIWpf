@@ -35,15 +35,15 @@ namespace LanChat
                 Name = Environment.MachineName,
             });
 
-            server.TextReceived += (s, e) =>
-            {
-                Console.WriteLine($"[TEXT from {e.ClientId}]: {e.Text}");
-            };
+            //server.TextReceived += (s, e) =>
+            //{
+            //    Console.WriteLine($"[TEXT from {e.ClientId}]: {e.Text}");
+            //};
 
-            server.EnvelopeReceived += (s, e) =>
-            {
-                Console.WriteLine($"[ENV from {e.ClientId}]: {e.Envelope.TypeName} -> {e.Envelope.Json}");
-            };
+            //server.EnvelopeReceived += (s, e) =>
+            //{
+            //    Console.WriteLine($"[ENV from {e.ClientId}]: {e.Envelope.TypeName} -> {e.Envelope.Json}");
+            //};
 
             server.ClientConnected += (o, args) =>
             {
