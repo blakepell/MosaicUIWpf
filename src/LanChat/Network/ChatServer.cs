@@ -6,13 +6,22 @@ using System.Text;
 using System.Text.Json;
 using Argus.Memory;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LanChat.Common;
+using LanChat.Common;   
+using LanChat.Network.Handlers;
 using Mosaic.UI.Wpf.Collections;
+using System.Linq;
+using System.Reflection;
 
 namespace LanChat.Network;
 
 public partial class ChatServer : ObservableObject, IAsyncDisposable
 {
+    public event EventHandler<ClientConnectionEventArgs>? ClientConnected;
+    public event EventHandler<ClientConnectionEventArgs>? ClientDisconnected;
+    public event EventHandler<TextMessageEventArgs>? TextReceived;
+    public event EventHandler<EnvelopeEventArgs>? EnvelopeReceived;
+    public event EventHandler<ErrorEventArgs>? Error;
+
     [ObservableProperty]
     private bool _isListening = false;
 
@@ -24,22 +33,60 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     private TcpListener? _listener;
     private readonly ChatServerOptions _options;
     private Task? _acceptLoop;
+    private List<IEnvelopeHandler> EnvelopeHandlers { get; }
 
     public ChatServer(ChatServerOptions options)
     {
         _options = options;
+
+        // Initialize the envelope handlers list and load implementations via reflection.
+        EnvelopeHandlers = new List<IEnvelopeHandler>();
+
+        try
+        {
+            // Use the assembly that contains this type to find handler implementations.
+            var asm = typeof(ChatServer).Assembly;
+
+            var handlerTypes = asm.GetTypes()
+                .Where(t => !t.IsAbstract && typeof(IEnvelopeHandler).IsAssignableFrom(t));
+
+            foreach (var ht in handlerTypes)
+            {
+                try
+                {
+                    if (Activator.CreateInstance(ht) is IEnvelopeHandler handler)
+                    {
+                        EnvelopeHandlers.Add(handler);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Surface loader errors through the Error event if someone is listening.
+                    Error?.Invoke(this, new ErrorEventArgs { Exception = ex });
+                }
+            }
+        }
+        catch (ReflectionTypeLoadException rtlex)
+        {
+            // Aggregate loader exceptions
+            foreach (var le in rtlex.LoaderExceptions ?? [])
+            {
+                Error?.Invoke(this, new ErrorEventArgs { Exception = le });
+            }
+        }
+        catch (Exception ex)
+        {
+            Error?.Invoke(this, new ErrorEventArgs { Exception = ex });
+        }
+
+
+
     }
 
     public async ValueTask DisposeAsync()
     {
         await StopAsync();
     }
-
-    public event EventHandler<ClientConnectionEventArgs>? ClientConnected;
-    public event EventHandler<ClientConnectionEventArgs>? ClientDisconnected;
-    public event EventHandler<TextMessageEventArgs>? TextReceived;
-    public event EventHandler<EnvelopeEventArgs>? EnvelopeReceived;
-    public event EventHandler<ErrorEventArgs>? Error;
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -173,61 +220,12 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
                         {
                             var env = JsonSerializer.Deserialize<MessageEnvelope>(payload, MessageEnvelope.DefaultJsonOptions);
 
-                            // Handle discovery requests from lightweight scanners
-                            if (!string.IsNullOrEmpty(env.TypeName) && string.Equals(env.TypeName, "DiscoveryRequest", StringComparison.OrdinalIgnoreCase))
+                            foreach (var handler in EnvelopeHandlers)
                             {
-                                try
+                                if (!string.IsNullOrEmpty(env.TypeName) && string.Equals(env.TypeName, handler.TypeName, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    var appSettings = AppServices.GetRequiredService<AppSettings>();
-                                    var respPayload = new { IsChatServer = true, ServerName = appSettings.ServerName, Name = _options.Name };
-                                    var respEnv = MessageEnvelope.Create(respPayload, typeName: "DiscoveryResponse");
-                                    var bytes = JsonSerializer.SerializeToUtf8Bytes(respEnv, MessageEnvelope.DefaultJsonOptions);
-                                    // Send only to the requesting client
-                                    await user.SendAsync(MessageKind.JsonEnvelope, bytes, ct).ConfigureAwait(false);
+                                    await handler.HandleAsync(user, env, ct);
                                 }
-                                catch (Exception ex)
-                                {
-                                    Error?.Invoke(this, new ErrorEventArgs { Exception = ex, ClientId = id });
-                                }
-
-                                break; // don't broadcast
-                            }
-
-                            // Handle login/announce messages
-                            if (!string.IsNullOrEmpty(env.TypeName) && string.Equals(env.TypeName, "Login", StringComparison.OrdinalIgnoreCase))
-                            {
-                                try
-                                {
-                                    var loginData = JsonSerializer.Deserialize<Dictionary<string, string>>(env.Json, MessageEnvelope.DefaultJsonOptions);
-
-                                    if (loginData?.TryGetValue("username", out var username) == true && !string.IsNullOrWhiteSpace(username))
-                                    {
-                                        user.Username = username.Trim();
-                                        user.LastActivity = DateTime.Now;
-                                        user.MessagesSent++;
-
-                                        // Send system announcement about the newly logged in user
-                                        var announcement = $"{user.DisplayName} has joined the chat.";
-                                        await BroadcastSystemMessageAsync(announcement, ct).ConfigureAwait(false);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Error?.Invoke(this, new ErrorEventArgs { Exception = ex, ClientId = id });
-                                }
-
-                                break; // Don't broadcast login messages
-                            }
-
-                            // Optional server-side processing
-                            if (_options.EnvelopeProcessor is { } proc)
-                            {
-                                var processed = proc(env);
-                                if (processed is null)
-                                {
-                                    break; // drop
-                                }
-                                env = processed.Value;
                             }
 
                             EnvelopeReceived?.Invoke(this, new EnvelopeEventArgs 
@@ -236,6 +234,7 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
                                 Envelope = env, 
                                 Username = user.Username 
                             });
+
                             await BroadcastEnvelopeAsync(env, ct).ConfigureAwait(false);
                             break;
                         }
@@ -246,6 +245,7 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
+            // ignore
         }
         catch (IOException) // remote closed
         {
@@ -325,16 +325,17 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     /// <summary>
     /// Create a system envelope from the supplied message and broadcast it to all clients.
     /// </summary>
-    private async Task BroadcastSystemMessageAsync(string message, CancellationToken ct = default)
+    public async Task BroadcastSystemMessageAsync(string message, CancellationToken ct = default)
     {
         var env = MessageEnvelope.Create(new { Text = message, Sender = "System" }, typeName: "SystemMessage");
         await BroadcastEnvelopeAsync(env, ct).ConfigureAwait(false);
     }
 
-    private async Task BroadcastAsync(MessageKind kind, ReadOnlyMemory<byte> payload, CancellationToken ct)
+    public async Task BroadcastAsync(MessageKind kind, ReadOnlyMemory<byte> payload, CancellationToken ct)
     {
         // Serialize writes across clients to avoid interleaving on slow connections.
         await _broadcastGate.WaitAsync(ct).ConfigureAwait(false);
+
         try
         {
             var tasks = new List<Task>(_clients.Count);
