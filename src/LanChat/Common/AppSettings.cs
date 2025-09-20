@@ -15,7 +15,6 @@ using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using System.Windows.Forms;
 
 namespace LanChat.Common
 {

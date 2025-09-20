@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using Argus.Memory;
+﻿using Argus.Memory;
 using LanChat.Common;
 using LanChat.Network;
 using Mosaic.UI.Wpf.Controls;

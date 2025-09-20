@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,12 +9,8 @@ using LanChat.Network;
 using Mosaic.UI.Wpf.Cache;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Extensions;
-using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text.Json;
-using System.Linq;
 using ServerInfo = LanChat.Common.SeverInfo;
 
 namespace LanChat.Views
