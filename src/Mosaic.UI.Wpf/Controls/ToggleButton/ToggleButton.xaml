@@ -1,4 +1,4 @@
-﻿<!-- This is based on code from https://github.com/WPFDevelopersOrg/WPFDevelopers available via the MIT License -->
+﻿<!--  This is based on code from https://github.com/WPFDevelopersOrg/WPFDevelopers available via the MIT License  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

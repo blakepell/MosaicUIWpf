@@ -18,6 +18,9 @@ namespace Mosaic.UI.Wpf.Controls
     /// Represents a button control that can switch between two states: checked and unchecked.  This
     /// implementation looks like a theme styled switch.
     /// </summary>
+    /// <remarks>
+    /// This is based on code from https://github.com/WPFDevelopersOrg/WPFDevelopers available via the MIT License.
+    /// </remarks>
     public class ToggleButton : System.Windows.Controls.Primitives.ToggleButton
     {
 
