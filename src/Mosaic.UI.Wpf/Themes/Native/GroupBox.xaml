@@ -1,6 +1,7 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
     <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}">
         <Setter Property="BorderBrush" Value="{DynamicResource themes:MosaicTheme.ControlBorderBrush}" />
@@ -107,5 +108,5 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>    
+    </Style>
 </ResourceDictionary>

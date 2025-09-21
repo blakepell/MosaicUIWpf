@@ -75,7 +75,7 @@
                 <Rectangle
                     Width="1"
                     HorizontalAlignment="Left"
-                    Fill="{DynamicResource {x:Static  themes:MosaicTheme.InactiveSelectionBorderBrush}}">
+                    Fill="{DynamicResource {x:Static themes:MosaicTheme.InactiveSelectionBorderBrush}}">
                     <Rectangle.Visibility>
                         <Binding ElementName="Me" Path="MenuItem.IsSelected">
                             <Binding.Converter>

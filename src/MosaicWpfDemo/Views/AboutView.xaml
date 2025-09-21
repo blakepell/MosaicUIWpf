@@ -219,6 +219,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -248,6 +249,20 @@
                         FontSize="12"
                         NavigateUri="https://github.com/SamKr/ChatBubbles"
                         Text="https://github.com/SamKr/ChatBubbles" />
+
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="WPFDevelopers" />
+                    <controls:Hyperlink
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/WPFDevelopersOrg/WPFDevelopers"
+                        Text="https://github.com/WPFDevelopersOrg/WPFDevelopers" />
                 </Grid>
 
             </StackPanel>

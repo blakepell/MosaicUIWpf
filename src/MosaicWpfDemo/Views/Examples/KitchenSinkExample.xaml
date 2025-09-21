@@ -58,6 +58,9 @@
                         </ComboBox>
                     </StackPanel>
 
+                    <ToggleButton Style="{DynamicResource MosaicToggleButton}">test</ToggleButton>
+
+                    <mosaic:ToggleButton />
 
                     <CheckBox Margin="4,4,0,0">
                         <TextBlock Text="Enabled" />

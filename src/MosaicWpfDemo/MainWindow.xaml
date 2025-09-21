@@ -522,6 +522,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ToggleButton Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/toggle2-48.png"
+                    Text="ToggleButton">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ToggleButton" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ToggleButtonExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ToggleButtonExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ToggleButton}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ToggleButtonExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/toggle2-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  ToggleSwitch Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
