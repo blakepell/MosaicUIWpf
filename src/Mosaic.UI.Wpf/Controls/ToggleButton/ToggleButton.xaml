@@ -10,6 +10,9 @@
     <Style TargetType="{x:Type controls:ToggleButton}">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Padding" Value="4,0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CheckedBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="UncheckedBackground" Value="#c1c2c6" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:ToggleButton}">
@@ -19,7 +22,7 @@
                                 x:Name="PART_Border"
                                 Width="40"
                                 Height="20"
-                                Background="{TemplateBinding Background}"
+                                Background="{TemplateBinding UncheckedBackground}"
                                 CornerRadius="10">
                                 <Ellipse
                                     x:Name="PART_Ellipse"
@@ -73,10 +76,7 @@
                     </BulletDecorator>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="False">
-                            <Setter Property="Background" Value="#c1c2c6" />
+                            <Setter TargetName="PART_Border" Property="Background" Value="{Binding CheckedBackground, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

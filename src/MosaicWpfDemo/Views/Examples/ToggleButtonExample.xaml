@@ -10,7 +10,21 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel Margin="10" Orientation="Vertical">
-        <TextBlock Margin="0,0,0,6" Text="Default Themed Button" />
-        <mosaic:ToggleButton />
+        <TextBlock Margin="0,0,0,6" Text="Default Themed Accent Color" />
+
+        <mosaic:SimpleStackPanel Orientation="Horizontal">
+            <mosaic:ToggleButton IsChecked="False" />
+            <mosaic:ToggleButton Margin="2,0,0,0" IsChecked="True" />
+        </mosaic:SimpleStackPanel>
+
+        <TextBlock Margin="0,6,0,6" Text="Custom Checked Color" />
+        <mosaic:ToggleButton CheckedBackground="Green" IsChecked="True" />
+
+        <TextBlock Margin="0,6,0,6" Text="Custom Color and Unchecked Color" />
+        <mosaic:ToggleButton
+            CheckedBackground="Green"
+            IsChecked="False"
+            UncheckedBackground="Red" />
+
     </StackPanel>
 </UserControl>
