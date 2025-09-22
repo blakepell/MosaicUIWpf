@@ -8,11 +8,17 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <StackPanel Orientation="Vertical">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
         <mosaic:AdaptiveImage
             Width="16"
             Height="16"
+            HorizontalAlignment="Center"
             Source="../../Assets/vs-add-16.png"
             ThemeMode="Light" />
-    </StackPanel>
+    </Grid>
 </UserControl>

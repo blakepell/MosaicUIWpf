@@ -14,36 +14,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <!--  Row 0: fill remaining space and scroll when content overflows  -->
-        <chat:ChatThread
-            x:Name="ChatThread"
-            Grid.Row="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            DataContext="{Binding Messages}" />
 
         <chat:TypingProgress
             x:Name="TypingProgress"
-            Grid.Row="1"
-            IsEnabled="True" />
-
-        <!--  Row 1: pinned to bottom  -->
-        <TextBox
-            x:Name="CommandTextBox"
-            Grid.Row="2"
-            Margin="0,20,0,0"
-            Padding="5"
-            BorderBrush="#38383B"
-            FontFamily="Consolas"
-            FontSize="12"
-            PreviewKeyDown="CommandTextBox_OnPreviewKeyDown">
-            <i:Interaction.Behaviors>
-                <local:TextBoxClearTextOnEscapeBehavior />
-            </i:Interaction.Behaviors>
-        </TextBox>
+            HorizontalAlignment="Center"
+            Grid.Row="0"
+            IsRunning="True" />
     </Grid>
 </UserControl>
