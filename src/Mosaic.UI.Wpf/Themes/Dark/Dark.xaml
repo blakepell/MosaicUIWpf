@@ -43,6 +43,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBackgroundColor}">#FF3F3F46</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundColor}">#FF6A6A6A</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderColor}">#FF4F4F53</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlSeparatorColor}">#343437</Color>
 
     <!--  Hyperlink  -->
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColor}">#FF569CD6</Color>

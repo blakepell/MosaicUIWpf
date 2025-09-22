@@ -86,6 +86,10 @@ namespace Mosaic.UI.Wpf.Themes
         public static ComponentResourceKey ControlDisabledBorderBrush { get; } = new(typeof(MosaicTheme), "ControlDisabledBorderBrush");
         public static ComponentResourceKey ControlDisabledBorderColor { get; } = new(typeof(MosaicTheme), "ControlDisabledBorderColor");
 
+        public static ComponentResourceKey ControlSeparatorBrush { get; } = new(typeof(MosaicTheme), "ControlSeparatorBrush");
+
+        public static ComponentResourceKey ControlSeparatorColor { get; } = new(typeof(MosaicTheme), "ControlSeparatorColor");
+
         public static ComponentResourceKey HyperLinkBrush { get; } = new(typeof(MosaicTheme), "HyperLinkBrush");
         public static ComponentResourceKey HyperLinkColor { get; } = new(typeof(MosaicTheme), "HyperLinkColor");
         public static ComponentResourceKey HyperLinkHoverBrush { get; } = new(typeof(MosaicTheme), "HyperLinkHoverBrush");
@@ -113,119 +117,5 @@ namespace Mosaic.UI.Wpf.Themes
 
         public static ComponentResourceKey SidebarForegroundColor { get; } = new(typeof(MosaicTheme), "SidebarForegroundColor");
         public static ComponentResourceKey SidebarForegroundBrush { get; } = new(typeof(MosaicTheme), "SidebarForegroundBrush");
-
-        /*
-         *  General color palette:
-         */
-        public static ComponentResourceKey Blue50 { get; } = new(typeof(MosaicTheme), "Blue50");
-        public static ComponentResourceKey Blue100 { get; } = new(typeof(MosaicTheme), "Blue100");
-        public static ComponentResourceKey Blue200 { get; } = new(typeof(MosaicTheme), "Blue200");
-        public static ComponentResourceKey Blue300 { get; } = new(typeof(MosaicTheme), "Blue300");
-        public static ComponentResourceKey Blue400 { get; } = new(typeof(MosaicTheme), "Blue400");
-        public static ComponentResourceKey Blue500 { get; } = new(typeof(MosaicTheme), "Blue500");
-        public static ComponentResourceKey Blue600 { get; } = new(typeof(MosaicTheme), "Blue600");
-        public static ComponentResourceKey Blue700 { get; } = new(typeof(MosaicTheme), "Blue700");
-        public static ComponentResourceKey Blue800 { get; } = new(typeof(MosaicTheme), "Blue800");
-        public static ComponentResourceKey Blue900 { get; } = new(typeof(MosaicTheme), "Blue900");
-
-        public static ComponentResourceKey Indigo50 { get; } = new(typeof(MosaicTheme), "Indigo50");
-        public static ComponentResourceKey Indigo100 { get; } = new(typeof(MosaicTheme), "Indigo100");
-        public static ComponentResourceKey Indigo200 { get; } = new(typeof(MosaicTheme), "Indigo200");
-        public static ComponentResourceKey Indigo300 { get; } = new(typeof(MosaicTheme), "Indigo300");
-        public static ComponentResourceKey Indigo400 { get; } = new(typeof(MosaicTheme), "Indigo400");
-        public static ComponentResourceKey Indigo500 { get; } = new(typeof(MosaicTheme), "Indigo500");
-        public static ComponentResourceKey Indigo600 { get; } = new(typeof(MosaicTheme), "Indigo600");
-        public static ComponentResourceKey Indigo700 { get; } = new(typeof(MosaicTheme), "Indigo700");
-        public static ComponentResourceKey Indigo800 { get; } = new(typeof(MosaicTheme), "Indigo800");
-        public static ComponentResourceKey Indigo900 { get; } = new(typeof(MosaicTheme), "Indigo900");
-
-        public static ComponentResourceKey Purple50 { get; } = new(typeof(MosaicTheme), "Purple50");
-        public static ComponentResourceKey Purple100 { get; } = new(typeof(MosaicTheme), "Purple100");
-        public static ComponentResourceKey Purple200 { get; } = new(typeof(MosaicTheme), "Purple200");
-        public static ComponentResourceKey Purple300 { get; } = new(typeof(MosaicTheme), "Purple300");
-        public static ComponentResourceKey Purple400 { get; } = new(typeof(MosaicTheme), "Purple400");
-        public static ComponentResourceKey Purple500 { get; } = new(typeof(MosaicTheme), "Purple500");
-        public static ComponentResourceKey Purple600 { get; } = new(typeof(MosaicTheme), "Purple600");
-        public static ComponentResourceKey Purple700 { get; } = new(typeof(MosaicTheme), "Purple700");
-        public static ComponentResourceKey Purple800 { get; } = new(typeof(MosaicTheme), "Purple800");
-        public static ComponentResourceKey Purple900 { get; } = new(typeof(MosaicTheme), "Purple900");
-
-        public static ComponentResourceKey Pink50 { get; } = new(typeof(MosaicTheme), "Pink50");
-        public static ComponentResourceKey Pink100 { get; } = new(typeof(MosaicTheme), "Pink100");
-        public static ComponentResourceKey Pink200 { get; } = new(typeof(MosaicTheme), "Pink200");
-        public static ComponentResourceKey Pink300 { get; } = new(typeof(MosaicTheme), "Pink300");
-        public static ComponentResourceKey Pink400 { get; } = new(typeof(MosaicTheme), "Pink400");
-        public static ComponentResourceKey Pink500 { get; } = new(typeof(MosaicTheme), "Pink500");
-        public static ComponentResourceKey Pink600 { get; } = new(typeof(MosaicTheme), "Pink600");
-        public static ComponentResourceKey Pink700 { get; } = new(typeof(MosaicTheme), "Pink700");
-        public static ComponentResourceKey Pink800 { get; } = new(typeof(MosaicTheme), "Pink800");
-        public static ComponentResourceKey Pink900 { get; } = new(typeof(MosaicTheme), "Pink900");
-
-        public static ComponentResourceKey Red50 { get; } = new(typeof(MosaicTheme), "Red50");
-        public static ComponentResourceKey Red100 { get; } = new(typeof(MosaicTheme), "Red100");
-        public static ComponentResourceKey Red200 { get; } = new(typeof(MosaicTheme), "Red200");
-        public static ComponentResourceKey Red300 { get; } = new(typeof(MosaicTheme), "Red300");
-        public static ComponentResourceKey Red400 { get; } = new(typeof(MosaicTheme), "Red400");
-        public static ComponentResourceKey Red500 { get; } = new(typeof(MosaicTheme), "Red500");
-        public static ComponentResourceKey Red600 { get; } = new(typeof(MosaicTheme), "Red600");
-        public static ComponentResourceKey Red700 { get; } = new(typeof(MosaicTheme), "Red700");
-        public static ComponentResourceKey Red800 { get; } = new(typeof(MosaicTheme), "Red800");
-        public static ComponentResourceKey Red900 { get; } = new(typeof(MosaicTheme), "Red900");
-
-        public static ComponentResourceKey Orange50 { get; } = new(typeof(MosaicTheme), "Orange50");
-        public static ComponentResourceKey Orange100 { get; } = new(typeof(MosaicTheme), "Orange100");
-        public static ComponentResourceKey Orange200 { get; } = new(typeof(MosaicTheme), "Orange200");
-        public static ComponentResourceKey Orange300 { get; } = new(typeof(MosaicTheme), "Orange300");
-        public static ComponentResourceKey Orange400 { get; } = new(typeof(MosaicTheme), "Orange400");
-        public static ComponentResourceKey Orange500 { get; } = new(typeof(MosaicTheme), "Orange500");
-        public static ComponentResourceKey Orange600 { get; } = new(typeof(MosaicTheme), "Orange600");
-        public static ComponentResourceKey Orange700 { get; } = new(typeof(MosaicTheme), "Orange700");
-        public static ComponentResourceKey Orange800 { get; } = new(typeof(MosaicTheme), "Orange800");
-        public static ComponentResourceKey Orange900 { get; } = new(typeof(MosaicTheme), "Orange900");
-
-        public static ComponentResourceKey Yellow50 { get; } = new(typeof(MosaicTheme), "Yellow50");
-        public static ComponentResourceKey Yellow100 { get; } = new(typeof(MosaicTheme), "Yellow100");
-        public static ComponentResourceKey Yellow200 { get; } = new(typeof(MosaicTheme), "Yellow200");
-        public static ComponentResourceKey Yellow300 { get; } = new(typeof(MosaicTheme), "Yellow300");
-        public static ComponentResourceKey Yellow400 { get; } = new(typeof(MosaicTheme), "Yellow400");
-        public static ComponentResourceKey Yellow500 { get; } = new(typeof(MosaicTheme), "Yellow500");
-        public static ComponentResourceKey Yellow600 { get; } = new(typeof(MosaicTheme), "Yellow600");
-        public static ComponentResourceKey Yellow700 { get; } = new(typeof(MosaicTheme), "Yellow700");
-        public static ComponentResourceKey Yellow800 { get; } = new(typeof(MosaicTheme), "Yellow800");
-        public static ComponentResourceKey Yellow900 { get; } = new(typeof(MosaicTheme), "Yellow900");
-
-        public static ComponentResourceKey Green50 { get; } = new(typeof(MosaicTheme), "Green50");
-        public static ComponentResourceKey Green100 { get; } = new(typeof(MosaicTheme), "Green100");
-        public static ComponentResourceKey Green200 { get; } = new(typeof(MosaicTheme), "Green200");
-        public static ComponentResourceKey Green300 { get; } = new(typeof(MosaicTheme), "Green300");
-        public static ComponentResourceKey Green400 { get; } = new(typeof(MosaicTheme), "Green400");
-        public static ComponentResourceKey Green500 { get; } = new(typeof(MosaicTheme), "Green500");
-        public static ComponentResourceKey Green600 { get; } = new(typeof(MosaicTheme), "Green600");
-        public static ComponentResourceKey Green700 { get; } = new(typeof(MosaicTheme), "Green700");
-        public static ComponentResourceKey Green800 { get; } = new(typeof(MosaicTheme), "Green800");
-        public static ComponentResourceKey Green900 { get; } = new(typeof(MosaicTheme), "Green900");
-
-        public static ComponentResourceKey Teal50 { get; } = new(typeof(MosaicTheme), "Teal50");
-        public static ComponentResourceKey Teal100 { get; } = new(typeof(MosaicTheme), "Teal100");
-        public static ComponentResourceKey Teal200 { get; } = new(typeof(MosaicTheme), "Teal200");
-        public static ComponentResourceKey Teal300 { get; } = new(typeof(MosaicTheme), "Teal300");
-        public static ComponentResourceKey Teal400 { get; } = new(typeof(MosaicTheme), "Teal400");
-        public static ComponentResourceKey Teal500 { get; } = new(typeof(MosaicTheme), "Teal500");
-        public static ComponentResourceKey Teal600 { get; } = new(typeof(MosaicTheme), "Teal600");
-        public static ComponentResourceKey Teal700 { get; } = new(typeof(MosaicTheme), "Teal700");
-        public static ComponentResourceKey Teal800 { get; } = new(typeof(MosaicTheme), "Teal800");
-        public static ComponentResourceKey Teal900 { get; } = new(typeof(MosaicTheme), "Teal900");
-
-        // Neutral gray scale (useful for surfaces/borders/disabled)
-        public static ComponentResourceKey Gray50 { get; } = new(typeof(MosaicTheme), "Gray50");
-        public static ComponentResourceKey Gray100 { get; } = new(typeof(MosaicTheme), "Gray100");
-        public static ComponentResourceKey Gray200 { get; } = new(typeof(MosaicTheme), "Gray200");
-        public static ComponentResourceKey Gray300 { get; } = new(typeof(MosaicTheme), "Gray300");
-        public static ComponentResourceKey Gray400 { get; } = new(typeof(MosaicTheme), "Gray400");
-        public static ComponentResourceKey Gray500 { get; } = new(typeof(MosaicTheme), "Gray500");
-        public static ComponentResourceKey Gray600 { get; } = new(typeof(MosaicTheme), "Gray600");
-        public static ComponentResourceKey Gray700 { get; } = new(typeof(MosaicTheme), "Gray700");
-        public static ComponentResourceKey Gray800 { get; } = new(typeof(MosaicTheme), "Gray800");
-        public static ComponentResourceKey Gray900 { get; } = new(typeof(MosaicTheme), "Gray900");
     }
 }

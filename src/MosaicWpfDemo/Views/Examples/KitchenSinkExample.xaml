@@ -11,6 +11,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
+
             <ResourceDictionary.MergedDictionaries>
                 <!--  Native  -->
                 <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native.xaml" />
@@ -23,12 +24,12 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Menu inserted in grid row 0 -->
+        <!--  Menu inserted in grid row 0  -->
         <Menu Grid.Row="0">
             <MenuItem Header="_File">
                 <MenuItem Header="New">
-                    <MenuItem Header="Text File"></MenuItem>
-                    <MenuItem Header="Markdown File"></MenuItem>
+                    <MenuItem Header="Text File" />
+                    <MenuItem Header="Markdown File" />
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="E_xit" />
@@ -40,6 +41,20 @@
             Grid.Row="1"
             VerticalAlignment="Top"
             Orientation="Vertical">
+
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="Right-click me">
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Open" />
+                        <MenuItem Header="Save" />
+                        <Separator />
+                        <MenuItem Header="Exit" />
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
+            </TextBlock>
 
             <TextBlock
                 Margin="0,0,0,8"

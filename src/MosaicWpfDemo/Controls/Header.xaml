@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -21,10 +22,8 @@
                 Text="{Binding Path=Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 TextTrimming="CharacterEllipsis" />
         </StackPanel>
-        <Rectangle
-            Height="1"
-            Margin="0,4,0,4"
-            Stroke="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+
+        <Separator Margin="8,4,0,4" Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"></Separator>
 
     </StackPanel>
 </UserControl>

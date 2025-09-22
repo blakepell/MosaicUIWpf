@@ -37,6 +37,7 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlSeparatorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorColor}}" />
 
     <!--  Hyperlink  -->
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkColor}}" />

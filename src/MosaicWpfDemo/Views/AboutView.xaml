@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MosaicWpfDemo.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -110,10 +111,8 @@
                     Margin="9,10,0,0"
                     FontSize="18"
                     Text="Third Party Library Usage" />
-                <Separator
-                    Height=".9"
-                    Margin="10,3,0,0"
-                    Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+
+                <Separator SnapsToDevicePixels="True" Margin="8,3,0,0" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -198,10 +197,8 @@
                     Margin="9,10,0,0"
                     FontSize="18"
                     Text="Attributions" />
-                <Separator
-                    Height=".9"
-                    Margin="10,3,0,0"
-                    Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+
+                <Separator SnapsToDevicePixels="True" Margin="8,3,0,0" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>

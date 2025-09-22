@@ -151,7 +151,7 @@
                             Command="{x:Static ScrollBar.LineUpCommand}"
                             CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                             Focusable="False"
-                            Style="{StaticResource MenuScrollUpButton}"
+                            Style="{DynamicResource MenuScrollUpButton}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
                             <RepeatButton.IsEnabled>
                                 <MultiBinding Converter="{StaticResource MenuScrollingEnabledConverter}" ConverterParameter="0">
@@ -169,7 +169,7 @@
                             Command="{x:Static ScrollBar.LineDownCommand}"
                             CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                             Focusable="False"
-                            Style="{StaticResource MenuScrollDownButton}"
+                            Style="{DynamicResource MenuScrollDownButton}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}">
                             <RepeatButton.IsEnabled>
                                 <MultiBinding Converter="{StaticResource MenuScrollingEnabledConverter}" ConverterParameter="100">
