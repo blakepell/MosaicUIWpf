@@ -10,7 +10,8 @@
     xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    UseLayoutRounding="True">
     <UserControl.Resources>
         <Style x:Key="ContentBoxBorderStyle" TargetType="Border">
             <Setter Property="Padding" Value="7" />
@@ -112,7 +113,10 @@
                     FontSize="18"
                     Text="Third Party Library Usage" />
 
-                <Separator SnapsToDevicePixels="True" Margin="8,3,0,0" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}" />
+                <Separator
+                    Margin="8,3,0,0"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                    SnapsToDevicePixels="True" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -198,7 +202,11 @@
                     FontSize="18"
                     Text="Attributions" />
 
-                <Separator SnapsToDevicePixels="True" Margin="8,3,0,0" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}" />
+                <Separator
+                    Margin="8,3,0,0"
+                    Height="1"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                    SnapsToDevicePixels="True" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>
