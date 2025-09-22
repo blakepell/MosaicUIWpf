@@ -206,4 +206,40 @@
     <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#DDDDDD" />
     <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#DDDDDD" />
 
+    <!-- Menu -->
+    <SolidColorBrush x:Key="Menu.BarBackground.Background" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="Menu.BarBackground.Border" Color="#FFF2F2F2" />
+
+    <SolidColorBrush x:Key="Menu.BarItem.Normal.Foreground" Color="#FF000000" />
+    <SolidColorBrush x:Key="Menu.BarItem.Hot.Background" Color="#1A0089FF" />
+    <SolidColorBrush x:Key="Menu.BarItem.Hot.Border" Color="#33008CFF" />
+    <SolidColorBrush x:Key="Menu.BarItem.Pressed.Background" Color="#33008CFF" />
+    <SolidColorBrush x:Key="Menu.BarItem.Pressed.Border" Color="#66008CFF" />
+    <SolidColorBrush x:Key="Menu.BarItem.Disabled.Foreground" Color="#FF707070" />
+
+    <SolidColorBrush x:Key="Menu.Popup.Background" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="Menu.Popup.Border" Color="#FFCCCCCC" />
+
+    <SolidColorBrush x:Key="Menu.PopupItem.Normal.Foreground" Color="#FF000000" />
+    <SolidColorBrush x:Key="Menu.PopupItem.Selected.Background" Color="#3D269FD9" />
+    <SolidColorBrush x:Key="Menu.PopupItem.Selected.Border" Color="#FF26A0DA" />
+    <SolidColorBrush x:Key="Menu.PopupItem.Hot.Background" Color="#66008CFF" />
+    <SolidColorBrush x:Key="Menu.PopupItem.Hot.Border" Color="#66008CFF" />
+    <SolidColorBrush x:Key="Menu.PopupItem.Disabled.Foreground" Color="#FF707070" />
+    <SolidColorBrush x:Key="Menu.PopupItem.DisabledHot.Background" Color="#0D000000" />
+    <SolidColorBrush x:Key="Menu.PopupItem.DisabledHot.Border" Color="#0D000000" />
+
+    <SolidColorBrush x:Key="Menu.PopupSeparator" Color="#FFD7D7D7" />
+    <SolidColorBrush x:Key="Menu.PopupGutter.Background" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="Menu.PopupGutter.Border" Color="#FFF0F0F0" />
+
+    <SolidColorBrush x:Key="Menu.PopupCheckBackground.Normal.Background" Color="#66008CFF" />
+    <SolidColorBrush x:Key="Menu.PopupCheckBackground.Normal.Border" Color="#66008CFF" />
+    <SolidColorBrush x:Key="Menu.PopupCheckBackground.Disabled.Background" Color="#0D000000" />
+    <SolidColorBrush x:Key="Menu.PopupCheckBackground.Disabled.Border" Color="#0D000000" />
+    <SolidColorBrush x:Key="Menu.PopupCheck.Normal.Foreground" Color="#FF333333" />
+    <SolidColorBrush x:Key="Menu.PopupCheck.Disabled.Foreground" Color="#FFA3A3A3" />
+
+    <SolidColorBrush x:Key="Menu.PopupSubmenu.Normal.Foreground" Color="#FF000000" />
+    <SolidColorBrush x:Key="Menu.PopupSubmenu.Disabled.Foreground" Color="#FF707070" />
 </ResourceDictionary>

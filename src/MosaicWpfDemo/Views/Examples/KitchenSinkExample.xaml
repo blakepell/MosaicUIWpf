@@ -18,7 +18,29 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid Margin="12">
-        <StackPanel VerticalAlignment="Top" Orientation="Vertical">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Menu inserted in grid row 0 -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="New">
+                    <MenuItem Header="Text File"></MenuItem>
+                    <MenuItem Header="Markdown File"></MenuItem>
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="E_xit" />
+            </MenuItem>
+            <MenuItem Header="_Action" />
+        </Menu>
+
+        <StackPanel
+            Grid.Row="1"
+            VerticalAlignment="Top"
+            Orientation="Vertical">
+
             <TextBlock
                 Margin="0,0,0,8"
                 FontSize="18"

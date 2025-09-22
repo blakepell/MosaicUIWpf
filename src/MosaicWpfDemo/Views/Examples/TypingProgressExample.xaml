@@ -18,8 +18,8 @@
 
         <chat:TypingProgress
             x:Name="TypingProgress"
-            HorizontalAlignment="Center"
             Grid.Row="0"
+            HorizontalAlignment="Center"
             IsRunning="True" />
     </Grid>
 </UserControl>
