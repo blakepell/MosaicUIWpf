@@ -263,6 +263,20 @@
                         FontSize="12"
                         NavigateUri="https://github.com/WPFDevelopersOrg/WPFDevelopers"
                         Text="https://github.com/WPFDevelopersOrg/WPFDevelopers" />
+
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="PresentationTheme.Aero" />
+                    <controls:Hyperlink
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/gix/PresentationTheme.Aero"
+                        Text="https://github.com/gix/PresentationTheme.Aero" />
                 </Grid>
 
             </StackPanel>
