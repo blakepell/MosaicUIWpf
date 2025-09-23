@@ -50,7 +50,7 @@ namespace MosaicWpfDemo.Common
         [property: Category("UI")]
         [property: Browsable(false)]
         [ObservableProperty]
-        private string _theme = "Light";
+        private ThemeMode _theme = ThemeMode.Light;
 
         /// <summary>
         /// Default font size for UI elements.

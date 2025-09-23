@@ -11,6 +11,7 @@
 // ReSharper disable CheckNamespace
 
 using System.Windows.Media.Imaging;
+using Mosaic.UI.Wpf.Themes;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -108,9 +109,9 @@ namespace Mosaic.UI.Wpf.Controls
         {
             // If the app has its own theme change event, hook it up here.  The caller
             // may or may not use our ThemeChanged event, but this is what we provide.
-            MosaicApp.ThemeChanged += MosaicApp_ThemeChanged;
-                                
-            this.ThemeMode = MosaicApp.Theme.Equals("Light") ? ThemeMode.Light : ThemeMode.Dark;
+            ThemeManager.ThemeChanged += MosaicApp_ThemeChanged;
+            var theme = AppServices.GetRequiredService<ThemeManager>();
+            this.ThemeMode = theme.Theme;
         }
 
         /// <summary>
@@ -118,9 +119,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         /// <param name="sender">The source of the event. This parameter can be <see langword="null"/>.</param>
         /// <param name="e">A string representing the new theme mode. Expected values are "Light" or "Dark".</param>
-        private void MosaicApp_ThemeChanged(object? sender, string e)
+        private void MosaicApp_ThemeChanged(object? sender, ThemeMode e)
         {
-            this.ThemeMode = e.Equals("Light") ? ThemeMode.Light : ThemeMode.Dark;
+            this.ThemeMode = e == ThemeMode.Light ? ThemeMode.Light : ThemeMode.Dark;
             InvalidateAdaptive();
         }
 
@@ -188,7 +189,7 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            var effectiveTheme = GetEffectiveTheme();
+            var theme = AppServices.GetRequiredService<ThemeManager>();
             ImageSource? target = null;
 
             if (!EnableLightnessMirror)
@@ -204,7 +205,7 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            if (effectiveTheme == ThemeMode.Light)
+            if (theme.Theme == ThemeMode.Light)
             {
                 if (_cachedLight == null)
                 {
@@ -230,16 +231,6 @@ namespace Mosaic.UI.Wpf.Controls
                 _isUpdatingSource = false;
                 _lastApplied = target;
             }
-        }
-
-        /// <summary>
-        /// Determines the effective theme mode based on the application's current theme setting.
-        /// </summary>
-        /// <returns>A <see cref="ThemeMode"/> value indicating the effective theme.  Returns <see cref="ThemeMode.Dark"/> if the
-        /// application's theme is set to "Dark"; otherwise, returns <see cref="ThemeMode.Light"/>.</returns>
-        private ThemeMode GetEffectiveTheme()
-        {
-            return MosaicApp.Theme == "Dark" ? ThemeMode.Dark : ThemeMode.Light;
         }
 
         /// <summary>

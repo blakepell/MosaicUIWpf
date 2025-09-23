@@ -10,6 +10,8 @@
 
 using System.Windows;
 using System.Windows.Input;
+using Argus.Memory;
+using Mosaic.UI.Wpf.Themes;
 
 namespace WpfDemo
 {
@@ -85,7 +87,8 @@ namespace WpfDemo
 
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
-            App.ToggleTheme();
+            var theme = AppServices.GetRequiredService<ThemeManager>();
+            theme.ToggleTheme();
         }
     }
 }

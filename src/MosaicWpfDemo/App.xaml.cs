@@ -18,7 +18,7 @@ namespace WpfDemo
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            ChangeTheme("Dark");
+            //ChangeTheme(ThemeMode.Dark);
         }
     }
 }

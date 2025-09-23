@@ -17,35 +17,10 @@ using System.Runtime;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Media.Animation;
+using Mosaic.UI.Wpf.Themes;
 
 namespace Mosaic.UI.Wpf
 {
-    /// <summary>
-    /// Static helper class for MosaicApp functionality that doesn't require generic type parameters.
-    /// </summary>
-    public static class MosaicApp
-    {
-        /// <summary>
-        /// Represents the current theme setting for the application.
-        /// </summary>
-        public static string Theme { get; set; } = "Dark";
-
-        /// <summary>
-        /// Event that is raised when the theme changes.
-        /// </summary>
-        public static event EventHandler<string>? ThemeChanged;
-
-        /// <summary>
-        /// Invokes the ThemeChanged event.
-        /// </summary>
-        /// <param name="themeName">The new theme name.</param>
-        internal static void OnThemeChanged(string themeName)
-        {
-            Theme = themeName;
-            ThemeChanged?.Invoke(null, themeName);
-        }
-    }
-
     /// <summary>
     /// Mosaic UI Application class to manage themes and resources.
     /// </summary>
@@ -203,11 +178,8 @@ namespace Mosaic.UI.Wpf
                     // so the user can edit it with the settings in a PropertyGrid.
                     settings.ClientSettings = clientSettings;
 
-                    // If a theme is specified, set it.
-                    if (!string.IsNullOrWhiteSpace(settings.Theme))
-                    {
-                        ChangeTheme(settings.Theme);
-                    }
+                    var theme = AppServices.GetRequiredService<ThemeManager>();
+                    theme.Theme = settings.Theme;
                 }
 
                 // Finally, add the settings into the DI container.
@@ -296,84 +268,6 @@ namespace Mosaic.UI.Wpf
             {
                 MessageBox.Show(ex.Message, "Save Settings Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        /// <summary>
-        /// Toggles the application's theme between "Light" and "Dark".
-        /// </summary>
-        public static void ToggleTheme()
-        {
-            if (MosaicApp.Theme == "Light")
-            {
-                ChangeTheme("Dark");
-            }
-            else
-            {
-                ChangeTheme("Light");
-            }
-        }
-
-        /// <summary>
-        /// Changes the application's theme by updating the resource dictionaries with the specified theme.
-        /// </summary>
-        /// <param name="themeName">The name of the theme to apply. Supported values are <see langword="Light"/> and <see langword="Dark"/>.</param>
-        public static void ChangeTheme(string themeName)
-        {
-            var mergedDictionaries = Application.Current.Resources.MergedDictionaries;
-
-            // Find and remove existing theme and brush dictionaries
-            var toRemove = new List<ResourceDictionary>();
-            foreach (var dict in mergedDictionaries)
-            {
-                if (dict.Source != null)
-                {
-                    var source = dict.Source.ToString();
-                    if (source.Contains("/Themes/Light.xaml") ||
-                        source.Contains("/Themes/Dark.xaml") ||
-                        source.Contains("SystemColors.xaml") ||
-                        source.Contains("aero2.normalcolor.xaml") ||
-                        source.Contains("aero2.darkcolor.xaml") ||
-                        source.Contains("/Brushes.xaml") ||
-                        source.Contains("/Generic.xaml") ||
-                        source.Contains("/Native.xaml")) // Also remove Generic.xaml and Native.xaml
-                    {
-                        toRemove.Add(dict);
-                    }
-                }
-            }
-
-            foreach (var dict in toRemove)
-            {
-                mergedDictionaries.Remove(dict);
-            }
-
-            // Load resources in correct order: aero2 first, then our theme colors to override
-            if (themeName == "Light")
-            {
-                // 1. Load aero2 base styles first
-                //mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.normalcolor.xaml") });
-                // 2. Load our theme colors to override aero2 where needed
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light/Light.xaml") });
-            }
-            else // Dark
-            {
-                // 1. Load aero2 base styles first
-                //mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/aero2.darkcolor.xaml") });
-                // 2. Load our theme colors to override aero2 where needed
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml") });
-            }
-
-            // 3. Re-add the BRUSH dictionary
-            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml") });
-            
-            // 4. Re-add the custom control dictionaries
-            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml") });
-            
-            // 5. Re-add the native control dictionaries LAST so they can use the theme brushes
-            mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml") });
-
-            // Notify subscribers about the theme change
-            MosaicApp.OnThemeChanged(themeName);
         }
     }
 }
