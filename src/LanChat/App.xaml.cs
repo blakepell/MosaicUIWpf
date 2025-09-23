@@ -13,6 +13,7 @@ using Mosaic.UI.Wpf;
 using System.Windows;
 using Argus.Memory;
 using LanChat.Network;
+using Mosaic.UI.Wpf.Themes;
 
 namespace LanChat
 {
@@ -25,9 +26,10 @@ namespace LanChat
         {
             base.OnStartup(e);
 
-            ChangeTheme("Dark");
-
             var vm = AppServices.GetRequiredService<AppViewModel>();
+
+            //var theme = AppServices.GetRequiredService<ThemeManager>();
+            //theme.Theme = vm.AppSettings.Theme;
 
             var server = new ChatServer(new ChatServerOptions
             {

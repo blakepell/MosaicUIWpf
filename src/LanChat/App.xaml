@@ -6,6 +6,7 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:vm="clr-namespace:LanChat.Common"
     xmlns:wpf="clr-namespace:Mosaic.UI.Wpf;assembly=Mosaic.UI.Wpf"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     x:TypeArguments="vm:AppSettings, vm:AppViewModel"
     Exit="App_OnExit"
     Startup="App_OnStartup"
@@ -13,10 +14,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml" />
+                <mosaic:ThemeManager Theme="Dark" Native="True" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
