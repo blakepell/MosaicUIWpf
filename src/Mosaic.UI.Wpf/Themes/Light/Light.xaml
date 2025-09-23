@@ -206,13 +206,13 @@
     <SolidColorBrush x:Key="ToolBarMenuCheckFill" Color="#E6F0FA" />
     <SolidColorBrush x:Key="ToolBarOpenHeaderBackground" Color="#FFFBFF" />
     <SolidColorBrush x:Key="ToolBarTrayBackground" Color="#FDFDFD" />
-    <SolidColorBrush x:Key="ToolBarHorizontalBackground" Color="#FFFBFF" />
-    <SolidColorBrush x:Key="ToolBarVerticalBackground" Color="#FFFBFF" />
+    <SolidColorBrush x:Key="ToolBarHorizontalBackground" Color="#F3F3F3" />
+    <SolidColorBrush x:Key="ToolBarVerticalBackground" Color="#F3F3F3" />
     <SolidColorBrush x:Key="ToolBarGripper" Color="#C6C3C6" />
     <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#DDDDDD" />
     <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#DDDDDD" />
 
-    <!-- Menu -->
+    <!--  Menu  -->
     <SolidColorBrush x:Key="Menu.BarBackground.Background" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="Menu.BarBackground.Border" Color="#FFF2F2F2" />
 
