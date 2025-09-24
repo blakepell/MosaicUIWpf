@@ -15,6 +15,8 @@
     <None Remove="Assets\server-add-96.png" />
     <None Remove="Assets\settings-48.png" />
     <None Remove="Assets\settings-96.png" />
+    <None Remove="Assets\tag-48.png" />
+    <None Remove="Assets\tag-96.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +31,8 @@
     <Resource Include="Assets\server-add-96.png" />
     <Resource Include="Assets\settings-48.png" />
     <Resource Include="Assets\settings-96.png" />
+    <Resource Include="Assets\tag-48.png" />
+    <Resource Include="Assets\tag-96.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,7 +7,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
-    xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
     DataContext="{Binding AppSettings}"
@@ -20,15 +19,6 @@
             <Setter Property="Padding" Value="7" />
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
-
-        <Style x:Key="SettingsBoxBorderStyle" TargetType="Border">
-            <Setter Property="Padding" Value="12" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="CornerRadius" Value="4" />
-            <Setter Property="Margin" Value="0,4,0,0" />
-            <Setter Property="Background" Value="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}" />
-        </Style>
-
     </UserControl.Resources>
 
     <DockPanel>
@@ -37,48 +27,25 @@
             <StackPanel>
                 <controls:Header ImageSource="pack://application:,,/Assets/settings-96.png" Text="Settings" />
 
-                <Border Style="{StaticResource SettingsBoxBorderStyle}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                <mosaic:SettingsItem
+                    Title="Start Server on Startup"
+                    Margin="0,4,0,0"
+                    Description="If an instance of a chat server host should be started when the app starts up."
+                    IconSource="/Assets/play-blue-48.png">
 
-                        <!--  Icon  -->
-                        <Image
-                            Grid.Column="0"
-                            Width="24"
-                            Height="24"
-                            Margin="0,0,12,0"
-                            VerticalAlignment="Center"
-                            Source="../Assets/play-blue-48.png" />
+                    <!--  Any control/content you want to show on the right  -->
+                    <mosaic:ToggleButton IsChecked="{Binding StartServerOnStartup, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>
 
-                        <!--  Setting Name and Description  -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock
-                                FontSize="14"
-                                FontWeight="SemiBold"
-                                Text="Start Server on Startup" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
-                                Text="If an instance of a chat server host should be started when the app starts up." />
-                            <TextBlock Text="{Binding StartServerOnStartup}" />
-                        </StackPanel>
+                <mosaic:SettingsItem
+                    Title="Server Name"
+                    Margin="0,4,0,0"
+                    Description="The name that your server should share to chat clients discovering servers."
+                    IconSource="/Assets/tag-48.png">
 
-                        <!--  Control  -->
-                        <ContentPresenter
-                            Grid.Column="2"
-                            Margin="12,0,0,0"
-                            VerticalAlignment="Center">
-                            <ContentPresenter.Content>
-                                <mosaic:ToggleButton IsChecked="{Binding StartServerOnStartup, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
-                            </ContentPresenter.Content>
-                        </ContentPresenter>
-                    </Grid>
-                </Border>
-
+                    <!--  Any control/content you want to show on the right  -->
+                    <TextBox VerticalAlignment="Center" Text="{Binding ServerName, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" Width="150" />
+                </mosaic:SettingsItem>
             </StackPanel>
         </Border>
     </DockPanel>
