@@ -64,6 +64,7 @@
                                 FontSize="12"
                                 Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                                 Text="If an instance of a chat server host should be started when the app starts up." />
+                            <TextBlock Text="{Binding StartServerOnStartup}" />
                         </StackPanel>
 
                         <!--  Control  -->
@@ -72,7 +73,7 @@
                             Margin="12,0,0,0"
                             VerticalAlignment="Center">
                             <ContentPresenter.Content>
-                                <mosaic:ToggleButton></mosaic:ToggleButton>
+                                <mosaic:ToggleButton IsChecked="{Binding StartServerOnStartup, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Grid>

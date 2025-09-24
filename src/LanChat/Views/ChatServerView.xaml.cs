@@ -13,19 +13,23 @@ namespace LanChat.Views
         {
             InitializeComponent();
             _server = AppServices.GetRequiredService<ChatServer>();
+            ToggleServerIsOn.IsOn = _server.IsListening;
         }
 
         private async void ServerIsOn_OnChanged(object? sender, ToggleSwitch.ToggleSwitchChangedEventArgs e)
         {
             try
             {
-                if (e.IsOn)
+                if (e.IsOn && !_server.IsListening)
                 {
                     await _server.StartAsync();
+                    return;
                 }
-                else
+
+                if (!e.IsOn)
                 {
                     await _server.StopAsync();
+                    return;
                 }
             }
             catch (Exception ex)

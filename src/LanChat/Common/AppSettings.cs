@@ -99,6 +99,13 @@ namespace LanChat.Common
         [property: Browsable(true)]
         private string _serverName = "Chat Server";
 
+        [property: Category("Network")]
+        [property: DisplayName("Start Server on Startup")]
+        [property: Description("If an instance of the server should start automatically on app startup.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private bool _startServerOnStartup = false;
+
         /// <summary>
         /// The view state information for a given window.
         /// </summary>

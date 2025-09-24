@@ -11,6 +11,7 @@
 using LanChat.Common;
 using Mosaic.UI.Wpf;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using Argus.Memory;
 using LanChat.Network;
 using Mosaic.UI.Wpf.Themes;
@@ -22,11 +23,13 @@ namespace LanChat
     /// </summary>
     public partial class App : MosaicApp<AppSettings, AppViewModel>
     {
-        private void App_OnStartup(object sender, StartupEventArgs e)
+        private async void App_OnStartup(object sender, StartupEventArgs e)
         {
             base.OnStartup(e);
 
             var vm = AppServices.GetRequiredService<AppViewModel>();
+            var appSettings = AppServices.GetRequiredService<AppSettings>();
+            vm.AppSettings = appSettings;
 
             //var theme = AppServices.GetRequiredService<ThemeManager>();
             //theme.Theme = vm.AppSettings.Theme;
@@ -60,6 +63,11 @@ namespace LanChat
             // Put our server into the DI service collection so we can access it later.
             AppServices.AddSingleton(server);
             vm.ChatServer = server;
+
+            if (appSettings.StartServerOnStartup)
+            {
+                await server.StartAsync();
+            }
         }
 
         private void App_OnExit(object sender, ExitEventArgs e)

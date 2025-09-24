@@ -44,7 +44,7 @@
             </TextBlock>
 
             <mosaic:ToggleSwitch
-                 x:Name="ToggleServerIsOn"
+                x:Name="ToggleServerIsOn"
                 HorizontalAlignment="Right"
                 Changed="ServerIsOn_OnChanged" />
         </StackPanel>
