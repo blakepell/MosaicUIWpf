@@ -12,7 +12,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <themes:ThemeManager Theme="Dark" Native="True" />
+                <themes:ThemeManager Theme="Dark" Native="True" SystemColors="True" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -3,10 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
-    <ResourceDictionary.MergedDictionaries>
-        <!--  Mosaic controls  -->
-        <ResourceDictionary Source="pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/SystemColors.xaml" />
-    </ResourceDictionary.MergedDictionaries>
 
     <!--  MOSAIC CUSTOM COLORS  -->
     <Color x:Key="{x:Static themes:MosaicTheme.AccentColor}">#FF0078D7</Color>

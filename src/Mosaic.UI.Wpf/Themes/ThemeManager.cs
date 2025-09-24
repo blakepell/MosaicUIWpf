@@ -24,8 +24,11 @@ namespace Mosaic.UI.Wpf.Themes
     {
         private bool _updating;
         private bool _initializing;
+
+        /// <summary>
+        /// Internal backing field for the Theme property.
+        /// </summary>
         private ThemeMode _theme;
-        private bool _native;
 
         /// <summary>
         /// Gets or sets the current theme mode for the application.
@@ -51,6 +54,11 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
+        /// Internal backing field for the Native property.
+        /// </summary>
+        private bool _native;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the native controls are styled.
         /// </summary>
         public bool Native
@@ -64,6 +72,34 @@ namespace Mosaic.UI.Wpf.Themes
                 }
 
                 _native = value;
+
+                // If we're being initialized from XAML, defer loading until EndInit.
+                if (!_initializing)
+                {
+                    UpdateMergedDictionaries();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Internal backing field for the SystemColors property.
+        /// </summary>
+        private bool _systemColors = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the system colors are replaced.
+        /// </summary>
+        public bool SystemColors
+        {
+            get => _systemColors;
+            set
+            {
+                if (_systemColors == value)
+                {
+                    return;
+                }
+
+                _systemColors = value;
 
                 // If we're being initialized from XAML, defer loading until EndInit.
                 if (!_initializing)
@@ -161,10 +197,20 @@ namespace Mosaic.UI.Wpf.Themes
 
                 if (Theme == ThemeMode.Light)
                 {
+                    if (this.SystemColors)
+                    {
+                        mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light/SystemColors.xaml") });
+                    }
+
                     mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light/Light.xaml") });
                 }
                 else
                 {
+                    if (this.SystemColors)
+                    {
+                        mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/SystemColors.xaml") });
+                    }
+
                     mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml") });
                 }
 
