@@ -207,7 +207,7 @@
     <SolidColorBrush x:Key="ToolBarToggleButtonHorizontalBackground" Color="#2D2D30" />
     <SolidColorBrush x:Key="ToolBarToggleButtonVerticalBackground" Color="#2D2D30" />
 
-    <!-- Menu -->
+    <!--  Menu  -->
 
     <!--<SolidColorBrush x:Key="ComboBoxItem.Items.Hover.Background" Color="#FF2A2D2E" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.Hover.Border" Color="#FF3A3D41" />

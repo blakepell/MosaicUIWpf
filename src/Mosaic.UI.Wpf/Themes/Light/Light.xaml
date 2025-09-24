@@ -9,7 +9,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.AccentBorderColor}">#FF005A9E</Color>
 
     <!--  Selection  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.SelectionBackgroundColor}">#FFCCE5FF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.SelectionBackgroundColor}">#FF3399FF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SelectionForegroundColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBackgroundColor}">#FFF0F0F0</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.InactiveSelectionBorderColor}">#FFCCCCCC</Color>
