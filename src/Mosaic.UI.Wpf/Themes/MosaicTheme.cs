@@ -71,6 +71,9 @@ namespace Mosaic.UI.Wpf.Themes
         public static ComponentResourceKey ControlTextForegroundBrush { get; } = new(typeof(MosaicTheme), "ControlTextForegroundBrush");
         public static ComponentResourceKey ControlTextForegroundColor { get; } = new(typeof(MosaicTheme), "ControlTextForegroundColor");
 
+        public static ComponentResourceKey ControlTextSecondaryForegroundBrush { get; } = new(typeof(MosaicTheme), "ControlTextSecondaryForegroundBrush");
+        public static ComponentResourceKey ControlTextSecondaryForegroundColor { get; } = new(typeof(MosaicTheme), "ControlTextSecondaryForegroundColor");
+
         public static ComponentResourceKey ControlPressedBackgroundBrush { get; } = new(typeof(MosaicTheme), "ControlPressedBackgroundBrush");
         public static ComponentResourceKey ControlPressedBackgroundColor { get; } = new(typeof(MosaicTheme), "ControlPressedBackgroundColor");
 

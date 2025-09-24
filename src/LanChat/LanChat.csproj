@@ -10,7 +10,11 @@
 
   <ItemGroup>
     <None Remove="Assets\chat-48.png" />
+    <None Remove="Assets\play-blue-48.png" />
     <None Remove="Assets\server-add-48.png" />
+    <None Remove="Assets\server-add-96.png" />
+    <None Remove="Assets\settings-48.png" />
+    <None Remove="Assets\settings-96.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +24,11 @@
   <ItemGroup>
     <Resource Include="Assets\chat-48.png" />
     <Resource Include="Assets\collage-48.png" />
+    <Resource Include="Assets\play-blue-48.png" />
     <Resource Include="Assets\server-add-48.png" />
+    <Resource Include="Assets\server-add-96.png" />
+    <Resource Include="Assets\settings-48.png" />
+    <Resource Include="Assets\settings-96.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -72,6 +72,9 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FF333333</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
 
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}">#FF666666</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
+
     <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#D3D4D7</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundColor}}" />
 

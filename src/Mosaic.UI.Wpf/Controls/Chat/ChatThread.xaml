@@ -174,8 +174,8 @@
         CanContentScroll="True"
         ClipToBounds="True"
         Focusable="False"
-        IsScrollAnimation="True"
         HorizontalScrollBarVisibility="Disabled"
+        IsScrollAnimation="True"
         VerticalScrollBarVisibility="Auto">
 
         <ItemsControl ItemsSource="{Binding Messages}">

@@ -193,12 +193,6 @@
             ContentPresenter="{Binding ElementName=MainContent}">
             <mosaic:SideMenu.MenuItems>
                 <mosaic:SideMenuItem
-                    ContentType="{x:Type views:AboutView}"
-                    ContentTypeIsSingleton="True"
-                    ImageSource="pack://application:,,,/Assets/collage-48.png"
-                    Text="About" />
-
-                <mosaic:SideMenuItem
                     ContentType="{x:Type views:ChatView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="pack://application:,,,/Assets/chat-48.png"
@@ -209,6 +203,18 @@
                     ContentTypeIsSingleton="True"
                     ImageSource="pack://application:,,,/Assets/server-add-48.png"
                     Text="Server" />
+
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:AboutView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="pack://application:,,,/Assets/collage-48.png"
+                    Text="About" />
+
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:SettingsView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="pack://application:,,,/Assets/settings-48.png"
+                    Text="Settings" />
 
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
