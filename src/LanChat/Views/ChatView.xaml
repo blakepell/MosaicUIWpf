@@ -67,18 +67,17 @@
                         <DockPanel Margin="0,0,0,6">
                             <ComboBox
                                 x:Name="ServerAddress"
-                                IsEditable="True"
-                                ItemsSource="{Binding ServerList}"
+                                MinWidth="220"
                                 Margin="0,0,6,0"
                                 DockPanel.Dock="Left"
-                                MinWidth="220">
-                            </ComboBox>
+                                IsEditable="True"
+                                ItemsSource="{Binding ServerList}" />
                             <Button
                                 x:Name="DiscoverButton"
-                                Content="Discover"
-                                Click="DiscoverServers_Click"
                                 Width="92"
                                 HorizontalAlignment="Right"
+                                Click="DiscoverServers_Click"
+                                Content="Discover"
                                 DockPanel.Dock="Right" />
                         </DockPanel>
                         <TextBlock

@@ -167,13 +167,14 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <ScrollViewer
+    <controls:InertiaScrollViewer
         x:Name="MessagesScrollViewer"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         CanContentScroll="True"
         ClipToBounds="True"
         Focusable="False"
+        IsScrollAnimation="True"
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Auto">
 
@@ -186,5 +187,5 @@
                     SentTemplateD="{StaticResource SentTemplateD}" />
             </ItemsControl.ItemTemplateSelector>
         </ItemsControl>
-    </ScrollViewer>
+    </controls:InertiaScrollViewer>
 </UserControl>
