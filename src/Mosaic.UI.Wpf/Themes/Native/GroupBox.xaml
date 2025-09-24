@@ -4,7 +4,7 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter" />
     <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}">
-        <Setter Property="BorderBrush" Value="{DynamicResource themes:MosaicTheme.ControlBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
@@ -36,7 +36,7 @@
                             Grid.Row="1"
                             Grid.RowSpan="3"
                             Grid.ColumnSpan="4"
-                            BorderBrush="{DynamicResource themes:MosaicTheme.ControlBorderBrush}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4">
                             <Border.OpacityMask>
@@ -81,8 +81,6 @@
         </Setter>
     </Style>
 
-
-
     <Style x:Key="{x:Type GroupItem}" TargetType="{x:Type GroupItem}">
         <Setter Property="Template">
             <Setter.Value>
@@ -95,7 +93,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style x:Key="{x:Type HeaderedContentControl}" TargetType="{x:Type HeaderedContentControl}">
         <Setter Property="Template">
