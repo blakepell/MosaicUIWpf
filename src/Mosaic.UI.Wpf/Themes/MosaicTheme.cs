@@ -111,11 +111,5 @@ namespace Mosaic.UI.Wpf.Themes
 
         public static ComponentResourceKey SidebarSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundColor");
         public static ComponentResourceKey SidebarSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundBrush");
-
-        public static ComponentResourceKey SidebarSelectedAccentColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedAccentColor");
-        public static ComponentResourceKey SidebarSelectedAccentBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedAccentBrush");
-
-        public static ComponentResourceKey SidebarForegroundColor { get; } = new(typeof(MosaicTheme), "SidebarForegroundColor");
-        public static ComponentResourceKey SidebarForegroundBrush { get; } = new(typeof(MosaicTheme), "SidebarForegroundBrush");
     }
 }

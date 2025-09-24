@@ -176,7 +176,6 @@ namespace Mosaic.UI.Wpf.Themes
                         if (source.Contains("/Themes/Light.xaml") ||
                             source.Contains("/Themes/Dark.xaml") ||
                             source.Contains("SystemColors.xaml") ||
-                            source.Contains("/Brushes.xaml") ||
                             source.Contains("/Generic.xaml") ||
                             source.Contains("/Native.xaml")) // Also remove Generic.xaml and Native.xaml
                         {
@@ -214,13 +213,10 @@ namespace Mosaic.UI.Wpf.Themes
                     mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml") });
                 }
 
-                // 3. Re-add the BRUSH dictionary
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Brushes.xaml") });
-
-                // 4. Re-add the custom control dictionaries
+                // Re-add the custom control dictionaries
                 mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml") });
 
-                // 5. Re-add the native control dictionaries LAST so they can use the theme brushes
+                // Re-add the native control dictionaries LAST so they can use the theme brushes
                 if (Native)
                 {
                     mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml") });

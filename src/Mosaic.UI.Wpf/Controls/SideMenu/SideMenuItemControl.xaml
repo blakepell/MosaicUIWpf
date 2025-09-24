@@ -36,7 +36,7 @@
                 <Rectangle
                     Width="3"
                     HorizontalAlignment="Left"
-                    Fill="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedAccentBrush}}"
+                    Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}"
                     RenderTransformOrigin="0.5,0.5">
                     <!--  Origin at the center for Y-scaling  -->
                     <Rectangle.RenderTransform>
@@ -123,7 +123,7 @@
                         FontFamily="Segoe UI Variable"
                         FontSize="14"
                         FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.SidebarForegroundBrush}}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
                         Text="{Binding MenuItem.Text, ElementName=Me}" />
 
                     <!--  Expander  -->
