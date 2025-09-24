@@ -8,12 +8,13 @@
     xmlns:local="clr-namespace:LanChat.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:common1="clr-namespace:Mosaic.UI.Wpf.Common;assembly=Mosaic.UI.Wpf"
     Padding="4"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <common:AppSettingsLocator x:Key="AppSettings" />
+        <common1:AppServiceLocator Type="{x:Type common:AppSettings}" x:Key="AppSettings" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
