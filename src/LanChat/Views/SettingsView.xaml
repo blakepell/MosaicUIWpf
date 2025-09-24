@@ -44,7 +44,10 @@
                     IconSource="/Assets/tag-48.png">
 
                     <!--  Any control/content you want to show on the right  -->
-                    <TextBox VerticalAlignment="Center" Text="{Binding ServerName, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" Width="150" />
+                    <TextBox
+                        Width="150"
+                        VerticalAlignment="Center"
+                        Text="{Binding ServerName, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                 </mosaic:SettingsItem>
             </StackPanel>
         </Border>
