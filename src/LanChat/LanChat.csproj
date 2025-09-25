@@ -10,6 +10,9 @@
 
   <ItemGroup>
     <None Remove="Assets\chat-48.png" />
+    <None Remove="Assets\link-48.png" />
+    <None Remove="Assets\link-96.png" />
+    <None Remove="Assets\network-disconnected-48.png" />
     <None Remove="Assets\play-blue-48.png" />
     <None Remove="Assets\server-add-48.png" />
     <None Remove="Assets\server-add-96.png" />
@@ -26,6 +29,9 @@
   <ItemGroup>
     <Resource Include="Assets\chat-48.png" />
     <Resource Include="Assets\collage-48.png" />
+    <Resource Include="Assets\link-48.png" />
+    <Resource Include="Assets\link-96.png" />
+    <Resource Include="Assets\network-disconnected-48.png" />
     <Resource Include="Assets\play-blue-48.png" />
     <Resource Include="Assets\server-add-48.png" />
     <Resource Include="Assets\server-add-96.png" />

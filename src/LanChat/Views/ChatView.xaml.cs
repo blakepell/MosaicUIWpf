@@ -28,8 +28,18 @@ namespace LanChat.Views
 
         public ChatView()
         {
-            this.DataContext = this;
+            DataContext = this;
             InitializeComponent();
+
+            if (!AppServices.IsRegistered<ChatView>())
+            {
+                AppServices.AddSingleton(this);
+            }
+        }
+
+        public void LoginClick()
+        {
+            LoginButton_Click(null, null);
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -132,7 +142,7 @@ namespace LanChat.Views
             }
         }
 
-        private async Task ConnectAndLoginAsync()
+        public async Task ConnectAndLoginAsync()
         {
             if (_chatClient != null)
             {
@@ -302,7 +312,7 @@ namespace LanChat.Views
                 int port = vm.AppSettings.Port;
 
                 var localIps = Argus.Network.Utilities.GetLocalIpAddresses()
-                    .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
                     .Select(ip => ip.ToString())
                     .ToList();
 
@@ -503,8 +513,8 @@ namespace LanChat.Views
         {
             Application.Current.Dispatcher.InvokeIfRequired(() =>
             {
-                msg.PreviousMessageDirection = this.Messages.Count > 0 ? this.Messages[^1].Direction : MessageDirection.Received;
-                this.Messages.Add(msg);
+                msg.PreviousMessageDirection = Messages.Count > 0 ? Messages[^1].Direction : MessageDirection.Received;
+                Messages.Add(msg);
                 ChatThread.ScrollConversationToEnd();
             });
         }

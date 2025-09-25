@@ -106,6 +106,13 @@ namespace LanChat.Common
         [property: Browsable(true)]
         private bool _startServerOnStartup = false;
 
+        [property: Category("Network")]
+        [property: DisplayName("Connect to localhost on Startup")]
+        [property: Description("If the app should connect to 127.0.0.1 on startup (requires start server setting to be on).")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private bool _connectToLocalhostOnStartup = false;
+
         /// <summary>
         /// The view state information for a given window.
         /// </summary>

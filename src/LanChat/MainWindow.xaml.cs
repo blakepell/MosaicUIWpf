@@ -12,6 +12,8 @@ using System.Windows;
 using System.Windows.Input;
 using Argus.Memory;
 using LanChat.Common;
+using LanChat.Network;
+using LanChat.Views;
 using Mosaic.UI.Wpf.Themes;
 
 namespace LanChat
@@ -25,11 +27,18 @@ namespace LanChat
             this.DataContext = AppServices.GetRequiredService<AppViewModel>();
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             TestSideMenu.SelectByIndex(0);
 
             var vm = AppServices.GetRequiredService<AppViewModel>();
+
+            // This is a little hacky, the chat view should be loaded via the SelectedByIndex(0) call above.
+            if (vm.AppSettings is { ConnectToLocalhostOnStartup: true, StartServerOnStartup: true } && !string.IsNullOrWhiteSpace(vm.AppSettings.Username))
+            {
+                var chatView = AppServices.GetService<ChatView>();
+                chatView?.LoginClick();
+            }
 
             var ips = Argus.Network.Utilities.GetLocalIpAddresses();
 

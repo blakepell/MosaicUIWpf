@@ -28,14 +28,28 @@
             <StackPanel>
                 <controls:Header ImageSource="pack://application:,,/Assets/settings-96.png" Text="Settings" />
 
+                <!--<mosaic:SettingsItem
+                    Title="Enable hyperlinks in chat."
+                    Margin="0,4,0,0"
+                    Description="If hyperlinks are enabled in the chat messages."
+                    IconSource="/Assets/link-48.png">
+                    <mosaic:ToggleButton IsChecked="{Binding EnableHyperLinks, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>-->
+
                 <mosaic:SettingsItem
                     Title="Start Server on Startup"
                     Margin="0,4,0,0"
                     Description="If an instance of a chat server host should be started when the app starts up."
                     IconSource="/Assets/play-blue-48.png">
-
-                    <!--  Any control/content you want to show on the right  -->
                     <mosaic:ToggleButton IsChecked="{Binding StartServerOnStartup, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>
+
+                <mosaic:SettingsItem
+                    Title="Connect to localhost on Startup"
+                    Margin="0,4,0,0"
+                    Description="If the app should connect to 127.0.0.1 on startup (requires start server setting to be on)."
+                    IconSource="/Assets/network-disconnected-48.png">
+                    <mosaic:ToggleButton IsChecked="{Binding ConnectToLocalhostOnStartup, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                 </mosaic:SettingsItem>
 
                 <mosaic:SettingsItem
@@ -43,8 +57,6 @@
                     Margin="0,4,0,0"
                     Description="The name that your server should share to chat clients discovering servers."
                     IconSource="/Assets/tag-48.png">
-
-                    <!--  Any control/content you want to show on the right  -->
                     <TextBox
                         Width="150"
                         VerticalAlignment="Center"

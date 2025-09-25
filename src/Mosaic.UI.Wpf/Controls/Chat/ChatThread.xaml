@@ -2,9 +2,12 @@
     x:Class="Mosaic.UI.Wpf.Controls.ChatThread"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors"
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:extensions="clr-namespace:Mosaic.UI.Wpf.Extensions"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
@@ -23,10 +26,25 @@
             <Setter Property="IsReadOnly" Value="True" />
         </Style>
 
+        <Style x:Key="ReadOnlyAvalonEditStyle" TargetType="avalonedit:TextEditor">
+            <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
+            <Setter Property="Background" Value="{Binding BackgroundBrush}" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        </Style>
+
         <Style x:Key="TextBlockStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{Binding ForegroundBrush}" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style TargetType="{x:Type avalonedit:TextView}">
+            <Setter Property="LinkTextForegroundBrush" Value="{Binding ForegroundBrush}" />
         </Style>
 
         <!--  Me under you  -->
@@ -47,10 +65,13 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox
-                    Grid.Row="2"
-                    Style="{DynamicResource ReadOnlyTextBoxStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <avalonedit:TextEditor Grid.Row="2" Style="{StaticResource ReadOnlyAvalonEditStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:AvalonTextEditorBindingBehavior Text="{Binding Path=Text, FallbackValue='No message text is available'}" />
+                        <behaviors:AvalonEditPropertiesBehavior CaretBrush="Transparent" />
+                        <behaviors:AvalonEditPropertiesBehavior EnableHyperLinks="True" />
+                    </i:Interaction.Behaviors>
+                </avalonedit:TextEditor>
                 <TextBlock
                     Grid.Row="3"
                     Style="{DynamicResource TextBlockStyle}"
@@ -87,10 +108,13 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox
-                    Grid.Row="3"
-                    Style="{StaticResource ReadOnlyTextBoxStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <avalonedit:TextEditor Grid.Row="3" Style="{StaticResource ReadOnlyAvalonEditStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:AvalonTextEditorBindingBehavior Text="{Binding Path=Text, FallbackValue='No message text is available'}" />
+                        <behaviors:AvalonEditPropertiesBehavior CaretBrush="Transparent" />
+                        <behaviors:AvalonEditPropertiesBehavior EnableHyperLinks="True" />
+                    </i:Interaction.Behaviors>
+                </avalonedit:TextEditor>
                 <TextBlock
                     Grid.Row="4"
                     Style="{StaticResource TextBlockStyle}"
@@ -121,10 +145,13 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox
-                    Grid.Row="3"
-                    Style="{StaticResource ReadOnlyTextBoxStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <avalonedit:TextEditor Grid.Row="3" Style="{StaticResource ReadOnlyAvalonEditStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:AvalonTextEditorBindingBehavior Text="{Binding Path=Text, FallbackValue='No message text is available'}" />
+                        <behaviors:AvalonEditPropertiesBehavior CaretBrush="Transparent" />
+                        <behaviors:AvalonEditPropertiesBehavior EnableHyperLinks="True" />
+                    </i:Interaction.Behaviors>
+                </avalonedit:TextEditor>
                 <TextBlock
                     Grid.Row="4"
                     Style="{StaticResource TextBlockStyle}"
@@ -149,10 +176,13 @@
                     <Run Text="{Binding From, FallbackValue='Unknown'}" />
                     <Run Text="says:" />
                 </TextBlock>
-                <TextBox
-                    Grid.Row="2"
-                    Style="{StaticResource ReadOnlyTextBoxStyle}"
-                    Text="{Binding Path=Text, FallbackValue='No message text is available.'}" />
+                <avalonedit:TextEditor Grid.Row="2" Style="{StaticResource ReadOnlyAvalonEditStyle}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:AvalonTextEditorBindingBehavior Text="{Binding Path=Text, FallbackValue='No message text is available'}" />
+                        <behaviors:AvalonEditPropertiesBehavior CaretBrush="Transparent" />
+                        <behaviors:AvalonEditPropertiesBehavior EnableHyperLinks="True" />
+                    </i:Interaction.Behaviors>
+                </avalonedit:TextEditor>
                 <TextBlock
                     Grid.Row="3"
                     Style="{StaticResource TextBlockStyle}"
