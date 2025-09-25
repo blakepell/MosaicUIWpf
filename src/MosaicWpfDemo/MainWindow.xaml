@@ -468,6 +468,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  InertiaScrollViewer  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/panel-right-48.png"
+                    Text="InertiaScrollViewer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="InertiaScrollViewer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.InertiaScrollViewerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.InertiaScrollViewerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:InertiaScrollViewer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:InertiaScrollViewerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-96.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Labeled Separator  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -34,6 +34,8 @@
     <None Remove="Assets\link-48.png" />
     <None Remove="Assets\list-48.png" />
     <None Remove="Assets\numbers-input-48.png" />
+    <None Remove="Assets\panel-right-48.png" />
+    <None Remove="Assets\panel-right-96.png" />
     <None Remove="Assets\password-48.png" />
     <None Remove="Assets\penny-heads.png" />
     <None Remove="Assets\penny-tails.png" />
@@ -103,6 +105,8 @@
   <!-- Embedded Resources and Linked Embedded Resources -->  
   <ItemGroup>
     <EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
+    <Resource Include="Assets\panel-right-48.png" />
+    <Resource Include="Assets\panel-right-96.png" />
     <EmbeddedResource Include="Assets\Xml.Dark.xshd" />
 
     <EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml">
@@ -257,6 +261,13 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Views\Examples\SearchBoxExample.xaml.cs">
       <Link>LinkedSources\SearchBoxExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\InertiaScrollViewerExample.xaml">
+      <Link>LinkedSources\InertiaScrollViewerExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\InertiaScrollViewerExample.xaml.cs">
+      <Link>LinkedSources\InertiaScrollViewerExample.xaml.cs</Link>
     </EmbeddedResource>
 
     <EmbeddedResource Include="Views\Examples\ToggleSwitchExample.xaml">

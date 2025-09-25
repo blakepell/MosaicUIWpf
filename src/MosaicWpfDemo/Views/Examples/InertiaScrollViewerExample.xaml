@@ -1,0 +1,99 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.InertiaScrollViewerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            FontSize="16"
+            FontWeight="Bold"
+            Text="InertiaScrollViewer Example" />
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,10" Orientation="Horizontal">
+            <CheckBox
+                x:Name="EnableAnimationCheckBox"
+                Margin="0,0,15,0"
+                VerticalAlignment="Center"
+                Content="Enable Scroll Animation"
+                IsChecked="{Binding IsScrollAnimationEnabled, Mode=TwoWay}" />
+
+            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Text="Animation Duration:" />
+            <TextBox
+                Width="60"
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Text="{Binding AnimationDuration, Mode=TwoWay}" />
+            <TextBlock Margin="0,0,15,0" VerticalAlignment="Center" Text="ms" />
+
+            <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Text="Frame Rate:" />
+            <TextBox
+                Width="40"
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Text="{Binding FrameRate, Mode=TwoWay}" />
+            <TextBlock VerticalAlignment="Center" Text="fps" />
+        </StackPanel>
+
+        <Border
+            Grid.Row="2"
+            BorderBrush="Gray"
+            BorderThickness="1">
+            <mosaic:InertiaScrollViewer
+                AnimationDurationMilliseconds="{Binding AnimationDuration}"
+                DesiredFrameRate="{Binding FrameRate}"
+                HorizontalScrollBarVisibility="Disabled"
+                IsScrollAnimation="{Binding IsScrollAnimationEnabled}"
+                VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="10" Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        FontWeight="Bold"
+                        Text="Scroll this content to test the inertia scrolling behavior" />
+
+                    <TextBlock Margin="0,0,0,10" TextWrapping="Wrap">
+                        <Run Text="This is an InertiaScrollViewer control that provides smooth, animated scrolling behavior. " />
+                        <Run Text="When scroll animation is enabled, mouse wheel scrolling will be animated with a smooth easing effect. " />
+                        <Run Text="You can adjust the animation duration and frame rate using the controls above." />
+                    </TextBlock>
+
+                    <!-- Generate some content to scroll through -->
+                    <ItemsControl ItemsSource="{Binding ContentItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="0,5"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    Padding="10">
+                                    <StackPanel>
+                                        <TextBlock FontWeight="Bold" Text="{Binding Title}" />
+                                        <TextBlock
+                                            Margin="0,5,0,0"
+                                            Text="{Binding Description}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </mosaic:InertiaScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
