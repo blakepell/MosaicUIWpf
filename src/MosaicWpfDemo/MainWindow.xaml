@@ -504,6 +504,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Settings Item  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/settings-panel-48.png"
+                    Text="Settings Item">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Settings Item" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SettingsItemExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SettingsItemExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SettingsItem}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SettingsItemExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/settings-panel-96.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Tab Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

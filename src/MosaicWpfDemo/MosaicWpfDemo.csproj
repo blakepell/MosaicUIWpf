@@ -38,6 +38,8 @@
     <None Remove="Assets\penny-heads.png" />
     <None Remove="Assets\penny-tails.png" />
     <None Remove="Assets\search-48.png" />
+    <None Remove="Assets\settings-panel-48.png" />
+    <None Remove="Assets\settings-panel-96.png" />
     <None Remove="Assets\shield-48.png" />
     <None Remove="Assets\start-half-empty-48.png" />
     <None Remove="Assets\stopwatch-48.png" />
@@ -84,6 +86,8 @@
     <Resource Include="Assets\penny-heads.png" />
     <Resource Include="Assets\penny-tails.png" />
     <Resource Include="Assets\search-48.png" />
+    <Resource Include="Assets\settings-panel-48.png" />
+    <Resource Include="Assets\settings-panel-96.png" />
     <Resource Include="Assets\shield-48.png" />
     <Resource Include="Assets\start-half-empty-48.png" />
     <Resource Include="Assets\stopwatch-48.png" />
@@ -192,6 +196,13 @@
       <Link>LinkedSources\HyperlinkExample.xaml.cs</Link>
     </EmbeddedResource>
 
+    <EmbeddedResource Include="Views\Examples\SettingsItemExample.xaml">
+      <Link>LinkedSources\SettingsItemExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\SettingsItemExample.xaml.cs">
+      <Link>LinkedSources\SettingsItemExample.xaml.cs</Link>
+    </EmbeddedResource>
+
     <EmbeddedResource Include="Views\Examples\InfoCardExample.xaml">
       <Link>LinkedSources\InfoCardExample.xaml</Link>
     </EmbeddedResource>
@@ -289,6 +300,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Examples\SettingsItemExample.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Examples\ToggleButtonExample.xaml.cs">
