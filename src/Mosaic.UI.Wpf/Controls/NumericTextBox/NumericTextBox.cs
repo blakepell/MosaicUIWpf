@@ -88,6 +88,13 @@ namespace Mosaic.UI.Wpf.Controls
             // Limit to one decimal point and one minus sign at the beginning.
             if (e.Key == Key.OemPeriod || e.Key == Key.Decimal)
             {
+                // If DecimalPlaces is 0, no decimal points are allowed.
+                if (this.DecimalPlaces == 0)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
                 if (Text.Contains('.'))
                 {
                     e.Handled = true; // Disallow multiple decimal point.
@@ -128,7 +135,6 @@ namespace Mosaic.UI.Wpf.Controls
                     e.Handled = true; // Disallow input that would exceed the decimal places.
                 }
             }
-
         }
     }
 }
