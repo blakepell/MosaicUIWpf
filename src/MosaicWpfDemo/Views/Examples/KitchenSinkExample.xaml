@@ -61,12 +61,15 @@
                 BorderThickness="1"
                 CornerRadius="4">
                 <StackPanel Orientation="Vertical">
+                    <mosaic:PropertyGrid Object="{Binding}" />
+
                     <StackPanel Orientation="Vertical">
                         <TextBlock Margin="0,0,0,0" Text="Username:" />
                         <TextBox
                             Width="250"
                             Margin="0,4,0,0"
-                            HorizontalAlignment="Left" />
+                            HorizontalAlignment="Left"
+                            Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
@@ -91,6 +94,8 @@
                     <CheckBox Margin="4,2,0,0">
                         <TextBlock Text="Enabled" />
                     </CheckBox>
+
+                    <DatePicker></DatePicker>
 
                 </StackPanel>
             </Border>

@@ -1,11 +1,30 @@
-﻿using System.IO;
+﻿/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : [Your Name]
+ * @website           : https://www.yourwebsite.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2025 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 
+// ReSharper disable CheckNamespace
+
 namespace LanChat.Network
 {
+    /// <summary>
+    /// Provides asynchronous TCP client functionality for the LanChat application.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="ChatClient"/> class manages a <see cref="TcpClient"/> connection,
+    /// handles reconnection logic, and exposes events for received messages and errors.
+    /// </remarks>
     public partial class ChatClient : ObservableObject, IAsyncDisposable
     {
         private TcpClient? _tcp;
@@ -16,9 +35,24 @@ namespace LanChat.Network
         private readonly SemaphoreSlim _reconnectGate = new(1, 1);
         private volatile bool _isDisconnecting;
 
+        /// <summary>
+        /// Occurs when a text message is received from the server.
+        /// </summary>
         public event EventHandler<TextMessageEventArgs>? TextReceived;
+
+        /// <summary>
+        /// Occurs when a JSON envelope is received from the server.
+        /// </summary>
         public event EventHandler<EnvelopeEventArgs>? EnvelopeReceived;
+
+        /// <summary>
+        /// Occurs when an error is encountered during communication.
+        /// </summary>
         public event EventHandler<ErrorEventArgs>? Error;
+
+        /// <summary>
+        /// Occurs when the client has been disconnected from the server.
+        /// </summary>
         public event EventHandler? Disconnected;
 
         [ObservableProperty]
@@ -32,6 +66,12 @@ namespace LanChat.Network
             IsConnected = _tcp is { Connected: true };
         }
 
+        /// <summary>
+        /// Connects to the specified host and port asynchronously.
+        /// </summary>
+        /// <param name="host">The server host name or IP address.</param>
+        /// <param name="port">The server port number.</param>
+        /// <param name="cancellationToken">A token to cancel the operation.</param>
         public async Task ConnectAsync(string host, int port, CancellationToken cancellationToken = default)
         {
             await DisconnectAsync();
@@ -56,6 +96,9 @@ namespace LanChat.Network
             _readLoop = Task.Run(() => ReadLoopAsync(_cts.Token));
         }
 
+        /// <summary>
+        /// Disconnects from the server asynchronously.
+        /// </summary>
         public async Task DisconnectAsync()
         {
             if (_isDisconnecting)
@@ -149,6 +192,11 @@ namespace LanChat.Network
             }
         }
 
+        /// <summary>
+        /// Logs in to the server with the specified username.
+        /// </summary>
+        /// <param name="username">The username to use for login.</param>
+        /// <param name="ct">A cancellation token.</param>
         public async Task LoginAsync(string username, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -159,7 +207,7 @@ namespace LanChat.Network
             await EnsureConnectedAsync(ct);
 
             Username = username.Trim();
-            
+
             var loginData = new Dictionary<string, string> { ["username"] = Username };
             var envelope = MessageEnvelope.Create(loginData, typeName: "Login");
             await SendEnvelopeInternalAsync(envelope, ct).ConfigureAwait(false);
@@ -171,6 +219,11 @@ namespace LanChat.Network
             _reconnectGate.Dispose();
         }
 
+        /// <summary>
+        /// Sends a text message to the server asynchronously.
+        /// </summary>
+        /// <param name="text">The text to send.</param>
+        /// <param name="ct">A cancellation token.</param>
         public async Task SendTextAsync(string text, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(Username))
@@ -194,6 +247,11 @@ namespace LanChat.Network
             }
         }
 
+        /// <summary>
+        /// Sends a JSON envelope to the server asynchronously.
+        /// </summary>
+        /// <param name="envelope">The envelope to send.</param>
+        /// <param name="ct">A cancellation token.</param>
         public async Task SendEnvelopeAsync(MessageEnvelope envelope, CancellationToken ct = default)
         {
             await EnsureConnectedAsync(ct);
@@ -226,7 +284,7 @@ namespace LanChat.Network
                                 Username = "Server"
                             });
                             break;
-                            
+
                         case MessageKind.JsonEnvelope:
                             var env = JsonSerializer.Deserialize<MessageEnvelope>(payload, MessageEnvelope.DefaultJsonOptions);
                             EnvelopeReceived?.Invoke(this, new EnvelopeEventArgs
@@ -236,13 +294,13 @@ namespace LanChat.Network
                                 Username = "Server"
                             });
                             break;
-                            
+
                         default:
                             throw new NotSupportedException($"Unknown message kind: {kind}");
                     }
                 }
             }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested) 
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
                 isIntentionalDisconnect = true;
             }

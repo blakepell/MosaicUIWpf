@@ -10,7 +10,7 @@
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
     Title="Mosaic UI WPF Demo"
     Width="1000"
-    Height="700"
+    Height="900"
     AllowsTransparency="False"
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"

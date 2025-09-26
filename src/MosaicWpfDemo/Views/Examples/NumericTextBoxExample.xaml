@@ -17,5 +17,12 @@
             Margin="0,4,0,0"
             Padding="4"
             DecimalPlaces="2" />
+
+        <TextBlock Margin="0,4,0,0" Text="0 Decimal Place Limit" />
+        <mosaic:NumericTextBox
+            Margin="0,4,0,0"
+            Padding="4"
+            DecimalPlaces="0" />
+
     </StackPanel>
 </UserControl>

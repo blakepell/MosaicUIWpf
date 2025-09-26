@@ -13,5 +13,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Menu.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Separator.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DatePicker.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

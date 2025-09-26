@@ -6432,6 +6432,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+  
     <ControlTemplate x:Key="FrameNavChromeTemplateKey" TargetType="{x:Type Frame}">
         <Border
             Padding="{TemplateBinding Padding}"

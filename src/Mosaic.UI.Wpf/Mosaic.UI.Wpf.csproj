@@ -56,10 +56,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Argus.Core" Version="2025.6.13.1" />
+    <PackageReference Include="Argus.Core" Version="2025.9.27.1" />
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 

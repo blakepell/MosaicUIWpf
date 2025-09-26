@@ -23,7 +23,7 @@
                 TextTrimming="CharacterEllipsis" />
         </StackPanel>
 
-        <Separator Margin="8,4,0,4" Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"></Separator>
+        <Separator Margin="8,4,0,4" Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
 
     </StackPanel>
 </UserControl>

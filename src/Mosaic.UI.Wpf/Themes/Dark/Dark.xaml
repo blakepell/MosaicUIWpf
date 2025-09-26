@@ -51,6 +51,9 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundColor}">#FF2D2D30</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColor}}" />
 
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundLightColor}">#373A3E</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBackgroundLightBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightColor}}" />
+
     <Color x:Key="{x:Static themes:MosaicTheme.ControlForegroundColor}">#FFF1F1F1</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundColor}}" />
 
@@ -167,20 +170,14 @@
     <SolidColorBrush x:Key="ScrollBar.Disabled.Thumb" Color="#FF3C3C3C" />
 
     <!--  ComboBox  -->
-    <LinearGradientBrush x:Key="ComboBox.Static.Background" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#FF2D2D30" />
-        <GradientStop Offset="1.0" Color="#FF232325" />
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBox.Static.Background" Color="#232325" />
     <SolidColorBrush x:Key="ComboBox.Static.Glyph" Color="#FF606060" />
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Border" Color="#FFABADB3" />
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Background" Color="Transparent" />
     <SolidColorBrush x:Key="ComboBox.Static.Editable.Button.Border" Color="Transparent" />
 
-    <LinearGradientBrush x:Key="ComboBox.MouseOver.Background" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#FF3C3C3C" />
-        <GradientStop Offset="1.0" Color="#FF2D2D30" />
-    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ComboBox.MouseOver.Background" Color="#232325" />
     <SolidColorBrush x:Key="ComboBox.MouseOver.Border" Color="#FF7EB4EA" />
     <SolidColorBrush x:Key="ComboBox.MouseOver.Glyph" Color="#FF000000" />
     <SolidColorBrush x:Key="ComboBox.MouseOver.Editable.Background" Color="#FFFFFFFF" />

@@ -21,5 +21,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ToggleButton/ToggleButton.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ToggleSwitch/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/PropertyGrid/PropertyGrid.xaml" />
+
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
