@@ -11,6 +11,8 @@
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True"></Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DatePicker}">
@@ -281,9 +283,18 @@
                             </Grid>
                         </Border>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Watermark Trigger: Show watermark when text is empty AND control is not focused -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Text" Value="" />
+                                <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Watermark" Property="Opacity" Value="1" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>
