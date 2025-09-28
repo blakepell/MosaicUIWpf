@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Windows;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Argus.Extensions;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -45,6 +43,12 @@ namespace Mosaic.UI.Wpf.Controls
         public Type? PropertyType { get; }
 
         /// <summary>
+        /// Gets the maximum length for string properties.
+        /// Returns 0 if no maximum length is specified.
+        /// </summary>
+        public int MaxLength { get; }
+
+        /// <summary>
         /// Gets the enumerable values for enum properties.
         /// </summary>
         [ObservableProperty]
@@ -74,6 +78,9 @@ namespace Mosaic.UI.Wpf.Controls
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
 
+            // Determine MaxLength from multiple sources
+            MaxLength = DetermineMaxLength(pd, attr);
+
             // Add event handler to listen for property changes on the owner object
             if (owner is INotifyPropertyChanged notifyPropertyChanged)
             {
@@ -85,6 +92,38 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 EnumValues = Enum.GetValues(pd.PropertyType);
             }
+        }
+
+        /// <summary>
+        /// Determines the maximum length for the property from various sources.
+        /// </summary>
+        /// <param name="pd">The property descriptor.</param>
+        /// <param name="attr">The PropertyGrid attribute.</param>
+        /// <returns>The maximum length, or 0 if no limit is specified.</returns>
+        private int DetermineMaxLength(PropertyDescriptor pd, PropertyGridAttribute? attr)
+        {
+            // First check PropertyGridAttribute
+            if (attr?.MaxLength > 0)
+            {
+                return attr.MaxLength;
+            }
+
+            // Check for StringLength attribute on the property
+            var stringLengthAttr = pd.Attributes.OfType<StringLengthAttribute>().FirstOrDefault();
+            if (stringLengthAttr?.MaximumLength > 0)
+            {
+                return stringLengthAttr.MaximumLength;
+            }
+
+            // Check for MaxLength attribute on the property
+            var maxLengthAttr = pd.Attributes.OfType<MaxLengthAttribute>().FirstOrDefault();
+            if (maxLengthAttr?.Length > 0)
+            {
+                return maxLengthAttr.Length;
+            }
+
+            // No maximum length specified
+            return 0;
         }
 
         /// <summary>

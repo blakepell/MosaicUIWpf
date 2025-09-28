@@ -17,6 +17,7 @@ namespace Mosaic.UI.Wpf.Controls
 
     public partial class Person : ObservableObject
     {
+        [property: PropertyGrid(MaxLength = 12)]
         [property: DisplayName("Username")]
         [property: Category("Account")]
         [property: Description("The users account name.")]

@@ -3,7 +3,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
-    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters">
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <!--  Define a dedicated style for the PropertyGrid TextBox editor  -->
+    <Style x:Key="PropertyGridTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
+        <Setter Property="Padding" Value="4"></Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding MaxLength}" Value="0">
+                <!-- When no MaxLength is specified, use the maximum possible value -->
+                <Setter Property="MaxLength" Value="2147483647" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding MaxLength, Converter={x:Static converters:GreaterThanZeroConverter.Instance}}" Value="True">
+                <!-- When a specific MaxLength is provided, apply it -->
+                <Setter Property="MaxLength" Value="{Binding MaxLength}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 
     <!--  1.  The editor selector – picks the right template  -->
     <local:PropertyEditorSelector x:Key="PropertyEditorSelector" />
@@ -11,9 +30,7 @@
     <!--  2.  Editor templates  -->
     <DataTemplate x:Key="TextEditor">
         <TextBox
-            VerticalAlignment="Center"
-            BorderThickness="0"
-            IsReadOnly="{Binding IsReadOnly}"
+            Style="{StaticResource PropertyGridTextBoxStyle}"
             Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 

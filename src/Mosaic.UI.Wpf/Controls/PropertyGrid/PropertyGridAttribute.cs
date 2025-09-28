@@ -12,5 +12,10 @@
 
         public bool IsReadOnly { get; set; } = false;
 
+        /// <summary>
+        /// Gets or sets the maximum length of the property value.
+        /// Used for string properties to limit input length.
+        /// </summary>
+        public int MaxLength { get; set; } = 0;
     }
 }
