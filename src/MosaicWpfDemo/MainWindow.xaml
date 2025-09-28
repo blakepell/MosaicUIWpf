@@ -378,6 +378,13 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ColorPaletteEditor  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type example:ColorPaletteEditor}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="pack://application:,,,/Assets/color-swatch-48.png"
+                    Text="Color Palette Editor" />
+
                 <!--  EditableTextBlock  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -320,4 +320,11 @@
 
     <SolidColorBrush x:Key="Menu.PopupSubmenu.Normal.Foreground" Color="#FF000000" />
     <SolidColorBrush x:Key="Menu.PopupSubmenu.Disabled.Foreground" Color="#FF707070" />
+
+    <!--  Calendar  -->
+    <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+    <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+    <Color x:Key="GlyphColor">#FF444444</Color>
+    <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+
 </ResourceDictionary>

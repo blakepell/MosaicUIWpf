@@ -28,77 +28,80 @@
             <MenuItem Header="_Action" />
         </Menu>
 
-        <StackPanel
-            Grid.Row="1"
-            VerticalAlignment="Top"
-            Orientation="Vertical">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel
+                VerticalAlignment="Top"
+                Orientation="Vertical">
 
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Text="Right-click me">
-                <TextBlock.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Open" />
-                        <MenuItem Header="Save" />
-                        <Separator />
-                        <MenuItem Header="Exit" />
-                    </ContextMenu>
-                </TextBlock.ContextMenu>
-            </TextBlock>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="Right-click me">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Open" />
+                            <MenuItem Header="Save" />
+                            <Separator />
+                            <MenuItem Header="Exit" />
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </TextBlock>
 
-            <TextBlock
-                Margin="0,0,0,8"
-                FontSize="18"
-                FontWeight="SemiBold"
-                Text="Kitchen Sink Example page" />
-            <!--  Blank example surface: add controls here  -->
-            <Border
-                MinHeight="300"
-                Padding="6"
-                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                BorderThickness="1"
-                CornerRadius="4">
-                <StackPanel Orientation="Vertical">
-                    <mosaic:PropertyGrid Object="{Binding}" />
-
+                <TextBlock
+                    Margin="0,0,0,8"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="Kitchen Sink Example page" />
+                <!--  Blank example surface: add controls here  -->
+                <Border
+                    MinHeight="300"
+                    Padding="6"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1"
+                    CornerRadius="4">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Username:" />
-                        <TextBox
-                            Width="250"
-                            Margin="0,4,0,0"
-                            HorizontalAlignment="Left"
-                            Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <mosaic:PropertyGrid Object="{Binding}" />
+
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="0,0,0,0" Text="Username:" />
+                            <TextBox
+                                Width="250"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left"
+                                Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="0,0,0,0" Text="Account Type:" />
+                            <ComboBox>
+                                <ComboBoxItem>User</ComboBoxItem>
+                                <ComboBoxItem>Admin</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="0,0,0,0" Text="Enter username:" />
+                            <ComboBox IsEditable="True">
+                                <ComboBoxItem>bpell</ComboBoxItem>
+                                <ComboBoxItem>isaac</ComboBoxItem>
+                                <ComboBoxItem>lucy</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <mosaic:ToggleButton Margin="0,6,0,0" />
+
+                        <CheckBox Margin="4,2,0,0">
+                            <TextBlock Text="Enabled" />
+                        </CheckBox>
+
+                        <DatePicker></DatePicker>
+
+                        <Calendar></Calendar>
+
                     </StackPanel>
-
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Account Type:" />
-                        <ComboBox>
-                            <ComboBoxItem>User</ComboBoxItem>
-                            <ComboBoxItem>Admin</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Enter username:" />
-                        <ComboBox IsEditable="True">
-                            <ComboBoxItem>bpell</ComboBoxItem>
-                            <ComboBoxItem>isaac</ComboBoxItem>
-                            <ComboBoxItem>lucy</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <mosaic:ToggleButton Margin="0,6,0,0" />
-
-                    <CheckBox Margin="4,2,0,0">
-                        <TextBlock Text="Enabled" />
-                    </CheckBox>
-
-                    <DatePicker></DatePicker>
-
-                </StackPanel>
-            </Border>
-        </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

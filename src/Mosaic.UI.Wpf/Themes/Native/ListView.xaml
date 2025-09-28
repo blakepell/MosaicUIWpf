@@ -3,6 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+    
+    <!--  Converter to determine ListView mode  -->
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    
     <!--  Focus Visual Style  -->
     <Style x:Key="FocusVisual">
         <Setter Property="Control.Template">
@@ -274,9 +278,27 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="true">
-                        <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        
+                        <Grid>
+                            <!-- Use GridViewRowPresenter when ListView has a GridView, ContentPresenter otherwise -->
+                            <GridViewRowPresenter x:Name="GridViewRowPresenter"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              Visibility="Collapsed" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!-- Show ContentPresenter when ListView.View is null (ItemTemplate mode) -->
+                        <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource AncestorType=ListView}}" Value="{x:Null}">
+                            <Setter TargetName="GridViewRowPresenter" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentPresenter" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />

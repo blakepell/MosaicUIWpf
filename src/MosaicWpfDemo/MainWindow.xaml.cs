@@ -26,6 +26,12 @@ namespace WpfDemo
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             TestSideMenu.SelectByIndex(0);
+
+#if DEBUG
+            // Debug mode for testing, set this view (Kitchen Sink) as the default view.
+            TestSideMenu.SelectByIndex(4);
+#endif
+
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
