@@ -109,26 +109,36 @@
                                                 <VisualStateGroup Name="CommonStates">
                                                     <VisualStateGroup.Transitions>
                                                         <VisualTransition GeneratedDuration="0" />
-                                                        <VisualTransition GeneratedDuration="0:0:0.1" To="MouseOver" />
-                                                        <VisualTransition GeneratedDuration="0:0:0.1" To="Pressed" />
+                                                        <VisualTransition GeneratedDuration="0:0:0.0" To="MouseOver" />
+                                                        <VisualTransition GeneratedDuration="0:0:0.0" To="Pressed" />
                                                     </VisualStateGroup.Transitions>
                                                     <VisualState Name="Normal" />
                                                     <VisualState Name="MouseOver">
                                                         <Storyboard>
-                                                            <ColorAnimation
+                                                            <ObjectAnimationUsingKeyFrames
                                                                 Storyboard.TargetName="Background"
-                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                                To="#FFBEE6FD"
-                                                                Duration="0" />
+                                                                Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Button.MouseOver.Background}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames
+                                                                Storyboard.TargetName="Background"
+                                                                Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Button.MouseOver.Border}" />
+                                                            </ObjectAnimationUsingKeyFrames>
                                                         </Storyboard>
                                                     </VisualState>
                                                     <VisualState Name="Pressed">
                                                         <Storyboard>
-                                                            <ColorAnimation
+                                                            <ObjectAnimationUsingKeyFrames
                                                                 Storyboard.TargetName="Background"
-                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                                To="#FFC4E5F6"
-                                                                Duration="0" />
+                                                                Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Button.Pressed.Background}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames
+                                                                Storyboard.TargetName="Background"
+                                                                Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Button.Pressed.Border}" />
+                                                            </ObjectAnimationUsingKeyFrames>
                                                             <DoubleAnimationUsingKeyFrames
                                                                 BeginTime="0"
                                                                 Storyboard.TargetName="Highlight"
