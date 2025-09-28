@@ -83,13 +83,8 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (PropertyDescriptor pd in props)
             {
-                if (pd.IsReadOnly)
-                {
-                    continue;   // optional: allow read‑only to be displayed
-                }
-
                 var attr = pd.GetAttribute<PropertyGridAttribute>();
-
+                
                 if (attr is { Ignore: true })
                 {
                     continue;

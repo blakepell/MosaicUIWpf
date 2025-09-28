@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Argus.Extensions;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -67,11 +68,11 @@ namespace Mosaic.UI.Wpf.Controls
             _propertyDescriptor = pd;
             Name = pd.Name;
             DisplayName = attr?.DisplayName ?? pd.DisplayName ?? pd.Name;
+            IsReadOnly = attr?.IsReadOnly ?? pd?.IsReadOnly ?? false;
             Category = attr?.Category ?? pd.Category;
             Description = attr?.Description ?? pd.Description;
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
-            IsReadOnly = attr?.IsReadOnly ?? false;
 
             // Add event handler to listen for property changes on the owner object
             if (owner is INotifyPropertyChanged notifyPropertyChanged)
