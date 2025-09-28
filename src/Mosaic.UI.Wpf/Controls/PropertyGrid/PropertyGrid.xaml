@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
-    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters">
 
     <!--  1.  The editor selector – picks the right template  -->
     <local:PropertyEditorSelector x:Key="PropertyEditorSelector" />
@@ -12,6 +13,7 @@
         <TextBox
             VerticalAlignment="Center"
             BorderThickness="0"
+            IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
@@ -19,6 +21,7 @@
         <CheckBox
             Margin="2,2,0,2"
             VerticalAlignment="Center"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
             IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
     </DataTemplate>
 
@@ -26,6 +29,7 @@
         <ComboBox
             VerticalAlignment="Center"
             BorderThickness="0"
+            IsReadOnly="{Binding IsReadOnly}"
             ItemsSource="{Binding EnumValues}"
             SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
@@ -36,6 +40,7 @@
             VerticalAlignment="Center"
             BorderThickness="0"
             DecimalPlaces="0"
+            IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
@@ -45,12 +50,14 @@
             VerticalAlignment="Center"
             BorderThickness="0"
             DecimalPlaces="10"
+            IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
     <DataTemplate x:Key="DateOnlyEditor">
         <DatePicker
             VerticalAlignment="Center"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
@@ -62,7 +69,8 @@
             x:Name="TogglePopupButton"
             Width="150"
             Height="30"
-            HorizontalAlignment="Left">
+            HorizontalAlignment="Left"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}">
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Run Text="Is button toggled? " />

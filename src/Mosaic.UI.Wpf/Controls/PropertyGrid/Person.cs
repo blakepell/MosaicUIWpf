@@ -42,9 +42,18 @@ namespace Mosaic.UI.Wpf.Controls
         [ObservableProperty]
         private bool _active;
 
+        [property: PropertyGrid(IsReadOnly = true, Description = "This field is read only.")]
+        [property: Category("Account")]
+        [ObservableProperty]
+        private bool _disabledBool;
+
         [property: Category("Giving")]
         [ObservableProperty]
         private double _lifetimeGiving = 0.00;
+
+        [property: PropertyGrid(IsReadOnly = true)]
+        [ObservableProperty]
+        private string _notes = "This is a readonly field.";
 
         [property: Category("Account")]
         [ObservableProperty]

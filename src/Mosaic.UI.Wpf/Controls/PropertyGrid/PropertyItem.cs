@@ -34,6 +34,11 @@ namespace Mosaic.UI.Wpf.Controls
         public string? Description { get; }
 
         /// <summary>
+        /// Gets the read-only status of the property.
+        /// </summary>
+        public bool IsReadOnly { get; }
+
+        /// <summary>
         /// Gets the type of the property.
         /// </summary>
         public Type? PropertyType { get; }
@@ -66,6 +71,7 @@ namespace Mosaic.UI.Wpf.Controls
             Description = attr?.Description ?? pd.Description;
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
+            IsReadOnly = attr?.IsReadOnly ?? false;
 
             // Add event handler to listen for property changes on the owner object
             if (owner is INotifyPropertyChanged notifyPropertyChanged)

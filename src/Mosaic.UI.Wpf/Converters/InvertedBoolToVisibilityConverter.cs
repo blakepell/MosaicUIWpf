@@ -22,6 +22,7 @@ namespace Mosaic.UI.Wpf.Converters
     {
         public static readonly InvertedBoolToVisibilityConverter Instance = new();
 
+        /// <inheritdoc />
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return this;

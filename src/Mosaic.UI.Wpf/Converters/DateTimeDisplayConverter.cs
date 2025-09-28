@@ -18,7 +18,7 @@ namespace Mosaic.UI.Wpf.Converters
     /// A value converter that formats a <see cref="DateTime"/> value as a localized time string if the date is the
     /// current day; otherwise, returns the original <see cref="DateTime"/> value.
     /// </summary>
-    public class DateTimeDisplayConverter : MarkupExtension, IValueConverter
+    public sealed class DateTimeDisplayConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
         /// Provides a singleton instance of the <see cref="DateTimeDisplayConverter"/> class.
