@@ -76,7 +76,7 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
 
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}">#D0CECE</Color>
-    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
 
     <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#FF0078D7</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundColor}}" />
@@ -336,4 +336,10 @@
 
     <SolidColorBrush x:Key="Menu.PopupSubmenu.Normal.Foreground" Color="#FFF1F1F1" />
     <SolidColorBrush x:Key="Menu.PopupSubmenu.Disabled.Foreground" Color="#FF707070" />
+
+    <!-- Calendar -->
+    <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+    <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+    <Color x:Key="GlyphColor">#FF999999</Color>
+    <Color x:Key="GlyphMouseOver">#FFCCCCCC</Color>
 </ResourceDictionary>
