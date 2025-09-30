@@ -235,7 +235,7 @@
     <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA" />
     <SolidColorBrush x:Key="Item.SelectedInactive.Foreground" Color="#FF333333" />
 
-<!--<SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#3D26A0DA" />
+    <!--<SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#3D26A0DA" />
     <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF26A0DA" />
     <SolidColorBrush x:Key="Item.SelectedActive.Foreground" Color="White" />-->
 
