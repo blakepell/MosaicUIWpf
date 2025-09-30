@@ -230,8 +230,10 @@
     <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#FF0078D7" />
     <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#FF0078D7" />
     <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF106EBE" />
+    <SolidColorBrush x:Key="Item.SelectedActive.Foreground" Color="White" />
     <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FF3F3F46" />
     <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FF6F6F73" />
+    <SolidColorBrush x:Key="Item.SelectedInactive.Foreground" Color="#FFF1F1F1" />
 
     <!--  Solid Colored Selection (alternative)  -->
     <!--<SolidColorBrush x:Key="Item.Static.Background" Color="Transparent" />

@@ -291,7 +291,7 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Item.SelectedInactive.Background}" />
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Item.SelectedInactive.Border}" />
-                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="White" />
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource Item.SelectedInactive.Foreground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -300,7 +300,7 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Item.SelectedActive.Background}" />
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Item.SelectedActive.Border}" />
-                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="White" />
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource Item.SelectedActive.Foreground}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
