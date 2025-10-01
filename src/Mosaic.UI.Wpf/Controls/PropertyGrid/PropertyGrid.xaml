@@ -6,6 +6,9 @@
     xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
+    <!-- Bool->Visibility converter for the editor button -->
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
     <!--  Define a dedicated style for the PropertyGrid TextBox editor  -->
     <Style x:Key="PropertyGridTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -169,6 +172,7 @@
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="200" />
                                                     <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
 
                                                 <Border
@@ -195,6 +199,15 @@
                                                         Content="{Binding}"
                                                         ContentTemplateSelector="{StaticResource PropertyEditorSelector}" />
                                                 </Border>
+
+                                                <Button
+                                                    Grid.Column="2"
+                                                    Content="..."
+                                                    Padding="4,0,4,0"
+                                                    ToolTip="Open Editor"
+                                                    Visibility="{Binding HasEditor, Converter={StaticResource BoolToVis}}"
+                                                    Command="{Binding OpenEditorCommand}" />
+
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

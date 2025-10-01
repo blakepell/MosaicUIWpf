@@ -17,5 +17,11 @@
         /// Used for string properties to limit input length.
         /// </summary>
         public int MaxLength { get; set; } = 0;
+
+        /// <summary>
+        /// Optional editor type. Should implement <see cref="IPropertyEditor"/> for predictable behavior.
+        /// When set, PropertyGrid will show a "..." button to open the editor.
+        /// </summary>
+        public Type? EditorType { get; set; }
     }
 }

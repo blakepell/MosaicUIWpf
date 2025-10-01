@@ -94,6 +94,11 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private Gender _gender;
 
+        [property: Category("Identity")]
+        [property: PropertyGrid(EditorType = typeof(FilePropertyEditor), IsReadOnly = true)]
+        [ObservableProperty]
+        private string? _profilePicturePath;
+
         [property: PropertyGrid(Ignore = true)]
         [property: Category("Identity")]
         [ObservableProperty]

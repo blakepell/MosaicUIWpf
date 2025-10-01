@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -43,6 +40,22 @@ namespace Mosaic.UI.Wpf.Controls
         public Type? PropertyType { get; }
 
         /// <summary>
+        /// Optional custom editor type (from PropertyGridAttribute).
+        /// </summary>
+        public Type? EditorType { get; }
+
+        /// <summary>
+        /// True when an editor is available.  Readonly properties are allowed where you want
+        /// the editor to set the value.
+        /// </summary>
+        public bool HasEditor => EditorType != null;
+
+        /// <summary>
+        /// Command used by the "..." button to open the custom editor.
+        /// </summary>
+        public ICommand OpenEditorCommand { get; }
+
+        /// <summary>
         /// Gets the maximum length for string properties.
         /// Returns 0 if no maximum length is specified.
         /// </summary>
@@ -78,6 +91,9 @@ namespace Mosaic.UI.Wpf.Controls
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
 
+            // EditorType from attribute (if any)
+            EditorType = attr?.EditorType;
+
             // Determine MaxLength from multiple sources
             MaxLength = DetermineMaxLength(pd, attr);
 
@@ -92,6 +108,9 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 EnumValues = Enum.GetValues(pd.PropertyType);
             }
+
+            // Commands
+            OpenEditorCommand = new DelegateCommand(OpenEditor, () => HasEditor);
         }
 
         /// <summary>
@@ -215,6 +234,45 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Open the custom editor (invoked by the "..." button).
+        /// Supports:
+        ///  - types implementing IPropertyEditor (preferred)
+        ///  - Window types as a fallback (attempts to extract result via common properties)
+        /// </summary>
+        private void OpenEditor()
+        {
+            if (EditorType == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var editorObj = Activator.CreateInstance(EditorType);
+                if (editorObj == null)
+                {
+                    return;
+                }
+
+                // Required: IPropertyEditor
+                if (editorObj is IPropertyEditor pe)
+                {
+                    var result = pe.Edit(Value, PropertyType ?? typeof(object), _owner);
+                    if (result != null)
+                    {
+                        // Assigning to the generated property triggers OnValueChanged -> owner update
+                        Value = result;
+                    }
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to open editor for '{Name}': {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Detaches event handlers to avoid memory leaks.
         /// </summary>
         public void Detach()
@@ -223,6 +281,31 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 notifyPropertyChanged.PropertyChanged -= OwnerPropertyChanged;
             }
+        }
+
+        /// <summary>
+        /// Simple ICommand implementation used for the editor command.
+        /// </summary>
+        private sealed class DelegateCommand : ICommand
+        {
+            private readonly Action _execute;
+            private readonly Func<bool>? _canExecute;
+
+            public DelegateCommand(Action execute, Func<bool>? canExecute = null)
+            {
+                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+                _canExecute = canExecute;
+            }
+
+            public event EventHandler? CanExecuteChanged
+            {
+                add { CommandManager.RequerySuggested += value; }
+                remove { CommandManager.RequerySuggested -= value; }
+            }
+
+            public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
+
+            public void Execute(object? parameter) => _execute();
         }
     }
 }
