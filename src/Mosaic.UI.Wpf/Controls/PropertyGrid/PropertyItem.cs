@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -109,8 +110,8 @@ namespace Mosaic.UI.Wpf.Controls
                 EnumValues = Enum.GetValues(pd.PropertyType);
             }
 
-            // Commands
-            OpenEditorCommand = new DelegateCommand(OpenEditor, () => HasEditor);
+            // Commands - use CommunityToolkit.Mvvm RelayCommand instead of custom DelegateCommand
+            OpenEditorCommand = new RelayCommand(OpenEditor, () => HasEditor);
         }
 
         /// <summary>
@@ -281,31 +282,6 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 notifyPropertyChanged.PropertyChanged -= OwnerPropertyChanged;
             }
-        }
-
-        /// <summary>
-        /// Simple ICommand implementation used for the editor command.
-        /// </summary>
-        private sealed class DelegateCommand : ICommand
-        {
-            private readonly Action _execute;
-            private readonly Func<bool>? _canExecute;
-
-            public DelegateCommand(Action execute, Func<bool>? canExecute = null)
-            {
-                _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-                _canExecute = canExecute;
-            }
-
-            public event EventHandler? CanExecuteChanged
-            {
-                add { CommandManager.RequerySuggested += value; }
-                remove { CommandManager.RequerySuggested -= value; }
-            }
-
-            public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
-
-            public void Execute(object? parameter) => _execute();
         }
     }
 }
