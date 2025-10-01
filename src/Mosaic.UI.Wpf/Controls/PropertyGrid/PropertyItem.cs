@@ -173,6 +173,14 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Sets the value of the property identified by <see cref="Name"/> on the owner object.
+        /// </summary>
+        /// <remarks>This method attempts to locate a writable property on the owner object with the name
+        /// specified by <see cref="Name"/>. If the property is found and writable, the provided value is converted to
+        /// the property's type and assigned to it. If the property does not exist, is not writable, or an error occurs
+        /// during the operation, the method fails silently.</remarks>
+        /// <param name="value">The value to set for the property. The value will be converted to the property's type if necessary.</param>
         private void SetOwnerPropertyValue(object? value)
         {
             if (_owner == null)
@@ -199,6 +207,18 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Converts the specified value to the specified target type, handling nullable types and using type converters
+        /// where applicable.
+        /// </summary>
+        /// <remarks>This method first checks if the value is already of the target type and returns it
+        /// directly if so.  For nullable types, it handles empty string values by returning <see langword="null"/>.  If
+        /// a type converter is available for the target type, it is used for the conversion.  Otherwise, the method
+        /// falls back to <see cref="Convert.ChangeType"/> for the conversion.</remarks>
+        /// <param name="value">The value to convert. Can be <see langword="null"/>.</param>
+        /// <param name="targetType">The type to which the value should be converted. Must not be <see langword="null"/>.</param>
+        /// <returns>The converted value as an instance of <paramref name="targetType"/>, or <see langword="null"/> if <paramref
+        /// name="value"/> is <see langword="null"/>  or an empty string and the target type is nullable.</returns>
         private object? ConvertValue(object? value, Type targetType)
         {
             if (value == null)
@@ -236,9 +256,6 @@ namespace Mosaic.UI.Wpf.Controls
 
         /// <summary>
         /// Open the custom editor (invoked by the "..." button).
-        /// Supports:
-        ///  - types implementing IPropertyEditor (preferred)
-        ///  - Window types as a fallback (attempts to extract result via common properties)
         /// </summary>
         private void OpenEditor()
         {

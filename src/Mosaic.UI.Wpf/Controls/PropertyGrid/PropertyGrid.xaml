@@ -34,7 +34,7 @@
     <DataTemplate x:Key="TextEditor">
         <TextBox
             Style="{StaticResource PropertyGridTextBoxStyle}"
-            Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
+            Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
     <DataTemplate x:Key="BoolEditor">
@@ -61,7 +61,7 @@
             BorderThickness="0"
             DecimalPlaces="0"
             IsReadOnly="{Binding IsReadOnly}"
-            Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
+            Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
     <DataTemplate x:Key="DecimalEditor">
@@ -71,7 +71,7 @@
             BorderThickness="0"
             DecimalPlaces="10"
             IsReadOnly="{Binding IsReadOnly}"
-            Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
+            Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay}" />
     </DataTemplate>
 
     <DataTemplate x:Key="DateOnlyEditor">
