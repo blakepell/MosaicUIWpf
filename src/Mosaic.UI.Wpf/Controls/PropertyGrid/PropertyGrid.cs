@@ -100,6 +100,12 @@ namespace Mosaic.UI.Wpf.Controls
                 {
                     view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
                 }
+
+                // Clear any existing sort descriptions
+                view.SortDescriptions.Clear();
+                // Sort by Category (alphabetically), then by DisplayName (alphabetically)
+                view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+                view.SortDescriptions.Add(new SortDescription("DisplayName", ListSortDirection.Ascending));
             }
         }
 
