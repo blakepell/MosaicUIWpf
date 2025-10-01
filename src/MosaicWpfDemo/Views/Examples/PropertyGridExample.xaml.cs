@@ -43,6 +43,11 @@ namespace MosaicWpfDemo.Views.Examples
 
     public partial class Person : ObservableObject
     {
+        [property: PropertyGrid(Ignore = true)]
+        [property: Category("Identity")]
+        [ObservableProperty]
+        private int _id;
+
         [property: PropertyGrid(MaxLength = 12)]
         [property: DisplayName("Username")]
         [property: Category("Account")]
@@ -63,7 +68,7 @@ namespace MosaicWpfDemo.Views.Examples
 
         [property: Category("Identity")]
         [ObservableProperty]
-        private DateOnly _birthday;
+        private DateOnly? _birthday;
 
         [property: Category("Account")]
         [ObservableProperty]
@@ -99,7 +104,6 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private string? _profilePicturePath;
 
-        [property: PropertyGrid(Ignore = true)]
         [property: Category("Identity")]
         [ObservableProperty]
         private ObservableCollection<string> _nickNames = new();
