@@ -522,6 +522,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ProperyGrid  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/edit-property-48.png"
+                    Text="PropertyGrid">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="PropertyGrid" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.PropertyGridExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.PropertyGridExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:PropertyGrid}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:PropertyGridExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/edit-property-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Settings Item  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
