@@ -8,16 +8,19 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using ICSharpCode.AvalonEdit;
 using Microsoft.Xaml.Behaviors;
+using MosaicWpfDemo.Controls;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Xml.Linq;
 
 namespace Mosaic.UI.Wpf.Controls.Behaviors
 {
-    public class ReflectionDocumentationBehavior : Behavior<TextEditor>
+    public class ReflectionDocumentationBehavior : Behavior<MarkdownViewer>
     {
         public static readonly DependencyProperty TypeProperty = DependencyProperty.Register(
             nameof(Type),
@@ -30,21 +33,22 @@ namespace Mosaic.UI.Wpf.Controls.Behaviors
             get => (Type)GetValue(TypeProperty);
             set => SetValue(TypeProperty, value);
         }
+
         private static void OnResourcePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is ReflectionDocumentationBehavior behavior && behavior.AssociatedObject != null)
             {
-                behavior.SetTextFromResource();
+                behavior.SetMarkdownFromResource();
             }
         }
 
         protected override void OnAttached()
         {
             base.OnAttached();
-            SetTextFromResource();
+            SetMarkdownFromResource();
         }
 
-        private void SetTextFromResource()
+        private void SetMarkdownFromResource()
         {
             if (AssociatedObject == null)
             {
@@ -55,11 +59,10 @@ namespace Mosaic.UI.Wpf.Controls.Behaviors
             {
                 if (Type == null)
                 {
-                    AssociatedObject.Text = "No type specified.";
                     return;
                 }
 
-                // Load XML documentation file
+                // Load XML documentation file next to the assembly
                 var xmlPath = Path.ChangeExtension(Type.Assembly.Location, ".xml");
                 XDocument? xmlDoc = null;
                 if (File.Exists(xmlPath))
@@ -86,10 +89,13 @@ namespace Mosaic.UI.Wpf.Controls.Behaviors
                     return summary ?? string.Empty;
                 }
 
-                var sb = new System.Text.StringBuilder();
+                var sb = new StringBuilder();
 
                 // Class header
-                sb.AppendLine($"# {Type.FullName}");
+                sb.AppendLine($"# {Type.Name}");
+                sb.AppendLine("---");
+                sb.AppendLine($"`{Type.FullName}`");
+
                 var classSummary = GetXmlSummary(Type);
                 if (!string.IsNullOrWhiteSpace(classSummary))
                 {
@@ -153,11 +159,11 @@ namespace Mosaic.UI.Wpf.Controls.Behaviors
                     }
                 }
 
-                AssociatedObject.Text = sb.ToString();
+                AssociatedObject.Markdown = sb.ToString();
             }
             catch (Exception ex)
             {
-                AssociatedObject.Text = $"Error loading resource: {ex.Message}";
+                AssociatedObject.Markdown = $"Error loading resource: {ex.Message}";
             }
         }
 

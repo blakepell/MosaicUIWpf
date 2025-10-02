@@ -9,7 +9,9 @@
     xmlns:controls="clr-namespace:MosaicWpfDemo.Controls"
     xmlns:controls1="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" 
+    xmlns:controls2="http://schemas.mosaicgate.net/wpf/mosaic"
     x:Name="Me"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -134,16 +136,12 @@
                         VerticalContentAlignment="Stretch"
                         Header="Documentation">
                         <Grid>
-                            <avalonedit:TextEditor
-                                x:Name="DocumentationEditor"
-                                FontFamily="Consolas"
-                                FontSize="13"
-                                IsReadOnly="True"
-                                ShowLineNumbers="True">
+                            <controls:MarkdownViewer
+                                x:Name="DocumentationEditor">
                                 <b:Interaction.Behaviors>
                                     <behaviors:ReflectionDocumentationBehavior Type="{Binding ElementName=Me, Path=DocumentationType}" />
                                 </b:Interaction.Behaviors>
-                            </avalonedit:TextEditor>
+                            </controls:MarkdownViewer>
                         </Grid>
                     </controls1:TabItem>
 
