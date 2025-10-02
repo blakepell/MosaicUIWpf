@@ -134,6 +134,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -195,6 +196,22 @@
                         FontSize="12"
                         NavigateUri="https://github.com/icsharpcode/AvalonEdit"
                         Text="https://github.com/icsharpcode/AvalonEdit" />
+
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="Markdig" />
+
+                    <controls:Hyperlink
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/xoofx/markdig"
+                        Text="https://github.com/xoofx/markdig" />
+
                 </Grid>
 
                 <TextBlock
@@ -226,7 +243,6 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
