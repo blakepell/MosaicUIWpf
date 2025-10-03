@@ -22,6 +22,12 @@ namespace Mosaic.UI.Wpf.Controls
     public partial class SideMenu
     {
         /// <summary>
+        /// Gets or sets a value indicating whether the search box should automatically receive focus when the
+        /// loaded event fires for this control.
+        /// </summary>
+        public bool FocusSearchBoxOnLoad { get; set; } = false;
+
+        /// <summary>
         /// Represents the method that will handle the event when the selected item in a side menu changes.
         /// </summary>
         /// <param name="sender">The source of the event, typically the side menu control.</param>
@@ -105,6 +111,19 @@ namespace Mosaic.UI.Wpf.Controls
             // This provides a unique collection for each SideMenu, preventing items
             // from being added to a shared static collection when defined in XAML.
             SetValue(MenuItemsProperty, new ObservableCollection<SideMenuItem>());
+        }
+
+        /// <summary>
+        /// Handles the <see cref="FrameworkElement.Loaded"/> event for the side menu instance.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the side menu instance.</param>
+        /// <param name="e">The event data associated with the <see cref="FrameworkElement.Loaded"/> event.</param>
+        private void SideMenuInstance_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (this.FocusSearchBoxOnLoad)
+            {
+                SearchBox.Focus();
+            }
         }
 
         /// <summary>
