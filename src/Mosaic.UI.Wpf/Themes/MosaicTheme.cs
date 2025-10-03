@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace Mosaic.UI.Wpf.Themes
+﻿namespace Mosaic.UI.Wpf.Themes
 {
     /// <summary>
     /// ComponentResourceKeys so XAML can strongly-reference resources:

@@ -8,10 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.ComponentModel;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-
 namespace Mosaic.UI.Wpf
 {
     /// <summary>

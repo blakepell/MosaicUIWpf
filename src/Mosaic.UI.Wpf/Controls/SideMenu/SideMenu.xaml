@@ -7,11 +7,11 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="SideMenuInstance"    
+    x:Name="SideMenuInstance"
     d:DesignHeight="450"
     d:DesignWidth="300"
-    mc:Ignorable="d"
-    Loaded="SideMenuInstance_Loaded">
+    Loaded="SideMenuInstance_Loaded"
+    mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -42,10 +42,10 @@
                     <DataTemplate DataType="{x:Type local:SideMenuItem}">
                         <local:SideMenuItemControl
                             Margin="0,1,0,0"
-                            MenuItem="{Binding}"
                             Cursor="Hand"
-                            Visibility="{Binding Visibility}"
-                            SideMenu="{Binding ElementName=SideMenuInstance}" />
+                            MenuItem="{Binding}"
+                            SideMenu="{Binding ElementName=SideMenuInstance}"
+                            Visibility="{Binding Visibility}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -10,7 +10,6 @@
 
 using System.Collections.Specialized;
 using Microsoft.Xaml.Behaviors;
-using Mosaic.UI.Wpf.Extensions;
 
 namespace Mosaic.UI.Wpf.Behaviors
 {

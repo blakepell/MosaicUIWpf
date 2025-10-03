@@ -448,7 +448,7 @@
                 Content="{TemplateBinding Content}"
                 ContentTemplate="{TemplateBinding ContentTemplate}">
                 <TextElement.Foreground>
-                    <SolidColorBrush x:Name="HeaderButtonForegroundBrush" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}"/>
+                    <SolidColorBrush x:Name="HeaderButtonForegroundBrush" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
                 </TextElement.Foreground>
             </ContentPresenter>
             <VisualStateManager.VisualStateGroups>
@@ -492,10 +492,10 @@
                                 FontSize="9.5"
                                 FontWeight="Bold">
                                 <TextBlock.Foreground>
-                                    <SolidColorBrush Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}"/>
+                                    <SolidColorBrush Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
                                 </TextBlock.Foreground>
                                 <TextBlock.Text>
-                                    <Binding/>
+                                    <Binding />
                                 </TextBlock.Text>
                             </TextBlock>
                         </DataTemplate>

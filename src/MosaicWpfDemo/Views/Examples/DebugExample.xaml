@@ -14,14 +14,22 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="500" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Calendar />
+        <mosaic:HexColorTextBox
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Color="{Binding SelectedColor}" />
+
+        <mosaic:SimpleStackPanel Grid.Row="1" Orientation="Horizontal">
+            <mosaic:HexColorTextBox Margin="0,0,0,0" Color="{Binding SelectedColor}" />
+            <TextBox Margin="5,0,0,0" />
+        </mosaic:SimpleStackPanel>
 
     </Grid>
 </UserControl>

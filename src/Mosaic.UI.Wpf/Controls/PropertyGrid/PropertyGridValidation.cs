@@ -1,5 +1,3 @@
-using System.Windows;
-
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>

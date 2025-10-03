@@ -30,3 +30,4 @@ global using System.Windows.Media;
 global using System.Windows.Threading;
 global using System.Xml;
 global using CommunityToolkit.Mvvm.ComponentModel;
+global using Mosaic.UI.Wpf.Extensions;

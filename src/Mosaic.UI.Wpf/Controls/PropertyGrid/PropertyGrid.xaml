@@ -1,36 +1,41 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
-    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
     xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
-    <!-- Bool->Visibility converter for the editor button -->
+    <!--  Bool->Visibility converter for the editor button  -->
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
     <!--  Define a dedicated style for the PropertyGrid TextBox editor  -->
-    <Style x:Key="PropertyGridTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+    <Style
+        x:Key="PropertyGridTextBoxStyle"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="TextBox">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
-        <Setter Property="Padding" Value="4"></Setter>
+        <Setter Property="Padding" Value="4" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding MaxLength}" Value="0">
-                <!-- When no MaxLength is specified, use the maximum possible value -->
+                <!--  When no MaxLength is specified, use the maximum possible value  -->
                 <Setter Property="MaxLength" Value="2147483647" />
             </DataTrigger>
             <DataTrigger Binding="{Binding MaxLength, Converter={x:Static converters:GreaterThanZeroConverter.Instance}}" Value="True">
-                <!-- When a specific MaxLength is provided, apply it -->
+                <!--  When a specific MaxLength is provided, apply it  -->
                 <Setter Property="MaxLength" Value="{Binding MaxLength}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
-    <!--  1.  The editor selector – picks the right template  -->
+    <!--  The editor selector – picks the right template  -->
     <local:PropertyEditorSelector x:Key="PropertyEditorSelector" />
 
-    <!--  2.  Editor templates  -->
+    <!--  Editor templates  -->
+
+    <!--  TextEditor  -->
     <DataTemplate x:Key="TextEditor">
         <TextBox
             local:PropertyGridValidation.PropertyItem="{Binding}"
@@ -38,99 +43,114 @@
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  BoolEditor  -->
     <DataTemplate x:Key="BoolEditor">
         <CheckBox
-            local:PropertyGridValidation.PropertyItem="{Binding}"
             Margin="2,2,0,2"
             VerticalAlignment="Center"
-            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
-            IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
+            local:PropertyGridValidation.PropertyItem="{Binding}"
+            IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}" />
     </DataTemplate>
 
+    <!--  EnumEditor  -->
     <DataTemplate x:Key="EnumEditor">
         <ComboBox
-            local:PropertyGridValidation.PropertyItem="{Binding}"
             VerticalAlignment="Center"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             IsReadOnly="{Binding IsReadOnly}"
             ItemsSource="{Binding EnumValues}"
             SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  NumberEditor  -->
     <DataTemplate x:Key="NumberEditor">
         <local:NumericTextBox
-            local:PropertyGridValidation.PropertyItem="{Binding}"
             Padding="4"
             VerticalAlignment="Center"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             DecimalPlaces="0"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  DecimalEditor  -->
     <DataTemplate x:Key="DecimalEditor">
         <local:NumericTextBox
-            local:PropertyGridValidation.PropertyItem="{Binding}"
             Padding="4"
             VerticalAlignment="Center"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             DecimalPlaces="10"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  DateOnlyEditor  -->
     <DataTemplate x:Key="DateOnlyEditor">
         <DatePicker
-            local:PropertyGridValidation.PropertyItem="{Binding}"
             VerticalAlignment="Center"
-            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
             SelectedDate="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  ColorEditor  -->
+    <DataTemplate x:Key="ColorEditor">
+        <local:HexColorTextBox
+            VerticalAlignment="Center"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
+            BorderThickness="0"
+            Color="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
+    </DataTemplate>
+
+    <!--  StringListEditor  -->
     <DataTemplate x:Key="StringListEditor">
         <Grid>
-            <!-- Styled ToggleButton to look like a ComboBox -->
+            <!--  Styled ToggleButton to look like a ComboBox  -->
             <ToggleButton
                 x:Name="TogglePopupButton"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
-                Focusable="False">
+                Focusable="False"
+                IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}">
 
-                <!-- Visual template: border + content + chevron -->
+                <!--  Visual template: border + content + chevron  -->
                 <ToggleButton.Template>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border
+                            Padding="6,4"
+                            HorizontalAlignment="Stretch"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
                             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness="1"
-                            Padding="6,4"
-                            SnapsToDevicePixels="True"
-                            HorizontalAlignment="Stretch">
+                            SnapsToDevicePixels="True">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="20" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Summary text: show count or first item -->
+                                <!--  Summary text: show count or first item  -->
                                 <TextBlock
-                                    VerticalAlignment="Center"
                                     HorizontalAlignment="Stretch"
-                                    TextTrimming="CharacterEllipsis"
-                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}">
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                    TextTrimming="CharacterEllipsis">
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0} item(s)">
-                                            <!-- Prefer showing a short preview: if collection empty show 'Empty', else show count -->
+                                            <!--  Prefer showing a short preview: if collection empty show 'Empty', else show count  -->
                                             <Binding Path="Value.Count" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
 
-                                <!-- Chevron arrow -->
+                                <!--  Chevron arrow  -->
                                 <Path
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
@@ -143,21 +163,21 @@
                     </ControlTemplate>
                 </ToggleButton.Template>
 
-                <!-- Popup placed under the styled ToggleButton -->
+                <!--  Popup placed under the styled ToggleButton  -->
                 <Popup
                     Name="myPopup"
-                    StaysOpen="False"
-                    PlacementTarget="{Binding ElementName=TogglePopupButton}"
+                    IsOpen="{Binding IsChecked, ElementName=TogglePopupButton, Mode=TwoWay}"
                     Placement="Bottom"
-                    IsOpen="{Binding IsChecked, ElementName=TogglePopupButton, Mode=TwoWay}">
+                    PlacementTarget="{Binding ElementName=TogglePopupButton}"
+                    StaysOpen="False">
                     <Border
-                        BorderThickness="1"
-                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
-                        Padding="6"
                         MinWidth="250"
-                        MaxWidth="500">
-                        <!-- Reuse your existing editor control for the observable collection -->
+                        MaxWidth="500"
+                        Padding="6"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                        BorderThickness="1">
+                        <!--  Reuse your existing editor control for the observable collection  -->
                         <local:StringListEditor Items="{Binding Value}" />
                     </Border>
                 </Popup>
@@ -262,11 +282,11 @@
 
                                                 <Button
                                                     Grid.Column="2"
-                                                    Content="..."
                                                     Padding="4,0,4,0"
+                                                    Command="{Binding OpenEditorCommand}"
+                                                    Content="..."
                                                     ToolTip="Open Editor"
-                                                    Visibility="{Binding HasEditor, Converter={StaticResource BoolToVis}}"
-                                                    Command="{Binding OpenEditorCommand}" />
+                                                    Visibility="{Binding HasEditor, Converter={StaticResource BoolToVis}}" />
 
                                             </Grid>
                                         </DataTemplate>

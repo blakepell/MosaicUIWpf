@@ -15,8 +15,6 @@ using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.Concurrent;
 using System.Runtime;
 using System.Text.Json;
-using System.Windows;
-using System.Windows.Media.Animation;
 using Mosaic.UI.Wpf.Themes;
 
 namespace Mosaic.UI.Wpf

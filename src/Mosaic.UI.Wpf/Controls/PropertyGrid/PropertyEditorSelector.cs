@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.Design;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -26,48 +27,65 @@ namespace Mosaic.UI.Wpf.Controls
                 return base.SelectTemplate(item, container);
             }
 
-            // Enum
-            if (pi.PropertyType.IsEnum)
+            // Guard null and resolve underlying type for nullable support
+            var propType = pi.PropertyType ?? typeof(object);
+            var effectiveType = Nullable.GetUnderlyingType(propType) ?? propType;
+
+            // Helper to find template either on the element or application resources
+            static DataTemplate? FindTemplate(FrameworkElement element, string key)
             {
-                return fe.FindResource("EnumEditor") as DataTemplate;
+                var obj = element.TryFindResource(key) ?? (Application.Current?.TryFindResource(key) ?? null);
+                return obj as DataTemplate;
+            }
+
+            // Enum
+            if (effectiveType.IsEnum)
+            {
+                return FindTemplate(fe, "EnumEditor");
             }
 
             // Bool
-            if (pi.PropertyType == typeof(bool))
+            if (effectiveType == typeof(bool))
             {
-                return fe.FindResource("BoolEditor") as DataTemplate;
+                return FindTemplate(fe, "BoolEditor");
             }
 
             // ObservableCollection<string>
-            if (pi.PropertyType == typeof(ObservableCollection<string>))
+            if (effectiveType == typeof(ObservableCollection<string>))
             {
-                return fe.FindResource("StringListEditor") as DataTemplate;
+                return FindTemplate(fe, "StringListEditor");
             }
 
-            if (pi.PropertyType == typeof(DateOnly) || pi.PropertyType == typeof(DateOnly?))
+            if (effectiveType == typeof(DateOnly))
             {
-                return fe.FindResource("DateOnlyEditor") as DataTemplate;
+                return FindTemplate(fe, "DateOnlyEditor");
             }
 
             //  Numeric types non decimal types.
-            if (pi.PropertyType == typeof(int) ||
-                pi.PropertyType == typeof(long) ||
-                pi.PropertyType == typeof(uint) ||
-                pi.PropertyType == typeof(ulong))
+            if (effectiveType == typeof(int) ||
+                effectiveType == typeof(long) ||
+                effectiveType == typeof(uint) ||
+                effectiveType == typeof(ulong))
             {
-                return fe.FindResource("NumberEditor") as DataTemplate;
+                return FindTemplate(fe, "NumberEditor");
             }
 
             // Numeric types decimal types.
-            if (pi.PropertyType == typeof(double) ||
-                pi.PropertyType == typeof(float) ||
-                pi.PropertyType == typeof(decimal))
+            if (effectiveType == typeof(double) ||
+                effectiveType == typeof(float) ||
+                effectiveType == typeof(decimal))
             {
-                return fe.FindResource("DecimalEditor") as DataTemplate;
+                return FindTemplate(fe, "DecimalEditor");
+            }
+
+            // Color or Nullable<Color>
+            if (effectiveType == typeof(Color))
+            {
+                return FindTemplate(fe, "ColorEditor");
             }
 
             // Fallback to text editor
-            return fe.FindResource("TextEditor") as DataTemplate;
+            return FindTemplate(fe, "TextEditor");
         }
     }
 }
