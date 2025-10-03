@@ -93,6 +93,12 @@ namespace Mosaic.UI.Wpf.Controls
         private Dictionary<string, object?> _parameters = new();
 
         /// <summary>
+        /// Gets or sets the visibility of the menu item.
+        /// </summary>
+        [ObservableProperty]
+        private Visibility _visibility = Visibility.Visible;
+
+        /// <summary>
         /// Represents a collection of parameters used to configure the side menu.
         /// </summary>
         /// <remarks>This field holds an instance of <see cref="SideMenuParameterCollection"/> that may be

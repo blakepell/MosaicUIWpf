@@ -25,7 +25,12 @@ namespace WpfDemo
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            TestSideMenu.SelectByIndex(1);
+#else
+            TestSideMenu.MenuItems[1].Visibility = Visibility.Collapsed;
             TestSideMenu.SelectByIndex(0);
+#endif
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

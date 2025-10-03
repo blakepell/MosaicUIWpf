@@ -42,6 +42,8 @@
                         <local:SideMenuItemControl
                             Margin="0,1,0,0"
                             MenuItem="{Binding}"
+                            Cursor="Hand"
+                            Visibility="{Binding Visibility}"
                             SideMenu="{Binding ElementName=SideMenuInstance}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

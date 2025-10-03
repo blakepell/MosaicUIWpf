@@ -198,7 +198,7 @@
                     ImageSource="pack://application:,,,/Assets/collage-48.png"
                     Text="About" />
 
-                <!--  AdaptiveImage  -->
+                <!--  Debug  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
