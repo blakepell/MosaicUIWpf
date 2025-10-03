@@ -63,6 +63,11 @@ namespace Mosaic.UI.Wpf.Controls
         public int MaxLength { get; }
 
         /// <summary>
+        /// Gets or sets whether invalid values should be reverted to the previous valid value.
+        /// </summary>
+        public bool RevertInvalidValues { get; set; }
+
+        /// <summary>
         /// Gets the enumerable values for enum properties.
         /// </summary>
         [ObservableProperty]
@@ -71,8 +76,10 @@ namespace Mosaic.UI.Wpf.Controls
         [ObservableProperty]
         private object? _value;
 
+        private object? _lastValidValue;
         private readonly object _owner;
         private readonly PropertyDescriptor _propertyDescriptor;
+        private WeakReference<FrameworkElement>? _boundElement;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyItem"/> class.
@@ -91,6 +98,7 @@ namespace Mosaic.UI.Wpf.Controls
             Description = attr?.Description ?? pd.Description;
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
+            _lastValidValue = _value;
 
             // EditorType from attribute (if any)
             EditorType = attr?.EditorType;
@@ -153,7 +161,22 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         partial void OnValueChanged(object? value)
         {
-            SetOwnerPropertyValue(value);   // use custom method with type conversion
+            if (RevertInvalidValues)
+            {
+                if (TrySetOwnerPropertyValue(value))
+                {
+                    _lastValidValue = value;
+                }
+                else
+                {
+                    // Revert to last valid value
+                    SetProperty(ref _value, _lastValidValue, nameof(Value));
+                }
+            }
+            else
+            {
+                SetOwnerPropertyValue(value);
+            }
         }
 
         /// <summary>
@@ -169,7 +192,11 @@ namespace Mosaic.UI.Wpf.Controls
                 var newValue = _propertyDescriptor.GetValue(_owner);
 
                 // Use SetProperty for built-in change detection and notification
-                SetProperty(ref _value, newValue, nameof(Value));
+                if (SetProperty(ref _value, newValue, nameof(Value)))
+                {
+                    // Update last valid value when owner changes
+                    _lastValidValue = newValue;
+                }
             }
         }
 
@@ -183,9 +210,19 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="value">The value to set for the property. The value will be converted to the property's type if necessary.</param>
         private void SetOwnerPropertyValue(object? value)
         {
+            TrySetOwnerPropertyValue(value);
+        }
+
+        /// <summary>
+        /// Attempts to set the value of the property on the owner object.
+        /// </summary>
+        /// <param name="value">The value to set.</param>
+        /// <returns>True if the value was set successfully; otherwise, false.</returns>
+        private bool TrySetOwnerPropertyValue(object? value)
+        {
             if (_owner == null)
             {
-                return;
+                return false;
             }
 
             try
@@ -193,17 +230,19 @@ namespace Mosaic.UI.Wpf.Controls
                 var propertyInfo = _owner.GetType().GetProperty(Name);
                 if (propertyInfo == null || !propertyInfo.CanWrite)
                 {
-                    return;
+                    return false;
                 }
 
                 // Convert the value to the target property type
                 object? convertedValue = ConvertValue(value, propertyInfo.PropertyType);
                 propertyInfo.SetValue(_owner, convertedValue);
+                return true;
             }
             catch (Exception ex)
             {
                 // Log the exception or handle it appropriately
                 Debug.WriteLine($"Failed to set property '{Name}': {ex.Message}");
+                return false;
             }
         }
 
@@ -298,6 +337,65 @@ namespace Mosaic.UI.Wpf.Controls
             if (_owner is INotifyPropertyChanged notifyPropertyChanged)
             {
                 notifyPropertyChanged.PropertyChanged -= OwnerPropertyChanged;
+            }
+
+            // Detach validation handler if bound element still exists
+            if (_boundElement != null && _boundElement.TryGetTarget(out var element))
+            {
+                DetachValidationHandler(element);
+            }
+        }
+
+        /// <summary>
+        /// Attaches validation error handling to a UI element.
+        /// </summary>
+        /// <param name="element">The UI element to attach to.</param>
+        public void AttachValidationHandler(FrameworkElement element)
+        {
+            if (element == null || !RevertInvalidValues)
+            {
+                return;
+            }
+
+            _boundElement = new WeakReference<FrameworkElement>(element);
+            Validation.AddErrorHandler(element, OnValidationError);
+        }
+
+        /// <summary>
+        /// Detaches validation error handling from a UI element.
+        /// </summary>
+        /// <param name="element">The UI element to detach from.</param>
+        public void DetachValidationHandler(FrameworkElement element)
+        {
+            if (element == null)
+            {
+                return;
+            }
+
+            Validation.RemoveErrorHandler(element, OnValidationError);
+        }
+
+        /// <summary>
+        /// Handles validation errors by reverting to the last valid value.
+        /// </summary>
+        private void OnValidationError(object sender, ValidationErrorEventArgs e)
+        {
+            if (!RevertInvalidValues)
+            {
+                return;
+            }
+
+            if (e.Action == ValidationErrorEventAction.Added)
+            {
+                // Validation error occurred - schedule revert to last valid value
+                if (sender is FrameworkElement element)
+                {
+                    element.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        // Revert to last valid value
+                        SetProperty(ref _value, _lastValidValue, nameof(Value));
+                    }), System.Windows.Threading.DispatcherPriority.Background);
+                }
             }
         }
     }

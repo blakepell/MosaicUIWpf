@@ -46,6 +46,23 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(PropertiesProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the RevertInvalidValues dependency property.
+        /// </summary>
+        public static readonly DependencyProperty RevertInvalidValuesProperty =
+            DependencyProperty.Register(nameof(RevertInvalidValues), typeof(bool), typeof(PropertyGrid),
+                new PropertyMetadata(false, OnRevertInvalidValuesChanged));
+
+        /// <summary>
+        /// Gets or sets whether invalid values should be reverted to the previous valid value on lost focus.
+        /// When true, if a value cannot be converted to the underlying type, it will revert to the previous value.
+        /// </summary>
+        public bool RevertInvalidValues
+        {
+            get => (bool)GetValue(RevertInvalidValuesProperty);
+            set => SetValue(RevertInvalidValuesProperty, value);
+        }
+
         #endregion
 
         #region Dependency Property Change
@@ -59,6 +76,23 @@ namespace Mosaic.UI.Wpf.Controls
         {
             var pg = (PropertyGrid)d;
             pg.UpdateProperties();
+        }
+
+        /// <summary>
+        /// Called when the RevertInvalidValues property changes.
+        /// </summary>
+        /// <param name="d">The PropertyGrid instance.</param>
+        /// <param name="e">The event arguments.</param>
+        private static void OnRevertInvalidValuesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pg = (PropertyGrid)d;
+            var revertInvalidValues = (bool)e.NewValue;
+
+            // Update all existing property items
+            foreach (var propertyItem in pg.Properties)
+            {
+                propertyItem.RevertInvalidValues = revertInvalidValues;
+            }
         }
 
         /// <summary>
@@ -90,7 +124,11 @@ namespace Mosaic.UI.Wpf.Controls
                     continue;
                 }
 
-                Properties.Add(new PropertyItem(pd, Object, attr));
+                var propertyItem = new PropertyItem(pd, Object, attr)
+                {
+                    RevertInvalidValues = RevertInvalidValues
+                };
+                Properties.Add(propertyItem);
             }
 
             if (Properties.Any())

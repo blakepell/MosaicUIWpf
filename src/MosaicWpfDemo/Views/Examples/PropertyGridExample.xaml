@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <mosaic:PropertyGrid Grid.Row="0" Object="{Binding}" />
+        <mosaic:PropertyGrid Grid.Row="0" Object="{Binding}" RevertInvalidValues="True" />
 
     </Grid>
 </UserControl>
