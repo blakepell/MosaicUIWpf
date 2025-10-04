@@ -20,7 +20,7 @@ A final note, if you have a useful reusable (mostly) compartmentalized control y
 
 ## Light Theme
 
-![Light Theme](./docs/images/screen-chat2.png)
+![Light Theme](./docs/images/screen-property-grid.png)
 
 ## Solution Projects
 

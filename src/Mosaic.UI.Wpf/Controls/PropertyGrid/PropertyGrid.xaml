@@ -18,6 +18,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
         <Setter Property="Padding" Value="4" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"></Setter>
         <Style.Triggers>
             <DataTrigger Binding="{Binding MaxLength}" Value="0">
                 <!--  When no MaxLength is specified, use the maximum possible value  -->
@@ -72,6 +73,7 @@
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             DecimalPlaces="0"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
@@ -84,6 +86,7 @@
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             DecimalPlaces="10"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
@@ -128,7 +131,7 @@
                             HorizontalAlignment="Stretch"
                             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
                             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                            BorderThickness="1"
+                            BorderThickness="0"
                             SnapsToDevicePixels="True">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -193,7 +196,7 @@
                     <Border
                         Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
                         BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                        BorderThickness="1"
+                        BorderThickness="1,1,1,0"
                         SnapsToDevicePixels="True"
                         UseLayoutRounding="True">
                         <Grid>
