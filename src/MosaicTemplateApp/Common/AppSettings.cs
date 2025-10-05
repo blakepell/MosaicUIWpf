@@ -44,15 +44,6 @@ namespace MosaicTemplateApp.Common
         private LocalSettings? _clientSettings = new();
 
         /// <summary>
-        /// The applications current theme.
-        /// </summary>
-        [property: DisplayName("Theme")]
-        [property: Category("UI")]
-        [property: Browsable(false)]
-        [ObservableProperty]
-        private string _theme = "Light";
-
-        /// <summary>
         /// Default font size for UI elements.
         /// </summary>
         [property: Category("UI")]
@@ -61,6 +52,15 @@ namespace MosaicTemplateApp.Common
         [ObservableProperty]
         [property: Browsable(true)]
         private double _fontSize = 12.0;
+
+        /// <summary>
+        /// The applications current theme.
+        /// </summary>
+        [property: DisplayName("Theme")]
+        [property: Category("UI")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private ThemeMode _theme = ThemeMode.Light;
 
         /// <summary>
         /// The view state information for a given window.

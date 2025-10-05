@@ -110,10 +110,11 @@
                     Margin="9,10,0,0"
                     FontSize="18"
                     Text="Third Party Library Usage" />
+
                 <Separator
-                    Height=".9"
                     Margin="10,3,0,0"
-                    Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                    SnapsToDevicePixels="True" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -198,10 +199,11 @@
                     Margin="9,10,0,0"
                     FontSize="18"
                     Text="Attributions" />
+
                 <Separator
-                    Height=".9"
                     Margin="10,3,0,0"
-                    Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                    SnapsToDevicePixels="True" />
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>

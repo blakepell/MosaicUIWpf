@@ -10,8 +10,8 @@
     xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d"
-    UseLayoutRounding="True">
+    UseLayoutRounding="True"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <Style x:Key="ContentBoxBorderStyle" TargetType="Border">
             <Setter Property="Padding" Value="7" />
@@ -220,8 +220,8 @@
                     Text="Attributions" />
 
                 <Separator
-                    Margin="8,3,0,0"
                     Height="1"
+                    Margin="8,3,0,0"
                     Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
                     SnapsToDevicePixels="True" />
 

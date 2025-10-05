@@ -22,8 +22,6 @@ namespace MosaicTemplateApp
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            ChangeTheme("Light");
         }
 
         private void App_OnExit(object sender, ExitEventArgs e)

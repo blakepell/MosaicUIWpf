@@ -18,6 +18,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Argus.Memory;
+using Mosaic.UI.Wpf.Common;
+using Mosaic.UI.Wpf.Themes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace MosaicTemplateApp
@@ -94,7 +97,8 @@ namespace MosaicTemplateApp
 
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
-            App.ToggleTheme();
+            var theme = AppServices.GetRequiredService<ThemeManager>();
+            theme.ToggleTheme();
         }
     }
 }
