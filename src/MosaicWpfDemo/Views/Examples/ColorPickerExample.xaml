@@ -19,6 +19,61 @@
         VerticalScrollBarVisibility="Auto">
 
         <StackPanel Margin="20" Orientation="Vertical">
+            <!--  Hex Color Text Box Examples  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Hex Color Text Box Examples">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Use HexColorTextBox to type, paste, or pick colors.  The control normalizes #RGB, #RRGGBB, and named brushes." />
+                    <WrapPanel Margin="0,0,0,10">
+                        <StackPanel Width="240" Margin="0,0,20,10">
+                            <TextBlock FontWeight="Bold" Text="Default appearance" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="Provides a quick way to enter a hex color or choose from generated shades." />
+                            <mosaic:HexColorTextBox Width="220" HexColor="#FF1E88E5" />
+                        </StackPanel>
+                        <StackPanel Width="240" Margin="0,0,20,10">
+                            <TextBlock FontWeight="Bold" Text="Custom corner radius" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="CornerRadius can be adjusted to match surrounding UI." />
+                            <mosaic:HexColorTextBox Width="220" CornerRadius="6" HexColor="#FFE91E63" />
+                        </StackPanel>
+                        <StackPanel Width="240" Margin="0,0,20,10">
+                            <TextBlock FontWeight="Bold" Text="Linked to color picker" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="This HexColorTextBox shares its value with the basic color picker below." />
+                            <mosaic:HexColorTextBox
+                                Width="220"
+                                HexColor="{Binding ElementName=BasicColorPicker, Path=HexValue, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Width="240" Margin="0,0,0,10">
+                            <TextBlock FontWeight="Bold" Text="Two-way binding example" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="Bind HexColor to a view-model property to store the normalized value." />
+                            <mosaic:HexColorTextBox
+                                x:Name="BoundHexColorTextBox"
+                                Width="220"
+                                HexColor="{Binding SelectedHexColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock
+                                Margin="0,6,0,0"
+                                FontFamily="Consolas"
+                                Text="{Binding SelectedHexColor}" />
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
             <!--  Basic Color Picker  -->
             <GroupBox
                 Margin="0,0,0,20"

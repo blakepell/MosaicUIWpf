@@ -18,7 +18,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
         <Setter Property="Padding" Value="4" />
-        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding MaxLength}" Value="0">
                 <!--  When no MaxLength is specified, use the maximum possible value  -->
@@ -71,9 +71,9 @@
             Padding="4"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
             DecimalPlaces="0"
-            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
@@ -84,9 +84,9 @@
             Padding="4"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
             DecimalPlaces="10"
-            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>

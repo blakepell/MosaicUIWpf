@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Mosaic.UI.Wpf.Converters"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
-    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
-    xmlns:conv="clr-namespace:Mosaic.UI.Wpf.Converters">
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <conv:ColorToBrushConverter x:Key="ColorToBrushConverter" />
 
@@ -24,10 +24,9 @@
                             Width="24"
                             Height="16"
                             Margin="0,0,8,0"
+                            Background="{Binding Converter={StaticResource ColorToBrushConverter}}"
                             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                            BorderThickness="1"
-                            Background="{Binding Converter={StaticResource ColorToBrushConverter}}">
-                        </Border>
+                            BorderThickness="1" />
                         <TextBlock
                             VerticalAlignment="Center"
                             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
@@ -59,10 +58,9 @@
                                 Height="16"
                                 Margin="4,2,0,2"
                                 VerticalAlignment="Center"
+                                Background="{Binding Color, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ColorToBrushConverter}}"
                                 BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                                BorderThickness="1"
-                                Background="{Binding Color, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ColorToBrushConverter}}">
-                            </Border>
+                                BorderThickness="1" />
 
                             <!--  Editable text box (ComboBox provides PART_EditableTextBox when IsEditable=True)  -->
                             <TextBox
@@ -99,12 +97,12 @@
                                 Placement="Bottom"
                                 PopupAnimation="Slide">
                                 <Border
+                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     Padding="2"
                                     Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
                                     BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                                     BorderThickness="1"
-                                    CornerRadius="3"
-                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    CornerRadius="3">
                                     <ScrollViewer MaxHeight="300">
                                         <ItemsPresenter />
                                     </ScrollViewer>

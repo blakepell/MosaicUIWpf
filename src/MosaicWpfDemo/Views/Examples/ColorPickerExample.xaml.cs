@@ -21,6 +21,9 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private Brush _demoBackgroundBrush = ColorPaletteCache.GetBrush("#185ABD");
 
+        [ObservableProperty]
+        private string _selectedHexColor = "#FF185ABD";
+
         public ColorPickerExample()
         {
             InitializeComponent();
