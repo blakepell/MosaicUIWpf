@@ -36,11 +36,10 @@
             ValueForegroundBrush="White"
             Value="MIT" />
 
-        <!--  Default Properties  -->
-        <mosaic:Shield
-            Margin="0,5"
-            Label="Mosaic.UI.Wpf"
-            Value="{Binding Version}" />
+        <!--  Example with the VersionTextBlock control  -->
+        <mosaic:Shield Margin="0,5" Label="Mosaic.UI.Wpf">
+            <mosaic:VersionTextBlock />
+        </mosaic:Shield>
 
     </StackPanel>
 </UserControl>
