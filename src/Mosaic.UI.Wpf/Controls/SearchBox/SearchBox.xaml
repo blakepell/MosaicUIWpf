@@ -142,7 +142,7 @@
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="False">
                             <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
