@@ -62,6 +62,18 @@
                         VerticalAlignment="Center"
                         Text="{Binding ServerName, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                 </mosaic:SettingsItem>
+
+                <mosaic:SettingsItem
+                    Title="Chat Nickname"
+                    Margin="0,4,0,0"
+                    Description="The default nickname/username that you want to known by on the chat servers."
+                    IconSource="/Assets/user-48.png">
+                    <TextBox
+                        Width="150"
+                        VerticalAlignment="Center"
+                        Text="{Binding Username, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>
+
             </StackPanel>
         </Border>
     </DockPanel>
