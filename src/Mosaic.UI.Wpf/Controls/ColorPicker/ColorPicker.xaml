@@ -29,7 +29,7 @@
                 Grid.Column="0"
                 Margin="4"
                 Background="{Binding SelectedBrush, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBorderBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlDisabledBorderBrush}}"
                 BorderThickness="1"
                 CornerRadius="2" />
 
