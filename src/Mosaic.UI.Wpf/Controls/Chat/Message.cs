@@ -71,7 +71,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <remarks>
         /// System.Text.Json converter provided so the message brushes can be serialized/deserialized.
         /// </remarks>
-        [JsonConverter(typeof(SolidColorBrushJsonConverter))]
+        [JsonConverter(typeof(SolidColorBrushJsonSerializer))]
         [ObservableProperty]
         private Brush _backgroundBrush = ColorPaletteCache.GetBrush("#0A86F1");
 
@@ -81,7 +81,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <remarks>
         /// System.Text.Json converter provided so the message brushes can be serialized/deserialized.
         /// </remarks>
-        [JsonConverter(typeof(SolidColorBrushJsonConverter))]
+        [JsonConverter(typeof(SolidColorBrushJsonSerializer))]
         [ObservableProperty]
         private Brush _foregroundBrush = Brushes.White;
     }

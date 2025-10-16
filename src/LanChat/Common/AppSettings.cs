@@ -15,6 +15,9 @@ using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using System.Windows.Media;
+using Mosaic.UI.Wpf.Cache;
+using Mosaic.UI.Wpf.Json;
 
 namespace LanChat.Common
 {
@@ -71,6 +74,17 @@ namespace LanChat.Common
         [ObservableProperty]
         [property: Browsable(true)]
         private string _username = "Anonymous";
+
+        /// <summary>
+        /// Default font size for UI elements.
+        /// </summary>
+        [property: Category("UI")]
+        [property: DisplayName("Chat Accent Brush")]
+        [property: Description("The color your chat bubbles should display in.")]
+        [property: JsonConverter(typeof(SolidColorBrushJsonSerializer))]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private SolidColorBrush _chatAccentBrush = ColorPaletteCache.GetBrush(Colors.CornflowerBlue);
 
         /// <summary>
         /// Gets or sets the network address of the remote chat server.

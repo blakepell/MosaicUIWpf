@@ -15,6 +15,7 @@
 
     <UserControl.Resources>
         <common:AppServiceLocator x:Key="AppSettings" Type="{x:Type common1:AppSettings}" />
+        <mosaic:BrushToSolidColorBrushConverter x:Key="BrushConverter" />
 
         <Style x:Key="ContentBoxBorderStyle" TargetType="Border">
             <Setter Property="Padding" Value="7" />
@@ -72,6 +73,19 @@
                         Width="150"
                         VerticalAlignment="Center"
                         Text="{Binding Username, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>
+
+                <mosaic:SettingsItem
+                    Title="Chat Accent Color"
+                    Margin="0,4,0,0"
+                    Description="The accent color that your chat messages should display in."
+                    IconSource="/Assets/color-swatch-48.png">
+                    <mosaic:ColorPicker
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        CornerRadius="0"
+                        DataContext="{StaticResource AppSettings}"
+                        SelectedBrush="{Binding ChatAccentBrush, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, Converter={StaticResource BrushConverter}}" />
                 </mosaic:SettingsItem>
 
             </StackPanel>
