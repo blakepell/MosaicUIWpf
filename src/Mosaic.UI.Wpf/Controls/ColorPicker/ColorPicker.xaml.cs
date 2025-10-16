@@ -123,7 +123,8 @@ namespace Mosaic.UI.Wpf.Controls
         {
             InitializeComponent();
             InitializePresetColors();
-            DataContext = this;
+
+            // The XAML uses RelativeSource bindings to access this control's properties.
             Loaded += ColorPicker_Loaded;
             
             // Store the initial value as the previous valid value
