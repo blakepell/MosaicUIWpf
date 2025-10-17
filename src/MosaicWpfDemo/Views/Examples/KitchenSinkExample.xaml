@@ -61,8 +61,11 @@
                 BorderThickness="1"
                 CornerRadius="4">
                 <StackPanel Orientation="Vertical">
-                    <mosaic:PropertyGrid Object="{Binding}" />
-
+                    <mosaic:AutoCompleteBox
+                        Width="250"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Left"
+                        ItemsSource="{Binding Usernames}" />
                     <StackPanel Orientation="Vertical">
                         <TextBlock Margin="0,0,0,0" Text="Username:" />
                         <TextBox

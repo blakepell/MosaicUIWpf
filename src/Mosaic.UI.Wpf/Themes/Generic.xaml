@@ -23,5 +23,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ToggleSwitch/ToggleSwitch.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/PropertyGrid/PropertyGrid.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HexColorTextBox/HexColorTextBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/AutoCompleteBox/AutoCompleteBox.xaml" />
+
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
