@@ -65,9 +65,10 @@
                         Width="250"
                         Margin="0,0,0,8"
                         HorizontalAlignment="Left"
+                        Placeholder="Select a username"
                         FilterMode="Contains"
-                        SelectedItem="{Binding Username, Mode=TwoWay}"
-                        ItemsSource="{Binding Usernames}" />
+                        ItemsSource="{Binding Usernames}"
+                        SelectedItem="{Binding Username, Mode=TwoWay}" />
                     <StackPanel Orientation="Vertical">
                         <TextBlock Margin="0,0,0,0" Text="Username:" />
                         <TextBox
@@ -100,7 +101,7 @@
                         <TextBlock Text="Enabled" />
                     </CheckBox>
 
-                    <DatePicker></DatePicker>
+                    <DatePicker />
 
                 </StackPanel>
             </Border>
