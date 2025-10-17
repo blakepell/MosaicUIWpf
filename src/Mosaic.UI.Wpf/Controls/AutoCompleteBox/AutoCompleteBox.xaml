@@ -147,10 +147,7 @@
                             x:Name="Text"
                             Margin="0"
                             Padding="{TemplateBinding Padding}"
-                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
-                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             IsTabStop="True"
                             Style="{TemplateBinding TextBoxStyle}" />
                         <Border
@@ -217,9 +214,7 @@
                                         </Border.Background>
                                         <ListBox
                                             x:Name="Selector"
-                                            Background="{TemplateBinding Background}"
                                             BorderThickness="0"
-                                            Foreground="{TemplateBinding Foreground}"
                                             ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                             ItemTemplate="{TemplateBinding ItemTemplate}"
                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
