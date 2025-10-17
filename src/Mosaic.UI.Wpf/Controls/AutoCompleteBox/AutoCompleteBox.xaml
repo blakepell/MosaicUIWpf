@@ -9,7 +9,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:input="clr-namespace:Mosaic.UI.Wpf.Controls"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <!--  CommonValidationToolTipTemplate  -->
     <ControlTemplate x:Key="CommonValidationToolTipTemplate" TargetType="ToolTip">
@@ -133,10 +134,12 @@
                     <Grid Opacity="{TemplateBinding Opacity}">
                         <ContentControl
                             x:Name="Watermark"
+                            Padding="{TemplateBinding Padding}"
                             Panel.ZIndex="10"
                             Content="{TemplateBinding Placeholder}"
                             ContentTemplate="{TemplateBinding PlaceholderTemplate}"
                             ContentTemplateSelector="{TemplateBinding PlaceholderTemplateSelector}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             IsHitTestVisible="False"
                             IsTabStop="False"
                             Visibility="Hidden" />
@@ -144,10 +147,10 @@
                             x:Name="Text"
                             Margin="0"
                             Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Foreground="{TemplateBinding Foreground}"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                             IsTabStop="True"
                             Style="{TemplateBinding TextBoxStyle}" />
                         <Border
