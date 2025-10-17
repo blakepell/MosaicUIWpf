@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-
-namespace Mosaic.UI.Wpf.Controls
+﻿namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
     /// The InteractionHelper provides controls with support for all of the

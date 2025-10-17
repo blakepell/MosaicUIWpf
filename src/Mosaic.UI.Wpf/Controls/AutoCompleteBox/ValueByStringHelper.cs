@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 namespace Mosaic.UI.Wpf.Controls
 {

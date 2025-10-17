@@ -65,6 +65,8 @@
                         Width="250"
                         Margin="0,0,0,8"
                         HorizontalAlignment="Left"
+                        FilterMode="Contains"
+                        SelectedItem="{Binding Username, Mode=TwoWay}"
                         ItemsSource="{Binding Usernames}" />
                     <StackPanel Orientation="Vertical">
                         <TextBlock Margin="0,0,0,0" Text="Username:" />

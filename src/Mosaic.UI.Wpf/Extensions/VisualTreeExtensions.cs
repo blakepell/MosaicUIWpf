@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mosaic.UI.Wpf.Extensions
+﻿namespace Mosaic.UI.Wpf.Extensions
 {
     /// <summary>
     /// A static class providing methods for working with the visual tree.  

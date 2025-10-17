@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Mosaic.UI.Wpf.Controls
+﻿namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
     /// The IUpdateVisualState interface is used to provide the

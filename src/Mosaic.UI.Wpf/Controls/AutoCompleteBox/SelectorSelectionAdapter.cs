@@ -4,12 +4,8 @@
 // All other rights reserved.
 
 using System.Collections;
-using System.Linq;
-using System.Windows;
 using System.Windows.Automation.Peers;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using Extensions;
 
 namespace Mosaic.UI.Wpf.Controls
