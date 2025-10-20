@@ -738,6 +738,23 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  VersionTextBlock Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/shield-version-48.png"
+                    Text="VersionTextBlock">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="VersionTextBlock" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.VersionTextBlockExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.VersionTextBlockExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:VersionTextBlock}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:VersionTextBlockExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/shield-version-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
 

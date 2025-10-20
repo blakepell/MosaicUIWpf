@@ -44,6 +44,7 @@
 		<None Remove="Assets\settings-panel-48.png" />
 		<None Remove="Assets\settings-panel-96.png" />
 		<None Remove="Assets\shield-48.png" />
+		<None Remove="Assets\shield-version-48.png" />
 		<None Remove="Assets\start-half-empty-48.png" />
 		<None Remove="Assets\stopwatch-48.png" />
 		<None Remove="Assets\tab-control-48.png" />
@@ -93,6 +94,7 @@
 		<Resource Include="Assets\settings-panel-48.png" />
 		<Resource Include="Assets\settings-panel-96.png" />
 		<Resource Include="Assets\shield-48.png" />
+		<Resource Include="Assets\shield-version-48.png" />
 		<Resource Include="Assets\start-half-empty-48.png" />
 		<Resource Include="Assets\stopwatch-48.png" />
 		<Resource Include="Assets\tab-control-48.png" />
@@ -306,6 +308,14 @@
 		<EmbeddedResource Include="Views\Examples\PropertyGridExample.xaml.cs">
 			<Link>LinkedSources\PropertyGridExample.xaml.cs</Link>
 		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml">
+			<Link>LinkedSources\VersionTextBlockExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml.cs">
+			<Link>LinkedSources\VersionTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 	</ItemGroup>
 
 	<ItemGroup>
@@ -331,6 +341,9 @@
 		</Compile>
 		<Compile Update="Views\Examples\SettingsItemExample.xaml.cs">
 			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\Examples\VersionTextBlockExample.xaml.cs">
+		  <SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\ToggleButtonExample.xaml.cs">
 			<SubType>Code</SubType>
