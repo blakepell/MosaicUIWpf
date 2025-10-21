@@ -90,6 +90,23 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="SelectedBorderBrush"/> dependency property, which specifies the border brush
+        /// when the control has focus.
+        /// </summary>
+        public static readonly DependencyProperty SelectedBorderBrushProperty = DependencyProperty.Register(
+            nameof(SelectedBorderBrush), typeof(Brush), typeof(SearchBox), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the border brush used when the control has focus.
+        /// </summary>
+        /// <remarks>If not set, defaults to the theme's ControlSelectedBorderBrush resource.</remarks>
+        public Brush? SelectedBorderBrush
+        {
+            get => (Brush?)GetValue(SelectedBorderBrushProperty);
+            set => SetValue(SelectedBorderBrushProperty, value);
+        }
+
+        /// <summary>
         /// Initializes static members of the <see cref="SearchBox"/> class by overriding default metadata for specific
         /// dependency properties.
         /// </summary>

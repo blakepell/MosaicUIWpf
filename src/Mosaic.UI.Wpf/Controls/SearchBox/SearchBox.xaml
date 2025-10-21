@@ -142,7 +142,7 @@
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding SelectedBorderBrush, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="False">
                             <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
@@ -159,5 +159,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="SelectedBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
     </Style>
 </ResourceDictionary>
