@@ -24,7 +24,7 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(Text), typeof(string), typeof(AsteriskTextBlock), new PropertyMetadata(string.Empty, OnTextChanged));
 
         /// <summary>
-        /// The text property that should be bound to.  This value will then trigger the update of DisplayText which
+        /// The text property that should be bound to.  This value will then trigger the update of <see cref="MaskedText"/> which
         /// is what is shown on this control.
         /// </summary>
         public string Text
@@ -33,25 +33,44 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(TextProperty, value);
         }
 
-        /// <summary>
-        /// Identifies the <see cref="DisplayText"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty DisplayTextProperty = DependencyProperty.Register(
-            nameof(DisplayText), typeof(string), typeof(AsteriskTextBlock), new PropertyMetadata(default(string)));
+        private static readonly DependencyPropertyKey MaskedTextPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(MaskedText), typeof(string), typeof(AsteriskTextBlock), 
+            new PropertyMetadata(string.Empty));
 
         /// <summary>
-        /// The text that is displayed on this TextBlock.  Do not update this directly, instead update the <see cref="Text"/> property.
+        /// Identifies the <see cref="MaskedText"/> dependency property.
         /// </summary>
-        public string DisplayText
+        public static readonly DependencyProperty MaskedTextProperty = MaskedTextPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// The text that is displayed on this TextBlock. This is automatically updated based on the <see cref="Text"/> property.
+        /// </summary>
+        public string MaskedText
         {
-            get => (string)GetValue(DisplayTextProperty);
-            set => SetValue(DisplayTextProperty, value);
+            get => (string)GetValue(MaskedTextProperty);
+            private set => SetValue(MaskedTextPropertyKey, value);
         }
+
+        /// <summary>
+        /// Identifies the <see cref="MaskCharacter"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MaskCharacterProperty = DependencyProperty.Register(
+            nameof(MaskCharacter), typeof(char), typeof(AsteriskTextBlock), new PropertyMetadata('\u25cf', OnMaskCharacterChanged));
 
         /// <summary>
         /// The asterisk character to use for the mask.
         /// </summary>
-        public char Character { get; set; } = '\u25cf';
+        public char MaskCharacter
+        {
+            get => (char)GetValue(MaskCharacterProperty);
+            set => SetValue(MaskCharacterProperty, value);
+        }
+
+        private static void OnMaskCharacterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (AsteriskTextBlock)d;
+            control.UpdateText();
+        }
 
         /// <summary>
         /// A text block that displays asterisks for each character in its text property.
@@ -62,7 +81,7 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Handles updating the DisplayText property whenever the Text has been updated.
+        /// Handles updating the <see cref="MaskedText" /> property whenever the Text has been updated.
         /// </summary>
         /// <param name="d"></param>
         /// <param name="e"></param>
@@ -73,11 +92,11 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Handles updating the DisplayText property.
+        /// Handles updating the <see cref="MaskedText" /> property.
         /// </summary>
         private void UpdateText()
         {
-            DisplayText = new string(this.Character, Text.Length);
+            MaskedText = string.IsNullOrEmpty(Text) ? string.Empty : new string(MaskCharacter, Text.Length);
         }
     }
 }
