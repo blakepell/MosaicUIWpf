@@ -10,11 +10,14 @@
 
 // ReSharper disable CheckNamespace
 
+using System.Windows.Markup;
+
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
     /// A text block that displays asterisks for each character in its text property.
     /// </summary>
+    [ContentProperty(nameof(Text))]
     public class AsteriskTextBlock : Control
     {
         /// <summary>
