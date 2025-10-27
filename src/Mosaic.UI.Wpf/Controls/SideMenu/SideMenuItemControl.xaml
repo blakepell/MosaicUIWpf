@@ -149,15 +149,7 @@
                                         RenderTransformOrigin="0.5,0.5">
                                         <Path.Style>
                                             <Style TargetType="Path">
-                                                <Setter Property="Fill" Value="#666666" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="True">
-                                                        <Setter Property="Fill" Value="{Binding SideMenu.SelectedForeground, ElementName=Me}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="False">
-                                                        <Setter Property="Fill" Value="{Binding SideMenu.SelectedForeground, ElementName=Me}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
+                                                <Setter Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
                                             </Style>
                                         </Path.Style>
                                         <Path.RenderTransform>
