@@ -46,6 +46,21 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="Compact"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CompactProperty =
+            DependencyProperty.Register(nameof(Compact), typeof(bool), typeof(SideMenuItemControl), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the menu item is displayed in compact mode (icon above text).
+        /// </summary>
+        public bool Compact
+        {
+            get => (bool)GetValue(CompactProperty);
+            set => SetValue(CompactProperty, value);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SideMenuItemControl"/> class.
         /// </summary>
         public SideMenuItemControl()

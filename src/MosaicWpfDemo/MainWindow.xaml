@@ -190,7 +190,10 @@
             Grid.Row="1"
             Grid.Column="0"
             Margin="5"
-            ContentPresenter="{Binding ElementName=MainContent}">
+            Compact="False"
+            ContentPresenter="{Binding ElementName=MainContent}"
+            SearchBoxVisibility="Visible"
+            VerticalScrollViewerVisibility="Visible">
             <mosaic:SideMenu.MenuItems>
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:AboutView}"

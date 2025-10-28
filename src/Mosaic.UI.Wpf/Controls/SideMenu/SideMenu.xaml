@@ -36,12 +36,13 @@
         <ScrollViewer
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
+            VerticalScrollBarVisibility="{Binding VerticalScrollViewerVisibility, ElementName=SideMenuInstance}">
             <ItemsControl x:Name="MenuOptions" ItemsSource="{Binding MenuItems, ElementName=SideMenuInstance}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:SideMenuItem}">
                         <local:SideMenuItemControl
                             Margin="0,1,0,0"
+                            Compact="{Binding ElementName=SideMenuInstance, Path=Compact}"
                             Cursor="Hand"
                             MenuItem="{Binding}"
                             SideMenu="{Binding ElementName=SideMenuInstance}"

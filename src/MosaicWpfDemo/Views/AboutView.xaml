@@ -57,6 +57,7 @@
                         Margin="20,2,0,0"
                         FontSize="12"
                         Text="Version:" />
+
                     <mosaic:VersionTextBlock
                         Grid.Row="1"
                         Grid.Column="1"

@@ -102,6 +102,35 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="Compact"/> dependency property, which controls whether the side menu displays items in compact mode.
+        /// </summary>
+        public static readonly DependencyProperty CompactProperty = DependencyProperty.Register(nameof(Compact), typeof(bool), typeof(SideMenu), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the side menu displays items in compact mode (icon above text).
+        /// </summary>
+        public bool Compact
+        {
+            get => (bool)GetValue(CompactProperty);
+            set => SetValue(CompactProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="VerticalScrollViewerVisibility"/> dependency property, which controls the visibility of the
+        /// vertical scroll bar in the side menu's scroll viewer.
+        /// </summary>
+        public static readonly DependencyProperty VerticalScrollViewerVisibilityProperty = DependencyProperty.Register(nameof(VerticalScrollViewerVisibility), typeof(ScrollBarVisibility), typeof(SideMenu), new PropertyMetadata(ScrollBarVisibility.Auto));
+
+        /// <summary>
+        /// Gets or sets a value indicating the visibility of the vertical scroll bar in the side menu.
+        /// </summary>
+        public ScrollBarVisibility VerticalScrollViewerVisibility
+        {
+            get => (ScrollBarVisibility)GetValue(VerticalScrollViewerVisibilityProperty);
+            set => SetValue(VerticalScrollViewerVisibilityProperty, value);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SideMenu"/> class.
         /// </summary>
         public SideMenu()

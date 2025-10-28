@@ -11,11 +11,16 @@
     d:DesignHeight="450"
     d:DesignWidth="300"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:CompactHeightConverter x:Key="CompactHeightConverter" />
+        <local:CompactWidthConverter x:Key="CompactWidthConverter" />
+    </UserControl.Resources>
 
     <StackPanel>
         <!--  Main Menu Item  -->
         <Border
-            Height="36"
+            Width="{Binding Compact, ElementName=Me, Converter={StaticResource CompactWidthConverter}}"
+            Height="{Binding Compact, ElementName=Me, Converter={StaticResource CompactHeightConverter}}"
             Cursor="Hand"
             MouseLeftButtonDown="OnItemClick">
             <Border.Style>
@@ -93,99 +98,144 @@
                             </Binding.Converter>
                         </Binding>
                     </Grid.Margin>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
 
-                    <!--  Header ContentPresenter  -->
-                    <Image
-                        Grid.Column="0"
-                        Width="24"
-                        Height="24"
-                        Margin="10,0,0,0"
+                    <!--  Compact Mode Layout (Icon Above Text)  -->
+                    <StackPanel
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Source="{Binding MenuItem.ImageSource, ElementName=Me}" />
+                        Orientation="Vertical">
+                        <StackPanel.Visibility>
+                            <Binding ElementName="Me" Path="Compact">
+                                <Binding.Converter>
+                                    <converters:BoolToVisibilityConverter />
+                                </Binding.Converter>
+                            </Binding>
+                        </StackPanel.Visibility>
+                        <!--  Icon  -->
+                        <Image
+                            Width="24"
+                            Height="24"
+                            Margin="0,4,0,4"
+                            HorizontalAlignment="Center"
+                            Source="{Binding MenuItem.ImageSource, ElementName=Me}" />
 
-                    <ContentPresenter
-                        Grid.Column="1"
-                        Margin="0,0,5,0"
-                        VerticalAlignment="Center"
-                        Content="{Binding MenuItem.Header, ElementName=Me}" />
+                        <!--  Label  -->
+                        <TextBlock
+                            Margin="4,0,4,0"
+                            HorizontalAlignment="Center"
+                            FontFamily="Segoe UI Variable"
+                            FontSize="11"
+                            FontWeight="Normal"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                            Text="{Binding MenuItem.Text, ElementName=Me}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
 
-                    <!--  Text  -->
-                    <TextBlock
-                        Grid.Column="2"
-                        Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        FontFamily="Segoe UI Variable"
-                        FontSize="14"
-                        FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
-                        Text="{Binding MenuItem.Text, ElementName=Me}" />
+                    <!--  Normal Mode Layout (Icon, Text, Expander)  -->
+                    <Grid x:Name="NormalModeGrid">
+                        <Grid.Visibility>
+                            <Binding ElementName="Me" Path="Compact">
+                                <Binding.Converter>
+                                    <converters:InvertedBoolToVisibilityConverter />
+                                </Binding.Converter>
+                            </Binding>
+                        </Grid.Visibility>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <!--  Expander  -->
-                    <ToggleButton
-                        Grid.Column="3"
-                        Width="16"
-                        Height="16"
-                        Margin="0,0,8,0"
-                        VerticalAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Click="OnExpanderClick"
-                        IsChecked="{Binding MenuItem.IsExpanded, ElementName=Me, Mode=TwoWay}"
-                        Visibility="{Binding MenuItem.HasChildren, ElementName=Me, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}">
-                        <ToggleButton.Template>
-                            <ControlTemplate TargetType="ToggleButton">
-                                <Border Background="{TemplateBinding Background}">
-                                    <Path
-                                        x:Name="ExpandPath"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Data="M 0 0 L 4 4 L 8 0 Z"
-                                        RenderTransformOrigin="0.5,0.5">
-                                        <Path.Style>
-                                            <Style TargetType="Path">
-                                                <Setter Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
-                                            </Style>
-                                        </Path.Style>
-                                        <Path.RenderTransform>
-                                            <RotateTransform x:Name="ExpandRotateTransform" Angle="0" />
-                                        </Path.RenderTransform>
-                                    </Path>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="True">
-                                        <Trigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="ExpandRotateTransform"
-                                                        Storyboard.TargetProperty="Angle"
-                                                        To="180"
-                                                        Duration="0:0:0.2" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </Trigger.EnterActions>
-                                        <Trigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="ExpandRotateTransform"
-                                                        Storyboard.TargetProperty="Angle"
-                                                        To="0"
-                                                        Duration="0:0:0.2" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </Trigger.ExitActions>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </ToggleButton.Template>
-                    </ToggleButton>
+                        <!--  Header ContentPresenter  -->
+                        <Image
+                            Grid.Column="0"
+                            Width="24"
+                            Height="24"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            Source="{Binding MenuItem.ImageSource, ElementName=Me}" />
+
+                        <ContentPresenter
+                            Grid.Column="1"
+                            Margin="0,0,5,0"
+                            VerticalAlignment="Center"
+                            Content="{Binding MenuItem.Header, ElementName=Me}" />
+
+                        <!--  Text  -->
+                        <TextBlock
+                            Grid.Column="2"
+                            Margin="8,0,0,0"
+                            VerticalAlignment="Center"
+                            FontFamily="Segoe UI Variable"
+                            FontSize="14"
+                            FontWeight="Normal"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                            Text="{Binding MenuItem.Text, ElementName=Me}" />
+
+                        <!--  Expander  -->
+                        <ToggleButton
+                            Grid.Column="3"
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnExpanderClick"
+                            IsChecked="{Binding MenuItem.IsExpanded, ElementName=Me, Mode=TwoWay}"
+                            Visibility="{Binding MenuItem.HasChildren, ElementName=Me, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <Path
+                                            x:Name="ExpandPath"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M 0 0 L 4 4 L 8 0 Z"
+                                            RenderTransformOrigin="0.5,0.5">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+                                                </Style>
+                                            </Path.Style>
+                                            <Path.RenderTransform>
+                                                <RotateTransform x:Name="ExpandRotateTransform" Angle="0" />
+                                            </Path.RenderTransform>
+                                        </Path>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetName="ExpandRotateTransform"
+                                                            Storyboard.TargetProperty="Angle"
+                                                            To="180"
+                                                            Duration="0:0:0.2" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetName="ExpandRotateTransform"
+                                                            Storyboard.TargetProperty="Angle"
+                                                            To="0"
+                                                            Duration="0:0:0.2" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                    </Grid>
                 </Grid>
             </Grid>
         </Border>
@@ -247,6 +297,7 @@
                 <DataTemplate DataType="{x:Type local:SideMenuItem}">
                     <local:SideMenuItemControl
                         Margin="0,1,0,0"
+                        Compact="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:SideMenu}, Path=Compact}"
                         MenuItem="{Binding}"
                         SideMenu="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:SideMenu}}" />
                 </DataTemplate>
