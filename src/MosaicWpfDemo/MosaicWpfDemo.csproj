@@ -45,6 +45,7 @@
 		<None Remove="Assets\settings-panel-96.png" />
 		<None Remove="Assets\shield-48.png" />
 		<None Remove="Assets\shield-version-48.png" />
+		<None Remove="Assets\sidebar-menu-48.png" />
 		<None Remove="Assets\start-half-empty-48.png" />
 		<None Remove="Assets\stopwatch-48.png" />
 		<None Remove="Assets\tab-control-48.png" />
@@ -95,6 +96,7 @@
 		<Resource Include="Assets\settings-panel-96.png" />
 		<Resource Include="Assets\shield-48.png" />
 		<Resource Include="Assets\shield-version-48.png" />
+		<Resource Include="Assets\sidebar-menu-48.png" />
 		<Resource Include="Assets\start-half-empty-48.png" />
 		<Resource Include="Assets\stopwatch-48.png" />
 		<Resource Include="Assets\tab-control-48.png" />
@@ -188,6 +190,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\ClipBorderExample.xaml.cs">
 			<Link>LinkedSources\ClipBorderExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\SideMenuExample.xaml">
+			<Link>LinkedSources\SideMenuExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SideMenuExample.xaml.cs">
+			<Link>LinkedSources\SideMenuExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\EditableTextBlockExample.xaml">
@@ -338,6 +347,9 @@
 		</Compile>
 		<Compile Update="Views\Examples\ChatThreadExample.xaml.cs">
 			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\Examples\SideMenuExample.xaml.cs">
+		  <SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\SettingsItemExample.xaml.cs">
 			<SubType>Code</SubType>

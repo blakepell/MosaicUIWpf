@@ -651,6 +651,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SideMenu Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/sidebar-menu-48.png"
+                    Text="Side Menu">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Side Menu" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SideMenuExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SideMenuExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SideMenu}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SideMenuExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/sidebar-menu-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Stopwatch Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
