@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <AssemblyVersion>2025.10.28.1</AssemblyVersion>
-    <FileVersion>2025.10.28.1</FileVersion>
-    <PackageVersion>2025.10.28.1</PackageVersion>
+    <AssemblyVersion>2025.10.29.1</AssemblyVersion>
+    <FileVersion>2025.10.29.1</FileVersion>
+    <PackageVersion>2025.10.29.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -59,8 +59,8 @@
     <PackageReference Include="Argus.Core" Version="2025.9.27.1" />
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="Markdig" Version="0.42.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Markdig" Version="0.43.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 
