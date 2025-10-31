@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicTemplateApp", "src\Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanChat", "src\LanChat\LanChat.csproj", "{124ADAF3-B941-4B05-B9D4-3B9FFEDE2CF7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7F2E7D73-53FC-4F78-9187-CED4D6EBBE3A}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\AddMenuItemAutomation.ps1 = scripts\AddMenuItemAutomation.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
