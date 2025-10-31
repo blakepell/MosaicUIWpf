@@ -93,7 +93,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="74" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -190,6 +190,8 @@
             Grid.Row="1"
             Grid.Column="0"
             Margin="5"
+            Compact="True"
+            SearchBoxVisibility="Collapsed"
             ContentPresenter="{Binding ElementName=MainContent}">
             <mosaic:SideMenu.MenuItems>
                 <mosaic:SideMenuItem
