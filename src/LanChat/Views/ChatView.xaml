@@ -17,6 +17,11 @@
         <common1:AppServiceLocator x:Key="AppSettings" Type="{x:Type common:AppSettings}" />
     </UserControl.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100*" />
+            <ColumnDefinition Width="0" />
+        </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -26,6 +31,7 @@
         <mosaic:ChatThread
             x:Name="ChatThread"
             Grid.Row="0"
+            Grid.Column="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             Messages="{Binding Messages}"
