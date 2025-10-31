@@ -55,6 +55,7 @@
                 Margin="2"
                 Background="Transparent"
                 BorderThickness="0"
+                Focusable="True"
                 ToolTip="Select from preset colors">
                 <Path
                     HorizontalAlignment="Center"

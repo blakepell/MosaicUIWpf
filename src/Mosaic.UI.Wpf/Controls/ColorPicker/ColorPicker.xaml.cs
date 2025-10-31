@@ -443,6 +443,7 @@ namespace Mosaic.UI.Wpf.Controls
             if (_colorPopup != null)
             {
                 _colorPopup.IsOpen = !_colorPopup.IsOpen;
+                e.Handled = true;
             }
         }
 
