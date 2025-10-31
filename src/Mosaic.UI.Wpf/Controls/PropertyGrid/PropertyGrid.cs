@@ -35,14 +35,27 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Identifies the Properties dependency property.
         /// </summary>
-        public static readonly DependencyProperty PropertiesProperty = DependencyProperty.Register(nameof(Properties), typeof(ObservableCollection<PropertyItem>), typeof(PropertyGrid), new PropertyMetadata(new ObservableCollection<PropertyItem>()));
+        public static readonly DependencyProperty PropertiesProperty = DependencyProperty.Register(
+            nameof(Properties), 
+            typeof(ObservableCollection<PropertyItem>), 
+            typeof(PropertyGrid), 
+            new PropertyMetadata(null, OnPropertiesChanged));
 
         /// <summary>
         /// Gets or sets the collection of properties displayed in the grid.
         /// </summary>
         public ObservableCollection<PropertyItem> Properties
         {
-            get => (ObservableCollection<PropertyItem>)GetValue(PropertiesProperty);
+            get
+            {
+                var collection = (ObservableCollection<PropertyItem>?)GetValue(PropertiesProperty);
+                if (collection == null)
+                {
+                    collection = new ObservableCollection<PropertyItem>();
+                    SetValue(PropertiesProperty, collection);
+                }
+                return collection;
+            }
             set => SetValue(PropertiesProperty, value);
         }
 
@@ -66,6 +79,14 @@ namespace Mosaic.UI.Wpf.Controls
         #endregion
 
         #region Dependency Property Change
+
+        /// <summary>
+        /// Called when the Properties dependency property changes.
+        /// </summary>
+        private static void OnPropertiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // This callback is optional but can be used for additional logic if needed
+        }
 
         /// <summary>
         /// Called when the Object property changes.
