@@ -6,6 +6,9 @@
     This script creates example XAML/C# files and registers them in both the .csproj file 
     and MainWindow.xaml, eliminating manual file creation and configuration.
     
+    The script automatically locates the MosaicWpfDemo project by traversing up from the
+    scripts folder and looking for the .csproj file.
+    
 .PARAMETER ExampleName
     The name of the control to document (e.g., "MyControl" for "MyControlExample")
     
@@ -15,9 +18,6 @@
 .PARAMETER IconPath
     The relative path to the icon asset (e.g., "/Assets/my-control-48.png")
     
-.PARAMETER ProjectRoot
-    The root path of the MosaicWpfDemo project (default: current directory)
-    
 .PARAMETER CreateFiles
     Switch to create the XAML and C# template files if they don't exist
     
@@ -25,15 +25,16 @@
     Switch to apply changes to actual files (without this, shows preview only)
     
 .EXAMPLE
-    # Preview only (no files created or modified)
+    # Run from scripts folder - Preview only (no files created or modified)
     .\AddMenuItemAutomation.ps1 -ExampleName "MyControl" -ControlType "MyControl" -IconPath "/Assets/my-control-48.png"
     
 .EXAMPLE
-    # Create files and apply all changes
+    # Run from scripts folder - Create files and apply all changes
     .\AddMenuItemAutomation.ps1 -ExampleName "MyControl" -ControlType "MyControl" -IconPath "/Assets/my-control-48.png" -CreateFiles -ApplyChanges
 
-    # Example
-    ../../AddMenuItemAutomation.ps1 -ExampleName "MusicPlayer" -ControlType "MusicPlayer" -IconPath "/Assets/circle-48.png" -CreateFiles -ApplyChanges
+.EXAMPLE
+    # Example usage
+    .\AddMenuItemAutomation.ps1 -ExampleName "MusicPlayer" -ControlType "MusicPlayer" -IconPath "/Assets/circle-48.png" -CreateFiles -ApplyChanges
 #>
 
 param(
@@ -46,21 +47,50 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$IconPath,
     
-    [string]$ProjectRoot = (Get-Location).Path,
-    
     [switch]$CreateFiles,
     
     [switch]$ApplyChanges
 )
 
+# Auto-detect ProjectRoot by finding MosaicWpfDemo.csproj
+# Start from the scripts folder and traverse up to find it
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$currentPath = Split-Path -Parent $scriptPath  # Go up one level from scripts
+
+# Search for the csproj file by traversing down typical project structures
+$csprojFile = $null
+$searchPaths = @(
+    (Join-Path $currentPath "src\MosaicWpfDemo\MosaicWpfDemo.csproj"),
+    (Join-Path $currentPath "MosaicWpfDemo\MosaicWpfDemo.csproj"),
+    (Join-Path $currentPath "src\MosaicWpfDemo\MosaicWpfDemo.csproj")
+)
+
+foreach ($path in $searchPaths) {
+    if (Test-Path $path) {
+        $csprojFile = $path
+        break
+    }
+}
+
+if (-not $csprojFile) {
+    Write-Error "Could not find MosaicWpfDemo.csproj. Searched in:"
+    $searchPaths | ForEach-Object { Write-Error "  - $_" }
+    exit 1
+}
+
+# Derive ProjectRoot from csproj location
+$projectRoot = Split-Path -Parent $csprojFile
+
 # Define paths
-$examplesDir = Join-Path $ProjectRoot "Views\Examples"
+$examplesDir = Join-Path $projectRoot "Views\Examples"
 $xamlFile = Join-Path $examplesDir "${ExampleName}Example.xaml"
 $codeFile = Join-Path $examplesDir "${ExampleName}Example.xaml.cs"
-$csprojFile = Join-Path $ProjectRoot "MosaicWpfDemo.csproj"
-$mainWindowFile = Join-Path $ProjectRoot "MainWindow.xaml"
+$mainWindowFile = Join-Path $projectRoot "MainWindow.xaml"
 
 # Validate project structure
+Write-Host "Using project root: $projectRoot" -ForegroundColor Gray
+Write-Host ""
+
 if (-not (Test-Path $csprojFile)) {
     Write-Error "Project file not found: $csprojFile"
     exit 1
