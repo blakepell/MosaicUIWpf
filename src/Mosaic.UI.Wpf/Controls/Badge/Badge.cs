@@ -43,7 +43,6 @@ namespace Mosaic.UI.Wpf.Controls
             HeightProperty.OverrideMetadata(typeof(Badge), new FrameworkPropertyMetadata(20.0));
             HorizontalContentAlignmentProperty.OverrideMetadata(typeof(Badge), new FrameworkPropertyMetadata(HorizontalAlignment.Center));
             BorderThicknessProperty.OverrideMetadata(typeof(Badge), new FrameworkPropertyMetadata(new Thickness(0.0)));
-
         }
     }
 }
