@@ -63,7 +63,7 @@
                 Foreground="White">
                 <controls:Badge.Content>
                     <controls:Hyperlink
-                        Margin="0,0,10,0"
+                        Margin="8,0,8,0"
                         Foreground="White"
                         HoverBrush="LightGray"
                         NavigateUri="https://www.apexgate.net"
