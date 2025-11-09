@@ -61,6 +61,12 @@
                             Grid.Column="1"
                             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                             BorderThickness=".9,.9,.9,.9">
+                            <Button.Resources>
+                                <!--  This control is designed with square corners  -->
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="0" />
+                                </Style>
+                            </Button.Resources>
                             <Button.Content>
                                 <controls:AdaptiveImage Source="../../Assets/vs-add-16.png" />
                             </Button.Content>
