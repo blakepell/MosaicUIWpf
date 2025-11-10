@@ -32,7 +32,21 @@
             Text="Center" />
         <mosaic:LabeledSeparator
             Margin="0,10,0,0"
+            FontFamily="Segoe UI"
+            FontWeight="Bold"
+            LabelPosition="Center"
+            Text="Center (Bold)" />
+        <mosaic:LabeledSeparator
+            Margin="0,10,0,0"
             LabelPosition="Right"
             Text="Right" />
+        <mosaic:LabeledSeparator
+            Margin="0,0,0,0"
+            FontFamily="Segoe UI"
+            FontSize="24"
+            FontWeight="SemiBold"
+            LabelPosition="AboveLeft"
+            Text="Above Left (Font Changes)" />
+
     </StackPanel>
 </UserControl>

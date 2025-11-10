@@ -19,8 +19,7 @@
                                 Grid.Column="0"
                                 Margin="0,0,8,0"
                                 HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}"
+                                VerticalAlignment="Center"                                
                                 Text="{TemplateBinding Text}" />
                             <Border
                                 Grid.Column="1"
