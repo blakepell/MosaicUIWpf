@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <AssemblyVersion>2025.11.9.1</AssemblyVersion>
-    <FileVersion>2025.11.9.1</FileVersion>
-    <PackageVersion>2025.11.9.1</PackageVersion>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyVersion>2025.11.12.1</AssemblyVersion>
+    <FileVersion>2025.11.12.1</FileVersion>
+    <PackageVersion>2025.11.12.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -60,7 +60,7 @@
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Markdig" Version="0.43.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
   </ItemGroup>
 
