@@ -24,7 +24,8 @@
                                 FontWeight="SemiBold"
                                 Foreground="{TemplateBinding Foreground}"
                                 Text="{TemplateBinding Text}"
-                                Visibility="{TemplateBinding Text, Converter={StaticResource IsNullOrWhiteSpaceToVisibilityConverter}}" />
+                                Visibility="{TemplateBinding Text,
+                                                             Converter={StaticResource IsNullOrWhiteSpaceToVisibilityConverter}}" />
                             <ContentPresenter
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

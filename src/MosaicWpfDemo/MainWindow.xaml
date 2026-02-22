@@ -1,10 +1,9 @@
-﻿<Window
+<Window
     x:Class="WpfDemo.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
@@ -17,9 +16,11 @@
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
-    mc:Ignorable="d">
-
+    WindowStyle="None">
+    <!--  @TitleBar  -->
+    <!--  @MenuBar  -->
+    <!--  @StatusBar  -->
+    <!--  @EOF  -->
     <Window.Resources>
         <!--  Button Styles for Theming  -->
         <Style x:Key="TitleBarButtonStyle" TargetType="Button">
@@ -776,6 +777,24 @@
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
+
+                <!--  ValidationSummaryPanel Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/warning-48.png"
+                    Text="ValidationSummaryPanel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ValidationSummaryPanel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ValidationSummaryPanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ValidationSummaryPanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ValidationSummaryPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ValidationSummaryPanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/warning-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
 
@@ -784,4 +803,5 @@
             Grid.Row="1"
             Grid.Column="1" />
     </Grid>
+    <!--  #EOF  -->
 </Window>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows</TargetFramework>
@@ -321,9 +321,16 @@
 		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml">
 			<Link>LinkedSources\VersionTextBlockExample.xaml</Link>
 		</EmbeddedResource>
-		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml.cs">
-			<Link>LinkedSources\VersionTextBlockExample.xaml.cs</Link>
-		</EmbeddedResource>
+		                <EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml.cs">
+                        <Link>LinkedSources\VersionTextBlockExample.xaml.cs</Link>
+                </EmbeddedResource>
+
+                <EmbeddedResource Include="Views\Examples\ValidationSummaryPanelExample.xaml">
+                        <Link>LinkedSources\ValidationSummaryPanelExample.xaml</Link>
+                </EmbeddedResource>
+                <EmbeddedResource Include="Views\Examples\ValidationSummaryPanelExample.xaml.cs">
+                        <Link>LinkedSources\ValidationSummaryPanelExample.xaml.cs</Link>
+                </EmbeddedResource>
 
 	</ItemGroup>
 
@@ -399,9 +406,14 @@
 		<Compile Update="Views\Examples\SearchBoxExample.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>
-		<Compile Update="Views\Examples\SymbolRatingExample.xaml.cs">
-			<SubType>Code</SubType>
-		</Compile>
+		                <Compile Update="Views\Examples\SymbolRatingExample.xaml.cs">
+                        <SubType>Code</SubType>
+                </Compile>
+                <Compile Update="Views\Examples\ValidationSummaryPanelExample.xaml.cs">
+                        <SubType>Code</SubType>
+                </Compile>
 	</ItemGroup>
 
 </Project>
+
+

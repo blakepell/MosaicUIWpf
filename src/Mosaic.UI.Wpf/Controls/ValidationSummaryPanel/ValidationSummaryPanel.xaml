@@ -1,0 +1,161 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!-- Default Error Icon Geometry (X/Error icon) -->
+    <Geometry x:Key="ValidationErrorIconGeometry">M264 456Q210 456 164 429 118 402 91 356 64 310 64 256 64 202 91 156 118 110 164 83 210 56 264 56 318 56 364 83 410 110 437 156 464 202 464 256 464 310 437 356 410 402 364 429 318 456 264 456ZM264 288L328 352 360 320 296 256 360 192 328 160 264 224 200 160 168 192 232 256 168 320 200 352 264 288Z</Geometry>
+
+    <Style TargetType="{x:Type controls:ValidationSummaryPanel}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="IconBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+        <Setter Property="IconGeometry" Value="{StaticResource ValidationErrorIconGeometry}" />
+        <Setter Property="HeaderBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0,0,0,10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ValidationSummaryPanel}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Header -->
+                            <Border
+                                Grid.Row="0"
+                                Padding="10,8"
+                                Background="{TemplateBinding HeaderBackground}"
+                                CornerRadius="4,4,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Icon -->
+                                    <Viewbox
+                                        Grid.Column="0"
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0">
+                                        <Path
+                                            Data="{TemplateBinding IconGeometry}"
+                                            Fill="White"
+                                            Stretch="Uniform" />
+                                    </Viewbox>
+
+                                    <!-- Title -->
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Text="{TemplateBinding Title}" />
+
+                                    <!-- Error Count Badge -->
+                                    <Border
+                                        Grid.Column="2"
+                                        MinWidth="24"
+                                        Padding="6,2"
+                                        Background="White"
+                                        CornerRadius="10">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontSize="11"
+                                            FontWeight="Bold"
+                                            Foreground="{TemplateBinding IconBrush}"
+                                            Text="{Binding ErrorCount, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!-- Error List -->
+                            <ScrollViewer
+                                Grid.Row="1"
+                                MaxHeight="200"
+                                VerticalScrollBarVisibility="Auto">
+                                <ItemsPresenter Margin="8,4,8,8" />
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate DataType="{x:Type controls:ValidationError}">
+                    <Border
+                        x:Name="ErrorBorder"
+                        Margin="0,4,0,0"
+                        Padding="8,6"
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                        BorderThickness="0,0,0,1"
+                        Cursor="Hand">
+                        <Border.InputBindings>
+                            <MouseBinding
+                                Command="{x:Static controls:ValidationSummaryPanel.FocusErrorCommand}"
+                                CommandParameter="{Binding}"
+                                MouseAction="LeftClick" />
+                        </Border.InputBindings>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Bullet/Icon -->
+                            <Ellipse
+                                Grid.Column="0"
+                                Width="6"
+                                Height="6"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                Fill="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+
+                            <!-- Error Message -->
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <TextBlock
+                                    x:Name="PropertyNameText"
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                                    Text="{Binding PropertyName}" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                                    Text="{Binding Message}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <DataTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ErrorBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding PropertyName}" Value="">
+                            <Setter TargetName="PropertyNameText" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding PropertyName}" Value="{x:Null}">
+                            <Setter TargetName="PropertyNameText" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
