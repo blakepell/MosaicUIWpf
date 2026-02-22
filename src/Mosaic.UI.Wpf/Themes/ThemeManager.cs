@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -11,27 +11,27 @@
 namespace Mosaic.UI.Wpf.Themes
 {
     /// <summary>
-    /// Manages the application's theme and related resources, including support for toggling between light and dark
-    /// themes, applying native control styles, and dynamically updating resource dictionaries.
+    /// Manages Mosaic theme resources and supports runtime theme switching.
     /// </summary>
-    /// <remarks>The <see cref="ThemeManager"/> class provides functionality to manage and apply themes in a
-    /// WPF application. It supports dynamic updates to resource dictionaries based on the selected theme mode and
-    /// whether native control styles are enabled. The class also raises the <see cref="ThemeChanged"/> event whenever
-    /// the theme is updated, allowing subscribers to respond to theme changes.  This class is typically used as a
-    /// singleton and is automatically registered as such in the application's service container if not already
-    /// registered.</remarks>
+    /// <remarks>
+    /// This dictionary is self-contained and updates its own <see cref="ResourceDictionary.MergedDictionaries"/>
+    /// collection only. This lets consumers scope theme resources at the application, window, or control level
+    /// without mutating unrelated resource dictionaries.
+    /// </remarks>
     public class ThemeManager : ResourceDictionary, ISupportInitialize
     {
         private bool _updating;
         private bool _initializing;
+        private readonly List<ResourceDictionary> _managedDictionaries = new();
+
+        private ThemeMode _theme = ThemeMode.Light;
+        private bool _native;
+        private bool _systemColors = true;
+        private bool _typography = true;
+        private bool _controlTemplates = true;
 
         /// <summary>
-        /// Internal backing field for the Theme property.
-        /// </summary>
-        private ThemeMode _theme;
-
-        /// <summary>
-        /// Gets or sets the current theme mode for the application.
+        /// Gets or sets the active theme mode.
         /// </summary>
         public ThemeMode Theme
         {
@@ -45,7 +45,6 @@ namespace Mosaic.UI.Wpf.Themes
 
                 _theme = value;
 
-                // If we're being initialized from XAML, defer loading until EndInit.
                 if (!_initializing)
                 {
                     UpdateMergedDictionaries();
@@ -54,12 +53,7 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// Internal backing field for the Native property.
-        /// </summary>
-        private bool _native;
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the native controls are styled.
+        /// Gets or sets a value indicating whether native WPF controls should be restyled.
         /// </summary>
         public bool Native
         {
@@ -73,7 +67,6 @@ namespace Mosaic.UI.Wpf.Themes
 
                 _native = value;
 
-                // If we're being initialized from XAML, defer loading until EndInit.
                 if (!_initializing)
                 {
                     UpdateMergedDictionaries();
@@ -82,12 +75,7 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// Internal backing field for the SystemColors property.
-        /// </summary>
-        private bool _systemColors = true;
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the system colors are replaced.
+        /// Gets or sets a value indicating whether system color keys should be overridden.
         /// </summary>
         public bool SystemColors
         {
@@ -101,7 +89,6 @@ namespace Mosaic.UI.Wpf.Themes
 
                 _systemColors = value;
 
-                // If we're being initialized from XAML, defer loading until EndInit.
                 if (!_initializing)
                 {
                     UpdateMergedDictionaries();
@@ -110,24 +97,65 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// Event that is raised when the theme changes.
+        /// Gets or sets a value indicating whether Mosaic typography resources are loaded.
+        /// </summary>
+        public bool Typography
+        {
+            get => _typography;
+            set
+            {
+                if (_typography == value)
+                {
+                    return;
+                }
+
+                _typography = value;
+
+                if (!_initializing)
+                {
+                    UpdateMergedDictionaries();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether Mosaic control template dictionaries are loaded.
+        /// </summary>
+        public bool ControlTemplates
+        {
+            get => _controlTemplates;
+            set
+            {
+                if (_controlTemplates == value)
+                {
+                    return;
+                }
+
+                _controlTemplates = value;
+
+                if (!_initializing)
+                {
+                    UpdateMergedDictionaries();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Event that is raised when the active theme mode changes.
         /// </summary>
         public static event EventHandler<ThemeMode>? ThemeChanged;
 
         /// <summary>
-        /// Invokes the ThemeChanged event.
+        /// Invokes the <see cref="ThemeChanged"/> event.
         /// </summary>
-        /// <param name="themeName">The new theme name.</param>
-        internal static void OnThemeChanged(ThemeMode themeName)
+        internal static void OnThemeChanged(ThemeMode themeMode)
         {
-            ThemeChanged?.Invoke(null, themeName);
+            ThemeChanged?.Invoke(null, themeMode);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeManager"/> class.
         /// </summary>
-        /// <remarks>If an instance of <see cref="ThemeManager"/> is not already registered as a singleton
-        /// in the application's service container, this constructor registers the current instance.</remarks>
         public ThemeManager()
         {
             if (!AppServices.IsSingletonRegistered<ThemeManager>())
@@ -137,20 +165,32 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// ISupportInitialize - XAML calls BeginInit before setting properties.
+        /// Called before XAML property initialization.
         /// </summary>
         public new void BeginInit()
         {
             _initializing = true;
+            base.BeginInit();
+        }
+
+        void ISupportInitialize.BeginInit()
+        {
+            BeginInit();
         }
 
         /// <summary>
-        /// ISupportInitialize - XAML calls EndInit after setting properties.
+        /// Called after XAML property initialization.
         /// </summary>
         public new void EndInit()
         {
+            base.EndInit();
             _initializing = false;
             UpdateMergedDictionaries();
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            EndInit();
         }
 
         private void UpdateMergedDictionaries()
@@ -160,69 +200,46 @@ namespace Mosaic.UI.Wpf.Themes
                 return;
             }
 
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher != null && !dispatcher.CheckAccess())
+            {
+                dispatcher.Invoke(UpdateMergedDictionaries);
+                return;
+            }
+
             _updating = true;
 
             try
             {
-                var mergedDictionaries = Application.Current.Resources.MergedDictionaries;
-
-                // Find and remove existing theme and brush dictionaries
-                var toRemove = new List<ResourceDictionary>();
-                foreach (var dict in mergedDictionaries)
+                foreach (var dictionary in _managedDictionaries.ToList())
                 {
-                    if (dict.Source != null)
-                    {
-                        var source = dict.Source.ToString();
-                        if (source.Contains("/Themes/Light.xaml") ||
-                            source.Contains("/Themes/Dark.xaml") ||
-                            source.Contains("SystemColors.xaml") ||
-                            source.Contains("/Generic.xaml") ||
-                            source.Contains("/Native.xaml")) // Also remove Generic.xaml and Native.xaml
-                        {
-                            toRemove.Add(dict);
-                        }
-                    }
+                    MergedDictionaries.Remove(dictionary);
                 }
 
-                foreach (var dict in toRemove)
+                _managedDictionaries.Clear();
+
+                if (Typography)
                 {
-                    mergedDictionaries.Remove(dict);
+                    AddManagedDictionary(ThemeDictionaryUris.Typography);
                 }
 
-                /*
-                 * We're going to load the Light or Dark theme, then the shared Brushes that reference the theme, then our
-                 * custom controls in Generic.xaml and finally if the user specifies we'll load the Native controls.
-                 */
-
-                if (Theme == ThemeMode.Light)
+                if (SystemColors)
                 {
-                    if (this.SystemColors)
-                    {
-                        mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light/SystemColors.xaml") });
-                    }
-
-                    mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Light/Light.xaml") });
-                }
-                else
-                {
-                    if (this.SystemColors)
-                    {
-                        mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/SystemColors.xaml") });
-                    }
-
-                    mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Dark/Dark.xaml") });
+                    AddManagedDictionary(ThemeDictionaryUris.GetSystemColorsUri(Theme));
                 }
 
-                // Re-add the custom control dictionaries
-                mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Generic.xaml") });
+                AddManagedDictionary(ThemeDictionaryUris.GetThemeUri(Theme));
 
-                // Re-add the native control dictionaries LAST so they can use the theme brushes
+                if (ControlTemplates)
+                {
+                    AddManagedDictionary(ThemeDictionaryUris.Generic);
+                }
+
                 if (Native)
                 {
-                    mergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native.xaml") });
+                    AddManagedDictionary(ThemeDictionaryUris.Native);
                 }
 
-                // Notify subscribers about the theme change
                 OnThemeChanged(Theme);
             }
             finally
@@ -231,12 +248,39 @@ namespace Mosaic.UI.Wpf.Themes
             }
         }
 
+        private void AddManagedDictionary(Uri source)
+        {
+            var dictionary = new ResourceDictionary { Source = source };
+            MergedDictionaries.Add(dictionary);
+            _managedDictionaries.Add(dictionary);
+        }
+
         /// <summary>
-        /// Toggles the application's theme between "Light" and "Dark".
+        /// Toggles between light and dark themes.
         /// </summary>
         public void ToggleTheme()
         {
-            Theme = Theme == ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light;
+            Theme = Theme switch
+            {
+                ThemeMode.Light => ThemeMode.Dark,
+                ThemeMode.Dark => ThemeMode.Light,
+                ThemeMode.HighContrast => ThemeMode.Light,
+                _ => ThemeMode.Light
+            };
+        }
+
+        /// <summary>
+        /// Cycles through Light, Dark, and HighContrast themes.
+        /// </summary>
+        public void CycleTheme()
+        {
+            Theme = Theme switch
+            {
+                ThemeMode.Light => ThemeMode.Dark,
+                ThemeMode.Dark => ThemeMode.HighContrast,
+                ThemeMode.HighContrast => ThemeMode.Light,
+                _ => ThemeMode.Light
+            };
         }
     }
 }

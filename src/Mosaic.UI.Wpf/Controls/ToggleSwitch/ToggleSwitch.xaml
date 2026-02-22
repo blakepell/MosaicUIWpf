@@ -1,14 +1,20 @@
-﻿<ResourceDictionary
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <Style TargetType="{x:Type controls:ToggleSwitch}">
-        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="#0078D7" />
-        <Setter Property="Foreground" Value="#FFFFFF" />
+        <Setter Property="OnBackgroundBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="OffBackgroundBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
         <Setter Property="Focusable" Value="True" />
+        <Setter Property="CornerRadius" Value="14" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
@@ -35,6 +41,7 @@
                                     Margin="6,0,0,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
                                     Text="{TemplateBinding OnText}"
                                     TextTrimming="CharacterEllipsis" />
                                 <TextBlock
@@ -43,6 +50,7 @@
                                     Margin="0,0,6,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
                                     Text="{TemplateBinding OffText}"
                                     TextTrimming="CharacterEllipsis" />
                             </Grid>
@@ -59,6 +67,12 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.65" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

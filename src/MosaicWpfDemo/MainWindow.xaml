@@ -120,7 +120,7 @@
                         Width="48"
                         Click="ButtonToggleTheme_OnClick"
                         Style="{StaticResource TitleBarButtonStyle}"
-                        ToolTip="Toggle Themes">
+                        ToolTip="Cycle themes (Light, Dark, High Contrast)">
                         <Button.ContentTemplate>
                             <DataTemplate>
                                 <Viewbox Width="16" Height="16">

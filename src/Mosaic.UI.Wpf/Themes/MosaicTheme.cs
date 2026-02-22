@@ -115,5 +115,12 @@
 
         public static ComponentResourceKey SidebarSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundColor");
         public static ComponentResourceKey SidebarSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundBrush");
+
+        // Typography
+        public static ComponentResourceKey FontFamily { get; } = new(typeof(MosaicTheme), "FontFamily");
+        public static ComponentResourceKey MonospaceFontFamily { get; } = new(typeof(MosaicTheme), "MonospaceFontFamily");
+        public static ComponentResourceKey FontSizeSmall { get; } = new(typeof(MosaicTheme), "FontSizeSmall");
+        public static ComponentResourceKey FontSizeNormal { get; } = new(typeof(MosaicTheme), "FontSizeNormal");
+        public static ComponentResourceKey FontSizeLarge { get; } = new(typeof(MosaicTheme), "FontSizeLarge");
     }
 }

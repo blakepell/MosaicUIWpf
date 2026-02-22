@@ -1,0 +1,23 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  Typography tokens. Use keyed styles to opt in and avoid polluting consumer defaults.  -->
+    <FontFamily x:Key="{x:Static themes:MosaicTheme.FontFamily}">Segoe UI</FontFamily>
+    <FontFamily x:Key="{x:Static themes:MosaicTheme.MonospaceFontFamily}">Consolas</FontFamily>
+
+    <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeSmall}">11</sys:Double>
+    <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeNormal}">12</sys:Double>
+    <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeLarge}">14</sys:Double>
+
+    <Style x:Key="Mosaic.Text.Body" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+    </Style>
+
+    <Style x:Key="Mosaic.Text.Caption" BasedOn="{StaticResource Mosaic.Text.Body}" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
+    </Style>
+</ResourceDictionary>

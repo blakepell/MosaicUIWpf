@@ -15,7 +15,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ShadowPanel/ShadowPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/StopwatchDisplay/StopwatchDisplay.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/StringListEditor/StringListEditor.xaml" />
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ShadowPanel/ShadowPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Shield/Shield.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SymbolRating/SymbolRating.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />

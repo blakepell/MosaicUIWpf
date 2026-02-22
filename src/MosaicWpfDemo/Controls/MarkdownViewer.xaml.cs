@@ -129,23 +129,17 @@ namespace MosaicWpfDemo.Controls
                 convertedHtml = $"<pre>{ex.ToFormattedString().HtmlEncode()}</pre>";
             }
 
-            string backgroundColor;
-            string foregroundColor;
             string strTheme;
 
             var theme = AppServices.GetService<ThemeManager>();
 
-            if (theme == null || theme.Theme == Mosaic.UI.Wpf.ThemeMode.Dark)
+            if (theme == null || theme.Theme != Mosaic.UI.Wpf.ThemeMode.Light)
             {
                 strTheme = "dark";
-                backgroundColor = "#232325";
-                foregroundColor = "#FFFFFF";
             }
             else
             {
                 strTheme = "light";
-                backgroundColor = "#FFFFFF";
-                foregroundColor = "#000000";
             }
 
             // Basic HTML shell - place converted markdown inside the body

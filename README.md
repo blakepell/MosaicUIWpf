@@ -22,6 +22,10 @@ A final note, if you have a useful reusable (mostly) compartmentalized control y
 
 ![Light Theme](./docs/images/screen-property-grid.png)
 
+## Architecture Blueprint
+
+See `docs/ARCHITECTURE_BLUEPRINT.md` for the control-library architecture, theming model, interoperability rules, accessibility baseline, and DX guidelines.
+
 ## Solution Projects
 
 | Feature                | Description                                                                                                                            |

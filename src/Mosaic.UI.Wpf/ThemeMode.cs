@@ -12,6 +12,10 @@
         /// <summary>
         /// Dark Mode
         /// </summary>
-        Dark
+        Dark,
+        /// <summary>
+        /// High Contrast Mode
+        /// </summary>
+        HighContrast
     }
 }

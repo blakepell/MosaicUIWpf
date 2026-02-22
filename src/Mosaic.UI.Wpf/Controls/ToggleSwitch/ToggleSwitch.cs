@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -10,28 +10,21 @@
 
 // ReSharper disable CheckNamespace
 
+using System.Windows.Automation.Peers;
 using System.Windows.Media.Animation;
 
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
-    /// Represents a toggle switch control that allows users to switch between two states, such as "On" and "Off".
+    /// Represents a toggle switch control that allows users to switch between two states.
     /// </summary>
-    /// <remarks>The <see cref="ToggleSwitch"/> control provides a customizable toggle mechanism with visual
-    /// feedback. It supports binding to a boolean value via the <see cref="IsOn"/> property, and allows customization
-    /// of the displayed text and background colors for the "On" and "Off" states using the <see cref="OnText"/>, <see
-    /// cref="OffText"/>, <see cref="OnBackgroundBrush"/>, and <see cref="OffBackgroundBrush"/> properties.  The control
-    /// is designed to be templated, and it relies on specific template parts for its functionality: - A <see
-    /// cref="Border"/> named "PART_Thumb" for the toggle thumb. - A <see cref="TextBlock"/> named "PART_OnTextBlock"
-    /// for the "On" state text. - A <see cref="TextBlock"/> named "PART_OffTextBlock" for the "Off" state text.  The
-    /// control handles user interaction, such as mouse clicks, to toggle its state.</remarks>
+    [DefaultEvent(nameof(Toggled))]
+    [DefaultProperty(nameof(IsOn))]
     [TemplatePart(Name = PartThumb, Type = typeof(Border))]
     [TemplatePart(Name = PartOnTextBlock, Type = typeof(TextBlock))]
     [TemplatePart(Name = PartOffTextBlock, Type = typeof(TextBlock))]
     public class ToggleSwitch : Control
     {
-        #region Private Fields
-
         private const string PartThumb = "PART_Thumb";
         private const string PartOnTextBlock = "PART_OnTextBlock";
         private const string PartOffTextBlock = "PART_OffTextBlock";
@@ -41,19 +34,20 @@ namespace Mosaic.UI.Wpf.Controls
         private TextBlock? _onTextBlock;
         private TextBlock? _offTextBlock;
 
-        #endregion
-
         #region Dependency Properties
 
         /// <summary>
         /// Identifies the <see cref="IsOn"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty IsOnProperty = DependencyProperty.Register(
-            nameof(IsOn), typeof(bool), typeof(ToggleSwitch), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsOnChanged));
+            nameof(IsOn), typeof(bool), typeof(ToggleSwitch),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnIsOnChanged));
 
         /// <summary>
         /// Gets or sets a value indicating whether the control is in the "on" state.
         /// </summary>
+        [Category("Common")]
+        [Description("Indicates whether the switch is currently on.")]
         public bool IsOn
         {
             get => (bool)GetValue(IsOnProperty);
@@ -61,26 +55,7 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Called when the value of the <see cref="IsOn"/> dependency property changes.
-        /// </summary>
-        /// <param name="d">The <see cref="DependencyObject"/> on which the property value has changed.</param>
-        /// <param name="e">The event data containing information about the property change.</param>
-        private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var ts = (ToggleSwitch)d;
-            ts?.UpdateThumbPosition(true);
-            ts?.RefreshUI();
-
-            // Raise the Changed event for subscribers
-            if (ts != null)
-            {
-                ts.OnChanged(new ToggleSwitchChangedEventArgs((bool)e.NewValue));
-            }
-        }
-
-        /// <summary>
-        /// Identifies the <see cref="OnText"/> dependency property, which represents the text displayed when the toggle
-        /// switch is in the "on" state.
+        /// Identifies the <see cref="OnText"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty OnTextProperty = DependencyProperty.Register(
             nameof(OnText), typeof(string), typeof(ToggleSwitch), new PropertyMetadata("ON"));
@@ -88,6 +63,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Gets or sets the text displayed when the control is in the "on" state.
         /// </summary>
+        [Category("Appearance")]
+        [Description("Text shown on the left side when the switch is on.")]
         public string OnText
         {
             get => (string)GetValue(OnTextProperty);
@@ -103,6 +80,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Gets or sets the text displayed when the control is in the "off" state.
         /// </summary>
+        [Category("Appearance")]
+        [Description("Text shown on the right side when the switch is off.")]
         public string OffText
         {
             get => (string)GetValue(OffTextProperty);
@@ -112,11 +91,14 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Identifies the <see cref="OnBackgroundBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OnBackgroundBrushProperty = DependencyProperty.Register(nameof(OnBackgroundBrush), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Green));
+        public static readonly DependencyProperty OnBackgroundBrushProperty = DependencyProperty.Register(
+            nameof(OnBackgroundBrush), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Green, OnStateVisualPropertyChanged));
 
         /// <summary>
-        /// Gets or sets the brush used to render the background when the control is in the "on" state.
+        /// Gets or sets the background brush used when the switch is on.
         /// </summary>
+        [Category("Brushes")]
+        [Description("Background brush used when IsOn is true.")]
         public Brush OnBackgroundBrush
         {
             get => (Brush)GetValue(OnBackgroundBrushProperty);
@@ -126,11 +108,14 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Identifies the <see cref="OffBackgroundBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OffBackgroundBrushProperty = DependencyProperty.Register(nameof(OffBackgroundBrush), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.DarkGray));
+        public static readonly DependencyProperty OffBackgroundBrushProperty = DependencyProperty.Register(
+            nameof(OffBackgroundBrush), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.DarkGray, OnStateVisualPropertyChanged));
 
         /// <summary>
-        /// Gets or sets the background brush used when the control is in the "off" state.
+        /// Gets or sets the background brush used when the switch is off.
         /// </summary>
+        [Category("Brushes")]
+        [Description("Background brush used when IsOn is false.")]
         public Brush OffBackgroundBrush
         {
             get => (Brush)GetValue(OffBackgroundBrushProperty);
@@ -144,56 +129,101 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(CornerRadius), typeof(CornerRadius), typeof(ToggleSwitch), new PropertyMetadata(default(CornerRadius)));
 
         /// <summary>
-        /// Gets or sets the radius of the corners for the element.
+        /// Gets or sets the corner radius used by the switch track and thumb.
         /// </summary>
+        [Category("Appearance")]
+        [Description("Corner radius for switch border and thumb.")]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
         }
 
-        #endregion
-
-        // Changed event and supporting EventArgs
         /// <summary>
-        /// Raised when the IsOn property changes.
+        /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public event EventHandler<ToggleSwitchChangedEventArgs>? Changed;
+        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+            nameof(Command), typeof(ICommand), typeof(ToggleSwitch), new PropertyMetadata(default(ICommand)));
 
         /// <summary>
-        /// Protected virtual method to allow derived classes to handle or intercept the Changed event.
+        /// Gets or sets the command that is invoked for user initiated toggles.
         /// </summary>
-        /// <param name="e">Event args containing the new IsOn value.</param>
-        protected virtual void OnChanged(ToggleSwitchChangedEventArgs e)
+        [Category("Action")]
+        [Description("Command invoked when the user toggles the switch.")]
+        public ICommand? Command
         {
-            Changed?.Invoke(this, e);
+            get => (ICommand?)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
         /// <summary>
-        /// EventArgs for the Changed event.
+        /// Identifies the <see cref="CommandParameter"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
+            nameof(CommandParameter), typeof(object), typeof(ToggleSwitch), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets an optional parameter for <see cref="Command"/>.
+        /// </summary>
+        [Category("Action")]
+        [Description("Optional command parameter; defaults to the new IsOn state when null.")]
+        public object? CommandParameter
+        {
+            get => GetValue(CommandParameterProperty);
+            set => SetValue(CommandParameterProperty, value);
+        }
+
+        #endregion
+
+        #region Routed Events
+
+        /// <summary>
+        /// Identifies the <see cref="Toggled"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent ToggledEvent = EventManager.RegisterRoutedEvent(
+            nameof(Toggled), RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<bool>), typeof(ToggleSwitch));
+
+        /// <summary>
+        /// Occurs when <see cref="IsOn"/> changes.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Raised when IsOn changes.")]
+        public event RoutedPropertyChangedEventHandler<bool> Toggled
+        {
+            add => AddHandler(ToggledEvent, value);
+            remove => RemoveHandler(ToggledEvent, value);
+        }
+
+        #endregion
+
+        #region CLR Events
+
+        /// <summary>
+        /// Raised when <see cref="IsOn"/> changes.
+        /// </summary>
+        /// <remarks>
+        /// This event is preserved for backward compatibility. Prefer <see cref="Toggled"/> for routed event scenarios.
+        /// </remarks>
+        public event EventHandler<ToggleSwitchChangedEventArgs>? Changed;
+
+        /// <summary>
+        /// Event args for the <see cref="Changed"/> event.
         /// </summary>
         public sealed class ToggleSwitchChangedEventArgs : EventArgs
         {
             /// <summary>
-            /// Gets IsOn property
+            /// Gets the current switch state.
             /// </summary>
             public bool IsOn { get; }
 
-            /// <inheritdoc />
             public ToggleSwitchChangedEventArgs(bool isOn)
             {
                 IsOn = isOn;
             }
         }
 
-        /// <summary>
-        /// Initializes static members of the <see cref="ToggleSwitch"/> class.
-        /// </summary>
-        /// <remarks>This static constructor overrides metadata for several dependency properties of the
-        /// <see cref="ToggleSwitch"/> control: <list type="bullet"> <item> <description>Sets the default style key to
-        /// associate the control with its default style.</description> </item> <item> <description>Marks the control as
-        /// focusable by default.</description> </item> <item> <description>Sets the default width to 60.0 and the
-        /// default height to 28.0.</description> </item> </list></remarks>
+        #endregion
+
         static ToggleSwitch()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
@@ -205,24 +235,158 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Initializes a new instance of the <see cref="ToggleSwitch"/> class.
         /// </summary>
-        /// <remarks>The default cursor for the toggle switch is set to <see cref="Cursors.Hand"/>, 
-        /// indicating that the control is interactive.</remarks>
         public ToggleSwitch()
         {
             Cursor = Cursors.Hand;
         }
 
+        private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not ToggleSwitch toggleSwitch)
+            {
+                return;
+            }
+
+            var oldValue = (bool)e.OldValue;
+            var newValue = (bool)e.NewValue;
+
+            toggleSwitch.UpdateThumbPosition(animate: true);
+            toggleSwitch.RefreshUI();
+            toggleSwitch.RaiseToggledEvents(oldValue, newValue);
+        }
+
+        private static void OnStateVisualPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is ToggleSwitch toggleSwitch)
+            {
+                toggleSwitch.RefreshUI();
+            }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ToggleSwitchAutomationPeer(this);
+        }
+
+        /// <inheritdoc />
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            if (_thumb != null)
+            {
+                _thumb.Loaded -= OnThumbLoaded;
+            }
+
+            if (_canvasParent != null)
+            {
+                _canvasParent.SizeChanged -= OnCanvasSizeChanged;
+            }
+
+            _thumb = GetTemplateChild(PartThumb) as Border;
+            _canvasParent = _thumb?.Parent as Canvas;
+            _onTextBlock = GetTemplateChild(PartOnTextBlock) as TextBlock;
+            _offTextBlock = GetTemplateChild(PartOffTextBlock) as TextBlock;
+
+            if (_thumb != null)
+            {
+                _thumb.Loaded += OnThumbLoaded;
+            }
+
+            if (_canvasParent != null)
+            {
+                _canvasParent.SizeChanged += OnCanvasSizeChanged;
+            }
+
+            UpdateThumbPosition(animate: false);
+            RefreshUI();
+        }
+
+        /// <inheritdoc />
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            if (!IsEnabled)
+            {
+                return;
+            }
+
+            ToggleFromUserInteraction();
+            e.Handled = true;
+        }
+
+        /// <inheritdoc />
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (!IsEnabled)
+            {
+                return;
+            }
+
+            if (e.Key == Key.Space || e.Key == Key.Enter)
+            {
+                ToggleFromUserInteraction();
+                e.Handled = true;
+            }
+        }
+
+        internal void ToggleFromAutomation()
+        {
+            if (!IsEnabled)
+            {
+                return;
+            }
+
+            ToggleFromUserInteraction();
+        }
+
+        private void ToggleFromUserInteraction()
+        {
+            var newValue = !IsOn;
+            SetCurrentValue(IsOnProperty, newValue);
+            ExecuteToggleCommand(newValue);
+        }
+
+        private void ExecuteToggleCommand(bool newValue)
+        {
+            var command = Command;
+            if (command == null)
+            {
+                return;
+            }
+
+            var parameter = CommandParameter ?? newValue;
+            if (command.CanExecute(parameter))
+            {
+                command.Execute(parameter);
+            }
+        }
+
+        private void RaiseToggledEvents(bool oldValue, bool newValue)
+        {
+            RaiseEvent(new RoutedPropertyChangedEventArgs<bool>(oldValue, newValue, ToggledEvent));
+            OnChanged(new ToggleSwitchChangedEventArgs(newValue));
+
+            if (UIElementAutomationPeer.FromElement(this) is ToggleSwitchAutomationPeer peer)
+            {
+                peer.RaiseToggleStateChanged(oldValue, newValue);
+            }
+        }
+
         /// <summary>
-        /// Updates the user interface to reflect the current state of the control.
+        /// Protected virtual method to allow derived classes to handle the <see cref="Changed"/> event.
         /// </summary>
-        /// <remarks>
-        /// This method adjusts the background and the visibility of text blocks based on the
-        /// value of the <see cref="IsOn"/> property. If <see cref="_onTextBlock"/> or <see cref="_offTextBlock"/> are
-        /// null, their visibility is not modified.
-        /// </remarks>
+        protected virtual void OnChanged(ToggleSwitchChangedEventArgs e)
+        {
+            Changed?.Invoke(this, e);
+        }
+
         private void RefreshUI()
         {
-            this.Background = IsOn ? OnBackgroundBrush : OffBackgroundBrush;
+            Background = IsOn ? OnBackgroundBrush : OffBackgroundBrush;
 
             if (_onTextBlock != null)
             {
@@ -235,95 +399,16 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
-        /// <summary>
-        /// Invoked whenever application code or internal processes call <see cref="ApplyTemplate"/>.  This method is
-        /// used to reapply the control's template and initialize or update references  to template parts and event
-        /// handlers.
-        /// </summary>
-        /// <remarks>
-        /// This method ensures that the control's visual elements, such as the thumb and text
-        /// blocks, are correctly initialized and event handlers are properly subscribed. It also updates the thumb's
-        /// position and refreshes the control's appearance to reflect the current state.  If the control template is
-        /// changed, this method will be called again to reinitialize the template parts and associated logic.
-        /// </remarks>
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            // Unsubscribe previous handlers if any
-            if (_thumb != null)
-            {
-                _thumb.Loaded -= OnThumbLoaded;
-            }
-
-            _thumb = GetTemplateChild(PartThumb) as Border;
-            _canvasParent = _thumb?.Parent as Canvas;
-
-            if (_thumb != null)
-            {
-                _thumb.Loaded += OnThumbLoaded;
-            }
-
-            if (_canvasParent != null)
-            {
-                _canvasParent.SizeChanged -= OnCanvasSizeChanged;
-                _canvasParent.SizeChanged += OnCanvasSizeChanged;
-            }
-
-            _onTextBlock = GetTemplateChild(PartOnTextBlock) as TextBlock;
-            _offTextBlock = GetTemplateChild(PartOffTextBlock) as TextBlock;
-
-            // Handle clicks anywhere on the control
-            this.MouseLeftButtonDown -= OnMouseLeftButtonDown;
-            this.MouseLeftButtonDown += OnMouseLeftButtonDown;
-
-            // Set initial position without animation
-            this.UpdateThumbPosition(false);
-
-            // Refresh colors, etc.
-            this.RefreshUI();
-        }
-
-        /// <summary>
-        /// Handles the <see cref="FrameworkElement.Loaded"/> event for the thumb control.
-        /// </summary>
-        /// <param name="sender">The source of the event, typically the thumb control.</param>
-        /// <param name="e">The event data associated with the <see cref="RoutedEventArgs"/>.</param>
         private void OnThumbLoaded(object? sender, RoutedEventArgs e)
         {
-            UpdateThumbPosition(false);
+            UpdateThumbPosition(animate: false);
         }
 
-        /// <summary>
-        /// Handles the event triggered when the size of the canvas changes.
-        /// </summary>
-        /// <param name="sender">The source of the event. This can be <see langword="null"/>.</param>
-        /// <param name="e">The event data containing information about the new and previous sizes of the canvas.</param>
         private void OnCanvasSizeChanged(object? sender, SizeChangedEventArgs e)
         {
-            // Recalculate target positions when container resizes
-            UpdateThumbPosition(false);
+            UpdateThumbPosition(animate: false);
         }
 
-        /// <summary>
-        /// Handles the left mouse button down event and toggles the state of the control.
-        /// </summary>
-        /// <param name="sender">The source of the event, typically the control that was clicked.</param>
-        /// <param name="e">The <see cref="MouseButtonEventArgs"/> containing event data, including the mouse button state.</param>
-        private void OnMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
-        {
-            // Toggle state on click anywhere within the control
-            IsOn = !IsOn;
-            e.Handled = true;
-
-            this.RefreshUI();
-        }
-
-        /// <summary>
-        /// Updates the position of the thumb control within its parent canvas, optionally animating the movement.
-        /// </summary>
-        /// <param name="animate">A value indicating whether the thumb's movement should be animated.  <see langword="true"/> to animate the
-        /// movement; otherwise, <see langword="false"/>.</param>
         private void UpdateThumbPosition(bool animate)
         {
             if (_thumb == null || _canvasParent == null)
@@ -331,23 +416,17 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            // Ensure we have measured sizes
             if (_canvasParent.ActualWidth <= 0 || _thumb.ActualWidth <= 0)
             {
                 return;
             }
 
-            // The template sets Margin="4" on the thumb; when using Canvas.Left the actual left edge is Canvas.Left + Margin.Left.
-            // We want the thumb's left edge to be 4 when off, and (parentWidth - thumbWidth - 4) when on.
-            // Therefore Canvas.Left (value we set) should be desiredLeft - marginLeft.
+            var marginLeft = _thumb.Margin.Left;
+            var offLeft = 0.0;
+            var desiredOnLeftEdge = _canvasParent.ActualWidth - _thumb.ActualWidth - 4;
+            var onLeft = Math.Max(0, desiredOnLeftEdge - marginLeft);
 
-            double marginLeft = _thumb.Margin.Left;
-
-            double offLeft = 0; // desired left edge 4 => Canvas.Left = 0 because Margin.Left == 4
-            double desiredOnLeftEdge = _canvasParent.ActualWidth - _thumb.ActualWidth - 4;
-            double onLeft = Math.Max(0, desiredOnLeftEdge - marginLeft);
-
-            double target = IsOn ? onLeft : offLeft;
+            var target = IsOn ? onLeft : offLeft;
 
             if (animate)
             {
@@ -362,7 +441,7 @@ namespace Mosaic.UI.Wpf.Controls
             }
             else
             {
-                _thumb.BeginAnimation(Canvas.LeftProperty, null); // stop any animation
+                _thumb.BeginAnimation(Canvas.LeftProperty, null);
                 Canvas.SetLeft(_thumb, target);
             }
         }

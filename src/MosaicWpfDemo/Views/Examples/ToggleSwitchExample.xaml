@@ -33,6 +33,19 @@
             OffBackgroundBrush="Red"
             OnBackgroundBrush="Green" />
 
+        <TextBlock Margin="0,8,0,0" Text="MVVM surface: routed event + command" />
+        <TextBlock Margin="0,0,0,6">
+            <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" Text="Last routed event state =" />
+            <Run Foreground="CornflowerBlue" Text="{Binding LastEventState}" />
+            <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" Text=", command count =" />
+            <Run Foreground="CornflowerBlue" Text="{Binding CommandInvocations}" />
+        </TextBlock>
+
+        <mosaic:ToggleSwitch
+            HorizontalAlignment="Left"
+            Command="{Binding ToggleCommand}"
+            Toggled="ToggleSwitch_OnToggled" />
+
         <TextBlock Margin="0,6,0,6" Text="Toggle switch with no labels." />
         <mosaic:ToggleSwitch
             Margin="0,6,0,0"

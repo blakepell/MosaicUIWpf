@@ -7,9 +7,9 @@
     xmlns:local="clr-namespace:MosaicWpfDemo.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
-    xmlns:themes="http://schemas.apexgate.com/wpf/mosaic-ui"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="AboutView_OnLoaded"
     UseLayoutRounding="True"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -24,6 +24,105 @@
             <!--  Info Main Body  -->
             <StackPanel>
                 <local:Header ImageSource="pack://application:,,/Assets/collage-48.png" Text="Mosaic UI for WPF" />
+
+                <TextBlock
+                    Margin="9,10,0,0"
+                    FontSize="18"
+                    Text="Theme Lab" />
+
+                <Separator
+                    Margin="8,3,0,0"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                    SnapsToDevicePixels="True" />
+
+                <Border
+                    Margin="20,6,0,0"
+                    Padding="10"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="190" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            Text="Theme Mode" />
+                        <ComboBox
+                            x:Name="ThemeModeSelector"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="220"
+                            HorizontalAlignment="Left"
+                            SelectionChanged="ThemeModeSelector_OnSelectionChanged">
+                            <ComboBoxItem Tag="Light" Content="Light" />
+                            <ComboBoxItem Tag="Dark" Content="Dark" />
+                            <ComboBoxItem Tag="HighContrast" Content="High Contrast" />
+                        </ComboBox>
+
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,8,0,0"
+                            VerticalAlignment="Center"
+                            Text="Native Styles" />
+                        <CheckBox
+                            x:Name="NativeStylesCheckBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,8,0,0"
+                            Click="NativeStylesCheckBox_OnClick"
+                            Content="Style native WPF controls" />
+
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="0,6,0,0"
+                            VerticalAlignment="Center"
+                            Text="System Colors" />
+                        <CheckBox
+                            x:Name="SystemColorsCheckBox"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="0,6,0,0"
+                            Click="SystemColorsCheckBox_OnClick"
+                            Content="Override SystemColors keys" />
+
+                        <Border
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="0,10,0,0"
+                            Padding="10"
+                            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundLightBrush}}"
+                            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
+                            BorderThickness="1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock
+                                    Margin="0,0,12,0"
+                                    VerticalAlignment="Center"
+                                    Text="Preview"
+                                    FontWeight="SemiBold" />
+                                <Button MinWidth="110" Content="Action Button" />
+                                <TextBlock
+                                    Margin="12,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
+                                    Text="Accent" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
 
                 <Grid Margin="20,0,0,0">
                     <Grid.ColumnDefinitions>

@@ -1,0 +1,29 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  High-contrast system color overrides  -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FF000000" />
+    <Color x:Key="{x:Static SystemColors.ControlColorKey}">#FF000000</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#FFFFFFFF" />
+    <Color x:Key="{x:Static SystemColors.ControlTextColorKey}">#FFFFFFFF</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#FF000000" />
+    <Color x:Key="{x:Static SystemColors.WindowColorKey}">#FF000000</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#FFFFFFFF" />
+    <Color x:Key="{x:Static SystemColors.WindowTextColorKey}">#FFFFFFFF</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FFFFFF00" />
+    <Color x:Key="{x:Static SystemColors.HighlightColorKey}">#FFFFFF00</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FF000000" />
+    <Color x:Key="{x:Static SystemColors.HighlightTextColorKey}">#FF000000</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#FF000000" />
+    <Color x:Key="{x:Static SystemColors.MenuColorKey}">#FF000000</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#FFFFFFFF" />
+    <Color x:Key="{x:Static SystemColors.MenuTextColorKey}">#FFFFFFFF</Color>
+
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuHighlightBrushKey}" Color="#FFFFFF00" />
+    <Color x:Key="{x:Static SystemColors.MenuHighlightColorKey}">#FFFFFF00</Color>
+</ResourceDictionary>

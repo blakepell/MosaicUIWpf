@@ -9,7 +9,6 @@
  */
 
 using System.Windows;
-using System.Windows.Markup;
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None,            //where theme specific resource dictionaries are located
@@ -20,9 +19,3 @@ using System.Windows.Markup;
                                                 // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsPrefix("http://schemas.apexgate.net/wpf/mosaic", "mosaic")]
-[assembly: XmlnsDefinition("http://schemas.mosaicgate.net/wpf/mosaic", "Mosaic.UI.Wpf.Controls")]
-[assembly: XmlnsDefinition("http://schemas.mosaicgate.net/wpf/mosaic", "Mosaic.UI.Wpf.Behaviors")]
-[assembly: XmlnsDefinition("http://schemas.mosaicgate.net/wpf/mosaic", "Mosaic.UI.Wpf.Converters")]
-[assembly: XmlnsDefinition("http://schemas.mosaicgate.net/wpf/mosaic", "Mosaic.UI.Wpf.Extensions")]
-[assembly: XmlnsDefinition("http://schemas.mosaicgate.net/wpf/mosaic", "Mosaic.UI.Wpf.Themes")]

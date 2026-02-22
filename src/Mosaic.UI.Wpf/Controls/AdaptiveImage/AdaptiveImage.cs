@@ -118,10 +118,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// Handles the theme change event for the Mosaic application.
         /// </summary>
         /// <param name="sender">The source of the event. This parameter can be <see langword="null"/>.</param>
-        /// <param name="e">A string representing the new theme mode. Expected values are "Light" or "Dark".</param>
+        /// <param name="e">The new theme mode.</param>
         private void MosaicApp_ThemeChanged(object? sender, ThemeMode e)
         {
-            this.ThemeMode = e == ThemeMode.Light ? ThemeMode.Light : ThemeMode.Dark;
+            this.ThemeMode = e;
             InvalidateAdaptive();
         }
 
@@ -205,7 +205,9 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            if (theme.Theme == ThemeMode.Light)
+            var useDarkTransform = theme.Theme != ThemeMode.Light;
+
+            if (!useDarkTransform)
             {
                 if (_cachedLight == null)
                 {
@@ -214,7 +216,7 @@ namespace Mosaic.UI.Wpf.Controls
 
                 target = _cachedLight;
             }
-            else // Dark
+            else // Dark / HighContrast
             {
                 if (_cachedDark == null)
                 {
