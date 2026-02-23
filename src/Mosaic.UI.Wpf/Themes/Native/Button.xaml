@@ -7,7 +7,7 @@
         <Setter Property="Background" Value="{DynamicResource Button.Static.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="1" />

@@ -123,11 +123,13 @@
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FF333337</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}}" />
 
+    <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
+
     <!--  Button  -->
     <Color x:Key="Button.Static.BackgroundColor">#FF2D2D30</Color>
     <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource Button.Static.BackgroundColor}" />
 
-    <Color x:Key="Button.Static.BorderColor">#FF3A3A3C</Color>
+    <Color x:Key="Button.Static.BorderColor">#FF505055</Color>
     <SolidColorBrush x:Key="Button.Static.Border" Color="{DynamicResource Button.Static.BorderColor}" />
 
     <Color x:Key="Button.MouseOver.BackgroundColor">#FF3A96DD</Color>

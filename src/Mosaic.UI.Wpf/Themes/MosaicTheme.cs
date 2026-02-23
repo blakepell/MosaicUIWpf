@@ -116,6 +116,11 @@
         public static ComponentResourceKey SidebarSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundColor");
         public static ComponentResourceKey SidebarSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundBrush");
 
+        public static ComponentResourceKey ButtonBorderThickness { get; } = new(typeof(MosaicTheme), "ButtonBorderThickness");
+
+        public static ComponentResourceKey WindowTitleBarButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarButtonStyle");
+        public static ComponentResourceKey WindowTitleBarCloseButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarCloseButtonStyle");
+
         // Typography
         public static ComponentResourceKey FontFamily { get; } = new(typeof(MosaicTheme), "FontFamily");
         public static ComponentResourceKey MonospaceFontFamily { get; } = new(typeof(MosaicTheme), "MonospaceFontFamily");

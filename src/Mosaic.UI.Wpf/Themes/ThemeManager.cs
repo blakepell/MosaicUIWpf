@@ -211,34 +211,22 @@ namespace Mosaic.UI.Wpf.Themes
 
             try
             {
-                foreach (var dictionary in _managedDictionaries.ToList())
+                var existingManagedDictionaries = _managedDictionaries.ToList();
+                var nextManagedDictionaries = BuildManagedDictionaries();
+
+                // Add first so lookups never see a transient "resource not found" gap while switching themes.
+                foreach (var dictionary in nextManagedDictionaries)
+                {
+                    MergedDictionaries.Add(dictionary);
+                }
+
+                foreach (var dictionary in existingManagedDictionaries)
                 {
                     MergedDictionaries.Remove(dictionary);
                 }
 
                 _managedDictionaries.Clear();
-
-                if (Typography)
-                {
-                    AddManagedDictionary(ThemeDictionaryUris.Typography);
-                }
-
-                if (SystemColors)
-                {
-                    AddManagedDictionary(ThemeDictionaryUris.GetSystemColorsUri(Theme));
-                }
-
-                AddManagedDictionary(ThemeDictionaryUris.GetThemeUri(Theme));
-
-                if (ControlTemplates)
-                {
-                    AddManagedDictionary(ThemeDictionaryUris.Generic);
-                }
-
-                if (Native)
-                {
-                    AddManagedDictionary(ThemeDictionaryUris.Native);
-                }
+                _managedDictionaries.AddRange(nextManagedDictionaries);
 
                 OnThemeChanged(Theme);
             }
@@ -248,11 +236,39 @@ namespace Mosaic.UI.Wpf.Themes
             }
         }
 
-        private void AddManagedDictionary(Uri source)
+        private List<ResourceDictionary> BuildManagedDictionaries()
         {
-            var dictionary = new ResourceDictionary { Source = source };
-            MergedDictionaries.Add(dictionary);
-            _managedDictionaries.Add(dictionary);
+            var dictionaries = new List<ResourceDictionary>();
+
+            if (Typography)
+            {
+                dictionaries.Add(CreateDictionary(ThemeDictionaryUris.Typography));
+            }
+
+            if (SystemColors)
+            {
+                dictionaries.Add(CreateDictionary(ThemeDictionaryUris.GetSystemColorsUri(Theme)));
+            }
+
+            dictionaries.Add(CreateDictionary(ThemeDictionaryUris.GetThemeUri(Theme)));
+            dictionaries.Add(CreateDictionary(ThemeDictionaryUris.WindowChrome));
+
+            if (ControlTemplates)
+            {
+                dictionaries.Add(CreateDictionary(ThemeDictionaryUris.Generic));
+            }
+
+            if (Native)
+            {
+                dictionaries.Add(CreateDictionary(ThemeDictionaryUris.Native));
+            }
+
+            return dictionaries;
+        }
+
+        private static ResourceDictionary CreateDictionary(Uri source)
+        {
+            return new ResourceDictionary { Source = source };
         }
 
         /// <summary>

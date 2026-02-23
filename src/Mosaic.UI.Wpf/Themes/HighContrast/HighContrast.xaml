@@ -53,6 +53,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.WarningColor}">#FFFFFF00</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ErrorColor}">#FFFF6B6B</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FF1A1A1A</Color>
+    <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
 
     <!--  Native control resource overrides  -->
     <Color x:Key="Button.Static.BackgroundColor">#FF000000</Color>

@@ -123,6 +123,8 @@
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FFD4EDF9</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}}" />
 
+    <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
+
     <!--  Button  -->
     <Color x:Key="Button.Static.BackgroundColor">#FFDDDDDD</Color>
     <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource Button.Static.BackgroundColor}" />

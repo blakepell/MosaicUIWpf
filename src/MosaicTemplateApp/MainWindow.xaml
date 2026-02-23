@@ -5,85 +5,23 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicTemplateApp.Views"
     Title=""
     Width="1000"
     Height="600"
-    AllowsTransparency="False"
     Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
     Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
+    theme:WindowChromeBehavior.CaptionHeight="0"
+    theme:WindowChromeBehavior.CornerRadius="10"
+    theme:WindowChromeBehavior.GlassFrameThickness="0"
+    theme:WindowChromeBehavior.IsEnabled="True"
+    theme:WindowChromeBehavior.ResizeBorderThickness="5"
+    theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
     mc:Ignorable="d">
-
-    <Window.Resources>
-        <!--  Button Styles for Theming  -->
-        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="48" />
-            <Setter Property="Height" Value="36" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style
-            x:Key="CloseButtonStyle"
-            BasedOn="{StaticResource TitleBarButtonStyle}"
-            TargetType="Button">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="0">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#E2342E" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#9A100C" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="0"
-            CornerRadius="10"
-            GlassFrameThickness="0"
-            ResizeBorderThickness="5,5,5,5"
-            UseAeroCaptionButtons="True" />
-    </WindowChrome.WindowChrome>
 
     <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -116,7 +54,7 @@
                     <Button
                         Width="48"
                         Click="ButtonToggleTheme_OnClick"
-                        Style="{StaticResource TitleBarButtonStyle}"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
                         ToolTip="Toggle Themes">
                         <Button.ContentTemplate>
                             <DataTemplate>
@@ -135,7 +73,7 @@
                         Click="Minimize_Click"
                         Content="&#xE921;"
                         FontFamily="Segoe MDL2 Assets"
-                        Style="{StaticResource TitleBarButtonStyle}"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
                         ToolTip="Minimize" />
                     <Button
                         x:Name="MaxRestoreButton"
@@ -144,7 +82,7 @@
                         Click="MaximizeRestore_Click"
                         Content="&#xE922;"
                         FontFamily="Segoe MDL2 Assets"
-                        Style="{StaticResource TitleBarButtonStyle}"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
                         ToolTip="Maximize/Restore" />
                     <Button
                         HorizontalContentAlignment="Center"
@@ -152,7 +90,7 @@
                         Click="Close_Click"
                         Content="&#xE8BB;"
                         FontFamily="Segoe MDL2 Assets"
-                        Style="{StaticResource CloseButtonStyle}"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
                         ToolTip="Close" />
                 </StackPanel>
                 <!--  App Icon  -->
