@@ -36,92 +36,31 @@
         </Grid.ColumnDefinitions>
 
         <!--  Custom Title Bar  -->
-        <Border
+        <mosaic:WindowTitleBar
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Margin="0"
-            Padding="0"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
-            Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
-            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-            <DockPanel Height="35" LastChildFill="True">
-                <!--  System Buttons (Right)  -->
-                <StackPanel
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Right"
-                    Orientation="Horizontal">
-                    <!--  Toggle Theme Button  -->
-                    <Button
-                        Width="48"
-                        Click="ButtonToggleTheme_OnClick"
-                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                        ToolTip="Cycle themes (Light, Dark, High Contrast)">
-                        <Button.ContentTemplate>
-                            <DataTemplate>
-                                <Viewbox Width="16" Height="16">
-                                    <Canvas Width="512" Height="512">
-                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </DataTemplate>
-                        </Button.ContentTemplate>
-                    </Button>
-
-                    <Button
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Click="Minimize_Click"
-                        Content="&#xE921;"
-                        FontFamily="Segoe MDL2 Assets"
-                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                        ToolTip="Minimize" />
-                    <Button
-                        x:Name="MaxRestoreButton"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Click="MaximizeRestore_Click"
-                        Content="&#xE922;"
-                        FontFamily="Segoe MDL2 Assets"
-                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                        ToolTip="Maximize/Restore" />
-                    <Button
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Click="Close_Click"
-                        Content="&#xE8BB;"
-                        FontFamily="Segoe MDL2 Assets"
-                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
-                        ToolTip="Close" />
-                </StackPanel>
-                <!--  App Icon  -->
-                <Image
-                    Width="16"
-                    Height="16"
-                    Margin="8,0,4,0"
-                    VerticalAlignment="Center"
-                    Source="/Assets/collage-48.png" />
-                <!--  Custom Controls (Left)  -->
-                <StackPanel
-                    VerticalAlignment="Center"
-                    DockPanel.Dock="Left"
-                    Orientation="Horizontal">
-                    <!--  Add your custom controls here  -->
-                </StackPanel>
-                <!--  Title (Background hack so mouse hit test works across the border)  -->
-                <Border Height="35" Background="Transparent">
-                    <TextBlock
-                        Margin="4,0,8,0"
-                        VerticalAlignment="Center"
-                        FontFamily="Segoe UI"
-                        FontSize="12"
-                        FontWeight="Normal"
-                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
-                        Text="Mosaic UI WPF Demo" />
-                </Border>
-            </DockPanel>
-        </Border>
+            IconSource="/Assets/collage-48.png"
+            TitleText="Mosaic UI WPF Demo">
+            <mosaic:WindowTitleBar.RightContent>
+                <!--  Toggle Theme Button  -->
+                <Button
+                    Width="48"
+                    Click="ButtonToggleTheme_OnClick"
+                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
+                    ToolTip="Cycle themes (Light, Dark, High Contrast)">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <Viewbox Width="16" Height="16">
+                                <Canvas Width="512" Height="512">
+                                    <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                                </Canvas>
+                            </Viewbox>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+            </mosaic:WindowTitleBar.RightContent>
+        </mosaic:WindowTitleBar>
 
         <mosaic:SideMenu
             x:Name="TestSideMenu"

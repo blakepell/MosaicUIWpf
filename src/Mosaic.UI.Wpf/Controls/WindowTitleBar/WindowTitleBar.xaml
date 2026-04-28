@@ -1,0 +1,98 @@
+<UserControl
+    x:Class="Mosaic.UI.Wpf.Controls.WindowTitleBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
+    x:Name="TitleBarControl"
+    d:DesignHeight="35"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    MouseLeftButtonDown="OnTitleBarMouseLeftButtonDown">
+
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
+    <DockPanel
+        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+        LastChildFill="True">
+
+        <!--  System Buttons (Right)  -->
+        <StackPanel
+            VerticalAlignment="Center"
+            DockPanel.Dock="Right"
+            Orientation="Horizontal">
+
+            <!--  User-supplied right content (e.g. theme toggle, settings)  -->
+            <ContentPresenter Content="{Binding RightContent, ElementName=TitleBarControl}" />
+
+            <!--  Minimize  -->
+            <Button
+                x:Name="MinimizeButton"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Click="OnMinimizeClick"
+                Content="&#xE921;"
+                FontFamily="Segoe MDL2 Assets"
+                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
+                ToolTip="Minimize"
+                Visibility="{Binding ShowMinimizeButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+
+            <!--  Maximize / Restore  -->
+            <Button
+                x:Name="MaxRestoreButton"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Click="OnMaxRestoreClick"
+                Content="&#xE922;"
+                FontFamily="Segoe MDL2 Assets"
+                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
+                ToolTip="Maximize/Restore"
+                Visibility="{Binding ShowMaxRestoreButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+
+            <!--  Close  -->
+            <Button
+                x:Name="CloseButton"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Click="OnCloseClick"
+                Content="&#xE8BB;"
+                FontFamily="Segoe MDL2 Assets"
+                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
+                ToolTip="Close"
+                Visibility="{Binding ShowCloseButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
+
+        <!--  App Icon  -->
+        <Image
+            Width="16"
+            Height="16"
+            Margin="8,0,4,0"
+            VerticalAlignment="Center"
+            DockPanel.Dock="Left"
+            Source="{Binding IconSource, ElementName=TitleBarControl}"
+            Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+
+        <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
+        <ContentPresenter
+            VerticalAlignment="Center"
+            DockPanel.Dock="Left"
+            Content="{Binding LeftContent, ElementName=TitleBarControl}" />
+
+        <!--  Title text — fills remaining space; transparent background keeps mouse-hit-test intact  -->
+        <Border Background="Transparent">
+            <TextBlock
+                x:Name="TitleTextBlock"
+                Margin="4,0,8,0"
+                VerticalAlignment="Center"
+                FontFamily="Segoe UI"
+                FontSize="12"
+                FontWeight="Normal"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}"
+                HorizontalAlignment="{Binding TitleAlignment, ElementName=TitleBarControl}" />
+        </Border>
+    </DockPanel>
+</UserControl>
