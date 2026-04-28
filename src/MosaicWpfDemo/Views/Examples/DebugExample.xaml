@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
     xmlns:chat="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:controls="clr-namespace:MosaicWpfDemo.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,86 +28,21 @@
                     Background="#050505"
                     CornerRadius="0">
                     <Grid>
-                        <!-- AvalonEdit TextEditor styled as VT terminal -->
+                        <!-- AvalonEdit TextEditor with VT terminal skin applied via behavior -->
                         <avalonedit:TextEditor
                             x:Name="TerminalEditor"
                             Padding="10"
-                            Background="#050505"
                             BorderThickness="0"
                             FontFamily="Consolas, Courier New, Lucida Console"
                             FontSize="14"
-                            Foreground="#33ff33"
                             HorizontalScrollBarVisibility="Auto"
                             ShowLineNumbers="False"
                             VerticalScrollBarVisibility="Auto"
                             WordWrap="True">
-                            <avalonedit:TextEditor.Resources>
-                                <!-- Style the scrollbars to match terminal theme -->
-                                <Style TargetType="ScrollBar">
-                                    <Setter Property="Background" Value="#0a0a0a" />
-                                    <Setter Property="Foreground" Value="#1a5a1a" />
-                                </Style>
-                            </avalonedit:TextEditor.Resources>
+                            <i:Interaction.Behaviors>
+                                <behaviors:AvalonEditVtTerminalBehavior IsActive="True" />
+                            </i:Interaction.Behaviors>
                         </avalonedit:TextEditor>
-
-                        <!-- CRT Scan Lines Overlay - More visible -->
-                        <Rectangle IsHitTestVisible="False" Opacity="0.15">
-                            <Rectangle.Fill>
-                                <LinearGradientBrush MappingMode="Absolute" SpreadMethod="Repeat" StartPoint="0,0" EndPoint="0,4">
-                                    <GradientStop Offset="0" Color="Transparent" />
-                                    <GradientStop Offset="0.5" Color="Transparent" />
-                                    <GradientStop Offset="0.5" Color="#CCCCCC" />
-                                    <GradientStop Offset="1" Color="Black" />
-                                </LinearGradientBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>
-
-                        <!-- Screen curvature/vignette effect -->
-                        <Border IsHitTestVisible="False">
-                            <Border.Background>
-                                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="1" RadiusY="1">
-                                    <GradientStop Offset="0" Color="#00000000" />
-                                    <GradientStop Offset="0.6" Color="#00000000" />
-                                    <GradientStop Offset="1" Color="#80000000" />
-                                </RadialGradientBrush>
-                            </Border.Background>
-                        </Border>
-
-                        <!-- Phosphor glow effect - More visible -->
-                        <Border IsHitTestVisible="False" Opacity="0.12">
-                            <Border.Background>
-                                <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="1" RadiusY="1">
-                                    <GradientStop Offset="0" Color="#33ff33" />
-                                    <GradientStop Offset="0.5" Color="#1a801a" />
-                                    <GradientStop Offset="1" Color="#00000000" />
-                                </RadialGradientBrush>
-                            </Border.Background>
-                        </Border>
-
-                        <!-- Subtle flicker/noise texture -->
-                        <Rectangle IsHitTestVisible="False" Opacity="0.02">
-                            <Rectangle.Fill>
-                                <DrawingBrush
-                                    TileMode="Tile"
-                                    Viewport="0,0,4,4"
-                                    ViewportUnits="Absolute">
-                                    <DrawingBrush.Drawing>
-                                        <DrawingGroup>
-                                            <GeometryDrawing Brush="#33ff33">
-                                                <GeometryDrawing.Geometry>
-                                                    <RectangleGeometry Rect="0,0,1,1" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                            <GeometryDrawing Brush="#33ff33">
-                                                <GeometryDrawing.Geometry>
-                                                    <RectangleGeometry Rect="2,2,1,1" />
-                                                </GeometryDrawing.Geometry>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingBrush.Drawing>
-                                </DrawingBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>
                     </Grid>
                 </Border>
             </Grid>
