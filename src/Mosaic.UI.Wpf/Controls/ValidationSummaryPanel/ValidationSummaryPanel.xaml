@@ -4,7 +4,7 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
-    <!-- Default Error Icon Geometry (X/Error icon) -->
+    <!--  Default Error Icon Geometry (X/Error icon)  -->
     <Geometry x:Key="ValidationErrorIconGeometry">M264 456Q210 456 164 429 118 402 91 356 64 310 64 256 64 202 91 156 118 110 164 83 210 56 264 56 318 56 364 83 410 110 437 156 464 202 464 256 464 310 437 356 410 402 364 429 318 456 264 456ZM264 288L328 352 360 320 296 256 360 192 328 160 264 224 200 160 168 192 232 256 168 320 200 352 264 288Z</Geometry>
 
     <Style TargetType="{x:Type controls:ValidationSummaryPanel}">
@@ -31,7 +31,7 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header -->
+                            <!--  Header  -->
                             <Border
                                 Grid.Row="0"
                                 Padding="10,8"
@@ -44,7 +44,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Icon -->
+                                    <!--  Icon  -->
                                     <Viewbox
                                         Grid.Column="0"
                                         Width="16"
@@ -56,7 +56,7 @@
                                             Stretch="Uniform" />
                                     </Viewbox>
 
-                                    <!-- Title -->
+                                    <!--  Title  -->
                                     <TextBlock
                                         Grid.Column="1"
                                         VerticalAlignment="Center"
@@ -65,7 +65,7 @@
                                         Foreground="White"
                                         Text="{TemplateBinding Title}" />
 
-                                    <!-- Error Count Badge -->
+                                    <!--  Error Count Badge  -->
                                     <Border
                                         Grid.Column="2"
                                         MinWidth="24"
@@ -83,7 +83,7 @@
                                 </Grid>
                             </Border>
 
-                            <!-- Error List -->
+                            <!--  Error List  -->
                             <ScrollViewer
                                 Grid.Row="1"
                                 MaxHeight="200"
@@ -118,7 +118,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Bullet/Icon -->
+                            <!--  Bullet/Icon  -->
                             <Ellipse
                                 Grid.Column="0"
                                 Width="6"
@@ -127,7 +127,7 @@
                                 VerticalAlignment="Center"
                                 Fill="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
 
-                            <!-- Error Message -->
+                            <!--  Error Message  -->
                             <StackPanel Grid.Column="1" Orientation="Vertical">
                                 <TextBlock
                                     x:Name="PropertyNameText"

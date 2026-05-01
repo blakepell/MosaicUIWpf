@@ -17,7 +17,10 @@
         <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
     </Style>
 
-    <Style x:Key="Mosaic.Text.Caption" BasedOn="{StaticResource Mosaic.Text.Body}" TargetType="{x:Type TextBlock}">
+    <Style
+        x:Key="Mosaic.Text.Caption"
+        BasedOn="{StaticResource Mosaic.Text.Body}"
+        TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
     </Style>
 </ResourceDictionary>

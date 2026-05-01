@@ -9,16 +9,14 @@
     x:Name="TitleBarControl"
     d:DesignHeight="35"
     d:DesignWidth="800"
-    mc:Ignorable="d"
-    MouseLeftButtonDown="OnTitleBarMouseLeftButtonDown">
+    MouseLeftButtonDown="OnTitleBarMouseLeftButtonDown"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
 
-    <DockPanel
-        Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
-        LastChildFill="True">
+    <DockPanel Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" LastChildFill="True">
 
         <!--  System Buttons (Right)  -->
         <StackPanel
@@ -79,20 +77,20 @@
         <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
         <ContentPresenter
             VerticalAlignment="Center"
-            DockPanel.Dock="Left"
-            Content="{Binding LeftContent, ElementName=TitleBarControl}" />
+            Content="{Binding LeftContent, ElementName=TitleBarControl}"
+            DockPanel.Dock="Left" />
 
         <!--  Title text — fills remaining space; transparent background keeps mouse-hit-test intact  -->
         <Border Background="Transparent">
             <TextBlock
                 x:Name="TitleTextBlock"
                 Margin="4,0,8,0"
+                HorizontalAlignment="{Binding TitleAlignment, ElementName=TitleBarControl}"
                 VerticalAlignment="Center"
                 FontFamily="Segoe UI"
                 FontSize="12"
                 FontWeight="Normal"
-                Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}"
-                HorizontalAlignment="{Binding TitleAlignment, ElementName=TitleBarControl}" />
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}" />
         </Border>
     </DockPanel>
 </UserControl>
