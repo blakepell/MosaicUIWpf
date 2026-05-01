@@ -1,6 +1,6 @@
 ---
 name: mosaic-setup-project
-description: "Wire Mosaic UI into a WPF project. Converts App.xaml/App.xaml.cs to MosaicApp, adds ThemeManager to resources, applies WindowChromeBehavior and MosaicTheme brushes to MainWindow, and creates Common/AppSettings.cs + Common/AppViewModel.cs if they do not exist."
+description: "Wire Mosaic UI into a WPF project. Converts App.xaml/App.xaml.cs to MosaicApp, adds ThemeManager to resources, replaces any hand-rolled title bar with mosaic:WindowTitleBar, applies WindowChromeBehavior and MosaicTheme brushes to MainWindow, and creates Common/AppSettings.cs + Common/AppViewModel.cs if they do not exist."
 argument-hint: "Root namespace of the target WPF project (e.g. 'MyApp'). Defaults to the assembly name."
 ---
 
@@ -10,8 +10,8 @@ Wires Mosaic UI for WPF into an existing WPF application. The skill touches four
 
 1. `App.xaml` — change root element to `wpf:MosaicApp`, add `ThemeManager` to resources
 2. `App.xaml.cs` — inherit from `MosaicApp<AppSettings, AppViewModel>`, call `base.OnStartup` / `base.OnExit`
-3. `MainWindow.xaml` — add `WindowChromeBehavior` attached properties, Mosaic background/foreground brushes, and the theme-toggle button in the title bar
-4. `MainWindow.xaml.cs` — add minimize/maximize/close/drag helpers and theme-toggle handler
+3. `MainWindow.xaml` — add `WindowChromeBehavior` attached properties, Mosaic background/foreground brushes, and replace any hand-rolled title bar with `mosaic:WindowTitleBar`
+4. `MainWindow.xaml.cs` — keep only `MainWindow_OnLoaded` and `ButtonToggleTheme_OnClick`; remove all chrome helpers that `WindowTitleBar` now owns
 5. `Common/AppSettings.cs` *(create if missing)*
 6. `Common/AppViewModel.cs` *(create if missing)*
 
@@ -23,8 +23,8 @@ Before editing anything:
 
 - **Root namespace** — read `App.xaml` (`x:Class` prefix) or ask the user. All generated `namespace` declarations must match.
 - **Assembly name** — read the `.csproj` (`<AssemblyName>` or project file name stem). Used for the `xmlns:wpf` and `xmlns:mosaic` assembly references. If the assembly name differs from the root namespace, note it.
-- **Existing `Common/AppSettings.cs` and `Common/AppViewModel.cs`** — check with Glob. If they already exist, skip Step 4 and Step 5 but still verify they implement `IAppSettings` (AppSettings) and extend `ObservableObject` (AppViewModel).
-- **Existing window chrome or title bar** — read `MainWindow.xaml` to understand the current title bar structure before editing.
+- **Existing `Common/AppSettings.cs` and `Common/AppViewModel.cs`** — check with Glob. If they already exist, skip Steps 6 and 7 but still verify they implement `IAppSettings` (AppSettings) and extend `ObservableObject` (AppViewModel).
+- **Existing window chrome or title bar** — read `MainWindow.xaml`. Any existing hand-rolled `<Border>`/`<DockPanel>` title bar should be replaced with `mosaic:WindowTitleBar`. If a `mosaic:WindowTitleBar` is already present, preserve it and only add missing attributes.
 
 ---
 
@@ -93,7 +93,9 @@ Preserve any existing `using` directives and event handlers that are not replace
 
 ## Step 4 — Update `MainWindow.xaml`
 
-Add to the `<Window>` root element (merge with any existing attributes; do not duplicate):
+### Window element attributes
+
+Add (or update) the following on the `<Window>` root element. Do not duplicate attributes that are already present:
 
 ```xml
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly={AssemblyName}"
@@ -109,72 +111,61 @@ theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
 Loaded="MainWindow_OnLoaded"
 ```
 
-Add a custom title bar as the first row of the root `<Grid>` (Row 0, height 35). The title bar is a `<Border>` with a `<DockPanel>` that contains:
-- System buttons (minimize / maximize-restore / close) docked right, styled with `{x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}` (close uses `WindowTitleBarCloseButtonStyle`)
-- An optional theme-toggle button using the half-circle path icon
-- App icon (`/Assets/collage-48.png`) and title `TextBlock` on the left
-- `MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"` on the `<Border>` for drag / double-click maximize
+Remove `xmlns:d`, `xmlns:mc`, and `mc:Ignorable="d"` if `d:` prefixed attributes are not used anywhere in the file.
 
-If `MainWindow.xaml` already has a custom title bar, preserve it and only add the missing `WindowChromeBehavior` attributes and namespace declarations.
+### Title bar — replace with `mosaic:WindowTitleBar`
 
-Reference title bar template:
+Replace any hand-rolled `<Border>`/`<DockPanel>` title bar (or any earlier manual chrome) in Row 0 of the root `<Grid>` with the `mosaic:WindowTitleBar` control. The control handles drag-to-move, double-click maximize/restore, and the minimize/maximize/close buttons internally — no code-behind is required for those actions.
 
 ```xml
-<Border
+<!--  Title Bar  -->
+<mosaic:WindowTitleBar
     Grid.Row="0"
     Grid.Column="0"
     Grid.ColumnSpan="2"
-    Background="{DynamicResource {x:Static SystemColors.WindowBrush}}"
-    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-    <DockPanel Height="35" LastChildFill="True">
-        <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right" Orientation="Horizontal">
-            <Button Width="48" Click="ButtonToggleTheme_OnClick"
-                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Toggle Theme">
-                <Button.ContentTemplate>
-                    <DataTemplate>
-                        <Viewbox Width="16" Height="16">
-                            <Canvas Width="512" Height="512">
-                                <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z"
-                                      Fill="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
-                            </Canvas>
-                        </Viewbox>
-                    </DataTemplate>
-                </Button.ContentTemplate>
-            </Button>
-            <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    Click="Minimize_Click" Content="&#xE921;" FontFamily="Segoe MDL2 Assets"
-                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Minimize" />
-            <Button x:Name="MaxRestoreButton" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    Click="MaximizeRestore_Click" Content="&#xE922;" FontFamily="Segoe MDL2 Assets"
-                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Maximize/Restore" />
-            <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                    Click="Close_Click" Content="&#xE8BB;" FontFamily="Segoe MDL2 Assets"
-                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
-                    ToolTip="Close" />
-        </StackPanel>
-        <Image Width="16" Height="16" Margin="8,0,4,0" VerticalAlignment="Center" Source="/Assets/collage-48.png" />
-        <Border Height="35" Background="Transparent">
-            <TextBlock Margin="4,0,8,0" VerticalAlignment="Center"
-                       FontFamily="Segoe UI" FontSize="12"
-                       Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}"
-                       Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
-        </Border>
-    </DockPanel>
-</Border>
+    IconSource="/Assets/collage-48.png">
+    <mosaic:WindowTitleBar.RightContent>
+        <!--  Toggle Theme Button  -->
+        <Button
+            Width="48"
+            Click="ButtonToggleTheme_OnClick"
+            Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
+            ToolTip="Toggle Theme">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="512" Height="512">
+                            <Path
+                                Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z"
+                                Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                        </Canvas>
+                    </Viewbox>
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+    </mosaic:WindowTitleBar.RightContent>
+</mosaic:WindowTitleBar>
 ```
+
+**`mosaic:WindowTitleBar` key properties:**
+
+| Property | Purpose |
+|---|---|
+| `IconSource` | Path to the 16/48 px app icon |
+| `TitleText` | Static title string. Omit (or leave empty) to auto-bind to `Window.Title` |
+| `TitleAlignment` | `HorizontalAlignment` of the title text (default `Left`) |
+| `ShowIcon` / `ShowMinimizeButton` / `ShowMaxRestoreButton` / `ShowCloseButton` | `bool` visibility toggles |
+| `RightContent` | Content slot shown left of the system buttons (theme toggle, settings, etc.) |
+| `LeftContent` | Content slot shown right of the app icon (breadcrumbs, search, etc.) |
 
 ---
 
 ## Step 5 — Update `MainWindow.xaml.cs`
 
-Ensure the code-behind contains these handlers (add only what is missing; preserve everything else):
+Because `mosaic:WindowTitleBar` owns all chrome behaviour internally, the code-behind only needs the startup handler and the theme-toggle handler. Remove `TitleBar_MouseLeftButtonDown`, `Minimize_Click`, `MaximizeRestore_Click`, `Close_Click`, `ToggleMaximize`, `UpdateMaximizeIcon`, and the `OnStateChanged` override. Also remove `using System.Windows.Input` if it is no longer referenced.
 
 ```csharp
 using System.Windows;
-using System.Windows.Input;
 using Argus.Memory;
 using Mosaic.UI.Wpf.Themes;
 
@@ -185,44 +176,10 @@ namespace {RootNamespace}
         public MainWindow()
         {
             InitializeComponent();
-            UpdateMaximizeIcon();
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e) { }
-
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (e.ClickCount == 2) ToggleMaximize();
-            else DragMove();
-        }
-
-        private void Minimize_Click(object sender, RoutedEventArgs e) =>
-            WindowState = WindowState.Minimized;
-
-        private void MaximizeRestore_Click(object sender, RoutedEventArgs e) =>
-            ToggleMaximize();
-
-        private void Close_Click(object sender, RoutedEventArgs e) =>
-            Close();
-
-        private void ToggleMaximize()
-        {
-            WindowState = WindowState == WindowState.Maximized
-                ? WindowState.Normal
-                : WindowState.Maximized;
-            UpdateMaximizeIcon();
-        }
-
-        private void UpdateMaximizeIcon()
-        {
-            if (MaxRestoreButton == null) return;
-            MaxRestoreButton.Content = WindowState == WindowState.Maximized ? "\xE923" : "\xE922";
-        }
-
-        protected override void OnStateChanged(EventArgs e)
-        {
-            base.OnStateChanged(e);
-            UpdateMaximizeIcon();
         }
 
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
@@ -321,7 +278,7 @@ Confirm **0 errors**. Common issues:
 | `MosaicApp` not found | Verify `xmlns:wpf` uses the correct assembly name in `App.xaml` |
 | `AppSettings`/`AppViewModel` type not found | Check namespace matches root namespace; ensure `x:TypeArguments` values match |
 | `WindowChromeBehavior` XAML parse error | Ensure `xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"` is on the `<Window>` element |
-| `MaxRestoreButton` not found | The `x:Name="MaxRestoreButton"` button must exist in `MainWindow.xaml` |
+| `ButtonToggleTheme_OnClick` not found | The handler must exist in `MainWindow.xaml.cs` |
 | `AppServices` not found | Add `using Argus.Memory;` — it comes from the `Argus.Core` NuGet package |
 
 ---
@@ -332,7 +289,8 @@ Confirm **0 errors**. Common issues:
 - [ ] `ThemeManager` is in `Application.Resources > MergedDictionaries`
 - [ ] `App.xaml.cs` inherits `MosaicApp<AppSettings, AppViewModel>` and calls `base.OnStartup` / `base.OnExit`
 - [ ] `MainWindow.xaml` has `WindowChromeBehavior` attributes and Mosaic `Background`/`Foreground` brushes
-- [ ] `MainWindow.xaml.cs` has title bar event handlers and theme-toggle handler
+- [ ] `MainWindow.xaml` title bar uses `mosaic:WindowTitleBar` (no hand-rolled `<Border>`/`<DockPanel>` chrome)
+- [ ] `MainWindow.xaml.cs` contains only `MainWindow_OnLoaded` and `ButtonToggleTheme_OnClick` (all chrome helpers removed)
 - [ ] `Common/AppSettings.cs` exists and implements `IAppSettings`
 - [ ] `Common/AppViewModel.cs` exists
 - [ ] Build passes with 0 errors
