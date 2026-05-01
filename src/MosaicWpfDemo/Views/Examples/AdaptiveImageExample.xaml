@@ -19,6 +19,6 @@
             Height="16"
             HorizontalAlignment="Center"
             Source="../../Assets/vs-add-16.png"
-            ThemeMode="Light" />
+            MosaicThemeMode="Light" />
     </Grid>
 </UserControl>

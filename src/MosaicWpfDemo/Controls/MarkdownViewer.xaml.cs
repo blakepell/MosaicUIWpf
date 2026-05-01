@@ -133,7 +133,7 @@ namespace MosaicWpfDemo.Controls
 
             var theme = AppServices.GetService<ThemeManager>();
 
-            if (theme == null || theme.Theme != Mosaic.UI.Wpf.ThemeMode.Light)
+            if (theme == null || theme.Theme != Mosaic.UI.Wpf.MosaicThemeMode.Light)
             {
                 strTheme = "dark";
             }

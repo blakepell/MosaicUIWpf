@@ -20,24 +20,24 @@ namespace Mosaic.UI.Wpf.Themes
         public static readonly Uri DarkSystemColors = new($"{BasePath}/Dark/SystemColors.xaml", UriKind.Absolute);
         public static readonly Uri HighContrastSystemColors = new($"{BasePath}/HighContrast/SystemColors.xaml", UriKind.Absolute);
 
-        public static Uri GetThemeUri(ThemeMode themeMode)
+        public static Uri GetThemeUri(MosaicThemeMode MosaicThemeMode)
         {
-            return themeMode switch
+            return MosaicThemeMode switch
             {
-                ThemeMode.Light => Light,
-                ThemeMode.Dark => Dark,
-                ThemeMode.HighContrast => HighContrast,
+                MosaicThemeMode.Light => Light,
+                MosaicThemeMode.Dark => Dark,
+                MosaicThemeMode.HighContrast => HighContrast,
                 _ => Dark
             };
         }
 
-        public static Uri GetSystemColorsUri(ThemeMode themeMode)
+        public static Uri GetSystemColorsUri(MosaicThemeMode MosaicThemeMode)
         {
-            return themeMode switch
+            return MosaicThemeMode switch
             {
-                ThemeMode.Light => LightSystemColors,
-                ThemeMode.Dark => DarkSystemColors,
-                ThemeMode.HighContrast => HighContrastSystemColors,
+                MosaicThemeMode.Light => LightSystemColors,
+                MosaicThemeMode.Dark => DarkSystemColors,
+                MosaicThemeMode.HighContrast => HighContrastSystemColors,
                 _ => DarkSystemColors
             };
         }

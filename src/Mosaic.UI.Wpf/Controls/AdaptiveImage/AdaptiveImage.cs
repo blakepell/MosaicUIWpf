@@ -33,18 +33,18 @@ namespace Mosaic.UI.Wpf.Controls
         private bool _isUpdatingSource; // Flag to prevent recursion
 
         /// <summary>
-        /// Identifies the <see cref="ThemeMode"/> dependency property.
+        /// Identifies the <see cref="MosaicThemeMode"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ThemeModeProperty = DependencyProperty.Register(
-                nameof(ThemeMode), typeof(ThemeMode), typeof(AdaptiveImage), new FrameworkPropertyMetadata(ThemeMode.Light, FrameworkPropertyMetadataOptions.AffectsRender, OnThemeRelatedChanged));
+        public static readonly DependencyProperty MosaicThemeModeProperty = DependencyProperty.Register(
+                nameof(MosaicThemeMode), typeof(MosaicThemeMode), typeof(AdaptiveImage), new FrameworkPropertyMetadata(MosaicThemeMode.Light, FrameworkPropertyMetadataOptions.AffectsRender, OnThemeRelatedChanged));
 
         /// <summary>
         /// Gets or sets the theme mode for the application.
         /// </summary>
-        public ThemeMode ThemeMode
+        public MosaicThemeMode MosaicThemeMode
         {
-            get => (ThemeMode)GetValue(ThemeModeProperty);
-            set => SetValue(ThemeModeProperty, value);
+            get => (MosaicThemeMode)GetValue(MosaicThemeModeProperty);
+            set => SetValue(MosaicThemeModeProperty, value);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Mosaic.UI.Wpf.Controls
             // may or may not use our ThemeChanged event, but this is what we provide.
             ThemeManager.ThemeChanged += MosaicApp_ThemeChanged;
             var theme = AppServices.GetRequiredService<ThemeManager>();
-            this.ThemeMode = theme.Theme;
+            this.MosaicThemeMode = theme.Theme;
         }
 
         /// <summary>
@@ -119,9 +119,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         /// <param name="sender">The source of the event. This parameter can be <see langword="null"/>.</param>
         /// <param name="e">The new theme mode.</param>
-        private void MosaicApp_ThemeChanged(object? sender, ThemeMode e)
+        private void MosaicApp_ThemeChanged(object? sender, MosaicThemeMode e)
         {
-            this.ThemeMode = e;
+            this.MosaicThemeMode = e;
             InvalidateAdaptive();
         }
 
@@ -205,7 +205,7 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            var useDarkTransform = theme.Theme != ThemeMode.Light;
+            var useDarkTransform = theme.Theme != MosaicThemeMode.Light;
 
             if (!useDarkTransform)
             {

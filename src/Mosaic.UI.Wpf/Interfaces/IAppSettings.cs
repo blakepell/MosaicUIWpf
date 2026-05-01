@@ -30,6 +30,6 @@ namespace Mosaic.UI.Wpf.Interfaces
         /// <summary>
         /// The applications theme.
         /// </summary>
-        public ThemeMode Theme { get; set; }
+        public MosaicThemeMode Theme { get; set; }
     }
 }

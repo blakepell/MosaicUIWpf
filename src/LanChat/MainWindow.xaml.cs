@@ -121,15 +121,15 @@ namespace LanChat
             var theme = AppServices.GetRequiredService<ThemeManager>();
             var appSettings = AppServices.GetRequiredService<AppSettings>();
 
-            if (theme.Theme == Mosaic.UI.Wpf.ThemeMode.Light)
+            if (theme.Theme == Mosaic.UI.Wpf.MosaicThemeMode.Light)
             {
-                theme.Theme = Mosaic.UI.Wpf.ThemeMode.Dark;
-                appSettings.Theme = Mosaic.UI.Wpf.ThemeMode.Dark;
+                theme.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Dark;
+                appSettings.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Dark;
             }
             else
             {
-                theme.Theme = Mosaic.UI.Wpf.ThemeMode.Light;
-                appSettings.Theme = Mosaic.UI.Wpf.ThemeMode.Light;
+                theme.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Light;
+                appSettings.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Light;
             }
         }
     }

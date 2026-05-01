@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies the theme mode for an application or user interface.
     /// </summary>
-    public enum ThemeMode
+    public enum MosaicThemeMode
     {
         /// <summary>
         /// Light Mode

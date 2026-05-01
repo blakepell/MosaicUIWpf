@@ -59,12 +59,12 @@
                             VerticalAlignment="Center"
                             Text="Theme Mode" />
                         <ComboBox
-                            x:Name="ThemeModeSelector"
+                            x:Name="MosaicThemeModeSelector"
                             Grid.Row="0"
                             Grid.Column="1"
                             Width="220"
                             HorizontalAlignment="Left"
-                            SelectionChanged="ThemeModeSelector_OnSelectionChanged">
+                            SelectionChanged="MosaicThemeModeSelector_OnSelectionChanged">
                             <ComboBoxItem Tag="Light" Content="Light" />
                             <ComboBoxItem Tag="Dark" Content="Dark" />
                             <ComboBoxItem Tag="HighContrast" Content="High Contrast" />

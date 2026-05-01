@@ -14,7 +14,7 @@ using Argus.Memory;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Themes;
 using MosaicWpfDemo.Common;
-using MosaicThemeMode = Mosaic.UI.Wpf.ThemeMode;
+using MosaicMosaicThemeMode = Mosaic.UI.Wpf.MosaicThemeMode;
 
 namespace MosaicWpfDemo.Views
 {
@@ -32,19 +32,19 @@ namespace MosaicWpfDemo.Views
             SyncThemeEditorFromManager();
         }
 
-        private void ThemeModeSelector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MosaicThemeModeSelector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_syncingThemeControls)
             {
                 return;
             }
 
-            if (ThemeModeSelector.SelectedItem is not ComboBoxItem selected || selected.Tag is not string selectedTheme)
+            if (MosaicThemeModeSelector.SelectedItem is not ComboBoxItem selected || selected.Tag is not string selectedTheme)
             {
                 return;
             }
 
-            if (!Enum.TryParse<MosaicThemeMode>(selectedTheme, ignoreCase: true, out var mode))
+            if (!Enum.TryParse<MosaicMosaicThemeMode>(selectedTheme, ignoreCase: true, out var mode))
             {
                 return;
             }
@@ -106,7 +106,7 @@ namespace MosaicWpfDemo.Views
 
             ComboBoxItem? selectedItem = null;
 
-            foreach (var item in ThemeModeSelector.Items)
+            foreach (var item in MosaicThemeModeSelector.Items)
             {
                 if (item is ComboBoxItem comboBoxItem &&
                     string.Equals(comboBoxItem.Tag as string, manager.Theme.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -116,12 +116,12 @@ namespace MosaicWpfDemo.Views
                 }
             }
 
-            ThemeModeSelector.SelectedItem = selectedItem;
+            MosaicThemeModeSelector.SelectedItem = selectedItem;
 
             _syncingThemeControls = false;
         }
 
-        private static void PersistTheme(MosaicThemeMode theme)
+        private static void PersistTheme(MosaicMosaicThemeMode theme)
         {
             if (!AppServices.IsRegistered<AppSettings>())
             {

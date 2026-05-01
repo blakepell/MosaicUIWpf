@@ -60,7 +60,7 @@ namespace MosaicTemplateApp.Common
         [property: Category("UI")]
         [property: Browsable(false)]
         [ObservableProperty]
-        private ThemeMode _theme = ThemeMode.Light;
+        private MosaicThemeMode _theme = MosaicThemeMode.Light;
 
         /// <summary>
         /// The view state information for a given window.

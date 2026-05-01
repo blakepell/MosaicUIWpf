@@ -24,7 +24,7 @@ namespace Mosaic.UI.Wpf.Themes
         private bool _initializing;
         private readonly List<ResourceDictionary> _managedDictionaries = new();
 
-        private ThemeMode _theme = ThemeMode.Light;
+        private MosaicThemeMode _theme = MosaicThemeMode.Light;
         private bool _native;
         private bool _systemColors = true;
         private bool _typography = true;
@@ -33,7 +33,7 @@ namespace Mosaic.UI.Wpf.Themes
         /// <summary>
         /// Gets or sets the active theme mode.
         /// </summary>
-        public ThemeMode Theme
+        public MosaicThemeMode Theme
         {
             get => _theme;
             set
@@ -143,14 +143,14 @@ namespace Mosaic.UI.Wpf.Themes
         /// <summary>
         /// Event that is raised when the active theme mode changes.
         /// </summary>
-        public static event EventHandler<ThemeMode>? ThemeChanged;
+        public static event EventHandler<MosaicThemeMode>? ThemeChanged;
 
         /// <summary>
         /// Invokes the <see cref="ThemeChanged"/> event.
         /// </summary>
-        internal static void OnThemeChanged(ThemeMode themeMode)
+        internal static void OnThemeChanged(MosaicThemeMode MosaicThemeMode)
         {
-            ThemeChanged?.Invoke(null, themeMode);
+            ThemeChanged?.Invoke(null, MosaicThemeMode);
         }
 
         /// <summary>
@@ -278,10 +278,10 @@ namespace Mosaic.UI.Wpf.Themes
         {
             Theme = Theme switch
             {
-                ThemeMode.Light => ThemeMode.Dark,
-                ThemeMode.Dark => ThemeMode.Light,
-                ThemeMode.HighContrast => ThemeMode.Light,
-                _ => ThemeMode.Light
+                MosaicThemeMode.Light => MosaicThemeMode.Dark,
+                MosaicThemeMode.Dark => MosaicThemeMode.Light,
+                MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
+                _ => MosaicThemeMode.Light
             };
         }
 
@@ -292,10 +292,10 @@ namespace Mosaic.UI.Wpf.Themes
         {
             Theme = Theme switch
             {
-                ThemeMode.Light => ThemeMode.Dark,
-                ThemeMode.Dark => ThemeMode.HighContrast,
-                ThemeMode.HighContrast => ThemeMode.Light,
-                _ => ThemeMode.Light
+                MosaicThemeMode.Light => MosaicThemeMode.Dark,
+                MosaicThemeMode.Dark => MosaicThemeMode.HighContrast,
+                MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
+                _ => MosaicThemeMode.Light
             };
         }
     }
