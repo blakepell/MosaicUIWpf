@@ -79,7 +79,7 @@
                     Text="About" />
 
                 <mosaic:SideMenuHeader Text="DEBUG" />
-                
+
                 <!--  Debug  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
@@ -675,6 +675,27 @@
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
+
+                <mosaic:SideMenuHeader Text="BEHAVIORS" />
+
+                <!--  VT Terminal  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/text-48.png"
+                    Text="VT Terminal">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="VT Terminal" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AvalonEditVtTerminalBehaviorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AvalonEditVtTerminalBehaviorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type theme:AvalonEditVtTerminalBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AvalonEditVtTerminalBehaviorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
             </mosaic:SideMenu.MenuItems>
         </mosaic:SideMenu>
 

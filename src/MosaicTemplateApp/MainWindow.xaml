@@ -8,16 +8,16 @@
     Title=""
     Width="1000"
     Height="600"
-    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
-    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
-    Icon="/Assets/collage-48.png"
-    Loaded="MainWindow_OnLoaded"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="10"
     theme:WindowChromeBehavior.GlassFrameThickness="0"
     theme:WindowChromeBehavior.IsEnabled="True"
     theme:WindowChromeBehavior.ResizeBorderThickness="5"
     theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
+    Icon="/Assets/collage-48.png"
+    Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
 
     <Grid HorizontalAlignment="Stretch">
@@ -47,9 +47,7 @@
                         <DataTemplate>
                             <Viewbox Width="16" Height="16">
                                 <Canvas Width="512" Height="512">
-                                    <Path
-                                        Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z"
-                                        Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                                    <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
                                 </Canvas>
                             </Viewbox>
                         </DataTemplate>

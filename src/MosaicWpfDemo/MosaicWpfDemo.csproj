@@ -150,6 +150,13 @@
 			<Link>LinkedSources\AdaptiveImageExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml">
+			<Link>LinkedSources\AvalonEditVtTerminalBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml.cs">
+			<Link>LinkedSources\AvalonEditVtTerminalBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\AvatarExample.xaml">
 			<Link>LinkedSources\AvatarExample.xaml</Link>
 		</EmbeddedResource>
