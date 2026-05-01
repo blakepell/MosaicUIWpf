@@ -4,7 +4,7 @@
  * @project lead      : [Your Name]
  * @website           : https://www.yourwebsite.com
  * @website           : https://www.apexgate.net
- * @copyright         : Copyright (c), 2023-2025 All rights reserved.
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
