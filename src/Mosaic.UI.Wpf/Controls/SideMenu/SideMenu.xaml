@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
     x:Name="SideMenuInstance"
     d:DesignHeight="450"
     d:DesignWidth="300"
@@ -38,7 +39,22 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="{Binding VerticalScrollViewerVisibility, ElementName=SideMenuInstance}">
             <ItemsControl x:Name="MenuOptions" ItemsSource="{Binding MenuItems, ElementName=SideMenuInstance}">
-                <ItemsControl.ItemTemplate>
+                <ItemsControl.Resources>
+                    <!--  Category header — non-interactive label  -->
+                    <DataTemplate DataType="{x:Type local:SideMenuHeader}">
+                        <Border Margin="0,6,0,0" Visibility="{Binding Visibility}">
+                            <TextBlock
+                                Margin="13,4,8,2"
+                                FontFamily="Segoe UI Variable"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="{Binding Text}"
+                                TextTrimming="CharacterEllipsis" />
+                        </Border>
+                    </DataTemplate>
+
+                    <!--  Regular menu item  -->
                     <DataTemplate DataType="{x:Type local:SideMenuItem}">
                         <local:SideMenuItemControl
                             Margin="0,1,0,0"
@@ -48,7 +64,7 @@
                             SideMenu="{Binding ElementName=SideMenuInstance}"
                             Visibility="{Binding Visibility}" />
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                </ItemsControl.Resources>
             </ItemsControl>
         </ScrollViewer>
     </Grid>

@@ -220,9 +220,15 @@ namespace Mosaic.UI.Wpf.Controls
 
         /// <summary>
         /// Selects the specified item in the side menu and executes its associated command, if available.
+        /// <see cref="SideMenuHeader"/> items are silently ignored.
         /// </summary>
         public void SelectItem(SideMenuItem item)
         {
+            if (item is SideMenuHeader)
+            {
+                return;
+            }
+
             SelectedItem = item;
 
             // Execute command if available
@@ -233,14 +239,27 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Selects a menu item by its zero-based index.
+        /// Selects a menu item by its zero-based index, counting only selectable items
+        /// (i.e. <see cref="SideMenuHeader"/> entries are skipped).
         /// </summary>
         public void SelectByIndex(int index)
         {
-            if (index >= 0 && index < this.MenuItems.Count)
+            int nonHeaderIndex = 0;
+
+            foreach (var item in MenuItems)
             {
-                var item = MenuItems[index];
-                SelectItem(item);
+                if (item is SideMenuHeader)
+                {
+                    continue;
+                }
+
+                if (nonHeaderIndex == index)
+                {
+                    SelectItem(item);
+                    return;
+                }
+
+                nonHeaderIndex++;
             }
         }
 

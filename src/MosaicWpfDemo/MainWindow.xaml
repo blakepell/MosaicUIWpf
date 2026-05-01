@@ -10,16 +10,16 @@
     Title="Mosaic UI WPF Demo"
     Width="1000"
     Height="900"
-    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
-    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
-    Icon="/Assets/collage-48.png"
-    Loaded="MainWindow_OnLoaded"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="10"
     theme:WindowChromeBehavior.GlassFrameThickness="0"
     theme:WindowChromeBehavior.IsEnabled="True"
     theme:WindowChromeBehavior.ResizeBorderThickness="5"
     theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
+    Icon="/Assets/collage-48.png"
+    Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
     <!--  @TitleBar  -->
     <!--  @MenuBar  -->
@@ -78,6 +78,8 @@
                     ImageSource="pack://application:,,,/Assets/collage-48.png"
                     Text="About" />
 
+                <mosaic:SideMenuHeader Text="DEBUG" />
+                
                 <!--  Debug  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
@@ -95,6 +97,26 @@
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
+
+                <!--  Kitchen Sink (new)  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/collage-48.png"
+                    Text="Kitchen Sink">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Kitchen Sink" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ShadowPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:KitchenSinkExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <mosaic:SideMenuHeader Text="CONTROLS" />
 
                 <!--  AdaptiveImage  -->
                 <mosaic:SideMenuItem
@@ -128,24 +150,6 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AsteriskTextBlock}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AsteriskTextBlockExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/password-48.png" />
-                        </mosaic:SideMenuParameterCollection>
-                    </mosaic:SideMenuItem.ParameterCollection>
-                </mosaic:SideMenuItem>
-
-                <!--  Kitchen Sink (new)  -->
-                <mosaic:SideMenuItem
-                    ContentType="{x:Type views:ShellView}"
-                    ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/collage-48.png"
-                    Text="Kitchen Sink">
-                    <mosaic:SideMenuItem.ParameterCollection>
-                        <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="Kitchen Sink" />
-                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml" />
-                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.KitchenSinkExample.xaml.cs" />
-                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ShadowPanel}" />
-                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:KitchenSinkExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

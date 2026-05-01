@@ -138,12 +138,18 @@ namespace Mosaic.UI.Wpf.Behaviors
                 return;
             }
 
-            // This is the filter that will filter the collection view.            
+            // This is the filter that will filter the collection view.
             collectionView.Filter = item =>
             {
                 if (item == null)
                 {
                     return false;
+                }
+
+                // Headers are always visible regardless of the search term.
+                if (item is Mosaic.UI.Wpf.Controls.SideMenuHeader)
+                {
+                    return true;
                 }
 
                 string? fieldSearch = item.ToString();
