@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:terminal="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
     Title="Mosaic UI WPF Demo"
@@ -672,6 +673,25 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ValidationSummaryPanel}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ValidationSummaryPanelExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/warning-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  VT52 Terminal Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/terminal-48.png"
+                    ReuseContentInstance="True"
+                    Text="VT52 Terminal">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="VT52 Terminal" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.VT52TerminalExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.VT52TerminalExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type terminal:VT52Terminal}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:VT52TerminalExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/terminal-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

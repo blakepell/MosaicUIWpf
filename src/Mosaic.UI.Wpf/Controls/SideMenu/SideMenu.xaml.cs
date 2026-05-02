@@ -182,30 +182,9 @@ namespace Mosaic.UI.Wpf.Controls
 
                 if (sideMenu.ContentPresenter != null && item?.ContentType != null)
                 {
-                    if (item.ContentTypeIsSingleton && !AppServices.IsRegistered(item.ContentType))
-                    {
-                        var ctrl = Activator.CreateInstance(item.ContentType);
+                    object? contentInstance = sideMenu.GetContentInstance(item, out bool refreshRecipient);
 
-                        if (ctrl != null && AppServices.ServiceCollection != null)
-                        {
-                            // TODO: Transition to Argus.Core version
-                            AppServices.ServiceCollection.AddSingleton(item.ContentType, ctrl);
-                            AppServices.BuildServiceProvider();
-                        }
-                    }
-
-                    object? contentInstance;
-
-                    if (item.ContentTypeIsSingleton && AppServices.IsRegistered(item.ContentType))
-                    {
-                        contentInstance = AppServices.GetService(item.ContentType);
-                    }
-                    else
-                    {
-                        contentInstance = AppServices.CreateInstance(item.ContentType);
-                    }
-
-                    if (contentInstance is ISideMenuRecipient sideMenuRecipient)
+                    if (refreshRecipient && contentInstance is ISideMenuRecipient sideMenuRecipient)
                     {
                         // TODO: add image source.
                         sideMenuRecipient.ImageSource = item.ImageSource;
@@ -216,6 +195,47 @@ namespace Mosaic.UI.Wpf.Controls
                     sideMenu.ContentPresenter.Content = contentInstance;
                 }
             }
+        }
+
+        private object? GetContentInstance(SideMenuItem item, out bool refreshRecipient)
+        {
+            refreshRecipient = true;
+
+            if (item.ContentType == null)
+            {
+                return null;
+            }
+
+            if (item.ReuseContentInstance)
+            {
+                if (item.CachedContentInstance != null)
+                {
+                    refreshRecipient = false;
+                    return item.CachedContentInstance;
+                }
+
+                item.CachedContentInstance = AppServices.CreateInstance(item.ContentType);
+                return item.CachedContentInstance;
+            }
+
+            if (item.ContentTypeIsSingleton && !AppServices.IsRegistered(item.ContentType))
+            {
+                var ctrl = Activator.CreateInstance(item.ContentType);
+
+                if (ctrl != null && AppServices.ServiceCollection != null)
+                {
+                    // TODO: Transition to Argus.Core version
+                    AppServices.ServiceCollection.AddSingleton(item.ContentType, ctrl);
+                    AppServices.BuildServiceProvider();
+                }
+            }
+
+            if (item.ContentTypeIsSingleton && AppServices.IsRegistered(item.ContentType))
+            {
+                return AppServices.GetService(item.ContentType);
+            }
+
+            return AppServices.CreateInstance(item.ContentType);
         }
 
         /// <summary>

@@ -49,6 +49,7 @@
 		<None Remove="Assets\start-half-empty-48.png" />
 		<None Remove="Assets\stopwatch-48.png" />
 		<None Remove="Assets\tab-control-48.png" />
+		<None Remove="Assets\terminal-48.png" />
 		<None Remove="Assets\text-48.png" />
 		<None Remove="Assets\toggle-48.png" />
 		<None Remove="Assets\toggle2-48.png" />
@@ -100,6 +101,7 @@
 		<Resource Include="Assets\start-half-empty-48.png" />
 		<Resource Include="Assets\stopwatch-48.png" />
 		<Resource Include="Assets\tab-control-48.png" />
+		<Resource Include="Assets\terminal-48.png" />
 		<Resource Include="Assets\text-48.png" />
 		<Resource Include="Assets\toggle-48.png" />
 		<Resource Include="Assets\toggle2-48.png" />
@@ -344,6 +346,13 @@
                 </EmbeddedResource>
                 <EmbeddedResource Include="Views\Examples\ValidationSummaryPanelExample.xaml.cs">
                         <Link>LinkedSources\ValidationSummaryPanelExample.xaml.cs</Link>
+                </EmbeddedResource>
+
+                <EmbeddedResource Include="Views\Examples\VT52TerminalExample.xaml">
+                        <Link>LinkedSources\VT52TerminalExample.xaml</Link>
+                </EmbeddedResource>
+                <EmbeddedResource Include="Views\Examples\VT52TerminalExample.xaml.cs">
+                        <Link>LinkedSources\VT52TerminalExample.xaml.cs</Link>
                 </EmbeddedResource>
 
 	</ItemGroup>

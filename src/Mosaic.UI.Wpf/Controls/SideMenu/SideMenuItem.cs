@@ -81,6 +81,12 @@ namespace Mosaic.UI.Wpf.Controls
         private bool _contentTypeIsSingleton = true;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this item should reuse the same content instance each time it is selected.
+        /// </summary>
+        [ObservableProperty]
+        private bool _reuseContentInstance;
+
+        /// <summary>
         /// Gets or sets the source of the image.
         /// </summary>
         [ObservableProperty]
@@ -131,6 +137,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// Gets a value indicating whether the current object has any child elements.
         /// </summary>
         public bool HasChildren => Children?.Count > 0;
+
+        internal object? CachedContentInstance { get; set; }
 
         public SideMenuItem()
         {
