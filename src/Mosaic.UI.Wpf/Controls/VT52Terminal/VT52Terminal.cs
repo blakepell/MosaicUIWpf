@@ -357,13 +357,30 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             if (sequence != null)
             {
-                e.Handled = SendToConnection(sequence, GetLocalEchoText(e.Key));
+                e.Handled = SendToConnection(sequence, GetLocalEchoText(NormalizeKey(e)));
             }
+        }
+
+        private static Key NormalizeKey(KeyEventArgs e)
+        {
+            return e.Key == Key.System ? e.SystemKey : e.Key;
         }
 
         private static string? GetKeySequence(KeyEventArgs e)
         {
-            return e.Key switch
+            Key key = NormalizeKey(e);
+
+            if (key == Key.Tab && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                return "\x1b[Z";
+            }
+
+            if (key >= Key.F1 && key <= Key.F12)
+            {
+                return GetFunctionKeySequence(key);
+            }
+
+            return key switch
             {
                 Key.Up => "\x1b[A",
                 Key.Down => "\x1b[B",
@@ -375,10 +392,30 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 Key.Delete => "\x1b[3~",
                 Key.PageUp => "\x1b[5~",
                 Key.PageDown => "\x1b[6~",
-                Key.Enter => "\r",
+                Key.Enter or Key.Return => "\r",
                 Key.Back => "\x7f",
                 Key.Tab => "\t",
                 Key.Escape => "\x1b",
+                _ => null
+            };
+        }
+
+        private static string? GetFunctionKeySequence(Key key)
+        {
+            return key switch
+            {
+                Key.F1 => "\x1bOP",
+                Key.F2 => "\x1bOQ",
+                Key.F3 => "\x1bOR",
+                Key.F4 => "\x1bOS",
+                Key.F5 => "\x1b[15~",
+                Key.F6 => "\x1b[17~",
+                Key.F7 => "\x1b[18~",
+                Key.F8 => "\x1b[19~",
+                Key.F9 => "\x1b[20~",
+                Key.F10 => "\x1b[21~",
+                Key.F11 => "\x1b[23~",
+                Key.F12 => "\x1b[24~",
                 _ => null
             };
         }
@@ -392,11 +429,27 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return false;
             }
 
-            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+            Key key = NormalizeKey(e);
 
             if (key >= Key.A && key <= Key.Z)
             {
                 sequence = ((char)(key - Key.A + 1)).ToString();
+                return true;
+            }
+
+            sequence = key switch
+            {
+                Key.Space or Key.D2 or Key.NumPad2 => "\0",
+                Key.OemOpenBrackets => "\x1b",
+                Key.Oem5 => "\x1c",
+                Key.Oem6 => "\x1d",
+                Key.D6 or Key.NumPad6 => "\x1e",
+                Key.OemMinus or Key.Subtract or Key.Oem2 or Key.Divide => "\x1f",
+                _ => null
+            };
+
+            if (sequence != null)
+            {
                 return true;
             }
 
@@ -407,7 +460,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             return key switch
             {
-                Key.Enter => "\r\n",
+                Key.Enter or Key.Return => "\r\n",
                 Key.Back => "\b \b",
                 Key.Tab => "\t",
                 _ => null
