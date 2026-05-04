@@ -1,4 +1,14 @@
-﻿using ICSharpCode.AvalonEdit.Editing;
+﻿/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using System.Globalization;
 
@@ -13,6 +23,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         /// The text area to render the block caret for.
         /// </summary>
         private readonly TextArea _textArea;
+        private Typeface? _cachedTypeface;
+        private FontFamily? _cachedFontFamily;
+        private FontStyle _cachedFontStyle;
+        private FontWeight _cachedFontWeight;
+        private FontStretch _cachedFontStretch;
 
         /// <summary>
         /// Create a new block caret renderer.
@@ -40,22 +55,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             // Determine the visual position of the caret.
             var pos = caret.Position;
             var point = textView.GetVisualPosition(pos, VisualYPosition.LineTop) - textView.ScrollOffset;
-
-            // Use a consistent block size based on font metrics
-            var formattedText = new FormattedText(
-                "M", // Use a wide character for consistent block size
-                CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight, _textArea.FontStretch),
-                _textArea.FontSize,
-                Brushes.Black,
-                VisualTreeHelper.GetDpi(textView).PixelsPerDip);
-
-            var rect = new Rect(point, new Size(formattedText.Width, formattedText.Height));
+            var rect = new Rect(point, new Size(textView.WideSpaceWidth, textView.DefaultLineHeight));
 
             // Get the character under the caret, if any
             char caretChar = ' ';
-            if (pos.Line < _textArea.Document.LineCount)
+            if (pos.Line <= _textArea.Document.LineCount)
             {
                 var line = _textArea.Document.GetLineByNumber(pos.Line);
                 int offset = line.Offset + pos.Column - 1;
@@ -69,16 +73,36 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             drawingContext.DrawRectangle(Brushes.White, null, rect);
 
             // Draw the character under the caret in black (inverted color)
+            var dpi = VisualTreeHelper.GetDpi(textView);
             var caretText = new FormattedText(
                 caretChar.ToString(),
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight, _textArea.FontStretch),
+                GetTypeface(),
                 _textArea.FontSize,
                 Brushes.Black,
-                VisualTreeHelper.GetDpi(textView).PixelsPerDip);
+                dpi.PixelsPerDip);
 
             drawingContext.DrawText(caretText, point);
+        }
+
+        private Typeface GetTypeface()
+        {
+            if (_cachedTypeface != null &&
+                Equals(_cachedFontFamily, _textArea.FontFamily) &&
+                _cachedFontStyle == _textArea.FontStyle &&
+                _cachedFontWeight == _textArea.FontWeight &&
+                _cachedFontStretch == _textArea.FontStretch)
+            {
+                return _cachedTypeface;
+            }
+
+            _cachedFontFamily = _textArea.FontFamily;
+            _cachedFontStyle = _textArea.FontStyle;
+            _cachedFontWeight = _textArea.FontWeight;
+            _cachedFontStretch = _textArea.FontStretch;
+            _cachedTypeface = new Typeface(_cachedFontFamily, _cachedFontStyle, _cachedFontWeight, _cachedFontStretch);
+            return _cachedTypeface;
         }
     }
 }

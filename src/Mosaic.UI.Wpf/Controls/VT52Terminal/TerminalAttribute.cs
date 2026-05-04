@@ -1,4 +1,14 @@
-﻿namespace Mosaic.UI.Wpf.Controls.VT52Terminal
+﻿/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 {
     /// <summary>
     /// Terminal cell attributes (colors, bold, underline, etc.)
@@ -26,11 +36,21 @@
 
         public override bool Equals(object? obj) => obj is TerminalAttributes other && Equals(other);
 
-        public override int GetHashCode() => HashCode.Combine(
-            Foreground, Background, Bold, Dim, Italic,
-            Underline | (Blink ? (true) : false),
-            Reverse | (Hidden ? (true) : false),
-            Strikethrough);
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(Foreground);
+            hash.Add(Background);
+            hash.Add(Bold);
+            hash.Add(Dim);
+            hash.Add(Italic);
+            hash.Add(Underline);
+            hash.Add(Blink);
+            hash.Add(Reverse);
+            hash.Add(Hidden);
+            hash.Add(Strikethrough);
+            return hash.ToHashCode();
+        }
 
         public static bool operator ==(TerminalAttributes left, TerminalAttributes right) => left.Equals(right);
 

@@ -1,4 +1,14 @@
-﻿using ICSharpCode.AvalonEdit;
+﻿/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using ICSharpCode.AvalonEdit;
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 
 namespace Mosaic.UI.Wpf.Controls.VT52Terminal
@@ -61,6 +71,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private bool _autowrapPending = false; // Deferred autowrap
 
         private readonly object _lock = new();
+        private readonly SemaphoreSlim _sendGate = new(1, 1);
+        private readonly StringBuilder _pendingRemoteInput = new();
+        private string[] _lineCache = [];
+        private bool _isRemoteInputFlushQueued;
         private bool _isLoaded;
 
         /// <summary>
@@ -186,7 +200,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
-            SizeChanged += (_, __) => OnSizeChanged();
+            SizeChanged += OnControlSizeChanged;
             PreviewKeyDown += OnPreviewKeyDown;
             PreviewTextInput += OnPreviewTextInput;
 
@@ -203,9 +217,19 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             _isLoaded = true;
-            Dispatcher.Invoke(OnSizeChanged, DispatcherPriority.Background);
 
-            if (AutoConnect && Connection is { IsConnected: false })
+            // Re-attach connection events to handle load/unload cycles (e.g., tab switching).
+            // The -= before += is an idempotent guard that prevents double-subscription.
+            var connection = Connection;
+            if (connection != null)
+            {
+                connection.DataReceived -= OnConnectionDataReceived;
+                connection.DataReceived += OnConnectionDataReceived;
+            }
+
+            Dispatcher.BeginInvoke(OnSizeChanged, DispatcherPriority.Background);
+
+            if (AutoConnect && connection is { IsConnected: false })
             {
                 try
                 {
@@ -222,6 +246,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             _isLoaded = false;
 
+            // Detach the DataReceived event so the connection does not hold a reference to this
+            // control after it has been removed from the visual tree.
+            Connection?.DataReceived -= OnConnectionDataReceived;
+
             if (DisconnectOnUnload && Connection?.IsConnected == true)
             {
                 try
@@ -234,6 +262,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 }
             }
         }
+
+        private void OnControlSizeChanged(object sender, SizeChangedEventArgs e) => OnSizeChanged();
 
         private void AttachConnection(ITerminalConnection? connection)
         {
@@ -318,13 +348,49 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private void OnConnectionDataReceived(object? sender, string data)
         {
-            if (Dispatcher.CheckAccess())
+            if (string.IsNullOrEmpty(data))
             {
-                Add(data);
                 return;
             }
 
-            Dispatcher.BeginInvoke(() => Add(data), DispatcherPriority.Background);
+            lock (_lock)
+            {
+                _pendingRemoteInput.Append(data);
+
+                if (_isRemoteInputFlushQueued)
+                {
+                    return;
+                }
+
+                _isRemoteInputFlushQueued = true;
+            }
+
+            Dispatcher.BeginInvoke(FlushPendingRemoteInput, DispatcherPriority.Render);
+        }
+
+        private void FlushPendingRemoteInput()
+        {
+            string data;
+
+            lock (_lock)
+            {
+                data = _pendingRemoteInput.ToString();
+                _pendingRemoteInput.Clear();
+                _isRemoteInputFlushQueued = false;
+
+                if (data.Length == 0)
+                {
+                    return;
+                }
+
+                foreach (var ch in data)
+                {
+                    ProcessChar(ch);
+                }
+
+                // Do not reset parser state here; allow incomplete sequences to continue across calls.
+                UpdateDocument();
+            }
         }
 
         private void OnPreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -448,12 +514,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _ => null
             };
 
-            if (sequence != null)
-            {
-                return true;
-            }
-
-            return false;
+            return sequence != null;
         }
 
         private static string? GetLocalEchoText(Key key)
@@ -476,16 +537,49 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return false;
             }
 
+            _ = SendToConnectionAsync(connection, text, localEchoText);
+            return true;
+        }
+
+        private async Task SendToConnectionAsync(ITerminalConnection connection, string text, string? localEchoText)
+        {
             try
             {
-                connection.Send(text);
+                await _sendGate.WaitAsync();
+                try
+                {
+                    await connection.SendAsync(text);
+                }
+                finally
+                {
+                    _sendGate.Release();
+                }
+
                 EchoLocal(localEchoText);
-                return true;
             }
             catch (Exception ex)
             {
                 OnConnectionError(ex);
-                return false;
+            }
+        }
+
+        private async Task SendToConnectionAsync(ITerminalConnection connection, byte[] data)
+        {
+            try
+            {
+                await _sendGate.WaitAsync();
+                try
+                {
+                    await connection.SendAsync(data);
+                }
+                finally
+                {
+                    _sendGate.Release();
+                }
+            }
+            catch (Exception ex)
+            {
+                OnConnectionError(ex);
             }
         }
 
@@ -508,14 +602,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            try
-            {
-                Connection.Send(data);
-            }
-            catch (Exception ex)
-            {
-                OnConnectionError(ex);
-            }
+            _ = SendToConnectionAsync(Connection, data);
         }
 
         private void ApplyCurrentTerminalSize(ITerminalConnection connection, bool sendWindowChange)
@@ -608,6 +695,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 rows = Math.Max(1, rows);
                 cols = Math.Max(1, cols);
+
+                if (rows == Rows && cols == Columns)
+                {
+                    return;
+                }
+
                 var newBuf = new TerminalCell[rows, cols];
                 var defaultCell = new TerminalCell(' ', TerminalAttributes.Default);
                 for (int r = 0; r < rows; r++)
@@ -643,8 +736,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         }
 
 
-        public event Action<int, int, int, int>? TerminalResized; // rows, cols, pxW, pxH
+        /// <summary>
+        /// Raised after the terminal is resized. Arguments are rows, columns, pixel width, and pixel height.
+        /// </summary>
+        public event Action<int, int, int, int>? TerminalResized;
 
+        /// <summary>
+        /// Recalculates the terminal dimensions from the current control size and resizes the buffer accordingly.
+        /// Called automatically on <see cref="FrameworkElement.SizeChanged"/> and after the control is loaded.
+        /// </summary>
         public void OnSizeChanged()
         {
             if (TextArea?.TextView == null)
@@ -674,6 +774,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             TerminalResized?.Invoke(rows, cols, pxW, pxH);
         }
 
+        /// <summary>
+        /// Processes raw bytes from the remote host as terminal data.
+        /// </summary>
+        /// <param name="data">The bytes to process. <see langword="null"/> or empty arrays are ignored.</param>
         public void Add(byte[]? data)
         {
             if (data == null || data.Length == 0)
@@ -692,6 +796,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             }
         }
 
+        /// <summary>
+        /// Processes a string of terminal data from the remote host.
+        /// </summary>
+        /// <param name="data">The text to process. <see langword="null"/> or empty strings are ignored.</param>
         public void Add(string? data)
         {
             if (string.IsNullOrEmpty(data))
@@ -1281,18 +1389,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             int bottom = _scrollBottom - 1;
             var blankCell = new TerminalCell(' ', TerminalAttributes.Default);
 
-            for (int r = top; r < bottom; r++)
+            if (bottom > top)
             {
-                for (int c = 0; c < Columns; c++)
-                {
-                    _buf[r, c] = _buf[r + 1, c];
-                }
+                Array.Copy(_buf, (top + 1) * Columns, _buf, top * Columns, (bottom - top) * Columns);
             }
 
-            for (int c = 0; c < Columns; c++)
-            {
-                _buf[bottom, c] = blankCell;
-            }
+            FillRow(bottom, 0, Columns, blankCell);
         }
 
         private void ScrollDownRegion()
@@ -1302,35 +1404,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             int bottom = _scrollBottom - 1;
             var blankCell = new TerminalCell(' ', TerminalAttributes.Default);
 
-            for (int r = bottom; r > top; r--)
+            if (bottom > top)
             {
-                for (int c = 0; c < Columns; c++)
-                {
-                    _buf[r, c] = _buf[r - 1, c];
-                }
+                Array.Copy(_buf, top * Columns, _buf, (top + 1) * Columns, (bottom - top) * Columns);
             }
 
-            for (int c = 0; c < Columns; c++)
-            {
-                _buf[top, c] = blankCell;
-            }
-        }
-
-        private void ScrollUp()
-        {
-            var blankCell = new TerminalCell(' ', TerminalAttributes.Default);
-            for (int r = 0; r < Rows - 1; r++)
-            {
-                for (int c = 0; c < Columns; c++)
-                {
-                    _buf[r, c] = _buf[r + 1, c];
-                }
-            }
-
-            for (int c = 0; c < Columns; c++)
-            {
-                _buf[Rows - 1, c] = blankCell;
-            }
+            FillRow(top, 0, Columns, blankCell);
         }
 
         private void EraseToEndOfLine()
@@ -1414,22 +1493,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             var blankCell = new TerminalCell(' ', _currentAttrs);
             int bottom = _scrollBottom - 1;
-            for (int i = 0; i < count; i++)
+            count = Math.Min(count, bottom - _curRow + 1);
+            int moveRows = bottom - _curRow + 1 - count;
+
+            if (moveRows > 0)
             {
-                // Shift lines down
-                for (int r = bottom; r > _curRow; r--)
-                {
-                    for (int c = 0; c < Columns; c++)
-                    {
-                        _buf[r, c] = _buf[r - 1, c];
-                    }
-                }
-                // Clear current line
-                for (int c = 0; c < Columns; c++)
-                {
-                    _buf[_curRow, c] = blankCell;
-                }
+                Array.Copy(_buf, _curRow * Columns, _buf, (_curRow + count) * Columns, moveRows * Columns);
             }
+
+            FillRows(_curRow, count, blankCell);
             _curCol = 0;
         }
 
@@ -1441,22 +1513,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             var blankCell = new TerminalCell(' ', _currentAttrs);
             int bottom = _scrollBottom - 1;
-            for (int i = 0; i < count; i++)
+            count = Math.Min(count, bottom - _curRow + 1);
+            int moveRows = bottom - _curRow + 1 - count;
+
+            if (moveRows > 0)
             {
-                // Shift lines up
-                for (int r = _curRow; r < bottom; r++)
-                {
-                    for (int c = 0; c < Columns; c++)
-                    {
-                        _buf[r, c] = _buf[r + 1, c];
-                    }
-                }
-                // Clear bottom line
-                for (int c = 0; c < Columns; c++)
-                {
-                    _buf[bottom, c] = blankCell;
-                }
+                Array.Copy(_buf, (_curRow + count) * Columns, _buf, _curRow * Columns, moveRows * Columns);
             }
+
+            FillRows(bottom - count + 1, count, blankCell);
             _curCol = 0;
         }
 
@@ -1464,28 +1529,32 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             // Delete characters at cursor position, shifting rest of line left
             var blankCell = new TerminalCell(' ', _currentAttrs);
-            for (int i = 0; i < count; i++)
+            count = Math.Min(count, Columns - _curCol);
+            int rowOffset = _curRow * Columns;
+            int moveCount = Columns - _curCol - count;
+
+            if (moveCount > 0)
             {
-                for (int c = _curCol; c < Columns - 1; c++)
-                {
-                    _buf[_curRow, c] = _buf[_curRow, c + 1];
-                }
-                _buf[_curRow, Columns - 1] = blankCell;
+                Array.Copy(_buf, rowOffset + _curCol + count, _buf, rowOffset + _curCol, moveCount);
             }
+
+            FillRow(_curRow, Columns - count, count, blankCell);
         }
 
         private void InsertChars(int count)
         {
             // Insert blank characters at cursor position, shifting rest of line right
             var blankCell = new TerminalCell(' ', _currentAttrs);
-            for (int i = 0; i < count; i++)
+            count = Math.Min(count, Columns - _curCol);
+            int rowOffset = _curRow * Columns;
+            int moveCount = Columns - _curCol - count;
+
+            if (moveCount > 0)
             {
-                for (int c = Columns - 1; c > _curCol; c--)
-                {
-                    _buf[_curRow, c] = _buf[_curRow, c - 1];
-                }
-                _buf[_curRow, _curCol] = blankCell;
+                Array.Copy(_buf, rowOffset + _curCol, _buf, rowOffset + _curCol + count, moveCount);
             }
+
+            FillRow(_curRow, _curCol, count, blankCell);
         }
 
         private void EraseChars(int count)
@@ -1509,10 +1578,23 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             var cell = new TerminalCell(ch, _currentAttrs);
             for (int r = row; r < row + height; r++)
             {
-                for (int c = col; c < col + width; c++)
-                {
-                    _buf[r, c] = cell;
-                }
+                FillRow(r, col, width, cell);
+            }
+        }
+
+        private void FillRows(int row, int count, TerminalCell cell)
+        {
+            for (int r = row; r < row + count; r++)
+            {
+                FillRow(r, 0, Columns, cell);
+            }
+        }
+
+        private void FillRow(int row, int col, int count, TerminalCell cell)
+        {
+            for (int c = col; c < col + count; c++)
+            {
+                _buf[row, c] = cell;
             }
         }
 
@@ -1673,74 +1755,179 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             return (byte)(16 + 36 * ri + 6 * gi + bi);
         }
 
-        private readonly StringBuilder _updateSb = new();
-
         // ======================
         // Rendering
         // ======================
         private void UpdateDocument(bool forceScrollTop = false)
         {
-            _updateSb.Clear();
-            _updateSb.EnsureCapacity((Rows * (Columns + 1)) + 1);
+            int curRow = _curRow;
+            int curCol = _curCol;
+
+            if (!Dispatcher.CheckAccess())
+            {
+                var lines = BuildLineSnapshot();
+                var text = BuildDocumentText(lines);
+                Dispatcher.BeginInvoke(() => ApplyFullDocumentUpdate(text, lines, curRow, curCol, forceScrollTop), DispatcherPriority.Render);
+                return;
+            }
+
+            ApplyIncrementalDocumentUpdate(curRow, curCol, forceScrollTop);
+        }
+
+        private string[] BuildLineSnapshot()
+        {
+            var lines = new string[Rows];
+            var chars = new char[Columns];
+
             for (int r = 0; r < Rows; r++)
             {
                 for (int c = 0; c < Columns; c++)
                 {
-                    _updateSb.Append(_buf[r, c].Char);
+                    chars[c] = _buf[r, c].Char;
                 }
 
-                _updateSb.Append('\n'); // Always append LF, even for the last line
+                lines[r] = new string(chars);
             }
 
-            var text = _updateSb.ToString();
+            return lines;
+        }
 
-            // Capture state for the Apply closure (safe if dispatched to UI thread later)
-            int curRow = _curRow;
-            int curCol = _curCol;
+        private string BuildDocumentText(string[] lines)
+        {
+            var sb = new StringBuilder((lines.Length * (Columns + 1)) + 1);
 
-            void Apply()
+            foreach (string line in lines)
             {
-                if (Document == null)
-                {
-                    Document = new TextDocument();
-                }
+                sb.Append(line);
+                sb.Append('\n'); // Always append LF, even for the last line.
+            }
 
-                Document.BeginUpdate();
-                try
+            return sb.ToString();
+        }
+
+        private void ApplyIncrementalDocumentUpdate(int curRow, int curCol, bool forceScrollTop)
+        {
+            if (Document == null)
+            {
+                Document = new TextDocument();
+            }
+
+            var lines = BuildLineSnapshot();
+            bool requiresFullReplace = forceScrollTop ||
+                                       Document.LineCount < Rows ||
+                                       _lineCache.Length != Rows ||
+                                       (_lineCache.Length > 0 && _lineCache[0].Length != Columns);
+
+            if (requiresFullReplace)
+            {
+                ApplyFullDocumentUpdate(BuildDocumentText(lines), lines, curRow, curCol, forceScrollTop);
+                return;
+            }
+
+            bool beganUpdate = false;
+
+            try
+            {
+                for (int r = 0; r < Rows; r++)
                 {
-                    SelectionStart = 0;
-                    Document.Replace(0, Document.TextLength, text);
+                    if (string.Equals(lines[r], _lineCache[r], StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    if (!beganUpdate)
+                    {
+                        Document.BeginUpdate();
+                        beganUpdate = true;
+                    }
+
+                    var line = Document.GetLineByNumber(r + 1);
+                    Document.Replace(line.Offset, line.Length, lines[r]);
                 }
-                finally
+            }
+            finally
+            {
+                if (beganUpdate)
                 {
                     Document.EndUpdate();
                 }
+            }
 
-                // Caret placement using 1-based line/column
-                int targetLine = Math.Max(1, Math.Min(curRow + 1, Document.LineCount));
-                var line = Document.GetLineByNumber(targetLine);
-                int targetColumn = Math.Max(1, Math.Min(curCol + 1, line.Length + 1)); // allow caret after last char
+            _lineCache = lines;
+            UpdateCaret(curRow, curCol, forceScrollTop);
+        }
 
+        private void ApplyFullDocumentUpdate(string text, string[] lines, int curRow, int curCol, bool forceScrollTop)
+        {
+            if (Document == null)
+            {
+                Document = new TextDocument();
+            }
+
+            Document.BeginUpdate();
+            try
+            {
+                Document.Replace(0, Document.TextLength, text);
+            }
+            finally
+            {
+                Document.EndUpdate();
+            }
+
+            _lineCache = lines;
+            UpdateCaret(curRow, curCol, forceScrollTop);
+        }
+
+        private void UpdateCaret(int curRow, int curCol, bool forceScrollTop)
+        {
+            int targetLine = Math.Max(1, Math.Min(curRow + 1, Document.LineCount));
+            var line = Document.GetLineByNumber(targetLine);
+            int targetColumn = Math.Max(1, Math.Min(curCol + 1, line.Length + 1)); // allow caret after last char
+            var position = TextArea.Caret.Position;
+
+            if (position.Line != targetLine || position.Column != targetColumn)
+            {
                 TextArea.Caret.Position = new TextViewPosition(targetLine, targetColumn);
+            }
 
-                // Standard caret visibility
+            if (!IsLineVisible(targetLine))
+            {
                 TextArea.Caret.BringCaretToView();
+            }
 
-                // Keep nano header visible at the very top when we're on it
-                if (forceScrollTop)
+            // Keep nano header visible at the very top when we're on it.
+            if (forceScrollTop)
+            {
+                ScrollTo(1, 1);
+            }
+        }
+
+        private bool IsLineVisible(int lineNumber)
+        {
+            var textView = TextArea.TextView;
+
+            if (!textView.VisualLinesValid)
+            {
+                return false;
+            }
+
+            var visualLines = textView.VisualLines;
+
+            if (visualLines.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var visualLine in visualLines)
+            {
+                if (visualLine.FirstDocumentLine.LineNumber <= lineNumber &&
+                    visualLine.LastDocumentLine.LineNumber >= lineNumber)
                 {
-                    ScrollTo(1, 1);
+                    return true;
                 }
             }
 
-            if (Dispatcher.CheckAccess())
-            {
-                Apply();
-            }
-            else
-            {
-                Dispatcher.BeginInvoke(Apply, DispatcherPriority.Render);
-            }
+            return false;
         }
     }
 }

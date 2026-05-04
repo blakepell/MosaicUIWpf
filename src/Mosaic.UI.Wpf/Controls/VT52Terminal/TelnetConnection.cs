@@ -44,7 +44,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             SubnegotiationIac
         }
 
-        private readonly object _sendLock = new();
+        private readonly SemaphoreSlim _sendSemaphore = new(1, 1);
         private readonly List<byte> _subnegotiationBuffer = new();
         private TcpClient? _client;
         private NetworkStream? _stream;
@@ -209,7 +209,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            await WriteRawAsync(EscapeIac(data));
+            await WriteRawAsync(EscapeIac(data)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -463,10 +463,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            lock (_sendLock)
+            _sendSemaphore.Wait();
+            try
             {
                 _stream.Write(data, 0, data.Length);
                 _stream.Flush();
+            }
+            finally
+            {
+                _sendSemaphore.Release();
             }
         }
 
@@ -477,8 +482,16 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            await _stream.WriteAsync(data, 0, data.Length);
-            await _stream.FlushAsync();
+            await _sendSemaphore.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                await _stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+                await _stream.FlushAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                _sendSemaphore.Release();
+            }
         }
 
         private static byte[] EscapeIac(byte[] data)

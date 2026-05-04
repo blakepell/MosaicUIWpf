@@ -209,8 +209,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             }
 
             var bytes = Encoding.UTF8.GetBytes(text);
-            await _shell.WriteAsync(bytes, 0, bytes.Length);
-            await _shell.FlushAsync();
+            await _shell.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+            await _shell.FlushAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -243,8 +243,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            await _shell.WriteAsync(data, 0, data.Length);
-            await _shell.FlushAsync();
+            await _shell.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
+            await _shell.FlushAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />
