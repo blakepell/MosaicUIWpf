@@ -45,6 +45,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | Badge | A badge component. |
 | BindablePasswordBox | Represents a password input control that supports data binding for the password value. |
 | ChatThread | A chat thread control which shows sent and received messages in a single thread format. |
+| CheckBoxList | A ListBox variant that defaults to multiple selection and displays a checkbox beside each item. |
 | ClipBorder | Border which allows Clipping to its border. Useful especially when you need to clip to round corners. |
 | ColorPicker | A color picker UserControl that allows users to select colors from presets or enter hex values. |
 | EditableTextBlock | Represents a control that displays text in a non-editable mode and allows users to switch to an editable mode to modify the text. The control supports double-click editing, text trimming, and customizable appearance. |

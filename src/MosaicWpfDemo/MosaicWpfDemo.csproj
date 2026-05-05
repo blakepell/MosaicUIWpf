@@ -194,6 +194,13 @@
 			<Link>LinkedSources\ChatThreadExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\CheckBoxListExample.xaml">
+			<Link>LinkedSources\CheckBoxListExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\CheckBoxListExample.xaml.cs">
+			<Link>LinkedSources\CheckBoxListExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ColorPickerExample.xaml">
 			<Link>LinkedSources\ColorPickerExample.xaml</Link>
 		</EmbeddedResource>
