@@ -8,11 +8,11 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Mosaic.UI.Wpf.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using Mosaic.UI.Wpf.Controls;
 
 namespace MosaicWpfDemo.Views.Examples
 {

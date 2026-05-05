@@ -159,7 +159,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/typing-48.png"
+                    ImageSource="/Assets/typeahead-46.png"
                     Text="AutoCompleteBox">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -168,7 +168,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AutoCompleteBoxExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AutoCompleteBox}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AutoCompleteBoxExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/typing-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/typeahead-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
@@ -249,7 +249,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/list-48.png"
+                    ImageSource="/Assets/checkbox-list-48.png"
                     Text="CheckBoxList">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -258,7 +258,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.CheckBoxListExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:CheckBoxList}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:CheckBoxListExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/list-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/checkbox-list-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
@@ -591,7 +591,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/collage-48.png"
+                    ImageSource="/Assets/dropdown-field-48.png"
                     Text="SplitButton">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -600,7 +600,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SplitButtonExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SplitButton}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SplitButtonExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dropdown-field-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
