@@ -41,6 +41,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 |---|---|
 | AdaptiveImage | Image that adapts its colors to match app/OS theme. Intended purpose is to be used for icons to be able to adapt. |
 | AsteriskTextBlock | A text block that displays asterisks for each character in its text property. |
+| AutoCompleteBox | Represents an editable selection control that filters suggestions while the user types and commits a selected item. |
 | Avatar | Represents a customizable avatar control that displays content with support for corner radius and template selection. |
 | Badge | A badge component. |
 | BindablePasswordBox | Represents a password input control that supports data binding for the password value. |

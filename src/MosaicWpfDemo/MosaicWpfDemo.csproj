@@ -159,6 +159,13 @@
 			<Link>LinkedSources\AvalonEditVtTerminalBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\AutoCompleteBoxExample.xaml">
+			<Link>LinkedSources\AutoCompleteBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\AutoCompleteBoxExample.xaml.cs">
+			<Link>LinkedSources\AutoCompleteBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\AvatarExample.xaml">
 			<Link>LinkedSources\AvatarExample.xaml</Link>
 		</EmbeddedResource>

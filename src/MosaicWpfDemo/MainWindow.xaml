@@ -155,6 +155,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  AutoCompleteBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/typing-48.png"
+                    Text="AutoCompleteBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="AutoCompleteBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AutoCompleteBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AutoCompleteBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AutoCompleteBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AutoCompleteBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/typing-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Avatar  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
