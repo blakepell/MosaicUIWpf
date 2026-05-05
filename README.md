@@ -65,6 +65,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | SideMenu | Represents a side menu control that displays a collection of menu items and allows item selection. |
 | SimpleStackPanel | Arranges child elements into a single line that can be oriented horizontally or vertically that is more efficient that the normal StackPanel. |
 | SmallPanel | Represents a custom panel that arranges its child elements in a single layer and ensures that each child is measured and arranged within the available space. |
+| SplitButton | Represents a split button with a primary action surface and a separate drop-down surface that opens a context menu. |
 | StopwatchDisplay | Represents a stopwatch control that provides functionality to display a stopwatch timer as UI element. |
 | StringListEditor | A StringListEditor component. |
 | SymbolRating | A symbol rating component. |

@@ -299,6 +299,13 @@
 			<Link>LinkedSources\SearchBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\SplitButtonExample.xaml">
+			<Link>LinkedSources\SplitButtonExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SplitButtonExample.xaml.cs">
+			<Link>LinkedSources\SplitButtonExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\InertiaScrollViewerExample.xaml">
 			<Link>LinkedSources\InertiaScrollViewerExample.xaml</Link>
 		</EmbeddedResource>

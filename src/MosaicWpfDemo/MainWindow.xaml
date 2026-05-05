@@ -569,6 +569,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SplitButton Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/collage-48.png"
+                    Text="SplitButton">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="SplitButton" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SplitButtonExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SplitButtonExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SplitButton}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SplitButtonExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Stopwatch Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

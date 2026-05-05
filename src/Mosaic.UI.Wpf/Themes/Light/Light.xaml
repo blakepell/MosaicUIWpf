@@ -144,6 +144,10 @@
     <Color x:Key="Button.Pressed.BorderColor">#FF2C628B</Color>
     <SolidColorBrush x:Key="Button.Pressed.Border" Color="{DynamicResource Button.Pressed.BorderColor}" />
 
+    <SolidColorBrush x:Key="SplitButton.Open.Background" Color="{DynamicResource Button.Pressed.BackgroundColor}" />
+    <SolidColorBrush x:Key="SplitButton.Open.Border" Color="{DynamicResource Button.Pressed.BorderColor}" />
+    <SolidColorBrush x:Key="SplitButton.Open.Foreground" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
+
     <Color x:Key="Button.Disabled.BackgroundColor">#FFF4F4F4</Color>
     <SolidColorBrush x:Key="Button.Disabled.Background" Color="{DynamicResource Button.Disabled.BackgroundColor}" />
 

@@ -62,6 +62,9 @@
     <Color x:Key="Button.MouseOver.BorderColor">#FFFFFF00</Color>
     <Color x:Key="Button.Pressed.BackgroundColor">#FFFFFF00</Color>
     <Color x:Key="Button.Pressed.BorderColor">#FFFFFF00</Color>
+    <SolidColorBrush x:Key="SplitButton.Open.Background" Color="#FF000000" />
+    <SolidColorBrush x:Key="SplitButton.Open.Border" Color="#FFFFFF00" />
+    <SolidColorBrush x:Key="SplitButton.Open.Foreground" Color="#FFFFFFFF" />
     <Color x:Key="Button.Disabled.BackgroundColor">#FF0F0F0F</Color>
     <Color x:Key="Button.Disabled.BorderColor">#FF5C5C5C</Color>
     <Color x:Key="Button.Disabled.ForegroundColor">#FFB0B0B0</Color>
