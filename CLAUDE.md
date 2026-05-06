@@ -30,14 +30,36 @@ There is no test project in the solution.
 ### Library shape (`src/Mosaic.UI.Wpf`)
 
 - One runtime assembly with a stable root namespace `Mosaic.UI.Wpf.*`. Public XAML consumers use the canonical URI `http://schemas.apexgate.net/wpf/mosaic-ui` (prefix `mosaic`). Legacy URIs (`...mosaic`, `mosaicgate.net/...`) are mapped via `XmlnsCompatibleWith` in `AssemblyInfo.cs` — preserve those when adding new namespaces.
-- Controls live under `Controls/<ControlName>/` (one folder per control, often containing both code and a XAML resource dictionary). Default templates are reachable via `Themes/Generic.xaml`.
+- Controls live under `Controls/<ControlName>/`. Each folder contains exactly one `.cs` (the control class) and one `.xaml` (a `ResourceDictionary` with the default `Style` + `ControlTemplate`), plus optional helpers such as an `AutomationPeer` or `TemplateSelector`.
+- `Themes/Generic.xaml` is the WPF default-style index; it merges every individual control XAML via `<ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/{Control}/{Control}.xaml" />`. Add a new entry here whenever a new control XAML is created.
 - Other top-level folders: `Behaviors`, `Converters`, `Extensions`, `Interfaces`, `Collections`, `Cache`, `Json`, `Common`, `Assets`.
+
+### Control authoring conventions
+
+Prefer `CustomControl` (lookless, themable, `TemplatePart` contracts, automation peer) over `UserControl`. Key patterns to follow:
+
+- Declare template-part names as private `const string` fields prefixed with `PART_`, and annotate the class with `[TemplatePart(Name = PartFoo, Type = typeof(...))]`.
+- Register all `DependencyProperty` fields with `FrameworkPropertyMetadata`; set `BindsTwoWayByDefault` where the property represents user-editable state.
+- Decorate interactive DPs with `[Category]`, `[Description]`, `[DefaultEvent]`, and `[DefaultProperty]` for designer support.
+- Prefer routed events (`RoutingStrategy.Bubble`) for control-state notifications and provide `Command`/`CommandParameter` hooks for MVVM use.
+- Add an automation peer for every interactive control and keep keyboard parity with mouse interaction.
+- Use tokens, not hard-coded colors or sizes (see Theming model below).
 
 ### Theming model (`src/Mosaic.UI.Wpf/Themes`)
 
-`ThemeManager : ResourceDictionary` is the entry point. It mutates only its own `MergedDictionaries` and never `Application.Current.Resources` — this is a hard rule from `docs/ARCHITECTURE_BLUEPRINT.md` so the library can coexist with other UI kits. Composition order: foundation tokens → theme colors (`Light`/`Dark`/`HighContrast`) → optional system color overrides → generic control templates → optional native control styles. Theme switches replace managed dictionaries; brushes are referenced via `DynamicResource` against tokenized keys (`MosaicTheme.FontFamily`, accent/status brushes, etc.). Native restyling is opt-in (`Native=true`); the native style XAMLs in `Themes/Native/` are deliberately `<Page Remove>`d from the build (see csproj) and merged dynamically.
+`ThemeManager : ResourceDictionary` is the entry point. It mutates only its own `MergedDictionaries` and never `Application.Current.Resources` — this is a hard rule from `docs/ARCHITECTURE_BLUEPRINT.md` so the library can coexist with other UI kits. Composition order: `Foundation/` tokens (typography, window chrome) → theme colors (`Light`/`Dark`/`HighContrast`) → optional system color overrides → generic control templates → optional native control styles. Theme switches replace managed dictionaries; brushes are referenced via `DynamicResource` against tokenized keys.
 
-When adding a control: prefer `CustomControl` (lookless, themable, `TemplatePart` contracts, automation peer) over `UserControl`. Use tokens, not hard-coded colors. Add an automation peer for interactive controls and keep keyboard parity with mouse.
+**Theme token keys** are exposed as `static ComponentResourceKey` properties on `Mosaic.UI.Wpf.Themes.MosaicTheme`. Reference them in XAML like:
+```xml
+Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+```
+Categories include: accents, selection, status (Info/Success/Warning/Error), window, control background/foreground/border, and hover/disabled variants. Check `MosaicTheme.cs` for the full list.
+
+Native WPF control restyling is opt-in (`Native=true`). The native style XAMLs in `Themes/Native/` are deliberately `<Page Remove>`d from the build (so they impose nothing by default) and merged dynamically at runtime when the option is enabled.
+
+### Consumer entry point
+
+`MosaicApp<TSettings, TApplicationViewModel> : Application` (in `MosaicApp.cs`) is the recommended base class for Mosaic-themed WPF apps — it handles `ThemeManager` initialization and wires `AppSettings`/`AppViewModel`. `MosaicTemplateApp` is the canonical example.
 
 ### Demo app (`src/MosaicWpfDemo`)
 
@@ -45,7 +67,19 @@ Each control example is a `UserControl` under `Views/Examples/{Name}Example.xaml
 
 ## File header
 
-Source files use a fixed header block (`Mosaic UI for WPF / @project lead Blake Pell / @license MIT`). Match the existing style when creating new `.cs` files.
+Every `.cs` file starts with this block — match it exactly when creating new files:
+
+```csharp
+/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+```
 
 ## Reference docs
 
