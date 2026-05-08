@@ -56,26 +56,26 @@ namespace MosaicWpfDemo.Views.Examples
             _firstLoad = false;
 
             // Commented out: Ssh Example
-            var ssh = new SshConnection()
-            {
-                BufferSize = 8192,
-                Host = "18.213.178.120",
-                Username = "ubuntu",
-                KeyFile = @"C:\Users\blake\Dropbox\Code\cs-mud.pub"
-            };
-
-            Terminal.Connection = ssh;
-            await Terminal.ConnectAsync();
-
-            //// We'll use a telnet example for now to a public MUD (multi-user dimension game).
-            //var telnet = new TelnetConnection()
+            //var ssh = new SshConnection()
             //{
-            //    Host = "dsl-mud.org",
-            //    Port = 4000
+            //    BufferSize = 8192,
+            //    Host = "",
+            //    Username = "",
+            //    KeyFile = @""
             //};
 
-            //Terminal.Connection = telnet;
+            //Terminal.Connection = ssh;
             //await Terminal.ConnectAsync();
+
+            // We'll use a telnet example for now to a public MUD (multi-user dimension game).
+            var telnet = new TelnetConnection()
+            {
+                Host = "dsl-mud.org",
+                Port = 4000
+            };
+
+            Terminal.Connection = telnet;
+            await Terminal.ConnectAsync();
         }
     }
 }
