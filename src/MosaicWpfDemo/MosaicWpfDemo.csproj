@@ -146,6 +146,13 @@
 			<Link>LinkedSources\ShadowPanelExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ShadowTextBlockExample.xaml">
+			<Link>LinkedSources\ShadowTextBlockExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ShadowTextBlockExample.xaml.cs">
+			<Link>LinkedSources\ShadowTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ShieldExample.xaml">
 			<Link>LinkedSources\ShieldExample.xaml</Link>
 		</EmbeddedResource>
@@ -432,6 +439,9 @@
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\ShadowPanelExample.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\Examples\ShadowTextBlockExample.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\StringListEditorExample.xaml.cs">

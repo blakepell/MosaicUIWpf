@@ -1,0 +1,76 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ShadowTextBlockExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Margin="20" Orientation="Vertical">
+
+        <!--  Default shadow: BlurRadius=20, ShadowDepth=5, ShadowColor=Black  -->
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="White"
+            Text="Default Shadow (Black)" />
+
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            BlurRadius="5"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="Orange"
+            ShadowColor="Black"
+            ShadowDepth="4"
+            Text="Orange" />
+
+        <!--  Glowing blue shadow  -->
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            BlurRadius="25"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="White"
+            ShadowColor="#0078D7"
+            ShadowDepth="0"
+            Text="Glow Effect (Blue)" />
+
+        <!--  Subtle warm shadow  -->
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            BlurRadius="8"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="White"
+            ShadowColor="#CC6600"
+            ShadowDepth="3"
+            Text="Warm Shadow (Orange)" />
+
+        <!--  Deep hard shadow  -->
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            BlurRadius="4"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="White"
+            ShadowColor="#222222"
+            ShadowDepth="8"
+            Text="Hard Shadow (Dark)" />
+
+        <!--  Colored text with matching glow  -->
+        <mosaic:ShadowTextBlock
+            Margin="0,10"
+            BlurRadius="20"
+            FontSize="32"
+            FontWeight="Bold"
+            Foreground="#FF4444"
+            ShadowColor="#FF0000"
+            ShadowDepth="0"
+            Text="Red Neon Glow" />
+
+    </StackPanel>
+</UserControl>
