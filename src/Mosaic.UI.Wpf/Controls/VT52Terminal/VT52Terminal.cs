@@ -214,6 +214,19 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public event Action? Bell;
 
         /// <summary>
+        /// Fired when the remote host switches into or out of the alternate screen buffer
+        /// (CSI ? 1049 h / l, CSI ? 47 h / l, CSI ? 1047 h / l).
+        /// The boolean argument is <c>true</c> when entering the alternate screen and
+        /// <c>false</c> when returning to the main screen.
+        /// </summary>
+        public event Action<bool>? AlternateScreenChanged;
+
+        /// <summary>
+        /// Gets whether the terminal is currently displaying the alternate screen buffer.
+        /// </summary>
+        public bool IsAlternateScreenActive => _useAltBuffer;
+
+        /// <summary>
         /// Raised when automatic connection plumbing catches a connection exception.
         /// </summary>
         public event EventHandler<Exception>? ConnectionError;
@@ -1258,6 +1271,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                             _curRow = 0;
                             _curCol = 0;
                             _useAltBuffer = true;
+                            AlternateScreenChanged?.Invoke(true);
                         }
                     }
                     else
@@ -1271,6 +1285,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                             _currentAttrs = _altAttrs;
                             _altBuf = null;
                             _useAltBuffer = false;
+                            AlternateScreenChanged?.Invoke(false);
                         }
                     }
                     break;
