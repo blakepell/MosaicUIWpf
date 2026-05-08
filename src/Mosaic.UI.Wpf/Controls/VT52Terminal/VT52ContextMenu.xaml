@@ -1,0 +1,16 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vt="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal">
+    <!--
+        x:Shared="false" ensures each VT52Terminal instance gets its own ContextMenu
+        object when the dictionary is loaded. If you ever merge this dict into
+        Application.Resources instead of loading it per-instance, this is essential.
+    -->
+    <ContextMenu x:Key="AvalonTerminalContextMenu" x:Shared="false">
+        <MenuItem Command="{x:Static vt:VT52Terminal.CopyTextCommand}" Header="Copy" />
+        <MenuItem Command="{x:Static vt:VT52Terminal.PasteTextCommand}" Header="Paste" />
+        <Separator />
+        <MenuItem Command="{x:Static vt:VT52Terminal.ClearTerminalCommand}" Header="Clear Terminal" />
+    </ContextMenu>
+</ResourceDictionary>

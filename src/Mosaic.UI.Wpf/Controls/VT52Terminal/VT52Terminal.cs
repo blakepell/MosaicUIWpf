@@ -20,6 +20,46 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
     /// </summary>
     public class VT52Terminal : TextEditor
     {
+        #region Context menu commands
+
+        /// <summary>
+        /// Copies the selected terminal text to the clipboard.
+        /// </summary>
+        public static readonly RoutedUICommand CopyTextCommand = new(
+            "Copy", nameof(CopyTextCommand), typeof(VT52Terminal));
+
+        /// <summary>
+        /// Represents the command that pastes text into the VT52 terminal control.
+        /// </summary>
+        /// <remarks>This command can be used to bind paste functionality to UI elements, enabling users
+        /// to insert clipboard text into the terminal. It is typically used in command bindings or input gestures
+        /// within WPF applications.</remarks>
+        public static readonly RoutedUICommand PasteTextCommand = new(
+            "Paste", nameof(PasteTextCommand), typeof(VT52Terminal));
+
+        /// <summary>
+        /// Copies the selected terminal text with MUD colour markup to the clipboard.
+        /// </summary>
+        public static readonly RoutedUICommand CopyWithMudColorsCommand = new(
+            "Copy with Mud Colors", nameof(CopyWithMudColorsCommand), typeof(VT52Terminal));
+
+        /// <summary>
+        /// Clears the terminal screen and resets the internal buffer.
+        /// </summary>
+        public static readonly RoutedUICommand ClearTerminalCommand = new(
+            "Clear Terminal", nameof(ClearTerminalCommand), typeof(VT52Terminal));
+
+        /// <summary>
+        /// Raised when the user chooses "Open in Regex Builder" from the context menu.
+        /// The <see cref="ExecutedRoutedEventArgs.Parameter"/> is the currently selected text.
+        /// Consumers handle this by adding a <see cref="CommandBinding"/> to the terminal or
+        /// a parent element.
+        /// </summary>
+        public static readonly RoutedUICommand OpenInRegexBuilderCommand = new(
+            "Open in Regex Builder", nameof(OpenInRegexBuilderCommand), typeof(VT52Terminal));
+
+        #endregion
+
         // Screen geometry & buffer
         public int Rows { get; private set; }
         public int Columns { get; private set; }
@@ -203,6 +243,20 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             SizeChanged += OnControlSizeChanged;
             PreviewKeyDown += OnPreviewKeyDown;
             PreviewTextInput += OnPreviewTextInput;
+
+            // Load the context menu from its resource dictionary.
+            // Using a pack URI + new ResourceDictionary() creates a fresh instance every time,
+            // so each VT52Terminal gets its own ContextMenu (same effect as x:Shared="false").
+            var contextMenuDict = new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/VT52Terminal/VT52ContextMenu.xaml")
+            };
+            this.ContextMenu = (ContextMenu)contextMenuDict["AvalonTerminalContextMenu"];
+
+            // Wire built-in commands to their handlers on this instance.
+            CommandBindings.Add(new CommandBinding(CopyTextCommand, OnCopyTextExecuted, OnCopyTextCanExecute));
+            CommandBindings.Add(new CommandBinding(PasteTextCommand, OnPasteTextExecuted, OnPasteTextCanExecute));
+            CommandBindings.Add(new CommandBinding(ClearTerminalCommand, OnClearTerminalExecuted));
 
             OnSizeChanged();
         }
@@ -1929,5 +1983,55 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             return false;
         }
+
+        #region Context menu command handlers
+
+        private void OnCopyTextCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !string.IsNullOrEmpty(this.TextArea.Selection.GetText());
+        }
+
+        private void OnCopyTextExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            var text = this.TextArea.Selection.GetText();
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                Clipboard.SetText(text);
+            }
+        }
+
+        private void OnPasteTextCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = Clipboard.ContainsText() && this.Connection is { IsConnected: true };
+        }
+
+        private void OnPasteTextExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.Connection is not { IsConnected: true })
+            {
+                return;
+            }
+
+            string? text;
+
+            try
+            {
+                text = Clipboard.GetText();
+                Add(text);
+                this.Connection.Send(text);
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        private void OnClearTerminalExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            Reset(Rows, Columns);
+        }
+
+        #endregion
     }
 }
