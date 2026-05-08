@@ -251,7 +251,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/VT52Terminal/VT52ContextMenu.xaml")
             };
-            this.ContextMenu = (ContextMenu)contextMenuDict["AvalonTerminalContextMenu"];
+            this.ContextMenu = (ContextMenu)contextMenuDict["VT52TerminalContextMenu"];
 
             // Wire built-in commands to their handlers on this instance.
             CommandBindings.Add(new CommandBinding(CopyTextCommand, OnCopyTextExecuted, OnCopyTextCanExecute));

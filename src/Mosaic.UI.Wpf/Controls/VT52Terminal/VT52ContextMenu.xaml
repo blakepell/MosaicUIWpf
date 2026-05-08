@@ -7,7 +7,7 @@
         object when the dictionary is loaded. If you ever merge this dict into
         Application.Resources instead of loading it per-instance, this is essential.
     -->
-    <ContextMenu x:Key="AvalonTerminalContextMenu" x:Shared="false">
+    <ContextMenu x:Key="VT52TerminalContextMenu" x:Shared="false">
         <MenuItem Command="{x:Static vt:VT52Terminal.CopyTextCommand}" Header="Copy" />
         <MenuItem Command="{x:Static vt:VT52Terminal.PasteTextCommand}" Header="Paste" />
         <Separator />
