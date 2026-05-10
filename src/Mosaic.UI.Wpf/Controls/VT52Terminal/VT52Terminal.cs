@@ -18,6 +18,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
     /// Call Add(string) or Add(byte[]) with remote data; call SendKey/SendString for local keystrokes.
     /// Subscribe to Transmit to get bytes that the terminal sends back (e.g., Identify response).
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public class VT52Terminal : TextEditor
     {
         #region Context menu commands
@@ -38,42 +39,38 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             "Paste", nameof(PasteTextCommand), typeof(VT52Terminal));
 
         /// <summary>
-        /// Copies the selected terminal text with MUD colour markup to the clipboard.
-        /// </summary>
-        public static readonly RoutedUICommand CopyWithMudColorsCommand = new(
-            "Copy with Mud Colors", nameof(CopyWithMudColorsCommand), typeof(VT52Terminal));
-
-        /// <summary>
         /// Clears the terminal screen and resets the internal buffer.
         /// </summary>
         public static readonly RoutedUICommand ClearTerminalCommand = new(
             "Clear Terminal", nameof(ClearTerminalCommand), typeof(VT52Terminal));
 
-        /// <summary>
-        /// Raised when the user chooses "Open in Regex Builder" from the context menu.
-        /// The <see cref="ExecutedRoutedEventArgs.Parameter"/> is the currently selected text.
-        /// Consumers handle this by adding a <see cref="CommandBinding"/> to the terminal or
-        /// a parent element.
-        /// </summary>
-        public static readonly RoutedUICommand OpenInRegexBuilderCommand = new(
-            "Open in Regex Builder", nameof(OpenInRegexBuilderCommand), typeof(VT52Terminal));
+        private int _curRow;
 
         #endregion
+        internal int BufferRows => Rows;
 
-        // Screen geometry & buffer
+        /// <summary>
+        /// Gets the number of rows.
+        /// </summary>
         public int Rows { get; private set; }
-        public int Columns { get; private set; }
-        private TerminalCell[,] _buf = new TerminalCell[1, 1];
-        private int _curRow;
+
         private int _curCol;
 
-        // Current text attributes
-        private TerminalAttributes _currentAttrs = TerminalAttributes.Default;
+        internal int BufferColumns => Columns;
+
+        /// <summary>
+        /// Gets the number of columns.
+        /// </summary>
+        public int Columns { get; private set; }
 
         // Expose buffer for colorizer
         internal TerminalCell[,] Buffer => _buf;
-        internal int BufferRows => Rows;
-        internal int BufferColumns => Columns;
+
+        // Screen geometry & buffer
+        private TerminalCell[,] _buf = new TerminalCell[1, 1];
+
+        // Current text attributes
+        private TerminalAttributes _currentAttrs = TerminalAttributes.Default;
 
         // Parser state
         private enum ParseState
@@ -110,7 +107,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private bool _originMode = false; // DECOM - cursor relative to scroll region
         private bool _autowrapPending = false; // Deferred autowrap
 
-        private readonly object _lock = new();
+        private readonly Lock _lock = new();
         private readonly SemaphoreSlim _sendGate = new(1, 1);
         private readonly StringBuilder _pendingRemoteInput = new();
         private string[] _lineCache = [];
