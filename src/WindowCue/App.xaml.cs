@@ -32,12 +32,14 @@ namespace WindowCue
             var iconService    = new IconExtractionService();
             var dockingService = new ScreenDockingService();
             var dialogService  = new DialogService(enumService, iconService);
+            var appBarService  = new AppBarService();
 
             AppServices.AddSingleton(enumService);
             AppServices.AddSingleton(focusService);
             AppServices.AddSingleton(iconService);
             AppServices.AddSingleton(dockingService);
             AppServices.AddSingleton(dialogService);
+            AppServices.AddSingleton(appBarService);
 
             // Create and register the main ViewModel
             var mainVm = new MainWindowViewModel(
@@ -57,6 +59,10 @@ namespace WindowCue
                 settings.DockEdge          = mainVm.DockEdge.ToString();
                 settings.MonitorDeviceName = mainVm.MonitorDeviceName;
             }
+
+            // Release the shell AppBar reservation before the process exits so
+            // the monitor work area is restored immediately.
+            AppServices.GetService<AppBarService>()?.Unregister();
 
             base.OnExit(e);
         }

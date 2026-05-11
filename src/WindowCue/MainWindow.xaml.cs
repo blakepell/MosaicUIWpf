@@ -9,6 +9,7 @@
  */
 
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,7 +27,8 @@ namespace WindowCue
 {
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel _vm = null!;
+        private MainWindowViewModel _vm      = null!;
+        private AppBarService       _appBar  = null!;
 
         public MainWindow()
         {
@@ -57,6 +59,21 @@ namespace WindowCue
             }
 
             dockSvc.Dock(this, _vm.DockEdge, _vm.MonitorDeviceName);
+
+            // Register the window as a shell AppBar so Windows reserves the docked
+            // strip as work area.  Other windows will snap and maximize around it.
+            _appBar = AppServices.GetRequiredService<AppBarService>();
+            _appBar.Register(this, _vm.DockEdge, _vm.MonitorDeviceName);
+
+            // Keep the AppBar reservation in sync when the user changes the dock edge.
+            _vm.PropertyChanged += OnVmPropertyChanged;
+
+            // Remove the reservation as soon as the window closes.
+            Closed += (_, _) =>
+            {
+                _vm.PropertyChanged -= OnVmPropertyChanged;
+                _appBar.Unregister();
+            };
 
             // Restore pinned items from settings
             if (settings?.PinnedItems?.Count > 0)
@@ -149,6 +166,20 @@ namespace WindowCue
             catch
             {
                 return source;
+            }
+        }
+
+        // ── AppBar sync ───────────────────────────────────────────────────────
+
+        private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(MainWindowViewModel.DockEdge)
+                               or nameof(MainWindowViewModel.MonitorDeviceName))
+            {
+                // Post asynchronously so the ViewModel's synchronous Dock() call
+                // completes first; the AppBar-confirmed position then wins.
+                Dispatcher.InvokeAsync(
+                    () => _appBar.UpdateEdge(this, _vm.DockEdge, _vm.MonitorDeviceName));
             }
         }
 
