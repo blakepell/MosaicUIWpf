@@ -32,7 +32,7 @@ namespace WindowCue.ViewModels
 
         /// <summary>Process ID of the pinned window's owning process.</summary>
         [ObservableProperty]
-        private int _processId;
+        public partial int ProcessId { get; set; }
 
         /// <summary>Last known window handle. May become stale if the window is closed and re-opened.</summary>
         [ObservableProperty]
@@ -107,15 +107,15 @@ namespace WindowCue.ViewModels
 
             return new ToolbarItemViewModel
             {
-                Label          = label,
-                Icon           = info.Icon,
-                ProcessId      = info.ProcessId,
-                WindowHandle   = info.Handle,
-                WindowTitle    = info.Title,
-                ProcessName    = info.ProcessName,
+                Label = label,
+                Icon = info.Icon,
+                ProcessId = info.ProcessId,
+                WindowHandle = info.Handle,
+                WindowTitle = info.Title,
+                ProcessName = info.ProcessName,
                 ExecutablePath = info.ExecutablePath,
-                TargetType     = PinnedTargetType.Window,
-                IsAvailable    = true
+                TargetType = PinnedTargetType.Window,
+                IsAvailable = true
             };
         }
 
@@ -132,18 +132,18 @@ namespace WindowCue.ViewModels
 
             return new ToolbarItemViewModel
             {
-                Label               = label,
-                Icon                = tab.Icon,
-                ProcessId           = tab.ProcessId,
-                WindowHandle        = tab.WindowHandle,
-                WindowTitle         = tab.Title,
-                ProcessName         = tab.BrowserProcessName,
-                ExecutablePath      = tab.ExecutablePath,
-                TargetType          = PinnedTargetType.BrowserTab,
-                TabTitle            = tab.Title,
-                TabUrl              = tab.Url,
-                BrowserProcessName  = tab.BrowserProcessName,
-                IsAvailable         = true
+                Label = label,
+                Icon = tab.Icon,
+                ProcessId = tab.ProcessId,
+                WindowHandle = tab.WindowHandle,
+                WindowTitle = tab.Title,
+                ProcessName = tab.BrowserProcessName,
+                ExecutablePath = tab.ExecutablePath,
+                TargetType = PinnedTargetType.BrowserTab,
+                TabTitle = tab.Title,
+                TabUrl = tab.Url,
+                BrowserProcessName = tab.BrowserProcessName,
+                IsAvailable = true
             };
         }
     }

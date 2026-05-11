@@ -9,30 +9,54 @@
  */
 
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WindowCue.Interop
 {
     /// <summary>
     /// Snapshot of a visible, running desktop window used during the add-window picker flow.
     /// </summary>
-    public class WindowInfo
+    public partial class WindowInfo : ObservableObject
     {
-        /// <summary>Gets or sets the window handle (HWND).</summary>
+        /// <summary>
+        /// Gets or sets the window handle (HWND).
+        /// </summary>
         public IntPtr Handle { get; set; }
 
-        /// <summary>Gets or sets the window title text.</summary>
-        public string Title { get; set; } = string.Empty;
+        /// <summary>
+        /// Gets or sets the window title text.
+        /// </summary>
+        [ObservableProperty]
+        public partial string Title { get; set; } = string.Empty;
 
-        /// <summary>Gets or sets the owning process ID.</summary>
-        public int ProcessId { get; set; }
+        /// <summary>
+        /// Gets or sets the owning process ID.
+        /// </summary>
+        [ObservableProperty]
+        public partial int ProcessId { get; set; }
 
-        /// <summary>Gets or sets the process name (no extension).</summary>
-        public string ProcessName { get; set; } = string.Empty;
+        /// <summary>
+        /// Gets or sets the process name (no extension).
+        /// </summary>
+        [ObservableProperty]
+        public partial string ProcessName { get; set; } = string.Empty;
 
-        /// <summary>Gets or sets the full path to the executable, if accessible.</summary>
-        public string? ExecutablePath { get; set; }
+        /// <summary>
+        /// Gets or sets the full path to the executable, if accessible.
+        /// </summary>
+        [ObservableProperty]
+        public partial string? ExecutablePath { get; set; }
 
-        /// <summary>Gets or sets the icon extracted for this window.</summary>
-        public ImageSource? Icon { get; set; }
+        /// <summary>
+        /// The command line used to launch the process, if accessible.
+        /// </summary>
+        [ObservableProperty]
+        public partial string? CommandLine { get; set; }
+
+        /// <summary>
+        /// Gets or sets the icon extracted for this window.
+        /// </summary>
+        [ObservableProperty]
+        public partial ImageSource? Icon { get; set; }
     }
 }

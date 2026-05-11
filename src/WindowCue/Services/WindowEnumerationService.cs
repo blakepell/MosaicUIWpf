@@ -10,6 +10,7 @@
 
 using System.Diagnostics;
 using System.Text;
+using WindowCue.Common;
 using WindowCue.Interop;
 
 namespace WindowCue.Services
@@ -26,10 +27,10 @@ namespace WindowCue.Services
         /// </summary>
         public List<WindowInfo> GetVisibleWindows()
         {
-            var result     = new List<WindowInfo>();
-            var shellHwnd  = NativeMethods.GetShellWindow();
+            var result = new List<WindowInfo>();
+            var shellHwnd = NativeMethods.GetShellWindow();
             var desktopHwnd = NativeMethods.GetDesktopWindow();
-            int ownPid     = Environment.ProcessId;
+            int ownPid = Environment.ProcessId;
 
             NativeMethods.EnumWindows((hWnd, _) =>
             {
@@ -88,24 +89,44 @@ namespace WindowCue.Services
                         return true;
                     }
 
-                    string processName     = string.Empty;
+                    string processName = string.Empty;
                     string? executablePath = null;
+                    string? commandLine = null;
 
                     try
                     {
                         using var proc = Process.GetProcessById(pid);
                         processName = proc.ProcessName;
-                        try { executablePath = proc.MainModule?.FileName; } catch { /* access denied */ }
+                        try 
+                        { 
+                            executablePath = proc.MainModule?.FileName; 
+                        } 
+                        catch
+                        { 
+                            /* access denied */
+                        }
+
+                        try
+                        {
+                            commandLine = proc.GetCommandLine();
+                        }
+                        catch
+                        {
+                            // Couldn't get the command line.
+                        }
+
+                        
                     }
                     catch { return true; /* process already exited */ }
 
                     result.Add(new WindowInfo
                     {
-                        Handle        = hWnd,
-                        Title         = title,
-                        ProcessId     = pid,
-                        ProcessName   = processName,
-                        ExecutablePath = executablePath
+                        Handle = hWnd,
+                        Title = title,
+                        ProcessId = pid,
+                        ProcessName = processName,
+                        ExecutablePath = executablePath,
+                        CommandLine = commandLine
                     });
                 }
                 catch { /* ignore misbehaving windows */ }
