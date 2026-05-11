@@ -9,6 +9,7 @@
  */
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -216,10 +217,66 @@ namespace WindowCue.ViewModels
                         IsAvailable = false,
                         UnavailableReason = "Application is not currently running."
                     };
+
+                    // Attempt to extract an icon even though the window is unavailable.
+                    // Try the saved executable path first, then look for a running process
+                    // with the same name (another instance may be open, giving us the icon).
+                    var icon = TryExtractIconWithoutHandle(data.ExecutablePath, data.ProcessName);
+                    if (icon != null)
+                    {
+                        vm.Icon = icon;
+                    }
                 }
 
                 Items.Add(vm);
             }
+        }
+        /// <summary>
+        /// Attempts to obtain an icon without a live window handle. Tries the saved executable
+        /// path first; if that is missing or inaccessible, looks for a running process whose name
+        /// matches <paramref name="processName"/> and uses its main module's file path.
+        /// Returns <see langword="null"/> when no icon can be found.
+        /// </summary>
+        private System.Windows.Media.ImageSource? TryExtractIconWithoutHandle(
+            string? executablePath, string? processName)
+        {
+            // 1. Try saved executable path directly.
+            if (!string.IsNullOrWhiteSpace(executablePath))
+            {
+                try
+                {
+                    return _iconService.ExtractIcon(IntPtr.Zero, executablePath);
+                }
+                catch { /* fall through */ }
+            }
+
+            // 2. Find a running process with the same name and grab its executable.
+            if (!string.IsNullOrWhiteSpace(processName))
+            {
+                try
+                {
+                    var processes = Process.GetProcessesByName(processName);
+                    foreach (var proc in processes)
+                    {
+                        try
+                        {
+                            var path = proc.MainModule?.FileName;
+                            if (!string.IsNullOrWhiteSpace(path))
+                            {
+                                return _iconService.ExtractIcon(IntPtr.Zero, path);
+                            }
+                        }
+                        catch { /* 32/64-bit or permission mismatch — skip */ }
+                        finally
+                        {
+                            proc.Dispose();
+                        }
+                    }
+                }
+                catch { /* fall through */ }
+            }
+
+            return null;
         }
     }
 }

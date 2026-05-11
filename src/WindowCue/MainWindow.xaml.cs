@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Argus.Memory;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Controls;
@@ -80,14 +81,16 @@ namespace WindowCue
         {
             var mi = new SideMenuItem
             {
-                Text        = vm.Label,
-                ImageSource = vm.Icon,
-                Tag         = vm,
-                Command     = _vm.FocusItemCommand,
+                Text             = vm.Label,
+                ImageSource      = vm.IsAvailable ? vm.Icon : ToGrayscale(vm.Icon),
+                Tag              = vm,
+                Command          = _vm.FocusItemCommand,
                 CommandParameter = vm
             };
 
-            // Keep the SideMenuItem label in sync with the VM label
+            // Keep the SideMenuItem label and icon in sync with the VM.
+            // When the item becomes unavailable its icon is shown in greyscale;
+            // the item stays clickable so the focus command can attempt re-bind.
             vm.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(ToolbarItemViewModel.Label))
@@ -95,13 +98,58 @@ namespace WindowCue
                     mi.Text = vm.Label;
                 }
 
-                if (e.PropertyName == nameof(ToolbarItemViewModel.Icon))
+                if (e.PropertyName == nameof(ToolbarItemViewModel.Icon) ||
+                    e.PropertyName == nameof(ToolbarItemViewModel.IsAvailable))
                 {
-                    mi.ImageSource = vm.Icon;
+                    mi.ImageSource = vm.IsAvailable ? vm.Icon : ToGrayscale(vm.Icon);
                 }
             };
 
             return mi;
+        }
+
+        /// <summary>
+        /// Converts a <see cref="BitmapSource"/> to grayscale while preserving the alpha channel.
+        /// Returns the original source unchanged if conversion fails or the source is not a BitmapSource.
+        /// </summary>
+        private static ImageSource? ToGrayscale(ImageSource? source)
+        {
+            if (source is not BitmapSource bitmap)
+                return source;
+
+            try
+            {
+                // Convert to Bgra32 so we can read/write all four channels uniformly.
+                var bgra = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
+                int width  = bgra.PixelWidth;
+                int height = bgra.PixelHeight;
+                int stride = width * 4;
+                var pixels = new byte[stride * height];
+                bgra.CopyPixels(pixels, stride, 0);
+
+                for (int i = 0; i < pixels.Length; i += 4)
+                {
+                    byte b   = pixels[i];
+                    byte g   = pixels[i + 1];
+                    byte r   = pixels[i + 2];
+                    // Rec. 709 luminance
+                    byte lum = (byte)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+                    pixels[i]     = lum;
+                    pixels[i + 1] = lum;
+                    pixels[i + 2] = lum;
+                    // pixels[i + 3] = alpha — preserved as-is
+                }
+
+                var result = BitmapSource.Create(
+                    width, height, bitmap.DpiX, bitmap.DpiY,
+                    PixelFormats.Bgra32, null, pixels, stride);
+                result.Freeze();
+                return result;
+            }
+            catch
+            {
+                return source;
+            }
         }
 
         // ── Drag-to-move ─────────────────────────────────────────────────────
@@ -137,7 +185,7 @@ namespace WindowCue
         {
             var menu = new ContextMenu();
 
-            var rename = new MenuItem { Header = "Rename…" };
+            var rename = new MenuItem { Header = "Rename\u2026" };
             rename.Click += (_, _) => _vm.RenameItemCommand.Execute(vm);
 
             var separator = new Separator();
@@ -145,9 +193,16 @@ namespace WindowCue
             var remove = new MenuItem { Header = "Remove" };
             remove.Click += (_, _) => _vm.RemoveItemCommand.Execute(vm);
 
+            var separator2  = new Separator();
+
+            var removeAll = new MenuItem { Header = "Remove All" };
+            removeAll.Click += RemoveAll_Click;
+
             menu.Items.Add(rename);
             menu.Items.Add(separator);
             menu.Items.Add(remove);
+            menu.Items.Add(separator2);
+            menu.Items.Add(removeAll);
 
             menu.PlacementTarget = target;
             menu.IsOpen = true;
@@ -196,6 +251,20 @@ namespace WindowCue
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void RemoveAll_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Remove all pinned items?",
+                "Remove All",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                _vm.Items.Clear();
+            }
         }
     }
 }
