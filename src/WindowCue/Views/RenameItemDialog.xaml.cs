@@ -15,7 +15,9 @@ namespace WindowCue.Views
 {
     public partial class RenameItemDialog
     {
-        /// <summary>Gets the label the user confirmed, or the original value if cancelled.</summary>
+        /// <summary>
+        /// Gets the label the user confirmed, or the original value if cancelled.
+        /// </summary>
         public string NewLabel { get; set; }
 
         public RenameItemDialog(string currentLabel)
@@ -31,7 +33,7 @@ namespace WindowCue.Views
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            NewLabel    = LabelTextBox.Text.Trim();
+            NewLabel = LabelTextBox.Text.Trim();
             DialogResult = true;
         }
 
