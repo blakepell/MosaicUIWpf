@@ -33,14 +33,18 @@ namespace WindowCue.Services
 
         private AddWindowResult(WindowInfo? window, BrowserTabInfo? tab)
         {
-            Window    = window;
+            Window = window;
             BrowserTab = tab;
         }
 
-        /// <summary>Creates a result wrapping a desktop window selection.</summary>
+        /// <summary>
+        /// Creates a result wrapping a desktop window selection.
+        /// </summary>
         public static AddWindowResult FromWindow(WindowInfo info) => new(info, null);
 
-        /// <summary>Creates a result wrapping a browser-tab selection.</summary>
+        /// <summary>
+        /// Creates a result wrapping a browser-tab selection.
+        /// </summary>
         public static AddWindowResult FromBrowserTab(BrowserTabInfo tab) => new(null, tab);
     }
 
@@ -50,17 +54,14 @@ namespace WindowCue.Services
     public class DialogService
     {
         private readonly WindowEnumerationService _enumService;
-        private readonly IconExtractionService    _iconService;
-        private readonly BrowserTabService        _tabService;
+        private readonly IconExtractionService _iconService;
+        private readonly BrowserTabService _tabService;
 
-        public DialogService(
-            WindowEnumerationService enumService,
-            IconExtractionService iconService,
-            BrowserTabService tabService)
+        public DialogService(WindowEnumerationService enumService, IconExtractionService iconService, BrowserTabService tabService)
         {
             _enumService = enumService;
             _iconService = iconService;
-            _tabService  = tabService;
+            _tabService = tabService;
         }
 
         /// <summary>
@@ -73,8 +74,11 @@ namespace WindowCue.Services
             var vm = new SelectWindowDialogViewModel(_enumService, _iconService, _tabService);
             var dialog = new SelectWindowDialog { DataContext = vm, Owner = owner };
 
-            // Load windows and tabs in the background; icons are extracted lazily on the thread pool.
-            await vm.LoadWindowsAsync();
+            // Kick off enumeration after the dialog's visual tree is ready.
+            // ShowDialog enters a nested WPF dispatcher loop, so this async handler
+            // runs inside that loop — the dialog appears immediately with its loading
+            // indicator rather than the caller freezing for several seconds.
+            dialog.Loaded += async (_, _) => await vm.LoadWindowsAsync();
 
             if (dialog.ShowDialog() != true || vm.SelectedWindow == null)
             {

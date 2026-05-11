@@ -25,72 +25,91 @@ namespace WindowCue.ViewModels
     public partial class SelectWindowDialogViewModel : ObservableObject
     {
         private readonly WindowEnumerationService _enumService;
-        private readonly IconExtractionService    _iconService;
-        private readonly BrowserTabService        _tabService;
+        private readonly IconExtractionService _iconService;
+        private readonly BrowserTabService _tabService;
 
         private List<RunningWindowViewModel> _allItems = new();
 
-        /// <summary>Filtered list bound to the dialog's ListBox.</summary>
+        /// <summary>
+        /// Filtered list bound to the dialog's ListBox.
+        /// </summary>
         public ObservableCollection<RunningWindowViewModel> FilteredWindows { get; } = new();
 
-        /// <summary>The item the user has selected.</summary>
+        /// <summary>
+        /// The item the user has selected.
+        /// </summary>
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ConfirmCommand))]
         private RunningWindowViewModel? _selectedWindow;
 
-        /// <summary>Live search text; filtering updates on every keystroke.</summary>
+        /// <summary>
+        /// Live search text; filtering updates on every keystroke.
+        /// </summary>
         [ObservableProperty]
         private string _searchText = string.Empty;
 
+        /// <summary>
+        /// True while windows and browser tabs are being enumerated on the thread pool.
+        /// Bind the loading overlay visibility to this property.
+        /// </summary>
+        [ObservableProperty]
+        private bool _isLoading;
+
         partial void OnSearchTextChanged(string value) => ApplyFilter(value);
 
-        public SelectWindowDialogViewModel(
-            WindowEnumerationService enumService,
-            IconExtractionService iconService,
-            BrowserTabService tabService)
+        public SelectWindowDialogViewModel(WindowEnumerationService enumService, IconExtractionService iconService, BrowserTabService tabService)
         {
             _enumService = enumService;
             _iconService = iconService;
-            _tabService  = tabService;
+            _tabService = tabService;
         }
 
         /// <summary>
         /// Enumerates visible windows and open Edge tabs, then back-fills icons on the
         /// thread pool. Desktop windows are listed first, followed by browser tabs.
-        /// Call before showing the dialog.
+        /// Intended to be called after the dialog is shown so the window appears immediately
+        /// with a loading indicator rather than blocking the caller for several seconds.
         /// </summary>
         public async Task LoadWindowsAsync()
         {
-            // Run both enumerations in parallel on the thread pool.
-            var rawWindowsTask = Task.Run(_enumService.GetVisibleWindows);
-            var rawTabsTask    = Task.Run(() => _tabService.GetOpenTabs("msedge"));
-
-            await Task.WhenAll(rawWindowsTask, rawTabsTask);
-
-            var windowVms = rawWindowsTask.Result
-                .Select(w => new RunningWindowViewModel(w))
-                .ToList();
-
-            var tabVms = rawTabsTask.Result
-                .Select(t => new RunningWindowViewModel(t))
-                .ToList();
-
-            // Desktop windows first, then Edge tabs.
-            _allItems = [.. windowVms, .. tabVms];
-
-            ApplyFilter(SearchText);
-
-            // Extract icons without blocking the UI.
-            _ = Task.Run(async () =>
+            IsLoading = true;
+            try
             {
-                foreach (var vm in _allItems)
+                // Run both enumerations in parallel on the thread pool.
+                var rawWindowsTask = Task.Run(_enumService.GetVisibleWindows);
+                var rawTabsTask = Task.Run(() => _tabService.GetOpenTabs("msedge"));
+
+                await Task.WhenAll(rawWindowsTask, rawTabsTask);
+
+                var windowVms = rawWindowsTask.Result
+                    .Select(w => new RunningWindowViewModel(w))
+                    .ToList();
+
+                var tabVms = rawTabsTask.Result
+                    .Select(t => new RunningWindowViewModel(t))
+                    .ToList();
+
+                // Desktop windows first, then Edge tabs.
+                _allItems = [.. windowVms, .. tabVms];
+
+                ApplyFilter(SearchText);
+
+                // Extract icons without blocking the UI.
+                _ = Task.Run(async () =>
                 {
-                    IntPtr handle  = vm.IsEdgeTab ? vm.BrowserTab!.WindowHandle : vm.Source!.Handle;
-                    string? exePath = vm.ExecutablePath;
-                    var icon = _iconService.ExtractIcon(handle, exePath);
-                    await Application.Current.Dispatcher.InvokeAsync(() => vm.Icon = icon);
-                }
-            });
+                    foreach (var vm in _allItems)
+                    {
+                        IntPtr handle = vm.IsEdgeTab ? vm.BrowserTab!.WindowHandle : vm.Source!.Handle;
+                        string? exePath = vm.ExecutablePath;
+                        var icon = _iconService.ExtractIcon(handle, exePath);
+                        await Application.Current.Dispatcher.InvokeAsync(() => vm.Icon = icon);
+                    }
+                });
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private void ApplyFilter(string text)
@@ -114,7 +133,9 @@ namespace WindowCue.ViewModels
             }
         }
 
-        /// <summary>Confirms the selection and closes the dialog.</summary>
+        /// <summary>
+        /// Confirms the selection and closes the dialog.
+        /// </summary>
         [RelayCommand(CanExecute = nameof(CanConfirm))]
         private void Confirm(Window? dialog)
         {

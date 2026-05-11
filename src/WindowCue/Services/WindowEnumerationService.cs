@@ -97,12 +97,12 @@ namespace WindowCue.Services
                     {
                         using var proc = Process.GetProcessById(pid);
                         processName = proc.ProcessName;
-                        try 
-                        { 
-                            executablePath = proc.MainModule?.FileName; 
-                        } 
+                        try
+                        {
+                            executablePath = proc.MainModule?.FileName;
+                        }
                         catch
-                        { 
+                        {
                             /* access denied */
                         }
 
@@ -115,7 +115,7 @@ namespace WindowCue.Services
                             // Couldn't get the command line.
                         }
 
-                        
+
                     }
                     catch { return true; /* process already exited */ }
 

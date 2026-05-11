@@ -25,11 +25,11 @@ namespace WindowCue.Services
         // ── State ─────────────────────────────────────────────────────────────
 
         private WeakReference<Window>? _windowRef;
-        private DockEdge  _currentEdge       = DockEdge.Left;
-        private string?   _currentDeviceName;
+        private DockEdge _currentEdge = DockEdge.Left;
+        private string? _currentDeviceName;
 
-        private uint      _callbackMessage;
-        private bool      _registered;
+        private uint _callbackMessage;
+        private bool _registered;
         private HwndSource? _hwndSource;
 
         private const int WM_DISPLAYCHANGE = 0x007E;
@@ -53,8 +53,8 @@ namespace WindowCue.Services
         /// </summary>
         public void Register(Window window, DockEdge edge, string? deviceName)
         {
-            _windowRef         = new WeakReference<Window>(window);
-            _currentEdge       = edge;
+            _windowRef = new WeakReference<Window>(window);
+            _currentEdge = edge;
             _currentDeviceName = deviceName;
 
             var hwnd = new WindowInteropHelper(window).Handle;
@@ -80,7 +80,7 @@ namespace WindowCue.Services
         /// </summary>
         public void UpdateEdge(Window window, DockEdge edge, string? deviceName)
         {
-            _currentEdge       = edge;
+            _currentEdge = edge;
             _currentDeviceName = deviceName;
 
             if (!_registered)
@@ -125,13 +125,13 @@ namespace WindowCue.Services
         private void ApplyPosition(Window window, IntPtr hwnd, DockEdge edge, string? deviceName)
         {
             var monitorRect = GetMonitorRect(hwnd, deviceName);
-            var dpi         = GetDpiScale(window);
-            var thickness   = GetThicknessPx(window, edge, dpi);
-            var abeEdge     = ToAbeEdge(edge);
+            var dpi = GetDpiScale(window);
+            var thickness = GetThicknessPx(window, edge, dpi);
+            var abeEdge = ToAbeEdge(edge);
 
             var data = MakeData(hwnd);
             data.uEdge = abeEdge;
-            data.rc    = BuildProposedRect(monitorRect, edge, thickness);
+            data.rc = BuildProposedRect(monitorRect, edge, thickness);
 
             // Ask the shell to clip our proposed rect (e.g., around the taskbar).
             NativeMethods.SHAppBarMessage(NativeMethods.ABM_QUERYPOS, ref data);
@@ -154,8 +154,8 @@ namespace WindowCue.Services
 
         private NativeMethods.APPBARDATA MakeData(IntPtr hwnd) => new()
         {
-            cbSize           = (uint)Marshal.SizeOf<NativeMethods.APPBARDATA>(),
-            hWnd             = hwnd,
+            cbSize = (uint)Marshal.SizeOf<NativeMethods.APPBARDATA>(),
+            hWnd = hwnd,
             uCallbackMessage = _callbackMessage
         };
 
@@ -170,12 +170,12 @@ namespace WindowCue.Services
                     (hMon, _, ref _, _) =>
                     {
                         var mi = new NativeMethods.MONITORINFOEX
-                            { cbSize = (uint)Marshal.SizeOf<NativeMethods.MONITORINFOEX>() };
+                        { cbSize = (uint)Marshal.SizeOf<NativeMethods.MONITORINFOEX>() };
                         if (NativeMethods.GetMonitorInfo(hMon, ref mi) &&
                             string.Equals(mi.szDevice, deviceName, StringComparison.OrdinalIgnoreCase))
                         {
                             result = mi.rcMonitor;
-                            found  = true;
+                            found = true;
                             return false; // stop enumeration
                         }
                         return true;
@@ -186,7 +186,7 @@ namespace WindowCue.Services
             {
                 var hMon = NativeMethods.MonitorFromWindow(hwnd, NativeMethods.MONITOR_DEFAULTTONEAREST);
                 var info = new NativeMethods.MONITORINFOEX
-                    { cbSize = (uint)Marshal.SizeOf<NativeMethods.MONITORINFOEX>() };
+                { cbSize = (uint)Marshal.SizeOf<NativeMethods.MONITORINFOEX>() };
                 NativeMethods.GetMonitorInfo(hMon, ref info);
                 result = info.rcMonitor;
             }
@@ -205,27 +205,27 @@ namespace WindowCue.Services
 
         private static int GetThicknessPx(Window window, DockEdge edge, (double X, double Y) dpi) =>
             edge is DockEdge.Left or DockEdge.Right
-                ? (int)Math.Round(window.Width  * dpi.X)
+                ? (int)Math.Round(window.Width * dpi.X)
                 : (int)Math.Round(window.Height * dpi.Y);
 
         private static NativeMethods.RECT BuildProposedRect(
             NativeMethods.RECT mon, DockEdge edge, int thickness) => edge switch
-        {
-            DockEdge.Left   => new() { Left = mon.Left,                Top = mon.Top, Right = mon.Left + thickness,    Bottom = mon.Bottom },
-            DockEdge.Right  => new() { Left = mon.Right - thickness,   Top = mon.Top, Right = mon.Right,               Bottom = mon.Bottom },
-            DockEdge.Top    => new() { Left = mon.Left, Top = mon.Top,                Right = mon.Right, Bottom = mon.Top + thickness    },
-            DockEdge.Bottom => new() { Left = mon.Left, Top = mon.Bottom - thickness, Right = mon.Right, Bottom = mon.Bottom },
-            _               => default
-        };
+            {
+                DockEdge.Left => new() { Left = mon.Left, Top = mon.Top, Right = mon.Left + thickness, Bottom = mon.Bottom },
+                DockEdge.Right => new() { Left = mon.Right - thickness, Top = mon.Top, Right = mon.Right, Bottom = mon.Bottom },
+                DockEdge.Top => new() { Left = mon.Left, Top = mon.Top, Right = mon.Right, Bottom = mon.Top + thickness },
+                DockEdge.Bottom => new() { Left = mon.Left, Top = mon.Bottom - thickness, Right = mon.Right, Bottom = mon.Bottom },
+                _ => default
+            };
 
         private static void EnforceThickness(ref NativeMethods.RECT rc, DockEdge edge, int thickness)
         {
             switch (edge)
             {
-                case DockEdge.Left:   rc.Right  = rc.Left + thickness;   break;
-                case DockEdge.Right:  rc.Left   = rc.Right - thickness;  break;
-                case DockEdge.Top:    rc.Bottom = rc.Top + thickness;    break;
-                case DockEdge.Bottom: rc.Top    = rc.Bottom - thickness; break;
+                case DockEdge.Left: rc.Right = rc.Left + thickness; break;
+                case DockEdge.Right: rc.Left = rc.Right - thickness; break;
+                case DockEdge.Top: rc.Bottom = rc.Top + thickness; break;
+                case DockEdge.Bottom: rc.Top = rc.Bottom - thickness; break;
             }
         }
 
@@ -233,7 +233,7 @@ namespace WindowCue.Services
             Window window, NativeMethods.RECT rc, DockEdge edge, (double X, double Y) dpi)
         {
             window.Left = rc.Left / dpi.X;
-            window.Top  = rc.Top  / dpi.Y;
+            window.Top = rc.Top / dpi.Y;
 
             switch (edge)
             {
@@ -250,11 +250,11 @@ namespace WindowCue.Services
 
         private static uint ToAbeEdge(DockEdge edge) => edge switch
         {
-            DockEdge.Left   => NativeMethods.ABE_LEFT,
-            DockEdge.Right  => NativeMethods.ABE_RIGHT,
-            DockEdge.Top    => NativeMethods.ABE_TOP,
+            DockEdge.Left => NativeMethods.ABE_LEFT,
+            DockEdge.Right => NativeMethods.ABE_RIGHT,
+            DockEdge.Top => NativeMethods.ABE_TOP,
             DockEdge.Bottom => NativeMethods.ABE_BOTTOM,
-            _               => NativeMethods.ABE_LEFT
+            _ => NativeMethods.ABE_LEFT
         };
 
         // ── WndProc hook ──────────────────────────────────────────────────────

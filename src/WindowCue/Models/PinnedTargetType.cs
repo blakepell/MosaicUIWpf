@@ -15,10 +15,14 @@ namespace WindowCue.Models
     /// </summary>
     public enum PinnedTargetType
     {
-        /// <summary>A standard desktop application window identified by HWND / PID.</summary>
+        /// <summary>
+        /// A standard desktop application window identified by HWND / PID.
+        /// </summary>
         Window,
 
-        /// <summary>A specific tab inside a Chromium-based browser (Edge, Chrome, etc.).</summary>
+        /// <summary>
+        /// A specific tab inside a Chromium-based browser (Edge, Chrome, etc.).
+        /// </summary>
         BrowserTab
     }
 }

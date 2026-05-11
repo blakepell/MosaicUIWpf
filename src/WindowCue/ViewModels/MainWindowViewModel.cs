@@ -39,6 +39,13 @@ namespace WindowCue.ViewModels
         [ObservableProperty]
         private DockEdge _dockEdge = DockEdge.Left;
 
+        /// <summary>
+        /// True while pinned items are being restored from persisted settings on a background task.
+        /// Bind a loading indicator's visibility to this property.
+        /// </summary>
+        [ObservableProperty]
+        private bool _isRestoringPinnedItems;
+
         /// <summary>Device name of the monitor the toolbar is docked to.</summary>
         [ObservableProperty]
         private string? _monitorDeviceName;
@@ -126,7 +133,7 @@ namespace WindowCue.ViewModels
                 bool ok = _browserTabService.FocusTab(
                     item.BrowserProcessName, item.TabTitle, item.TabUrl);
 
-                item.IsAvailable    = ok;
+                item.IsAvailable = ok;
                 item.UnavailableReason = ok ? null : "Browser tab is no longer open.";
                 return;
             }
@@ -220,14 +227,14 @@ namespace WindowCue.ViewModels
         public List<PinnedItemData> ToPersistedItems() =>
             Items.Select(i => new PinnedItemData
             {
-                TargetType         = i.TargetType,
-                ProcessId          = i.ProcessId,
-                Label              = i.Label,
-                ProcessName        = i.ProcessName,
-                ExecutablePath     = i.ExecutablePath,
-                WindowTitle        = i.WindowTitle,
-                TabTitle           = i.TabTitle,
-                TabUrl             = i.TabUrl,
+                TargetType = i.TargetType,
+                ProcessId = i.ProcessId,
+                Label = i.Label,
+                ProcessName = i.ProcessName,
+                ExecutablePath = i.ExecutablePath,
+                WindowTitle = i.WindowTitle,
+                TabTitle = i.TabTitle,
+                TabUrl = i.TabUrl,
                 BrowserProcessName = i.BrowserProcessName
             }).ToList();
 
@@ -237,122 +244,143 @@ namespace WindowCue.ViewModels
         /// </summary>
         public async Task RestoreFromPersistedItemsAsync(IEnumerable<PinnedItemData> saved)
         {
-            foreach (var data in saved)
+            IsRestoringPinnedItems = true;
+            try
             {
-                // ── Browser-tab restore path ──────────────────────────────────
-                if (data.TargetType == PinnedTargetType.BrowserTab)
+                foreach (var data in saved)
                 {
-                    var tab = await Task.Run(() =>
-                        _browserTabService.TryRebind(
-                            data.BrowserProcessName, data.TabTitle, data.TabUrl));
-
-                    ToolbarItemViewModel tabVm;
-                    if (tab != null)
+                    // ── Browser-tab restore path ──────────────────────────────────
+                    if (data.TargetType == PinnedTargetType.BrowserTab)
                     {
-                        tab.Icon = _iconService.ExtractIcon(tab.WindowHandle, tab.ExecutablePath);
-                        tabVm = ToolbarItemViewModel.FromBrowserTab(tab, data.Label);
+                        var tab = await Task.Run(() =>
+                            _browserTabService.TryRebind(
+                                data.BrowserProcessName, data.TabTitle, data.TabUrl));
+
+                        ToolbarItemViewModel tabVm;
+                        if (tab != null)
+                        {
+                            tab.Icon = _iconService.ExtractIcon(tab.WindowHandle, tab.ExecutablePath);
+                            tabVm = ToolbarItemViewModel.FromBrowserTab(tab, data.Label);
+                        }
+                        else
+                        {
+                            tabVm = new ToolbarItemViewModel
+                            {
+                                Label = data.Label,
+                                ProcessName = data.BrowserProcessName,
+                                TargetType = PinnedTargetType.BrowserTab,
+                                TabTitle = data.TabTitle,
+                                TabUrl = data.TabUrl,
+                                BrowserProcessName = data.BrowserProcessName,
+                                IsAvailable = false,
+                                UnavailableReason = "Browser tab is not currently open."
+                            };
+                            var tabIcon = await TryExtractIconWithoutHandleAsync(data.ExecutablePath, data.BrowserProcessName);
+                            if (tabIcon != null)
+                            {
+                                tabVm.Icon = tabIcon;
+                            }
+                        }
+
+                        Items.Add(tabVm);
+                        continue;
+                    }
+
+                    // ── Regular window restore path ───────────────────────────────
+                    var match = await Task.Run(() =>
+                        _enumService.TryRebind(data.ExecutablePath, data.ProcessName, data.WindowTitle));
+
+                    ToolbarItemViewModel vm;
+                    if (match != null)
+                    {
+                        match.Icon = _iconService.ExtractIcon(match.Handle, match.ExecutablePath);
+                        vm = ToolbarItemViewModel.FromWindowInfo(match, data.Label);
                     }
                     else
                     {
-                        tabVm = new ToolbarItemViewModel
+                        // Show as unavailable placeholder so the user can remove or wait
+                        vm = new ToolbarItemViewModel
                         {
-                            Label              = data.Label,
-                            ProcessName        = data.BrowserProcessName,
-                            TargetType         = PinnedTargetType.BrowserTab,
-                            TabTitle           = data.TabTitle,
-                            TabUrl             = data.TabUrl,
-                            BrowserProcessName = data.BrowserProcessName,
-                            IsAvailable        = false,
-                            UnavailableReason  = "Browser tab is not currently open."
+                            Label = data.Label,
+                            ProcessName = data.ProcessName,
+                            ExecutablePath = data.ExecutablePath,
+                            WindowTitle = data.WindowTitle,
+                            IsAvailable = false,
+                            UnavailableReason = "Application is not currently running."
                         };
-                        var tabIcon = TryExtractIconWithoutHandle(data.ExecutablePath, data.BrowserProcessName);
-                        if (tabIcon != null)
+
+                        // Attempt to extract an icon even though the window is unavailable.
+                        // Try the saved executable path first, then look for a running process
+                        // with the same name (another instance may be open, giving us the icon).
+                        var icon = await TryExtractIconWithoutHandleAsync(data.ExecutablePath, data.ProcessName);
+                        if (icon != null)
                         {
-                            tabVm.Icon = tabIcon;
+                            vm.Icon = icon;
                         }
                     }
 
-                    Items.Add(tabVm);
-                    continue;
+                    Items.Add(vm);
                 }
-
-                // ── Regular window restore path ───────────────────────────────
-                var match = await Task.Run(() =>
-                    _enumService.TryRebind(data.ExecutablePath, data.ProcessName, data.WindowTitle));
-
-                ToolbarItemViewModel vm;
-                if (match != null)
-                {
-                    match.Icon = _iconService.ExtractIcon(match.Handle, match.ExecutablePath);
-                    vm = ToolbarItemViewModel.FromWindowInfo(match, data.Label);
-                }
-                else
-                {
-                    // Show as unavailable placeholder so the user can remove or wait
-                    vm = new ToolbarItemViewModel
-                    {
-                        Label = data.Label,
-                        ProcessName = data.ProcessName,
-                        ExecutablePath = data.ExecutablePath,
-                        WindowTitle = data.WindowTitle,
-                        IsAvailable = false,
-                        UnavailableReason = "Application is not currently running."
-                    };
-
-                    // Attempt to extract an icon even though the window is unavailable.
-                    // Try the saved executable path first, then look for a running process
-                    // with the same name (another instance may be open, giving us the icon).
-                    var icon = TryExtractIconWithoutHandle(data.ExecutablePath, data.ProcessName);
-                    if (icon != null)
-                    {
-                        vm.Icon = icon;
-                    }
-                }
-
-                Items.Add(vm);
+            }
+            finally
+            {
+                IsRestoringPinnedItems = false;
             }
         }
         /// <summary>
-        /// Attempts to obtain an icon without a live window handle. Tries the saved executable
-        /// path first; if that is missing or inaccessible, looks for a running process whose name
-        /// matches <paramref name="processName"/> and uses its main module's file path.
+        /// Asynchronously attempts to obtain an icon without a live window handle.
+        /// The blocking OS calls (<see cref="Process.GetProcessesByName"/> and
+        /// <see cref="System.Diagnostics.ProcessModule.FileName"/> access) run on the
+        /// thread pool so the UI thread is never blocked.
+        /// Tries the saved executable path first; if that is missing or inaccessible,
+        /// looks for a running process whose name matches <paramref name="processName"/>
+        /// and uses its main module's file path.
         /// Returns <see langword="null"/> when no icon can be found.
         /// </summary>
-        private System.Windows.Media.ImageSource? TryExtractIconWithoutHandle(
+        private async Task<System.Windows.Media.ImageSource?> TryExtractIconWithoutHandleAsync(
             string? executablePath, string? processName)
         {
-            // 1. Try saved executable path directly.
+            // 1. Try saved executable path directly — icon extraction may read disk, run off-thread.
             if (!string.IsNullOrWhiteSpace(executablePath))
             {
                 try
                 {
-                    return _iconService.ExtractIcon(IntPtr.Zero, executablePath);
+                    var icon = await Task.Run(() => _iconService.ExtractIcon(IntPtr.Zero, executablePath));
+                    if (icon != null)
+                    {
+                        return icon;
+                    }
                 }
                 catch { /* fall through */ }
             }
 
             // 2. Find a running process with the same name and grab its executable.
+            // Process.GetProcessesByName and MainModule access are blocking OS calls.
             if (!string.IsNullOrWhiteSpace(processName))
             {
                 try
                 {
-                    var processes = Process.GetProcessesByName(processName);
-                    foreach (var proc in processes)
+                    return await Task.Run(() =>
                     {
-                        try
+                        var processes = Process.GetProcessesByName(processName);
+                        foreach (var proc in processes)
                         {
-                            var path = proc.MainModule?.FileName;
-                            if (!string.IsNullOrWhiteSpace(path))
+                            try
                             {
-                                return _iconService.ExtractIcon(IntPtr.Zero, path);
+                                var path = proc.MainModule?.FileName;
+                                if (!string.IsNullOrWhiteSpace(path))
+                                {
+                                    return _iconService.ExtractIcon(IntPtr.Zero, path);
+                                }
+                            }
+                            catch { /* 32/64-bit or permission mismatch — skip */ }
+                            finally
+                            {
+                                proc.Dispose();
                             }
                         }
-                        catch { /* 32/64-bit or permission mismatch — skip */ }
-                        finally
-                        {
-                            proc.Dispose();
-                        }
-                    }
+                        return null;
+                    });
                 }
                 catch { /* fall through */ }
             }

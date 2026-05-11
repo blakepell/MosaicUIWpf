@@ -23,6 +23,10 @@
     Topmost="True"
     WindowStyle="None">
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="38" />
@@ -94,14 +98,22 @@
         </Border>
 
         <!--  ══ Pinned items via SideMenu compact ══  -->
-        <mosaic:SideMenu
-            x:Name="ToolbarMenu"
-            Grid.Row="1"
-            Compact="True"
-            ItemClicked="ToolbarMenu_ItemClicked"
-            MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown"
-            SearchBoxVisibility="Collapsed"
-            VerticalScrollViewerVisibility="Auto" />
+        <Grid Grid.Row="1">
+            <mosaic:SideMenu
+                x:Name="ToolbarMenu"
+                Compact="True"
+                ItemClicked="ToolbarMenu_ItemClicked"
+                MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown"
+                SearchBoxVisibility="Collapsed"
+                VerticalScrollViewerVisibility="Auto" />
+
+            <!--  Loading overlay — visible while pinned items are being restored  -->
+            <ProgressBar
+                Height="3"
+                VerticalAlignment="Top"
+                IsIndeterminate="True"
+                Visibility="{Binding IsRestoringPinnedItems, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </Grid>
 
         <!--  ══ Add button ══  -->
         <Button

@@ -19,37 +19,37 @@ namespace WindowCue.Interop
     internal static class NativeMethods
     {
         // ── Window style indices ──────────────────────────────────────────────
-        public const int GWL_STYLE   = -16;
+        public const int GWL_STYLE = -16;
         public const int GWL_EXSTYLE = -20;
 
         public const long WS_EX_TOOLWINDOW = 0x00000080L;
-        public const long WS_EX_APPWINDOW  = 0x00040000L;
-        public const long WS_CHILD         = 0x40000000L;
+        public const long WS_EX_APPWINDOW = 0x00040000L;
+        public const long WS_CHILD = 0x40000000L;
 
         // ── ShowWindow commands ───────────────────────────────────────────────
-        public const int SW_RESTORE      = 9;
+        public const int SW_RESTORE = 9;
         public const int SW_SHOWNOACTIVATE = 4;
 
         // ── GetClassLongPtr indices ───────────────────────────────────────────
-        public const int GCLP_HICON   = -14;
+        public const int GCLP_HICON = -14;
         public const int GCLP_HICONSM = -34;
 
         // ── WM_GETICON ────────────────────────────────────────────────────────
-        public const int WM_GETICON   = 0x007F;
-        public const int ICON_SMALL   = 0;
-        public const int ICON_BIG     = 1;
-        public const int ICON_SMALL2  = 2;
+        public const int WM_GETICON = 0x007F;
+        public const int ICON_SMALL = 0;
+        public const int ICON_BIG = 1;
+        public const int ICON_SMALL2 = 2;
 
         // ── SHGetFileInfo flags ───────────────────────────────────────────────
-        public const uint SHGFI_ICON             = 0x100;
-        public const uint SHGFI_LARGEICON        = 0x0;
-        public const uint SHGFI_SMALLICON        = 0x1;
+        public const uint SHGFI_ICON = 0x100;
+        public const uint SHGFI_LARGEICON = 0x0;
+        public const uint SHGFI_SMALLICON = 0x1;
         public const uint SHGFI_USEFILEATTRIBUTES = 0x10;
 
         // ── Monitor flags ─────────────────────────────────────────────────────
         public const uint MONITOR_DEFAULTTONEAREST = 2;
         public const uint MONITOR_DEFAULTTOPRIMARY = 1;
-        public const uint MONITORINFOF_PRIMARY     = 1;
+        public const uint MONITORINFOF_PRIMARY = 1;
 
         // ── Structs ───────────────────────────────────────────────────────────
 
@@ -57,8 +57,8 @@ namespace WindowCue.Interop
         public struct SHFILEINFO
         {
             public IntPtr hIcon;
-            public int    iIcon;
-            public uint   dwAttributes;
+            public int iIcon;
+            public uint dwAttributes;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
@@ -179,27 +179,27 @@ namespace WindowCue.Interop
         // ── Shell AppBar constants ─────────────────────────────────────────────
 
         // SHAppBarMessage dwMessage values
-        public const uint ABM_NEW              = 0x00000000;
-        public const uint ABM_REMOVE           = 0x00000001;
-        public const uint ABM_QUERYPOS         = 0x00000002;
-        public const uint ABM_SETPOS           = 0x00000003;
-        public const uint ABM_GETSTATE         = 0x00000004;
-        public const uint ABM_GETTASKBARPOS    = 0x00000005;
-        public const uint ABM_ACTIVATE         = 0x00000006;
-        public const uint ABM_GETAUTOHIDEBAR   = 0x00000007;
-        public const uint ABM_SETAUTOHIDEBAR   = 0x00000008;
+        public const uint ABM_NEW = 0x00000000;
+        public const uint ABM_REMOVE = 0x00000001;
+        public const uint ABM_QUERYPOS = 0x00000002;
+        public const uint ABM_SETPOS = 0x00000003;
+        public const uint ABM_GETSTATE = 0x00000004;
+        public const uint ABM_GETTASKBARPOS = 0x00000005;
+        public const uint ABM_ACTIVATE = 0x00000006;
+        public const uint ABM_GETAUTOHIDEBAR = 0x00000007;
+        public const uint ABM_SETAUTOHIDEBAR = 0x00000008;
         public const uint ABM_WINDOWPOSCHANGED = 0x00000009;
-        public const uint ABM_SETSTATE         = 0x0000000A;
+        public const uint ABM_SETSTATE = 0x0000000A;
 
         // AppBar edge identifiers (APPBARDATA.uEdge)
-        public const uint ABE_LEFT   = 0;
-        public const uint ABE_TOP    = 1;
-        public const uint ABE_RIGHT  = 2;
+        public const uint ABE_LEFT = 0;
+        public const uint ABE_TOP = 1;
+        public const uint ABE_RIGHT = 2;
         public const uint ABE_BOTTOM = 3;
 
         // AppBar notification codes (wParam of the registered callback message)
-        public const int ABN_STATECHANGE   = 0x0000000;
-        public const int ABN_POSCHANGED    = 0x0000001;
+        public const int ABN_STATECHANGE = 0x0000000;
+        public const int ABN_POSCHANGED = 0x0000001;
         public const int ABN_FULLSCREENAPP = 0x0000002;
         public const int ABN_WINDOWARRANGE = 0x0000003;
 
@@ -208,11 +208,11 @@ namespace WindowCue.Interop
         [StructLayout(LayoutKind.Sequential)]
         public struct APPBARDATA
         {
-            public uint   cbSize;
+            public uint cbSize;
             public IntPtr hWnd;
-            public uint   uCallbackMessage;
-            public uint   uEdge;
-            public RECT   rc;
+            public uint uCallbackMessage;
+            public uint uEdge;
+            public RECT rc;
             public IntPtr lParam;
         }
 

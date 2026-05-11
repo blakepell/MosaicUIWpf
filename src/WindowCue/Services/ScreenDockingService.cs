@@ -14,15 +14,19 @@ using WindowCue.Interop;
 
 namespace WindowCue.Services
 {
-    /// <summary>Represents one of the four edges a toolbar can be docked to.</summary>
+    /// <summary>
+    /// Represents one of the four edges a toolbar can be docked to.
+    /// </summary>
     public enum DockEdge { Left, Right, Top, Bottom }
 
-    /// <summary>Describes a physical monitor and its usable work area.</summary>
+    /// <summary>
+    /// Describes a physical monitor and its usable work area.
+    /// </summary>
     public class MonitorInfo
     {
         public string DeviceName { get; set; } = string.Empty;
-        public Rect   WorkArea   { get; set; }
-        public bool   IsPrimary  { get; set; }
+        public Rect WorkArea { get; set; }
+        public bool IsPrimary { get; set; }
     }
 
     /// <summary>
@@ -46,7 +50,7 @@ namespace WindowCue.Services
                         monitors.Add(new MonitorInfo
                         {
                             DeviceName = mi.szDevice,
-                            WorkArea   = new Rect(
+                            WorkArea = new Rect(
                                 mi.rcWork.Left, mi.rcWork.Top,
                                 mi.rcWork.Right - mi.rcWork.Left,
                                 mi.rcWork.Bottom - mi.rcWork.Top),
@@ -82,26 +86,26 @@ namespace WindowCue.Services
             switch (edge)
             {
                 case DockEdge.Left:
-                    window.Left   = work.Left;
-                    window.Top    = work.Top;
+                    window.Left = work.Left;
+                    window.Top = work.Top;
                     window.Height = work.Height;
                     break;
 
                 case DockEdge.Right:
-                    window.Left   = work.Right - window.Width;
-                    window.Top    = work.Top;
+                    window.Left = work.Right - window.Width;
+                    window.Top = work.Top;
                     window.Height = work.Height;
                     break;
 
                 case DockEdge.Top:
-                    window.Left  = work.Left;
-                    window.Top   = work.Top;
+                    window.Left = work.Left;
+                    window.Top = work.Top;
                     window.Width = work.Width;
                     break;
 
                 case DockEdge.Bottom:
-                    window.Left  = work.Left;
-                    window.Top   = work.Bottom - window.Height;
+                    window.Left = work.Left;
+                    window.Top = work.Bottom - window.Height;
                     window.Width = work.Width;
                     break;
             }

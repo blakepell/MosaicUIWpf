@@ -37,89 +37,111 @@
             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
         <!--  Running windows + Edge tabs list  -->
-        <ListBox
-            x:Name="WindowList"
-            Grid.Row="2"
-            Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
-            BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
-            ItemsSource="{Binding FilteredWindows}"
-            MouseDoubleClick="WindowList_MouseDoubleClick"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            SelectedItem="{Binding SelectedWindow, Mode=TwoWay}">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="Padding" Value="4,3" />
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}" />
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:RunningWindowViewModel}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="2">
+            <ListBox
+                x:Name="WindowList"
+                Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                ItemsSource="{Binding FilteredWindows}"
+                MouseDoubleClick="WindowList_MouseDoubleClick"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                SelectedItem="{Binding SelectedWindow, Mode=TwoWay}"
+                Visibility="{Binding IsLoading, Converter={mosaic:InvertedBoolToVisibilityConverter}}">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="4,3" />
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static theme:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:RunningWindowViewModel}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="36" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                        <!--  Icon  -->
-                        <Image
-                            Grid.Column="0"
-                            Width="28"
-                            Height="28"
-                            Margin="2"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="{Binding Icon}" />
+                            <!--  Icon  -->
+                            <Image
+                                Grid.Column="0"
+                                Width="28"
+                                Height="28"
+                                Margin="2"
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                Source="{Binding Icon}" />
 
-                        <!--  Title + subtitle (process name or "Edge Tab")  -->
-                        <StackPanel
-                            Grid.Column="1"
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center">
-                            <TextBlock
-                                FontSize="13"
-                                FontWeight="SemiBold"
-                                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
-                                Text="{Binding Title}"
-                                TextTrimming="CharacterEllipsis" />
-                            <TextBlock
-                                FontSize="11"
-                                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
-                                Text="{Binding DisplaySubtitle}"
-                                TextTrimming="CharacterEllipsis">
-                                <TextBlock.ToolTip>
-                                    <ToolTip Content="{Binding ExecutablePath}" />
-                                </TextBlock.ToolTip>
-                            </TextBlock>
-                        </StackPanel>
+                            <!--  Title + subtitle (process name or "Edge Tab")  -->
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="4,0,0,0"
+                                VerticalAlignment="Center">
+                                <TextBlock
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
+                                    Text="{Binding Title}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    FontSize="11"
+                                    Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="{Binding DisplaySubtitle}"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip Content="{Binding ExecutablePath}" />
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                            </StackPanel>
 
-                        <!--  "Tab" badge shown only for browser-tab items  -->
-                        <Border
-                            Grid.Column="2"
-                            Margin="6,0,2,0"
-                            Padding="5,2"
-                            VerticalAlignment="Center"
-                            Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
-                            CornerRadius="3"
-                            Visibility="{Binding IsEdgeTab, Converter={mosaic:BoolToVisibilityConverter}}">
-                            <TextBlock
-                                FontSize="10"
-                                FontWeight="SemiBold"
-                                Foreground="White"
-                                Text="TAB" />
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            <!--  "Tab" badge shown only for browser-tab items  -->
+                            <Border
+                                Grid.Column="2"
+                                Margin="6,0,2,0"
+                                Padding="5,2"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                CornerRadius="3"
+                                Visibility="{Binding IsEdgeTab, Converter={mosaic:BoolToVisibilityConverter}}">
+                                <TextBlock
+                                    FontSize="10"
+                                    FontWeight="SemiBold"
+                                    Foreground="White"
+                                    Text="TAB" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!--  Loading overlay — covers the list area while enumeration is running  -->
+            <Border
+                Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                Visibility="{Binding IsLoading, Converter={mosaic:BoolToVisibilityConverter}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ProgressBar
+                        Width="220"
+                        Height="4"
+                        IsIndeterminate="True" />
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                        Text="Loading windows and tabs…" />
+                </StackPanel>
+            </Border>
+        </Grid>
 
         <!--  Buttons  -->
         <StackPanel

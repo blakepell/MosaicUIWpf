@@ -77,13 +77,13 @@ namespace WindowCue.Services
 
                         result.Add(new BrowserTabInfo
                         {
-                            Title             = title,
-                            Url               = isActive ? activeUrl : null,
-                            WindowHandle      = proc.MainWindowHandle,
-                            ProcessId         = proc.Id,
+                            Title = title,
+                            Url = isActive ? activeUrl : null,
+                            WindowHandle = proc.MainWindowHandle,
+                            ProcessId = proc.Id,
                             BrowserProcessName = processName,
-                            ExecutablePath    = execPath,
-                            IsActiveTab       = isActive
+                            ExecutablePath = execPath,
+                            IsActiveTab = isActive
                         });
                     }
                 }
@@ -188,7 +188,7 @@ namespace WindowCue.Services
             {
                 var match = tabs.FirstOrDefault(t =>
                     string.Equals(t.Title, tabTitle, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(t.Url,   tabUrl,   StringComparison.OrdinalIgnoreCase));
+                    string.Equals(t.Url, tabUrl, StringComparison.OrdinalIgnoreCase));
                 if (match != null)
                 {
                     return match;
@@ -240,7 +240,9 @@ namespace WindowCue.Services
             return null;
         }
 
-        /// <summary>Returns the currently-selected tab element, or <see langword="null"/>.</summary>
+        /// <summary>
+        /// Returns the currently-selected tab element, or <see langword="null"/>.
+        /// </summary>
         private static AutomationElement? FindSelectedTab(AutomationElementCollection tabs)
         {
             foreach (AutomationElement tab in tabs)

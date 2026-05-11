@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace WindowCue.Views
 {
-    public partial class RenameItemDialog : Window
+    public partial class RenameItemDialog
     {
         /// <summary>Gets the label the user confirmed, or the original value if cancelled.</summary>
         public string NewLabel { get; set; }

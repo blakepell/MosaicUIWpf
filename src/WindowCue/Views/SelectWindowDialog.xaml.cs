@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace WindowCue.Views
 {
-    public partial class SelectWindowDialog : Window
+    public partial class SelectWindowDialog
     {
         public SelectWindowDialog()
         {

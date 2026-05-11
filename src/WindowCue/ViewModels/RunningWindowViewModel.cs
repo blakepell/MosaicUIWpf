@@ -42,13 +42,19 @@ namespace WindowCue.ViewModels
         /// </summary>
         public bool IsEdgeTab => BrowserTab != null;
 
-        /// <summary>Window or tab title used for display and filtering.</summary>
+        /// <summary>
+        /// Window or tab title used for display and filtering.
+        /// </summary>
         public string Title => IsEdgeTab ? BrowserTab!.Title : Source!.Title;
 
-        /// <summary>Process name used for secondary display and filtering.</summary>
+        /// <summary>
+        /// Process name used for secondary display and filtering.
+        /// </summary>
         public string ProcessName => IsEdgeTab ? BrowserTab!.BrowserProcessName : Source!.ProcessName;
 
-        /// <summary>Full executable path shown as a tooltip.</summary>
+        /// <summary>
+        /// Full executable path shown as a tooltip.
+        /// </summary>
         public string? ExecutablePath => IsEdgeTab ? BrowserTab!.ExecutablePath : Source!.ExecutablePath;
 
         /// <summary>
@@ -57,23 +63,29 @@ namespace WindowCue.ViewModels
         /// </summary>
         public string DisplaySubtitle => IsEdgeTab ? BuildTabSubtitle() : ProcessName;
 
-        /// <summary>Icon extracted for this item; set asynchronously after construction.</summary>
+        /// <summary>
+        /// Icon extracted for this item; set asynchronously after construction.
+        /// </summary>
         [ObservableProperty]
         private ImageSource? _icon;
 
         // ── Constructors ──────────────────────────────────────────────────────
 
-        /// <summary>Initializes a view model for a regular desktop window.</summary>
+        /// <summary>
+        /// Initializes a view model for a regular desktop window.
+        /// </summary>
         public RunningWindowViewModel(WindowInfo source)
         {
-            Source    = source;
+            Source = source;
             BrowserTab = null;
         }
 
-        /// <summary>Initializes a view model for a browser tab.</summary>
+        /// <summary>
+        /// Initializes a view model for a browser tab.
+        /// </summary>
         public RunningWindowViewModel(BrowserTabInfo tab)
         {
-            Source     = null;
+            Source = null;
             BrowserTab = tab;
         }
 
@@ -85,9 +97,9 @@ namespace WindowCue.ViewModels
             {
                 "msedge" => "Microsoft Edge",
                 "chrome" => "Google Chrome",
-                "brave"  => "Brave",
-                "opera"  => "Opera",
-                _        => BrowserTab.BrowserProcessName
+                "brave" => "Brave",
+                "opera" => "Opera",
+                _ => BrowserTab.BrowserProcessName
             };
 
             return $"{browser} — Tab";
