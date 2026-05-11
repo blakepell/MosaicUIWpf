@@ -9,10 +9,6 @@
     Width="72"
     MinWidth="64"
     MaxWidth="120"
-    ShowInTaskbar="False"
-    Topmost="True"
-    ResizeMode="NoResize"
-    WindowStyle="None"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="8"
     theme:WindowChromeBehavior.GlassFrameThickness="0"
@@ -21,7 +17,11 @@
     theme:WindowChromeBehavior.UseAeroCaptionButtons="False"
     Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}"
-    Loaded="MainWindow_OnLoaded">
+    Loaded="MainWindow_OnLoaded"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Topmost="True"
+    WindowStyle="None">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -30,83 +30,95 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <!-- ══ Drag handle / header ══ -->
+        <!--  ══ Drag handle / header ══  -->
         <Border
             Grid.Row="0"
+            Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}"
             Cursor="SizeAll"
-            MouseLeftButtonDown="DragArea_MouseLeftButtonDown"
-            Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}">
+            MouseLeftButtonDown="DragArea_MouseLeftButtonDown">
             <Grid>
-                <!-- Grip dots -->
+                <!--  Grip dots  -->
                 <TextBlock
-                    Text="⠿"
-                    FontSize="16"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    FontSize="16"
+                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}"
                     Opacity="0.45"
-                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}" />
+                    Text="⠿" />
 
-                <!-- Settings context button (top-right) -->
+                <!--  Settings context button (top-right)  -->
                 <Button
                     x:Name="SettingsButton"
                     Width="20"
                     Height="20"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
                     Margin="0,0,4,0"
                     Padding="0"
-                    ToolTip="Dock options"
-                    Click="SettingsButton_Click"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
                     Background="Transparent"
                     BorderThickness="0"
+                    Click="SettingsButton_Click"
                     Cursor="Hand"
+                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}"
                     Opacity="0.55"
-                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}">
-                    <TextBlock Text="⋮" FontSize="14" />
+                    ToolTip="Dock options">
+                    <TextBlock FontSize="14" Text="⋮" />
                     <Button.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Dock → Left"   Tag="Left"   Click="DockMenuItem_Click" />
-                            <MenuItem Header="Dock → Right"  Tag="Right"  Click="DockMenuItem_Click" />
-                            <MenuItem Header="Dock → Top"    Tag="Top"    Click="DockMenuItem_Click" />
-                            <MenuItem Header="Dock → Bottom" Tag="Bottom" Click="DockMenuItem_Click" />
+                            <MenuItem
+                                Click="DockMenuItem_Click"
+                                Header="Dock → Left"
+                                Tag="Left" />
+                            <MenuItem
+                                Click="DockMenuItem_Click"
+                                Header="Dock → Right"
+                                Tag="Right" />
+                            <MenuItem
+                                Click="DockMenuItem_Click"
+                                Header="Dock → Top"
+                                Tag="Top" />
+                            <MenuItem
+                                Click="DockMenuItem_Click"
+                                Header="Dock → Bottom"
+                                Tag="Bottom" />
                             <Separator />
-                            <MenuItem Header="Toggle Theme" Click="ToggleTheme_Click" />
+                            <MenuItem Click="ToggleTheme_Click" Header="Toggle Theme" />
                             <Separator />
-                            <MenuItem Header="Exit" Click="Exit_Click" />
+                            <MenuItem Click="Exit_Click" Header="Exit" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
             </Grid>
         </Border>
 
-        <!-- ══ Pinned items via SideMenu compact ══ -->
+        <!--  ══ Pinned items via SideMenu compact ══  -->
         <mosaic:SideMenu
             x:Name="ToolbarMenu"
             Grid.Row="1"
             Compact="True"
-            SearchBoxVisibility="Collapsed"
-            VerticalScrollViewerVisibility="Auto"
             ItemClicked="ToolbarMenu_ItemClicked"
-            MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown" />
+            MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown"
+            SearchBoxVisibility="Collapsed"
+            VerticalScrollViewerVisibility="Auto" />
 
-        <!-- ══ Add button ══ -->
+        <!--  ══ Add button ══  -->
         <Button
-            Grid.Row="2"
             x:Name="AddButton"
+            Grid.Row="2"
             Width="40"
             Height="40"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            FontSize="22"
-            FontWeight="Light"
+            Background="Transparent"
+            BorderBrush="{DynamicResource {x:Static themeNs:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="1"
+            Click="AddButton_Click"
             Content="+"
             Cursor="Hand"
-            ToolTip="Pin a running window"
-            Click="AddButton_Click"
-            Background="Transparent"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource {x:Static themeNs:MosaicTheme.ControlBorderBrush}}"
-            Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.ControlForegroundBrush}}">
+            FontSize="22"
+            FontWeight="Light"
+            Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.ControlForegroundBrush}}"
+            ToolTip="Pin a running window">
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Template">
@@ -122,8 +134,7 @@
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Bd" Property="Background"
-                                                Value="{DynamicResource {x:Static themeNs:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themeNs:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

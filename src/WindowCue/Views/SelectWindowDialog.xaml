@@ -25,37 +25,27 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Search box -->
-        <TextBox
-            Grid.Row="0"
+        <!--  Search box  -->
+        <mosaic:SearchBox
             x:Name="SearchBox"
-            FontSize="14"
+            Grid.Row="0"
             Padding="6,4"
-            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-            BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
             Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
-            Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}">
-            <TextBox.Style>
-                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                    <Style.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="4" />
-                        </Style>
-                    </Style.Resources>
-                </Style>
-            </TextBox.Style>
-        </TextBox>
+            BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+            FontSize="14"
+            Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
+            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-        <!-- Running windows list -->
+        <!--  Running windows list  -->
         <ListBox
-            Grid.Row="2"
             x:Name="WindowList"
-            ItemsSource="{Binding FilteredWindows}"
-            SelectedItem="{Binding SelectedWindow, Mode=TwoWay}"
+            Grid.Row="2"
             Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
             BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+            ItemsSource="{Binding FilteredWindows}"
+            MouseDoubleClick="WindowList_MouseDoubleClick"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            MouseDoubleClick="WindowList_MouseDoubleClick">
+            SelectedItem="{Binding SelectedWindow, Mode=TwoWay}">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -79,27 +69,30 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <!-- Icon -->
+                        <!--  Icon  -->
                         <Image
                             Grid.Column="0"
                             Width="28"
                             Height="28"
                             Margin="2"
-                            Source="{Binding Icon}"
-                            RenderOptions.BitmapScalingMode="HighQuality" />
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding Icon}" />
 
-                        <!-- Title + process name -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0,0,0">
+                        <!--  Title + process name  -->
+                        <StackPanel
+                            Grid.Column="1"
+                            Margin="4,0,0,0"
+                            VerticalAlignment="Center">
                             <TextBlock
-                                Text="{Binding Title}"
                                 FontSize="13"
                                 FontWeight="SemiBold"
                                 Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
+                                Text="{Binding Title}"
                                 TextTrimming="CharacterEllipsis" />
                             <TextBlock
-                                Text="{Binding ProcessName}"
                                 FontSize="11"
                                 Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="{Binding ProcessName}"
                                 TextTrimming="CharacterEllipsis">
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="{Binding ExecutablePath}" />
@@ -111,30 +104,30 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Buttons -->
+        <!--  Buttons  -->
         <StackPanel
             Grid.Row="4"
-            Orientation="Horizontal"
-            HorizontalAlignment="Right">
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
             <Button
-                Content="Add"
                 Width="80"
                 Height="30"
                 Margin="0,0,8,0"
-                IsDefault="True"
+                Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
                 Command="{Binding ConfirmCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
-                Foreground="White" />
+                Content="Add"
+                Foreground="White"
+                IsDefault="True" />
             <Button
-                Content="Cancel"
                 Width="80"
                 Height="30"
-                IsCancel="True"
-                Click="CancelButton_Click"
                 Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                Click="CancelButton_Click"
+                Content="Cancel"
                 Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
-                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}" />
+                IsCancel="True" />
         </StackPanel>
     </Grid>
 </Window>
