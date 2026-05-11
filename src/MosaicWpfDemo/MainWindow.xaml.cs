@@ -45,5 +45,10 @@ namespace WpfDemo
                 appSettings.Theme = theme.Theme;
             }
         }
+
+        private void SideMenuItem_Click(object sender, Mosaic.UI.Wpf.Controls.SideMenuItemClickEventArgs e)
+        {
+            MessageBox.Show($"You clicked: {e.Item.Text}");
+        }
     }
 }

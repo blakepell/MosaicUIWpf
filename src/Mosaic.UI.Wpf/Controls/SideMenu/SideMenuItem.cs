@@ -205,6 +205,23 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Occurs when this menu item is activated (selected).
+        /// </summary>
+        public event EventHandler<SideMenuItemClickEventArgs>? Click;
+
+        /// <summary>
+        /// Raises the <see cref="Click"/> event for this menu item and returns the event arguments so
+        /// callers (such as the parent <see cref="SideMenu"/>) can reuse the same snapshot.
+        /// </summary>
+        /// <returns>The <see cref="SideMenuItemClickEventArgs"/> that was passed to all event handlers.</returns>
+        public SideMenuItemClickEventArgs RaiseClick()
+        {
+            var args = new SideMenuItemClickEventArgs(this);
+            Click?.Invoke(this, args);
+            return args;
+        }
+
+        /// <summary>
         /// Returns a string representation of the current object.
         /// </summary>
         /// <returns>The value of the <see cref="Text"/> property.</returns>

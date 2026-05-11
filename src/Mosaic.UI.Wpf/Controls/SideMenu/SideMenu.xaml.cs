@@ -43,6 +43,13 @@ namespace Mosaic.UI.Wpf.Controls
         public event SelectedItemChangedEventHandler? SelectedItemChanged;
 
         /// <summary>
+        /// Occurs when any <see cref="SideMenuItem"/> in this menu is activated (selected).
+        /// The event arguments expose the clicked item and a read-only snapshot of its parameters,
+        /// making this a convenient single-subscription point for handling any menu navigation.
+        /// </summary>
+        public event EventHandler<SideMenuItemClickEventArgs>? ItemClicked;
+
+        /// <summary>
         /// Identifies the <see cref="SearchBoxVisibility"/> dependency property, which controls the visibility of the
         /// search box in the side menu.
         /// </summary>
@@ -177,8 +184,15 @@ namespace Mosaic.UI.Wpf.Controls
                     item = newItem;
                 }
 
-                // Raise the event
+                // Raise the SelectedItemChanged event
                 sideMenu.SelectedItemChanged?.Invoke(sideMenu, e.NewValue as SideMenuItem);
+
+                // Raise the Click event on the item, then bubble it up through ItemClicked on the menu
+                if (item != null)
+                {
+                    var clickArgs = item.RaiseClick();
+                    sideMenu.ItemClicked?.Invoke(sideMenu, clickArgs);
+                }
 
                 if (sideMenu.ContentPresenter != null && item?.ContentType != null)
                 {

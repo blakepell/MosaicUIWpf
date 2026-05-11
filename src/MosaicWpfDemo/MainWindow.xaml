@@ -101,6 +101,7 @@
 
                 <!--  Kitchen Sink (new)  -->
                 <mosaic:SideMenuItem
+                    Click="SideMenuItem_Click"
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/collage-48.png"

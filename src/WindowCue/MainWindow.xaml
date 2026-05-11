@@ -1,0 +1,136 @@
+<Window
+    x:Class="WindowCue.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themeNs="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    Title="WindowCue"
+    Width="72"
+    MinWidth="64"
+    MaxWidth="120"
+    ShowInTaskbar="False"
+    Topmost="True"
+    ResizeMode="NoResize"
+    WindowStyle="None"
+    theme:WindowChromeBehavior.CaptionHeight="0"
+    theme:WindowChromeBehavior.CornerRadius="8"
+    theme:WindowChromeBehavior.GlassFrameThickness="0"
+    theme:WindowChromeBehavior.IsEnabled="True"
+    theme:WindowChromeBehavior.ResizeBorderThickness="0"
+    theme:WindowChromeBehavior.UseAeroCaptionButtons="False"
+    Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}"
+    Loaded="MainWindow_OnLoaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Drag handle / header ══ -->
+        <Border
+            Grid.Row="0"
+            Cursor="SizeAll"
+            MouseLeftButtonDown="DragArea_MouseLeftButtonDown"
+            Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}">
+            <Grid>
+                <!-- Grip dots -->
+                <TextBlock
+                    Text="⠿"
+                    FontSize="16"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Opacity="0.45"
+                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}" />
+
+                <!-- Settings context button (top-right) -->
+                <Button
+                    x:Name="SettingsButton"
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Margin="0,0,4,0"
+                    Padding="0"
+                    ToolTip="Dock options"
+                    Click="SettingsButton_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Opacity="0.55"
+                    Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}">
+                    <TextBlock Text="⋮" FontSize="14" />
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Dock → Left"   Tag="Left"   Click="DockMenuItem_Click" />
+                            <MenuItem Header="Dock → Right"  Tag="Right"  Click="DockMenuItem_Click" />
+                            <MenuItem Header="Dock → Top"    Tag="Top"    Click="DockMenuItem_Click" />
+                            <MenuItem Header="Dock → Bottom" Tag="Bottom" Click="DockMenuItem_Click" />
+                            <Separator />
+                            <MenuItem Header="Toggle Theme" Click="ToggleTheme_Click" />
+                            <Separator />
+                            <MenuItem Header="Exit" Click="Exit_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ══ Pinned items via SideMenu compact ══ -->
+        <mosaic:SideMenu
+            x:Name="ToolbarMenu"
+            Grid.Row="1"
+            Compact="True"
+            SearchBoxVisibility="Collapsed"
+            VerticalScrollViewerVisibility="Auto"
+            ItemClicked="ToolbarMenu_ItemClicked"
+            MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown" />
+
+        <!-- ══ Add button ══ -->
+        <Button
+            Grid.Row="2"
+            x:Name="AddButton"
+            Width="40"
+            Height="40"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="22"
+            FontWeight="Light"
+            Content="+"
+            Cursor="Hand"
+            ToolTip="Pin a running window"
+            Click="AddButton_Click"
+            Background="Transparent"
+            BorderThickness="1"
+            BorderBrush="{DynamicResource {x:Static themeNs:MosaicTheme.ControlBorderBrush}}"
+            Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.ControlForegroundBrush}}">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    x:Name="Bd"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bd" Property="Background"
+                                                Value="{DynamicResource {x:Static themeNs:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+    </Grid>
+</Window>
