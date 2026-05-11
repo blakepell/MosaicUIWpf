@@ -60,17 +60,23 @@ namespace WindowCue.Services
 
                 // 2. WM_GETICON — small
                 if (hIcon == IntPtr.Zero)
+                {
                     hIcon = NativeMethods.SendMessage(windowHandle,
                         NativeMethods.WM_GETICON, new IntPtr(NativeMethods.ICON_SMALL), IntPtr.Zero);
+                }
 
                 // 3. Class icon
                 if (hIcon == IntPtr.Zero)
+                {
                     hIcon = NativeMethods.GetClassLongPtr(windowHandle, NativeMethods.GCLP_HICON);
+                }
             }
 
             // 4. Shell file info from executable path
             if (hIcon == IntPtr.Zero && !string.IsNullOrWhiteSpace(executablePath))
+            {
                 hIcon = ExtractFromExecutable(executablePath);
+            }
 
             if (hIcon != IntPtr.Zero)
             {

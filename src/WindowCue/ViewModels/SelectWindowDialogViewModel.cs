@@ -89,7 +89,9 @@ namespace WindowCue.ViewModels
                 FilteredWindows.Add(vm);
 
             if (SelectedWindow != null && !FilteredWindows.Contains(SelectedWindow))
+            {
                 SelectedWindow = null;
+            }
         }
 
         /// <summary>Confirms the selection and closes the dialog.</summary>
@@ -97,7 +99,9 @@ namespace WindowCue.ViewModels
         private void Confirm(Window? dialog)
         {
             if (dialog != null)
+            {
                 dialog.DialogResult = true;
+            }
         }
 
         private bool CanConfirm() => SelectedWindow != null;

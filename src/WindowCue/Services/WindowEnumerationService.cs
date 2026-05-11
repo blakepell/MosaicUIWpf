@@ -36,33 +36,57 @@ namespace WindowCue.Services
                 try
                 {
                     // Skip shell and desktop
-                    if (hWnd == shellHwnd || hWnd == desktopHwnd) return true;
+                    if (hWnd == shellHwnd || hWnd == desktopHwnd)
+                    {
+                        return true;
+                    }
 
                     // Only visible windows
-                    if (!NativeMethods.IsWindowVisible(hWnd)) return true;
+                    if (!NativeMethods.IsWindowVisible(hWnd))
+                    {
+                        return true;
+                    }
 
                     // Skip child windows (not top-level)
-                    if (NativeMethods.GetParent(hWnd) != IntPtr.Zero) return true;
+                    if (NativeMethods.GetParent(hWnd) != IntPtr.Zero)
+                    {
+                        return true;
+                    }
 
                     // Skip tool windows (not in Alt+Tab / taskbar)
                     long exStyle = NativeMethods.GetWindowLong(hWnd, NativeMethods.GWL_EXSTYLE);
-                    if ((exStyle & NativeMethods.WS_EX_TOOLWINDOW) != 0) return true;
+                    if ((exStyle & NativeMethods.WS_EX_TOOLWINDOW) != 0)
+                    {
+                        return true;
+                    }
 
                     // Skip windows with no title
                     int len = NativeMethods.GetWindowTextLength(hWnd);
-                    if (len == 0) return true;
+                    if (len == 0)
+                    {
+                        return true;
+                    }
 
                     var sb = new StringBuilder(len + 1);
                     NativeMethods.GetWindowText(hWnd, sb, sb.Capacity);
                     string title = sb.ToString();
-                    if (string.IsNullOrWhiteSpace(title)) return true;
+                    if (string.IsNullOrWhiteSpace(title))
+                    {
+                        return true;
+                    }
 
                     // Get process info
                     NativeMethods.GetWindowThreadProcessId(hWnd, out int pid);
-                    if (pid == 0) return true;
+                    if (pid == 0)
+                    {
+                        return true;
+                    }
 
                     // Skip our own process
-                    if (pid == ownPid) return true;
+                    if (pid == ownPid)
+                    {
+                        return true;
+                    }
 
                     string processName     = string.Empty;
                     string? executablePath = null;
@@ -108,7 +132,10 @@ namespace WindowCue.Services
             {
                 var match = windows.FirstOrDefault(w =>
                     string.Equals(w.ExecutablePath, executablePath, StringComparison.OrdinalIgnoreCase));
-                if (match != null) return match;
+                if (match != null)
+                {
+                    return match;
+                }
             }
 
             // Priority 2: process name
@@ -116,7 +143,10 @@ namespace WindowCue.Services
             {
                 var match = windows.FirstOrDefault(w =>
                     string.Equals(w.ProcessName, processName, StringComparison.OrdinalIgnoreCase));
-                if (match != null) return match;
+                if (match != null)
+                {
+                    return match;
+                }
             }
 
             // Priority 3: window title substring (bidirectional)
@@ -125,7 +155,10 @@ namespace WindowCue.Services
                 var match = windows.FirstOrDefault(w =>
                     w.Title.Contains(windowTitle, StringComparison.OrdinalIgnoreCase) ||
                     windowTitle.Contains(w.Title, StringComparison.OrdinalIgnoreCase));
-                if (match != null) return match;
+                if (match != null)
+                {
+                    return match;
+                }
             }
 
             return null;

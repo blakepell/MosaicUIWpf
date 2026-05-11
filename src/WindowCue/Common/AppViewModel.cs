@@ -15,9 +15,9 @@ namespace WindowCue.Common
     public partial class AppViewModel : ObservableObject
     {
         [ObservableProperty]
-        private AppSettings _appSettings = new();
+        public partial AppSettings AppSettings { get; set; } = new();
 
         [ObservableProperty]
-        private string _title = "WindowCue";
+        public partial string Title { get; set; } = "WindowCue";
     }
 }

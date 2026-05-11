@@ -25,10 +25,10 @@ namespace WindowCue.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         private readonly WindowEnumerationService _enumService;
-        private readonly WindowFocusService       _focusService;
-        private readonly IconExtractionService    _iconService;
-        private readonly ScreenDockingService     _dockingService;
-        private readonly DialogService            _dialogService;
+        private readonly WindowFocusService _focusService;
+        private readonly IconExtractionService _iconService;
+        private readonly ScreenDockingService _dockingService;
+        private readonly DialogService _dialogService;
 
         /// <summary>The ordered collection of pinned toolbar items.</summary>
         public ObservableCollection<ToolbarItemViewModel> Items { get; } = new();
@@ -48,11 +48,11 @@ namespace WindowCue.ViewModels
             ScreenDockingService dockingService,
             DialogService dialogService)
         {
-            _enumService    = enumService;
-            _focusService   = focusService;
-            _iconService    = iconService;
+            _enumService = enumService;
+            _focusService = focusService;
+            _iconService = iconService;
             _dockingService = dockingService;
-            _dialogService  = dialogService;
+            _dialogService = dialogService;
         }
 
         // ── Add ──────────────────────────────────────────────────────────────
@@ -62,10 +62,16 @@ namespace WindowCue.ViewModels
         private async Task AddWindowAsync()
         {
             var window = Application.Current.MainWindow;
-            if (window == null) return;
+            if (window == null)
+            {
+                return;
+            }
 
             var info = await _dialogService.ShowSelectWindowDialogAsync(window);
-            if (info == null) return;
+            if (info == null)
+            {
+                return;
+            }
 
             // Extract icon (may already be cached in the dialog, but re-extract for safety)
             var icon = _iconService.ExtractIcon(info.Handle, info.ExecutablePath);
@@ -81,12 +87,15 @@ namespace WindowCue.ViewModels
         [RelayCommand]
         private void FocusItem(ToolbarItemViewModel? item)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
 
             // Try the stored handle first
             if (_focusService.FocusWindow(item.WindowHandle))
             {
-                item.IsAvailable      = true;
+                item.IsAvailable = true;
                 item.UnavailableReason = null;
                 return;
             }
@@ -98,13 +107,13 @@ namespace WindowCue.ViewModels
                 item.WindowHandle = freshHandle;
                 if (_focusService.FocusWindow(freshHandle))
                 {
-                    item.IsAvailable       = true;
+                    item.IsAvailable = true;
                     item.UnavailableReason = null;
                     return;
                 }
             }
 
-            item.IsAvailable       = false;
+            item.IsAvailable = false;
             item.UnavailableReason = "Window is no longer available.";
         }
 
@@ -115,7 +124,9 @@ namespace WindowCue.ViewModels
         private void RemoveItem(ToolbarItemViewModel? item)
         {
             if (item != null)
+            {
                 Items.Remove(item);
+            }
         }
 
         // ── Rename ────────────────────────────────────────────────────────────
@@ -124,13 +135,22 @@ namespace WindowCue.ViewModels
         [RelayCommand]
         private void RenameItem(ToolbarItemViewModel? item)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
+
             var window = Application.Current.MainWindow;
-            if (window == null) return;
+            if (window == null)
+            {
+                return;
+            }
 
             string? newLabel = _dialogService.ShowRenameDialog(item.Label, window);
             if (newLabel != null)
+            {
                 item.Label = newLabel;
+            }
         }
 
         // ── Dock ──────────────────────────────────────────────────────────────
@@ -139,11 +159,17 @@ namespace WindowCue.ViewModels
         [RelayCommand]
         private void SetDockEdge(string edgeName)
         {
-            if (!Enum.TryParse<DockEdge>(edgeName, out var edge)) return;
+            if (!Enum.TryParse<DockEdge>(edgeName, out var edge))
+            {
+                return;
+            }
+
             DockEdge = edge;
             var window = Application.Current.MainWindow;
             if (window != null)
+            {
                 _dockingService.Dock(window, DockEdge, MonitorDeviceName);
+            }
         }
 
         // ── Persistence helpers ───────────────────────────────────────────────
@@ -154,10 +180,11 @@ namespace WindowCue.ViewModels
         public List<PinnedItemData> ToPersistedItems() =>
             Items.Select(i => new PinnedItemData
             {
-                Label          = i.Label,
-                ProcessName    = i.ProcessName,
+                ProcessId = i.ProcessId,
+                Label = i.Label,
+                ProcessName = i.ProcessName,
                 ExecutablePath = i.ExecutablePath,
-                WindowTitle    = i.WindowTitle
+                WindowTitle = i.WindowTitle
             }).ToList();
 
         /// <summary>
@@ -182,12 +209,12 @@ namespace WindowCue.ViewModels
                     // Show as unavailable placeholder so the user can remove or wait
                     vm = new ToolbarItemViewModel
                     {
-                        Label              = data.Label,
-                        ProcessName        = data.ProcessName,
-                        ExecutablePath     = data.ExecutablePath,
-                        WindowTitle        = data.WindowTitle,
-                        IsAvailable        = false,
-                        UnavailableReason  = "Application is not currently running."
+                        Label = data.Label,
+                        ProcessName = data.ProcessName,
+                        ExecutablePath = data.ExecutablePath,
+                        WindowTitle = data.WindowTitle,
+                        IsAvailable = false,
+                        UnavailableReason = "Application is not currently running."
                     };
                 }
 

@@ -25,10 +25,14 @@ namespace WindowCue.Services
         public bool FocusWindow(IntPtr handle)
         {
             if (handle == IntPtr.Zero || !NativeMethods.IsWindow(handle))
+            {
                 return false;
+            }
 
             if (NativeMethods.IsIconic(handle))
+            {
                 NativeMethods.ShowWindow(handle, NativeMethods.SW_RESTORE);
+            }
 
             NativeMethods.BringWindowToTop(handle);
             NativeMethods.SetForegroundWindow(handle);
@@ -40,7 +44,11 @@ namespace WindowCue.Services
         /// </summary>
         public bool IsWindowAlive(IntPtr handle)
         {
-            if (handle == IntPtr.Zero) return false;
+            if (handle == IntPtr.Zero)
+            {
+                return false;
+            }
+
             return NativeMethods.IsWindow(handle) && NativeMethods.IsWindowVisible(handle);
         }
 
@@ -50,7 +58,11 @@ namespace WindowCue.Services
         /// </summary>
         public IntPtr FindWindowForProcess(int processId)
         {
-            if (processId <= 0) return IntPtr.Zero;
+            if (processId <= 0)
+            {
+                return IntPtr.Zero;
+            }
+
             try
             {
                 using var proc = Process.GetProcessById(processId);

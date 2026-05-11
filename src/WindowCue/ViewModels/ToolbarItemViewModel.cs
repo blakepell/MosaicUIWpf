@@ -66,7 +66,9 @@ namespace WindowCue.ViewModels
 
             // Truncate long labels for compact display
             if (label.Length > 10)
+            {
                 label = label[..10];
+            }
 
             return new ToolbarItemViewModel
             {

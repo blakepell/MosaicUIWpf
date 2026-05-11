@@ -22,64 +22,64 @@ namespace WindowCue.Common
 {
     public partial class AppSettings : ObservableObject, IAppSettings
     {
-        [property: Category("File System")]
-        [property: DisplayName("Application Data Folder")]
-        [property: Description("The application data folder.")]
-        [property: ReadOnly(true)]
-        [property: Browsable(true)]
+        [Category("File System")]
+        [DisplayName("Application Data Folder")]
+        [Description("The application data folder.")]
+        [ReadOnly(true)]
+        [Browsable(true)]
         [ObservableProperty]
-        private string? _applicationDataFolder;
+        public partial string? ApplicationDataFolder { get; set; }
 
-        [property: Category("File System")]
-        [property: DisplayName("Client Settings")]
-        [property: Description("Settings specific to this workstation.")]
-        [property: ReadOnly(false)]
-        [property: Browsable(true)]
+        [Category("File System")]
+        [DisplayName("Client Settings")]
+        [Description("Settings specific to this workstation.")]
+        [ReadOnly(false)]
+        [Browsable(true)]
         [JsonIgnore]
         [ObservableProperty]
-        private LocalSettings? _clientSettings = new();
+        public partial LocalSettings? ClientSettings { get; set; } = new();
 
-        [property: Category("UI")]
-        [property: DisplayName("Font Size")]
-        [property: Description("The default font size for UI elements.")]
-        [property: Browsable(true)]
+        [Category("UI")]
+        [DisplayName("Font Size")]
+        [Description("The default font size for UI elements.")]
+        [Browsable(true)]
         [ObservableProperty]
-        private double _fontSize = 12.0;
+        public partial double FontSize { get; set; } = 12.0;
 
-        [property: DisplayName("Theme")]
-        [property: Category("UI")]
-        [property: Browsable(false)]
+        [DisplayName("Theme")]
+        [Category("UI")]
+        [Browsable(false)]
         [ObservableProperty]
-        private MosaicThemeMode _theme = MosaicThemeMode.Light;
+        public partial MosaicThemeMode Theme { get; set; } = MosaicThemeMode.Light;
 
-        [property: Category("UI")]
-        [property: DisplayName("Window View States")]
-        [property: Description("The view state information for a given window.")]
-        [property: Browsable(true)]
+        [Category("UI")]
+        [DisplayName("Window View States")]
+        [Description("The view state information for a given window.")]
+        [Browsable(true)]
         [ObservableProperty]
-        private ObservableCollection<WindowViewState> _windowViewStates = new();
+        public partial ObservableCollection<WindowViewState> WindowViewStates { get; set; } = new();
 
         // ── WindowCue-specific settings ───────────────────────────────────────
 
-        [property: Category("Toolbar")]
-        [property: DisplayName("Dock Edge")]
-        [property: Description("The screen edge the toolbar is docked to (Left, Right, Top, Bottom).")]
-        [property: Browsable(true)]
+        [Category("Toolbar")]
+        [DisplayName("Dock Edge")]
+        [Description("The screen edge the toolbar is docked to (Left, Right, Top, Bottom).")]
+        [Browsable(true)]
         [ObservableProperty]
-        private string _dockEdge = "Left";
+        public partial string DockEdge { get; set; } = "Left";
 
-        [property: Category("Toolbar")]
-        [property: DisplayName("Monitor Device Name")]
-        [property: Description("The device name of the monitor the toolbar is docked to.")]
-        [property: Browsable(true)]
+        [Category("Toolbar")]
+        [DisplayName("Monitor Device Name")]
+        [Description("The device name of the monitor the toolbar is docked to.")]
+        [Browsable(true)]
         [ObservableProperty]
-        private string? _monitorDeviceName;
+        public partial string? MonitorDeviceName { get; set; }
 
-        [property: Category("Toolbar")]
-        [property: DisplayName("Pinned Items")]
-        [property: Description("The windows pinned to the toolbar.")]
-        [property: Browsable(false)]
+        [Category("Toolbar")]
+        [DisplayName("Pinned Items")]
+        [Description("The windows pinned to the toolbar.")]
+        [Browsable(false)]
         [ObservableProperty]
-        private List<PinnedItemData> _pinnedItems = new();
+        public partial List<PinnedItemData> PinnedItems { get; set; } = new();
     }
 }

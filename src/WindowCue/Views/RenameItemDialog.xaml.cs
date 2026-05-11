@@ -43,7 +43,9 @@ namespace WindowCue.Views
         private void LabelTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
+            {
                 OkButton_Click(sender, e);
+            }
         }
     }
 }

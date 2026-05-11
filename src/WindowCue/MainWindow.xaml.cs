@@ -48,7 +48,9 @@ namespace WindowCue
             if (settings != null)
             {
                 if (Enum.TryParse<DockEdge>(settings.DockEdge, out var edge))
+                {
                     _vm.DockEdge = edge;
+                }
 
                 _vm.MonitorDeviceName = settings.MonitorDeviceName;
             }
@@ -57,7 +59,9 @@ namespace WindowCue
 
             // Restore pinned items from settings
             if (settings?.PinnedItems?.Count > 0)
+            {
                 await _vm.RestoreFromPersistedItemsAsync(settings.PinnedItems);
+            }
         }
 
         // ── SideMenu synchronization ─────────────────────────────────────────
@@ -87,9 +91,14 @@ namespace WindowCue
             vm.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(ToolbarItemViewModel.Label))
+                {
                     mi.Text = vm.Label;
+                }
+
                 if (e.PropertyName == nameof(ToolbarItemViewModel.Icon))
+                {
                     mi.ImageSource = vm.Icon;
+                }
             };
 
             return mi;
@@ -100,7 +109,9 @@ namespace WindowCue
         private void DragArea_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
+            {
                 DragMove();
+            }
         }
 
         // ── Right-click context menu on toolbar items ─────────────────────────
@@ -147,7 +158,9 @@ namespace WindowCue
         private void ToolbarMenu_ItemClicked(object sender, Mosaic.UI.Wpf.Controls.SideMenuItemClickEventArgs e)
         {
             if (e.Item.Tag is ToolbarItemViewModel vm)
+            {
                 _vm.FocusItemCommand.Execute(vm);
+            }
         }
 
         // ── Add button ───────────────────────────────────────────────────────
@@ -162,13 +175,17 @@ namespace WindowCue
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn)
+            {
                 btn.ContextMenu!.IsOpen = true;
+            }
         }
 
         private void DockMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (sender is MenuItem mi && mi.Tag is string edgeName)
+            {
                 _vm.SetDockEdgeCommand.Execute(edgeName);
+            }
         }
 
         private void ToggleTheme_Click(object sender, RoutedEventArgs e)

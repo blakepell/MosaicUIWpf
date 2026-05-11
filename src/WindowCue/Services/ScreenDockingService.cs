@@ -72,7 +72,10 @@ namespace WindowCue.Services
                           ?? monitors.FirstOrDefault(m => m.IsPrimary)
                           ?? monitors.FirstOrDefault();
 
-            if (monitor == null) return;
+            if (monitor == null)
+            {
+                return;
+            }
 
             var work = monitor.WorkArea;
 
