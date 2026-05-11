@@ -16,32 +16,75 @@ using WindowCue.Views;
 namespace WindowCue.Services
 {
     /// <summary>
+    /// Carries the result of the Select Window/Tab dialog: either a regular desktop
+    /// window or a browser tab.
+    /// </summary>
+    public sealed class AddWindowResult
+    {
+        /// <summary>
+        /// Non-null when the user selected a regular desktop window.
+        /// </summary>
+        public WindowInfo? Window { get; }
+
+        /// <summary>
+        /// Non-null when the user selected a browser tab.
+        /// </summary>
+        public BrowserTabInfo? BrowserTab { get; }
+
+        private AddWindowResult(WindowInfo? window, BrowserTabInfo? tab)
+        {
+            Window    = window;
+            BrowserTab = tab;
+        }
+
+        /// <summary>Creates a result wrapping a desktop window selection.</summary>
+        public static AddWindowResult FromWindow(WindowInfo info) => new(info, null);
+
+        /// <summary>Creates a result wrapping a browser-tab selection.</summary>
+        public static AddWindowResult FromBrowserTab(BrowserTabInfo tab) => new(null, tab);
+    }
+
+    /// <summary>
     /// Opens modal dialogs on behalf of ViewModels, keeping View construction out of VM code.
     /// </summary>
     public class DialogService
     {
         private readonly WindowEnumerationService _enumService;
         private readonly IconExtractionService    _iconService;
+        private readonly BrowserTabService        _tabService;
 
-        public DialogService(WindowEnumerationService enumService, IconExtractionService iconService)
+        public DialogService(
+            WindowEnumerationService enumService,
+            IconExtractionService iconService,
+            BrowserTabService tabService)
         {
             _enumService = enumService;
             _iconService = iconService;
+            _tabService  = tabService;
         }
 
         /// <summary>
-        /// Shows the Select Window dialog. Returns the chosen <see cref="WindowInfo"/> or
+        /// Shows the Select Window/Tab dialog. Returns an <see cref="AddWindowResult"/>
+        /// describing whether the user chose a desktop window or a browser tab, or
         /// <see langword="null"/> if the user cancelled.
         /// </summary>
-        public async Task<WindowInfo?> ShowSelectWindowDialogAsync(Window owner)
+        public async Task<AddWindowResult?> ShowSelectWindowDialogAsync(Window owner)
         {
-            var vm = new SelectWindowDialogViewModel(_enumService, _iconService);
+            var vm = new SelectWindowDialogViewModel(_enumService, _iconService, _tabService);
             var dialog = new SelectWindowDialog { DataContext = vm, Owner = owner };
 
-            // Load windows in the background; icons are extracted lazily on the thread pool.
+            // Load windows and tabs in the background; icons are extracted lazily on the thread pool.
             await vm.LoadWindowsAsync();
 
-            return dialog.ShowDialog() == true ? vm.SelectedWindow?.Source : null;
+            if (dialog.ShowDialog() != true || vm.SelectedWindow == null)
+            {
+                return null;
+            }
+
+            var selected = vm.SelectedWindow;
+            return selected.IsEdgeTab
+                ? AddWindowResult.FromBrowserTab(selected.BrowserTab!)
+                : AddWindowResult.FromWindow(selected.Source!);
         }
 
         /// <summary>

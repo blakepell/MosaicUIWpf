@@ -11,11 +11,14 @@
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WindowCue.Interop;
+using WindowCue.Models;
 
 namespace WindowCue.ViewModels
 {
     /// <summary>
-    /// Represents one pinned window item displayed in the WindowCue toolbar.
+    /// Represents one pinned item displayed in the WindowCue toolbar.
+    /// The item is either a desktop window (<see cref="PinnedTargetType.Window"/>) or a
+    /// specific browser tab (<see cref="PinnedTargetType.BrowserTab"/>).
     /// </summary>
     public partial class ToolbarItemViewModel : ObservableObject
     {
@@ -58,6 +61,38 @@ namespace WindowCue.ViewModels
         [ObservableProperty]
         private string? _unavailableReason;
 
+        // ── Browser-tab fields ────────────────────────────────────────────────
+
+        /// <summary>
+        /// Whether this item targets a desktop window or a specific browser tab.
+        /// Defaults to <see cref="PinnedTargetType.Window"/>.
+        /// </summary>
+        [ObservableProperty]
+        private PinnedTargetType _targetType = PinnedTargetType.Window;
+
+        /// <summary>
+        /// The tab title at the time of pinning; used as the primary rebinding key
+        /// for browser-tab items. Empty for regular window items.
+        /// </summary>
+        [ObservableProperty]
+        private string _tabTitle = string.Empty;
+
+        /// <summary>
+        /// The URL of the tab at the time of pinning; used as a disambiguation hint
+        /// alongside <see cref="TabTitle"/>. Null for background tabs and non-tab items.
+        /// </summary>
+        [ObservableProperty]
+        private string? _tabUrl;
+
+        /// <summary>
+        /// The browser process name used to locate the tab (e.g., <c>msedge</c>,
+        /// <c>chrome</c>). Empty for non-tab items.
+        /// </summary>
+        [ObservableProperty]
+        private string _browserProcessName = string.Empty;
+
+        // ── Factory methods ───────────────────────────────────────────────────
+
         /// <summary>Creates a ViewModel from a live <see cref="WindowInfo"/> snapshot.</summary>
         public static ToolbarItemViewModel FromWindowInfo(WindowInfo info, string? overrideLabel = null)
         {
@@ -79,7 +114,36 @@ namespace WindowCue.ViewModels
                 WindowTitle    = info.Title,
                 ProcessName    = info.ProcessName,
                 ExecutablePath = info.ExecutablePath,
+                TargetType     = PinnedTargetType.Window,
                 IsAvailable    = true
+            };
+        }
+
+        /// <summary>Creates a ViewModel from a live <see cref="BrowserTabInfo"/> snapshot.</summary>
+        public static ToolbarItemViewModel FromBrowserTab(BrowserTabInfo tab, string? overrideLabel = null)
+        {
+            string label = overrideLabel ?? tab.Title;
+
+            // Truncate long labels for compact display
+            if (label.Length > 10)
+            {
+                label = label[..10];
+            }
+
+            return new ToolbarItemViewModel
+            {
+                Label               = label,
+                Icon                = tab.Icon,
+                ProcessId           = tab.ProcessId,
+                WindowHandle        = tab.WindowHandle,
+                WindowTitle         = tab.Title,
+                ProcessName         = tab.BrowserProcessName,
+                ExecutablePath      = tab.ExecutablePath,
+                TargetType          = PinnedTargetType.BrowserTab,
+                TabTitle            = tab.Title,
+                TabUrl              = tab.Url,
+                BrowserProcessName  = tab.BrowserProcessName,
+                IsAvailable         = true
             };
         }
     }

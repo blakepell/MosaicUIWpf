@@ -19,6 +19,13 @@ namespace WindowCue.Models
     public partial class PinnedItemData : ObservableObject
     {
         /// <summary>
+        /// Indicates whether this item is a regular desktop window or a browser tab.
+        /// Defaults to <see cref="PinnedTargetType.Window"/> for backward compatibility.
+        /// </summary>
+        [ObservableProperty]
+        public partial PinnedTargetType TargetType { get; set; } = PinnedTargetType.Window;
+
+        /// <summary>
         /// The process ID associated with the pinned window to find a specific instance.
         /// </summary>
         [ObservableProperty]
@@ -47,5 +54,28 @@ namespace WindowCue.Models
         /// </summary>
         [ObservableProperty]
         public partial string WindowTitle { get; set; } = string.Empty;
+
+        // ── Browser-tab–specific fields (ignored for TargetType = Window) ─────
+
+        /// <summary>
+        /// The tab page title saved when the tab was pinned. Used as the primary
+        /// rebinding key for browser-tab items.
+        /// </summary>
+        [ObservableProperty]
+        public partial string TabTitle { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The URL of the tab at the time it was pinned. Used as a disambiguation hint
+        /// when multiple tabs share the same title. Null for background tabs.
+        /// </summary>
+        [ObservableProperty]
+        public partial string? TabUrl { get; set; }
+
+        /// <summary>
+        /// The browser process name used to locate the tab (e.g., <c>msedge</c>,
+        /// <c>chrome</c>). Defaults to <c>msedge</c>.
+        /// </summary>
+        [ObservableProperty]
+        public partial string BrowserProcessName { get; set; } = "msedge";
     }
 }

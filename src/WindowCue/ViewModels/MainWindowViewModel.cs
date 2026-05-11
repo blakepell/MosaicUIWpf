@@ -30,6 +30,7 @@ namespace WindowCue.ViewModels
         private readonly IconExtractionService _iconService;
         private readonly ScreenDockingService _dockingService;
         private readonly DialogService _dialogService;
+        private readonly BrowserTabService _browserTabService;
 
         /// <summary>The ordered collection of pinned toolbar items.</summary>
         public ObservableCollection<ToolbarItemViewModel> Items { get; } = new();
@@ -47,18 +48,24 @@ namespace WindowCue.ViewModels
             WindowFocusService focusService,
             IconExtractionService iconService,
             ScreenDockingService dockingService,
-            DialogService dialogService)
+            DialogService dialogService,
+            BrowserTabService browserTabService)
         {
             _enumService = enumService;
             _focusService = focusService;
             _iconService = iconService;
             _dockingService = dockingService;
             _dialogService = dialogService;
+            _browserTabService = browserTabService;
         }
 
         // ── Add ──────────────────────────────────────────────────────────────
 
-        /// <summary>Opens the Select Window dialog and adds the chosen window to the toolbar.</summary>
+        /// <summary>
+        /// Opens the Select Window/Tab dialog and adds the chosen item to the toolbar.
+        /// Regular windows are handled through the existing HWND path; browser tabs are
+        /// handled through the <see cref="BrowserTabService"/> path.
+        /// </summary>
         [RelayCommand]
         private async Task AddWindowAsync()
         {
@@ -68,23 +75,43 @@ namespace WindowCue.ViewModels
                 return;
             }
 
-            var info = await _dialogService.ShowSelectWindowDialogAsync(window);
-            if (info == null)
+            var result = await _dialogService.ShowSelectWindowDialogAsync(window);
+            if (result == null)
             {
                 return;
             }
 
-            // Extract icon (may already be cached in the dialog, but re-extract for safety)
-            var icon = _iconService.ExtractIcon(info.Handle, info.ExecutablePath);
-            info.Icon = icon;
+            ToolbarItemViewModel vm;
 
-            var vm = ToolbarItemViewModel.FromWindowInfo(info);
+            if (result.BrowserTab != null)
+            {
+                // Browser tab path
+                var icon = _iconService.ExtractIcon(result.BrowserTab.WindowHandle, result.BrowserTab.ExecutablePath);
+                result.BrowserTab.Icon = icon;
+                vm = ToolbarItemViewModel.FromBrowserTab(result.BrowserTab);
+            }
+            else if (result.Window != null)
+            {
+                // Regular desktop window path
+                var icon = _iconService.ExtractIcon(result.Window.Handle, result.Window.ExecutablePath);
+                result.Window.Icon = icon;
+                vm = ToolbarItemViewModel.FromWindowInfo(result.Window);
+            }
+            else
+            {
+                return;
+            }
+
             Items.Add(vm);
         }
 
         // ── Focus ─────────────────────────────────────────────────────────────
 
-        /// <summary>Focuses (and restores if minimized) the target window.</summary>
+        /// <summary>
+        /// Focuses (and restores if minimized) the target window or browser tab.
+        /// Browser-tab items are activated via <see cref="BrowserTabService"/>; regular
+        /// window items use the existing HWND / PID focus path.
+        /// </summary>
         [RelayCommand]
         private void FocusItem(ToolbarItemViewModel? item)
         {
@@ -93,6 +120,18 @@ namespace WindowCue.ViewModels
                 return;
             }
 
+            // ── Browser-tab path ─────────────────────────────────────────────
+            if (item.TargetType == PinnedTargetType.BrowserTab)
+            {
+                bool ok = _browserTabService.FocusTab(
+                    item.BrowserProcessName, item.TabTitle, item.TabUrl);
+
+                item.IsAvailable    = ok;
+                item.UnavailableReason = ok ? null : "Browser tab is no longer open.";
+                return;
+            }
+
+            // ── Regular window path ──────────────────────────────────────────
             // Try the stored handle first
             if (_focusService.FocusWindow(item.WindowHandle))
             {
@@ -181,11 +220,15 @@ namespace WindowCue.ViewModels
         public List<PinnedItemData> ToPersistedItems() =>
             Items.Select(i => new PinnedItemData
             {
-                ProcessId = i.ProcessId,
-                Label = i.Label,
-                ProcessName = i.ProcessName,
-                ExecutablePath = i.ExecutablePath,
-                WindowTitle = i.WindowTitle
+                TargetType         = i.TargetType,
+                ProcessId          = i.ProcessId,
+                Label              = i.Label,
+                ProcessName        = i.ProcessName,
+                ExecutablePath     = i.ExecutablePath,
+                WindowTitle        = i.WindowTitle,
+                TabTitle           = i.TabTitle,
+                TabUrl             = i.TabUrl,
+                BrowserProcessName = i.BrowserProcessName
             }).ToList();
 
         /// <summary>
@@ -196,6 +239,44 @@ namespace WindowCue.ViewModels
         {
             foreach (var data in saved)
             {
+                // ── Browser-tab restore path ──────────────────────────────────
+                if (data.TargetType == PinnedTargetType.BrowserTab)
+                {
+                    var tab = await Task.Run(() =>
+                        _browserTabService.TryRebind(
+                            data.BrowserProcessName, data.TabTitle, data.TabUrl));
+
+                    ToolbarItemViewModel tabVm;
+                    if (tab != null)
+                    {
+                        tab.Icon = _iconService.ExtractIcon(tab.WindowHandle, tab.ExecutablePath);
+                        tabVm = ToolbarItemViewModel.FromBrowserTab(tab, data.Label);
+                    }
+                    else
+                    {
+                        tabVm = new ToolbarItemViewModel
+                        {
+                            Label              = data.Label,
+                            ProcessName        = data.BrowserProcessName,
+                            TargetType         = PinnedTargetType.BrowserTab,
+                            TabTitle           = data.TabTitle,
+                            TabUrl             = data.TabUrl,
+                            BrowserProcessName = data.BrowserProcessName,
+                            IsAvailable        = false,
+                            UnavailableReason  = "Browser tab is not currently open."
+                        };
+                        var tabIcon = TryExtractIconWithoutHandle(data.ExecutablePath, data.BrowserProcessName);
+                        if (tabIcon != null)
+                        {
+                            tabVm.Icon = tabIcon;
+                        }
+                    }
+
+                    Items.Add(tabVm);
+                    continue;
+                }
+
+                // ── Regular window restore path ───────────────────────────────
                 var match = await Task.Run(() =>
                     _enumService.TryRebind(data.ExecutablePath, data.ProcessName, data.WindowTitle));
 

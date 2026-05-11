@@ -31,19 +31,21 @@ namespace WindowCue
             var focusService   = new WindowFocusService();
             var iconService    = new IconExtractionService();
             var dockingService = new ScreenDockingService();
-            var dialogService  = new DialogService(enumService, iconService);
+            var tabService     = new BrowserTabService();
+            var dialogService  = new DialogService(enumService, iconService, tabService);
             var appBarService  = new AppBarService();
 
             AppServices.AddSingleton(enumService);
             AppServices.AddSingleton(focusService);
             AppServices.AddSingleton(iconService);
             AppServices.AddSingleton(dockingService);
+            AppServices.AddSingleton(tabService);
             AppServices.AddSingleton(dialogService);
             AppServices.AddSingleton(appBarService);
 
             // Create and register the main ViewModel
             var mainVm = new MainWindowViewModel(
-                enumService, focusService, iconService, dockingService, dialogService);
+                enumService, focusService, iconService, dockingService, dialogService, tabService);
             AppServices.AddSingleton(mainVm);
         }
 

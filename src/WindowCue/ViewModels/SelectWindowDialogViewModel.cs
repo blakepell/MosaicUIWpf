@@ -18,16 +18,17 @@ using WindowCue.Services;
 namespace WindowCue.ViewModels
 {
     /// <summary>
-    /// ViewModel for the "Select a running window" picker dialog.
-    /// Loads all visible windows, extracts their icons asynchronously,
-    /// and provides live search/filter.
+    /// ViewModel for the "Select a running window or browser tab" picker dialog.
+    /// Loads all visible windows and open Edge tabs, extracts their icons asynchronously,
+    /// and provides live search/filter across both categories.
     /// </summary>
     public partial class SelectWindowDialogViewModel : ObservableObject
     {
         private readonly WindowEnumerationService _enumService;
         private readonly IconExtractionService    _iconService;
+        private readonly BrowserTabService        _tabService;
 
-        private List<RunningWindowViewModel> _allWindows = new();
+        private List<RunningWindowViewModel> _allItems = new();
 
         /// <summary>Filtered list bound to the dialog's ListBox.</summary>
         public ObservableCollection<RunningWindowViewModel> FilteredWindows { get; } = new();
@@ -45,32 +46,48 @@ namespace WindowCue.ViewModels
 
         public SelectWindowDialogViewModel(
             WindowEnumerationService enumService,
-            IconExtractionService iconService)
+            IconExtractionService iconService,
+            BrowserTabService tabService)
         {
             _enumService = enumService;
             _iconService = iconService;
+            _tabService  = tabService;
         }
 
         /// <summary>
-        /// Enumerates visible windows and back-fills icons on the thread pool.
+        /// Enumerates visible windows and open Edge tabs, then back-fills icons on the
+        /// thread pool. Desktop windows are listed first, followed by browser tabs.
         /// Call before showing the dialog.
         /// </summary>
         public async Task LoadWindowsAsync()
         {
-            var rawWindows = await Task.Run(_enumService.GetVisibleWindows);
+            // Run both enumerations in parallel on the thread pool.
+            var rawWindowsTask = Task.Run(_enumService.GetVisibleWindows);
+            var rawTabsTask    = Task.Run(() => _tabService.GetOpenTabs("msedge"));
 
-            _allWindows = rawWindows
+            await Task.WhenAll(rawWindowsTask, rawTabsTask);
+
+            var windowVms = rawWindowsTask.Result
                 .Select(w => new RunningWindowViewModel(w))
                 .ToList();
 
+            var tabVms = rawTabsTask.Result
+                .Select(t => new RunningWindowViewModel(t))
+                .ToList();
+
+            // Desktop windows first, then Edge tabs.
+            _allItems = [.. windowVms, .. tabVms];
+
             ApplyFilter(SearchText);
 
-            // Extract icons without blocking the UI
+            // Extract icons without blocking the UI.
             _ = Task.Run(async () =>
             {
-                foreach (var vm in _allWindows)
+                foreach (var vm in _allItems)
                 {
-                    var icon = _iconService.ExtractIcon(vm.Source.Handle, vm.Source.ExecutablePath);
+                    IntPtr handle  = vm.IsEdgeTab ? vm.BrowserTab!.WindowHandle : vm.Source!.Handle;
+                    string? exePath = vm.ExecutablePath;
+                    var icon = _iconService.ExtractIcon(handle, exePath);
                     await Application.Current.Dispatcher.InvokeAsync(() => vm.Icon = icon);
                 }
             });
@@ -80,13 +97,16 @@ namespace WindowCue.ViewModels
         {
             FilteredWindows.Clear();
             var filtered = string.IsNullOrWhiteSpace(text)
-                ? _allWindows
-                : _allWindows.Where(w =>
+                ? _allItems
+                : _allItems.Where(w =>
                     w.Title.Contains(text, StringComparison.OrdinalIgnoreCase) ||
-                    w.ProcessName.Contains(text, StringComparison.OrdinalIgnoreCase));
+                    w.ProcessName.Contains(text, StringComparison.OrdinalIgnoreCase) ||
+                    w.DisplaySubtitle.Contains(text, StringComparison.OrdinalIgnoreCase));
 
             foreach (var vm in filtered)
+            {
                 FilteredWindows.Add(vm);
+            }
 
             if (SelectedWindow != null && !FilteredWindows.Contains(SelectedWindow))
             {

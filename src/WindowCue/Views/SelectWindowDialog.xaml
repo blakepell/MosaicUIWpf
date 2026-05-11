@@ -5,7 +5,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:theme="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     xmlns:vm="clr-namespace:WindowCue.ViewModels"
-    Title="Add Window — WindowCue"
+    Title="Add Window or Tab — WindowCue"
     Width="520"
     Height="440"
     MinWidth="400"
@@ -36,7 +36,7 @@
             Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlForegroundBrush}}"
             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-        <!--  Running windows list  -->
+        <!--  Running windows + Edge tabs list  -->
         <ListBox
             x:Name="WindowList"
             Grid.Row="2"
@@ -67,6 +67,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="36" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <!--  Icon  -->
@@ -78,7 +79,7 @@
                             RenderOptions.BitmapScalingMode="HighQuality"
                             Source="{Binding Icon}" />
 
-                        <!--  Title + process name  -->
+                        <!--  Title + subtitle (process name or "Edge Tab")  -->
                         <StackPanel
                             Grid.Column="1"
                             Margin="4,0,0,0"
@@ -92,13 +93,29 @@
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
-                                Text="{Binding ProcessName}"
+                                Text="{Binding DisplaySubtitle}"
                                 TextTrimming="CharacterEllipsis">
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="{Binding ExecutablePath}" />
                                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
+
+                        <!--  "Tab" badge shown only for browser-tab items  -->
+                        <Border
+                            Grid.Column="2"
+                            Margin="6,0,2,0"
+                            Padding="5,2"
+                            VerticalAlignment="Center"
+                            Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                            CornerRadius="3"
+                            Visibility="{Binding IsEdgeTab, Converter={mosaic:BoolToVisibilityConverter}}">
+                            <TextBlock
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="TAB" />
+                        </Border>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
