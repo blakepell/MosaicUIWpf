@@ -339,7 +339,11 @@ namespace Mosaic.UI.Wpf.Controls
         {
             if (e.ClickCount == 2)
             {
-                ToggleMaximize();
+                // Only maximize if the ShowMaxRestoreButton is visible.
+                if (ShowMaxRestoreButton)
+                {
+                    ToggleMaximize();
+                }
             }
             else
             {
