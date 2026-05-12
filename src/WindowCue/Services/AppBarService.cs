@@ -239,6 +239,7 @@ namespace WindowCue.Services
             {
                 case DockEdge.Left:
                 case DockEdge.Right:
+                    window.Width = (rc.Right - rc.Left) / dpi.X;
                     window.Height = (rc.Bottom - rc.Top) / dpi.Y;
                     break;
                 case DockEdge.Top:
