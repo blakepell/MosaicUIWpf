@@ -65,9 +65,9 @@
                             Width="220"
                             HorizontalAlignment="Left"
                             SelectionChanged="MosaicThemeModeSelector_OnSelectionChanged">
-                            <ComboBoxItem Tag="Light" Content="Light" />
-                            <ComboBoxItem Tag="Dark" Content="Dark" />
-                            <ComboBoxItem Tag="HighContrast" Content="High Contrast" />
+                            <ComboBoxItem Content="Light" Tag="Light" />
+                            <ComboBoxItem Content="Dark" Tag="Dark" />
+                            <ComboBoxItem Content="High Contrast" Tag="HighContrast" />
                         </ComboBox>
 
                         <TextBlock
@@ -111,8 +111,8 @@
                                 <TextBlock
                                     Margin="0,0,12,0"
                                     VerticalAlignment="Center"
-                                    Text="Preview"
-                                    FontWeight="SemiBold" />
+                                    FontWeight="SemiBold"
+                                    Text="Preview" />
                                 <Button MinWidth="110" Content="Action Button" />
                                 <TextBlock
                                     Margin="12,0,0,0"

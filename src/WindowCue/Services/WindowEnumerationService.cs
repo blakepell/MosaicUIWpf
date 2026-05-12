@@ -22,6 +22,11 @@ namespace WindowCue.Services
     public class WindowEnumerationService
     {
         /// <summary>
+        /// Common entries that should be ignored, generally Windows related.
+        /// </summary>
+        public static HashSet<string> IgnoreList = ["SystemSettings", "TextInputHost", "ApplicationFrameHost"];
+
+        /// <summary>
         /// Returns a sorted list of visible, non-tool windows suitable for presentation use.
         /// WindowCue's own process windows are automatically filtered out.
         /// </summary>
@@ -119,15 +124,18 @@ namespace WindowCue.Services
                     }
                     catch { return true; /* process already exited */ }
 
-                    result.Add(new WindowInfo
+                    if (!IgnoreList.Contains(processName))
                     {
-                        Handle = hWnd,
-                        Title = title,
-                        ProcessId = pid,
-                        ProcessName = processName,
-                        ExecutablePath = executablePath,
-                        CommandLine = commandLine
-                    });
+                        result.Add(new WindowInfo
+                        {
+                            Handle = hWnd,
+                            Title = title,
+                            ProcessId = pid,
+                            ProcessName = processName,
+                            ExecutablePath = executablePath,
+                            CommandLine = commandLine
+                        });
+                    }
                 }
                 catch { /* ignore misbehaving windows */ }
 
