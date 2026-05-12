@@ -76,7 +76,26 @@ namespace Mosaic.UI.Wpf.Controls
         /// menu item in the associated side menu.</remarks>
         /// <param name="sender">The source of the event, typically the UI element that was clicked.</param>
         /// <param name="e">The <see cref="MouseButtonEventArgs"/> containing event data, such as mouse button details.</param>
-        private void OnItemClick(object sender, MouseButtonEventArgs e)
+        private void OnItemMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // When D&D reordering is active, mouse-down is reserved for drag initiation;
+            // selection happens on mouse-up instead.
+            if (SideMenu?.EnableDragAndDropReordering != true)
+            {
+                OnItemActivated(e);
+            }
+        }
+
+        private void OnItemMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            // Only handle mouse-up selection when D&D reordering is active.
+            if (SideMenu?.EnableDragAndDropReordering == true)
+            {
+                OnItemActivated(e);
+            }
+        }
+
+        private void OnItemActivated(MouseButtonEventArgs e)
         {
             e.Handled = true;
 

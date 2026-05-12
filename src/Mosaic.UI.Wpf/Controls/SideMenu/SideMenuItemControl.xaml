@@ -22,7 +22,8 @@
             Width="{Binding Compact, ElementName=Me, Converter={StaticResource CompactWidthConverter}}"
             Height="{Binding Compact, ElementName=Me, Converter={StaticResource CompactHeightConverter}}"
             Cursor="Hand"
-            MouseLeftButtonDown="OnItemClick">
+            MouseLeftButtonDown="OnItemMouseDown"
+            MouseLeftButtonUp="OnItemMouseUp">
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="Transparent" />

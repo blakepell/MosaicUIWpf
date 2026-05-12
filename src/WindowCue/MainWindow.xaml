@@ -102,6 +102,7 @@
             <mosaic:SideMenu
                 x:Name="ToolbarMenu"
                 Compact="True"
+                EnableDragAndDropReordering="True"
                 ItemClicked="ToolbarMenu_ItemClicked"
                 MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown"
                 SearchBoxVisibility="Collapsed"

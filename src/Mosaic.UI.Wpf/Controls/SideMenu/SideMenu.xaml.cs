@@ -138,6 +138,38 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="EnableDragAndDropReordering"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EnableDragAndDropReorderingProperty =
+            DependencyProperty.Register(nameof(EnableDragAndDropReordering), typeof(bool), typeof(SideMenu),
+                new PropertyMetadata(false, OnEnableDragAndDropReorderingChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether items in the menu can be reordered by dragging and
+        /// dropping them. When <see langword="true"/>, item selection requires a full click (mouse-up)
+        /// so that the mouse-down event is available for drag initiation. Defaults to <see langword="false"/>.
+        /// </summary>
+        public bool EnableDragAndDropReordering
+        {
+            get => (bool)GetValue(EnableDragAndDropReorderingProperty);
+            set => SetValue(EnableDragAndDropReorderingProperty, value);
+        }
+
+        private static void OnEnableDragAndDropReorderingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is SideMenu sideMenu)
+            {
+                sideMenu.ApplyDragAndDropReordering((bool)e.NewValue);
+            }
+        }
+
+        private void ApplyDragAndDropReordering(bool enable)
+        {
+            GongSolutions.Wpf.DragDrop.DragDrop.SetIsDragSource(MenuOptions, enable);
+            GongSolutions.Wpf.DragDrop.DragDrop.SetIsDropTarget(MenuOptions, enable);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SideMenu"/> class.
         /// </summary>
         public SideMenu()
