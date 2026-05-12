@@ -552,6 +552,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  TwoPaneView Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/panel-right-48.png"
+                    Text="Two Pane View">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Two Pane View" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.TwoPaneViewExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.TwoPaneViewExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:TwoPaneView}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TwoPaneViewExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TypingProgress Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

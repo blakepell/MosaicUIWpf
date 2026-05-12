@@ -26,5 +26,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/PropertyGrid/PropertyGrid.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HexColorTextBox/HexColorTextBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ValidationSummaryPanel/ValidationSummaryPanel.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TwoPaneView/TwoPaneView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -349,6 +349,13 @@
 			<Link>LinkedSources\ToggleButtonExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\TwoPaneViewExample.xaml">
+			<Link>LinkedSources\TwoPaneViewExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\TwoPaneViewExample.xaml.cs">
+			<Link>LinkedSources\TwoPaneViewExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\FlipPanelExample.xaml">
 			<Link>LinkedSources\FlipPanelExample.xaml</Link>
 		</EmbeddedResource>
