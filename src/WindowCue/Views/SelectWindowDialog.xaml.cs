@@ -22,9 +22,23 @@ namespace WindowCue.Views
 
         private void WindowList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Double-click confirms the selection if one is active
-            if (DataContext is ViewModels.SelectWindowDialogViewModel vm && vm.SelectedWindow != null)
+            // Double-click confirms the selection if at least one item is selected.
+            if (DataContext is ViewModels.SelectWindowDialogViewModel vm && WindowList.SelectedItems.Count > 0)
             {
+                vm.SelectedWindows = WindowList.SelectedItems
+                    .Cast<ViewModels.RunningWindowViewModel>()
+                    .ToList();
+                DialogResult = true;
+            }
+        }
+
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.SelectWindowDialogViewModel vm && WindowList.SelectedItems.Count > 0)
+            {
+                vm.SelectedWindows = WindowList.SelectedItems
+                    .Cast<ViewModels.RunningWindowViewModel>()
+                    .ToList();
                 DialogResult = true;
             }
         }

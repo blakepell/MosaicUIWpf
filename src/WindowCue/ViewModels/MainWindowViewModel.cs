@@ -82,34 +82,37 @@ namespace WindowCue.ViewModels
                 return;
             }
 
-            var result = await _dialogService.ShowSelectWindowDialogAsync(window);
-            if (result == null)
+            var results = await _dialogService.ShowSelectWindowDialogAsync(window);
+            if (results == null || results.Count == 0)
             {
                 return;
             }
 
-            ToolbarItemViewModel vm;
+            foreach (var result in results)
+            {
+                ToolbarItemViewModel vm;
 
-            if (result.BrowserTab != null)
-            {
-                // Browser tab path
-                var icon = _iconService.ExtractIcon(result.BrowserTab.WindowHandle, result.BrowserTab.ExecutablePath);
-                result.BrowserTab.Icon = icon;
-                vm = ToolbarItemViewModel.FromBrowserTab(result.BrowserTab);
-            }
-            else if (result.Window != null)
-            {
-                // Regular desktop window path
-                var icon = _iconService.ExtractIcon(result.Window.Handle, result.Window.ExecutablePath);
-                result.Window.Icon = icon;
-                vm = ToolbarItemViewModel.FromWindowInfo(result.Window);
-            }
-            else
-            {
-                return;
-            }
+                if (result.BrowserTab != null)
+                {
+                    // Browser tab path
+                    var icon = _iconService.ExtractIcon(result.BrowserTab.WindowHandle, result.BrowserTab.ExecutablePath);
+                    result.BrowserTab.Icon = icon;
+                    vm = ToolbarItemViewModel.FromBrowserTab(result.BrowserTab);
+                }
+                else if (result.Window != null)
+                {
+                    // Regular desktop window path
+                    var icon = _iconService.ExtractIcon(result.Window.Handle, result.Window.ExecutablePath);
+                    result.Window.Icon = icon;
+                    vm = ToolbarItemViewModel.FromWindowInfo(result.Window);
+                }
+                else
+                {
+                    continue;
+                }
 
-            Items.Add(vm);
+                Items.Add(vm);
+            }
         }
 
         // ── Focus ─────────────────────────────────────────────────────────────

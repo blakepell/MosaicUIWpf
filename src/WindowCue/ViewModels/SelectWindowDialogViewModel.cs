@@ -11,7 +11,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using WindowCue.Interop;
 using WindowCue.Services;
 
@@ -36,11 +35,10 @@ namespace WindowCue.ViewModels
         public ObservableCollection<RunningWindowViewModel> FilteredWindows { get; } = new();
 
         /// <summary>
-        /// The item the user has selected.
+        /// All items the user confirmed. Populated by the dialog's code-behind just
+        /// before <c>DialogResult = true</c> so callers get the full multi-selection.
         /// </summary>
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ConfirmCommand))]
-        private RunningWindowViewModel? _selectedWindow;
+        public List<RunningWindowViewModel> SelectedWindows { get; set; } = new();
 
         /// <summary>
         /// Live search text; filtering updates on every keystroke.
@@ -127,24 +125,11 @@ namespace WindowCue.ViewModels
                 FilteredWindows.Add(vm);
             }
 
-            if (SelectedWindow != null && !FilteredWindows.Contains(SelectedWindow))
+            if (!FilteredWindows.Any())
             {
-                SelectedWindow = null;
+                SelectedWindows.Clear();
             }
         }
 
-        /// <summary>
-        /// Confirms the selection and closes the dialog.
-        /// </summary>
-        [RelayCommand(CanExecute = nameof(CanConfirm))]
-        private void Confirm(Window? dialog)
-        {
-            if (dialog != null)
-            {
-                dialog.DialogResult = true;
-            }
-        }
-
-        private bool CanConfirm() => SelectedWindow != null;
     }
 }

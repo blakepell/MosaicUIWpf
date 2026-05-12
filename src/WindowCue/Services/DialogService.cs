@@ -65,11 +65,11 @@ namespace WindowCue.Services
         }
 
         /// <summary>
-        /// Shows the Select Window/Tab dialog. Returns an <see cref="AddWindowResult"/>
-        /// describing whether the user chose a desktop window or a browser tab, or
-        /// <see langword="null"/> if the user cancelled.
+        /// Shows the Select Window/Tab dialog. Returns a list of <see cref="AddWindowResult"/>
+        /// items for every entry the user confirmed (supports Ctrl/Shift multi-selection),
+        /// or <see langword="null"/> if the user cancelled or made no selection.
         /// </summary>
-        public async Task<AddWindowResult?> ShowSelectWindowDialogAsync(Window owner)
+        public async Task<List<AddWindowResult>?> ShowSelectWindowDialogAsync(Window owner)
         {
             var vm = new SelectWindowDialogViewModel(_enumService, _iconService, _tabService);
             var dialog = new SelectWindowDialog { DataContext = vm, Owner = owner };
@@ -80,15 +80,16 @@ namespace WindowCue.Services
             // indicator rather than the caller freezing for several seconds.
             dialog.Loaded += async (_, _) => await vm.LoadWindowsAsync();
 
-            if (dialog.ShowDialog() != true || vm.SelectedWindow == null)
+            if (dialog.ShowDialog() != true || vm.SelectedWindows.Count == 0)
             {
                 return null;
             }
 
-            var selected = vm.SelectedWindow;
-            return selected.IsEdgeTab
-                ? AddWindowResult.FromBrowserTab(selected.BrowserTab!)
-                : AddWindowResult.FromWindow(selected.Source!);
+            return vm.SelectedWindows
+                .Select(selected => selected.IsEdgeTab
+                    ? AddWindowResult.FromBrowserTab(selected.BrowserTab!)
+                    : AddWindowResult.FromWindow(selected.Source!))
+                .ToList();
         }
 
         /// <summary>

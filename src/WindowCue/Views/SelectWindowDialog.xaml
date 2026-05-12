@@ -60,7 +60,7 @@
                 ItemsSource="{Binding FilteredWindows}"
                 MouseDoubleClick="WindowList_MouseDoubleClick"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                SelectedItem="{Binding SelectedWindow, Mode=TwoWay}"
+                SelectionMode="Extended"
                 Visibility="{Binding IsLoading, Converter={mosaic:InvertedBoolToVisibilityConverter}}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
@@ -165,12 +165,12 @@
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
+                x:Name="ConfirmButton"
                 Width="80"
                 Height="30"
                 Margin="0,0,8,0"
                 Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
-                Command="{Binding ConfirmCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Click="ConfirmButton_Click"
                 Content="Add"
                 Foreground="White"
                 IsDefault="True" />
