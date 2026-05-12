@@ -462,6 +462,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  RelativePanel  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/collage-48.png"
+                    Text="RelativePanel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="RelativePanel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.RelativePanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.RelativePanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:RelativePanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:RelativePanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Settings Item  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

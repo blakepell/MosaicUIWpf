@@ -370,6 +370,13 @@
 			<Link>LinkedSources\PropertyGridExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\RelativePanelExample.xaml">
+			<Link>LinkedSources\RelativePanelExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\RelativePanelExample.xaml.cs">
+			<Link>LinkedSources\RelativePanelExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml">
 			<Link>LinkedSources\VersionTextBlockExample.xaml</Link>
 		</EmbeddedResource>
