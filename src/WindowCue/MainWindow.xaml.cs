@@ -8,6 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.Memory;
+using Mosaic.UI.Wpf.Controls;
+using Mosaic.UI.Wpf.Themes;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
@@ -15,10 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Argus.Memory;
-using Mosaic.UI.Wpf;
-using Mosaic.UI.Wpf.Controls;
-using Mosaic.UI.Wpf.Themes;
 using WindowCue.Common;
 using WindowCue.Services;
 using WindowCue.ViewModels;
@@ -27,8 +26,8 @@ namespace WindowCue
 {
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel _vm      = null!;
-        private AppBarService       _appBar  = null!;
+        private MainWindowViewModel _vm = null!;
+        private AppBarService _appBar = null!;
 
         public MainWindow()
         {
@@ -45,8 +44,8 @@ namespace WindowCue
             RebuildSideMenuItems();
 
             // Restore dock position from settings
-            var settings  = AppServices.GetService<AppSettings>();
-            var dockSvc   = AppServices.GetRequiredService<ScreenDockingService>();
+            var settings = AppServices.GetService<AppSettings>();
+            var dockSvc = AppServices.GetRequiredService<ScreenDockingService>();
 
             if (settings != null)
             {
@@ -98,10 +97,10 @@ namespace WindowCue
         {
             var mi = new SideMenuItem
             {
-                Text             = vm.Label,
-                ImageSource      = vm.IsAvailable ? vm.Icon : ToGrayscale(vm.Icon),
-                Tag              = vm,
-                Command          = _vm.FocusItemCommand,
+                Text = vm.Label,
+                ImageSource = vm.IsAvailable ? vm.Icon : ToGrayscale(vm.Icon),
+                Tag = vm,
+                Command = _vm.FocusItemCommand,
                 CommandParameter = vm
             };
 
@@ -138,7 +137,7 @@ namespace WindowCue
             {
                 // Convert to Bgra32 so we can read/write all four channels uniformly.
                 var bgra = new FormatConvertedBitmap(bitmap, PixelFormats.Bgra32, null, 0);
-                int width  = bgra.PixelWidth;
+                int width = bgra.PixelWidth;
                 int height = bgra.PixelHeight;
                 int stride = width * 4;
                 var pixels = new byte[stride * height];
@@ -146,12 +145,12 @@ namespace WindowCue
 
                 for (int i = 0; i < pixels.Length; i += 4)
                 {
-                    byte b   = pixels[i];
-                    byte g   = pixels[i + 1];
-                    byte r   = pixels[i + 2];
+                    byte b = pixels[i];
+                    byte g = pixels[i + 1];
+                    byte r = pixels[i + 2];
                     // Rec. 709 luminance
                     byte lum = (byte)(0.2126 * r + 0.7152 * g + 0.0722 * b);
-                    pixels[i]     = lum;
+                    pixels[i] = lum;
                     pixels[i + 1] = lum;
                     pixels[i + 2] = lum;
                     // pixels[i + 3] = alpha — preserved as-is
@@ -224,16 +223,9 @@ namespace WindowCue
             var remove = new MenuItem { Header = "Remove" };
             remove.Click += (_, _) => _vm.RemoveItemCommand.Execute(vm);
 
-            var separator2  = new Separator();
-
-            var removeAll = new MenuItem { Header = "Remove All" };
-            removeAll.Click += RemoveAll_Click;
-
             menu.Items.Add(rename);
             menu.Items.Add(separator);
             menu.Items.Add(remove);
-            menu.Items.Add(separator2);
-            menu.Items.Add(removeAll);
 
             menu.PlacementTarget = target;
             menu.IsOpen = true;
