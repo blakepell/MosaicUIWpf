@@ -22,6 +22,9 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -136,6 +139,76 @@
             Grid.Row="5"
             Grid.Column="1" />
 
+        <TextBlock
+            Grid.Row="6"
+            Margin="0,15,0,10"
+            FontSize="18"
+            FontWeight="Bold"
+            Text="SideMenu (Drag-and-Drop Reordering)" />
+        <Separator
+            Grid.Row="7"
+            Grid.ColumnSpan="2"
+            Margin="0,0,0,10" />
+
+        <!--  Compact SideMenu with drag-and-drop reordering enabled.
+              Items can be dragged to a new position. Selection requires a
+              full click (mouse-up) so that mouse-down is reserved for drag. -->
+        <mosaic:SideMenu
+            Grid.Row="8"
+            Grid.Column="0"
+            Width="250"
+            Compact="True"
+            EnableDragAndDropReordering="True"
+            HorizontalAlignment="Left"
+            HorizontalContentAlignment="Left"
+            SearchBoxVisibility="Collapsed"
+            VerticalScrollViewerVisibility="Auto">
+            <mosaic:SideMenuItem
+                ImageSource="pack://application:,,,/Assets/collage-48.png"
+                Text="Item One" />
+            <mosaic:SideMenuItem
+                ImageSource="pack://application:,,,/Assets/avatar-48.png"
+                Text="Item Two" />
+            <mosaic:SideMenuItem
+                ImageSource="/Assets/bug-48.png"
+                Text="Item Three" />
+            <mosaic:SideMenuItem
+                ImageSource="pack://application:,,,/Assets/collage-48.png"
+                Text="Item Four" />
+            <mosaic:SideMenuItem
+                ImageSource="pack://application:,,,/Assets/avatar-48.png"
+                Text="Item Five" />
+        </mosaic:SideMenu>
+
+        <StackPanel
+            Grid.Row="8"
+            Grid.Column="1"
+            Margin="20,0,0,0"
+            VerticalAlignment="Center">
+            <TextBlock
+                FontSize="13"
+                FontWeight="SemiBold"
+                Text="How it works"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Margin="0,6,0,0"
+                FontSize="12"
+                Opacity="0.75"
+                Text="• Drag an item up or down to reorder it."
+                TextWrapping="Wrap" />
+            <TextBlock
+                Margin="0,3,0,0"
+                FontSize="12"
+                Opacity="0.75"
+                Text="• Click (mouse-up) to select an item."
+                TextWrapping="Wrap" />
+            <TextBlock
+                Margin="0,3,0,0"
+                FontSize="12"
+                Opacity="0.75"
+                Text="• Set EnableDragAndDropReordering=&quot;False&quot; (the default) to restore mouse-down selection."
+                TextWrapping="Wrap" />
+        </StackPanel>
 
     </Grid>
 </UserControl>
