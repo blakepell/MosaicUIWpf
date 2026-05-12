@@ -8,6 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Mosaic.UI.Wpf.Interfaces;
+
 namespace Mosaic.UI.Wpf.Themes
 {
     /// <summary>
@@ -283,6 +285,9 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light
             };
+
+            var appSettings = AppServices.GetService<IAppSettings>();
+            appSettings?.Theme = Theme;
         }
 
         /// <summary>
@@ -297,6 +302,9 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light
             };
+
+            var appSettings = AppServices.GetService<IAppSettings>();
+            appSettings?.Theme = Theme;
         }
     }
 }

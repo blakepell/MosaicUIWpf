@@ -12,10 +12,10 @@ using Argus.Collections;
 using Argus.IO;
 using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Interfaces;
+using Mosaic.UI.Wpf.Themes;
 using System.Collections.Concurrent;
 using System.Runtime;
 using System.Text.Json;
-using Mosaic.UI.Wpf.Themes;
 
 namespace Mosaic.UI.Wpf
 {
@@ -182,6 +182,7 @@ namespace Mosaic.UI.Wpf
 
                 // Finally, add the settings into the DI container.
                 AppServices.AddSingleton(appSettings);
+                AppServices.AddSingleton((IAppSettings)appSettings);
             }
             catch (Exception ex)
             {
