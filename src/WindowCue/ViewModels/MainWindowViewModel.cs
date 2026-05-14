@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WindowCue.Interop;
@@ -32,6 +33,7 @@ namespace WindowCue.ViewModels
         private readonly ScreenDockingService _dockingService;
         private readonly DialogService _dialogService;
         private readonly BrowserTabService _browserTabService;
+        private readonly DispatcherTimer _processMonitorTimer;
 
         /// <summary>The ordered collection of pinned toolbar items.</summary>
         public ObservableCollection<ToolbarItemViewModel> Items { get; } = new();
@@ -65,6 +67,13 @@ namespace WindowCue.ViewModels
             _dockingService = dockingService;
             _dialogService = dialogService;
             _browserTabService = browserTabService;
+
+            _processMonitorTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5)
+            };
+            _processMonitorTimer.Tick += OnProcessMonitorTick;
+            _processMonitorTimer.Start();
         }
 
         // ── Add ──────────────────────────────────────────────────────────────
@@ -164,8 +173,76 @@ namespace WindowCue.ViewModels
                 }
             }
 
+            // Check whether the process itself is still alive.
+            // If the process is gone, remove the item entirely.
+            // If it is alive (e.g. a tray app that hid its window), just gray it out.
+            bool processAlive;
+            try
+            {
+                using var proc = Process.GetProcessById(item.ProcessId);
+                processAlive = !proc.HasExited;
+            }
+            catch
+            {
+                processAlive = false;
+            }
+
+            if (!processAlive)
+            {
+                Items.Remove(item);
+                return;
+            }
+
             item.IsAvailable = false;
             item.UnavailableReason = "Window is no longer available.";
+        }
+
+        // ── Process monitor ───────────────────────────────────────────────────
+
+        /// <summary>
+        /// Fires every 5 seconds to remove pinned window items whose process has exited.
+        /// The liveness checks run on the thread pool to avoid blocking the UI thread.
+        /// Browser-tab items are skipped — their lifecycle is managed by the browser.
+        /// </summary>
+        private async void OnProcessMonitorTick(object? sender, EventArgs e)
+        {
+            var windowItems = Items
+                .Where(i => i.TargetType == PinnedTargetType.Window)
+                .ToList();
+
+            if (windowItems.Count == 0)
+            {
+                return;
+            }
+
+            var deadItems = await Task.Run(() =>
+            {
+                var dead = new List<ToolbarItemViewModel>();
+                foreach (var item in windowItems)
+                {
+                    bool alive;
+                    try
+                    {
+                        using var proc = Process.GetProcessById(item.ProcessId);
+                        alive = !proc.HasExited;
+                    }
+                    catch
+                    {
+                        alive = false;
+                    }
+
+                    if (!alive)
+                    {
+                        dead.Add(item);
+                    }
+                }
+                return dead;
+            });
+
+            foreach (var dead in deadItems)
+            {
+                Items.Remove(dead);
+            }
         }
 
         // ── Remove ────────────────────────────────────────────────────────────
@@ -397,6 +474,18 @@ namespace WindowCue.ViewModels
                     }
                     else
                     {
+                        // If the process is completely gone, skip the placeholder.
+                        // Only add an unavailable placeholder when a matching process is
+                        // actually running (window may be hidden / not yet shown).
+                        bool processRunning = await Task.Run(() =>
+                            Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(data.ProcessName ?? ""))
+                                   .Any(p => { try { return !p.HasExited; } finally { p.Dispose(); } }));
+
+                        if (!processRunning)
+                        {
+                            continue;
+                        }
+
                         // Show as unavailable placeholder so the user can remove or wait
                         vm = new ToolbarItemViewModel
                         {
@@ -409,8 +498,6 @@ namespace WindowCue.ViewModels
                         };
 
                         // Attempt to extract an icon even though the window is unavailable.
-                        // Try the saved executable path first, then look for a running process
-                        // with the same name (another instance may be open, giving us the icon).
                         var icon = await TryExtractIconWithoutHandleAsync(data.ExecutablePath, data.ProcessName);
                         if (icon != null)
                         {
