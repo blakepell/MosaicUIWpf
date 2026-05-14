@@ -10,6 +10,7 @@
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -221,6 +222,81 @@ namespace WindowCue.ViewModels
             }
 
             _dialogService.ShowPropertiesDialog(item, window);
+        }
+
+        // ── Pin Foreground Window (hotkey) ────────────────────────────────────
+
+        /// <summary>
+        /// Pins the currently focused desktop window to the toolbar if it is not already pinned.
+        /// Intended to be triggered by a system-wide hotkey.
+        /// </summary>
+        [RelayCommand]
+        private async Task PinForegroundWindowAsync()
+        {
+            var hWnd = NativeMethods.GetForegroundWindow();
+
+            if (hWnd == IntPtr.Zero || !NativeMethods.IsWindow(hWnd) || !NativeMethods.IsWindowVisible(hWnd))
+            {
+                return;
+            }
+
+            // Skip WindowCue's own windows.
+            NativeMethods.GetWindowThreadProcessId(hWnd, out int pid);
+            if (pid == 0 || pid == Environment.ProcessId)
+            {
+                return;
+            }
+
+            // Skip if already pinned (match by ProcessId).
+            if (Items.Any(i => i.ProcessId == pid))
+            {
+                return;
+            }
+
+            // Build WindowInfo from the live handle.
+            int titleLen = NativeMethods.GetWindowTextLength(hWnd);
+            var sb = new StringBuilder(titleLen + 1);
+            NativeMethods.GetWindowText(hWnd, sb, sb.Capacity);
+            string title = sb.ToString();
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                return;
+            }
+
+            string processName = string.Empty;
+            string? executablePath = null;
+
+            try
+            {
+                using var proc = Process.GetProcessById(pid);
+                processName = proc.ProcessName;
+                try { executablePath = proc.MainModule?.FileName; } catch { /* access denied */ }
+            }
+            catch
+            {
+                return;
+            }
+
+            if (WindowEnumerationService.IgnoreList.Contains(processName))
+            {
+                return;
+            }
+
+            var info = new WindowInfo
+            {
+                Handle = hWnd,
+                Title = title,
+                ProcessId = pid,
+                ProcessName = processName,
+                ExecutablePath = executablePath
+            };
+
+            var icon = await Task.Run(() => _iconService.ExtractIcon(hWnd, executablePath));
+            info.Icon = icon;
+
+            var vm = ToolbarItemViewModel.FromWindowInfo(info);
+            Items.Add(vm);
         }
 
         // ── Dock ──────────────────────────────────────────────────────────────

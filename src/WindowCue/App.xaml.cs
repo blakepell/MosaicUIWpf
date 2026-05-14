@@ -47,6 +47,10 @@ namespace WindowCue
             var mainVm = new MainWindowViewModel(
                 enumService, focusService, iconService, dockingService, dialogService, tabService);
             AppServices.AddSingleton(mainVm);
+
+            // Register global hotkeys (F13 → pin focused window).
+            var hotKeyService = new HotKeyService(mainVm);
+            AppServices.AddSingleton(hotKeyService);
         }
 
         private void App_OnExit(object sender, ExitEventArgs e)
@@ -65,6 +69,9 @@ namespace WindowCue
             // Release the shell AppBar reservation before the process exits so
             // the monitor work area is restored immediately.
             AppServices.GetService<AppBarService>()?.Unregister();
+
+            // Unregister global hotkeys.
+            AppServices.GetService<HotKeyService>()?.Dispose();
 
             base.OnExit(e);
         }
