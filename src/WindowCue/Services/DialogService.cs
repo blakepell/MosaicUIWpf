@@ -100,5 +100,14 @@ namespace WindowCue.Services
             var dialog = new RenameItemDialog(currentLabel) { Owner = owner };
             return dialog.ShowDialog() == true ? dialog.NewLabel : null;
         }
+
+        /// <summary>
+        /// Shows the Object Properties dialog for the given toolbar item.
+        /// </summary>
+        public void ShowPropertiesDialog(ToolbarItemViewModel item, Window owner)
+        {
+            var dialog = new ObjectPropertiesDialog(item) { Owner = owner };
+            dialog.ShowDialog();
+        }
     }
 }

@@ -203,6 +203,26 @@ namespace WindowCue.ViewModels
             }
         }
 
+        // ── Properties ───────────────────────────────────────────────────────
+
+        /// <summary>Opens the properties dialog for the item.</summary>
+        [RelayCommand]
+        private void ShowItemProperties(ToolbarItemViewModel? item)
+        {
+            if (item == null)
+            {
+                return;
+            }
+
+            var window = Application.Current.MainWindow;
+            if (window == null)
+            {
+                return;
+            }
+
+            _dialogService.ShowPropertiesDialog(item, window);
+        }
+
         // ── Dock ──────────────────────────────────────────────────────────────
 
         /// <summary>Changes the dock edge and repositions the toolbar window.</summary>

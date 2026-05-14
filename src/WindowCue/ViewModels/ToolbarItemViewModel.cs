@@ -10,6 +10,7 @@
 
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Mosaic.UI.Wpf.Controls;
 using WindowCue.Interop;
 using WindowCue.Models;
 
@@ -24,30 +25,37 @@ namespace WindowCue.ViewModels
     {
         /// <summary>User-editable display label shown beneath the icon.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Appearance", DisplayName = "Label")]
         private string _label = string.Empty;
 
         /// <summary>Icon extracted from the target window or its executable.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Ignore = true)]
         private ImageSource? _icon;
 
         /// <summary>Process ID of the pinned window's owning process.</summary>
         [ObservableProperty]
+        [PropertyGrid(Category = "Process", DisplayName = "Process ID", IsReadOnly = true)]
         public partial int ProcessId { get; set; }
 
         /// <summary>Last known window handle. May become stale if the window is closed and re-opened.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Ignore = true)]
         private IntPtr _windowHandle;
 
         /// <summary>Last known title of the target window.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Window", DisplayName = "Window Title", IsReadOnly = true)]
         private string _windowTitle = string.Empty;
 
         /// <summary>Process name (without extension) of the owning process.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Process", DisplayName = "Process Name", IsReadOnly = true)]
         private string _processName = string.Empty;
 
         /// <summary>Full path to the executable, if accessible.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Process", DisplayName = "Executable Path", IsReadOnly = true)]
         private string? _executablePath;
 
         /// <summary>
@@ -55,10 +63,12 @@ namespace WindowCue.ViewModels
         /// when the process has exited or the handle is stale.
         /// </summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Status", DisplayName = "Available", IsReadOnly = true)]
         private bool _isAvailable = true;
 
         /// <summary>Human-readable explanation shown in the tooltip when the item is unavailable.</summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Status", DisplayName = "Unavailable Reason", IsReadOnly = true)]
         private string? _unavailableReason;
 
         // ── Browser-tab fields ────────────────────────────────────────────────
@@ -68,6 +78,7 @@ namespace WindowCue.ViewModels
         /// Defaults to <see cref="PinnedTargetType.Window"/>.
         /// </summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "General", DisplayName = "Target Type", IsReadOnly = true)]
         private PinnedTargetType _targetType = PinnedTargetType.Window;
 
         /// <summary>
@@ -75,6 +86,7 @@ namespace WindowCue.ViewModels
         /// for browser-tab items. Empty for regular window items.
         /// </summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Browser Tab", DisplayName = "Tab Title", IsReadOnly = true)]
         private string _tabTitle = string.Empty;
 
         /// <summary>
@@ -82,6 +94,7 @@ namespace WindowCue.ViewModels
         /// alongside <see cref="TabTitle"/>. Null for background tabs and non-tab items.
         /// </summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Browser Tab", DisplayName = "URL", IsReadOnly = true)]
         private string? _tabUrl;
 
         /// <summary>
@@ -89,6 +102,7 @@ namespace WindowCue.ViewModels
         /// <c>chrome</c>). Empty for non-tab items.
         /// </summary>
         [ObservableProperty]
+        [property: PropertyGrid(Category = "Browser Tab", DisplayName = "Browser", IsReadOnly = true)]
         private string _browserProcessName = string.Empty;
 
         // ── Factory methods ───────────────────────────────────────────────────

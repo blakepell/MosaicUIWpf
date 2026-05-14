@@ -218,14 +218,17 @@ namespace WindowCue
             var rename = new MenuItem { Header = "Rename\u2026" };
             rename.Click += (_, _) => _vm.RenameItemCommand.Execute(vm);
 
-            var separator = new Separator();
-
             var remove = new MenuItem { Header = "Remove" };
             remove.Click += (_, _) => _vm.RemoveItemCommand.Execute(vm);
 
+            var properties = new MenuItem { Header = "Properties\u2026" };
+            properties.Click += (_, _) => _vm.ShowItemPropertiesCommand.Execute(vm);
+
             menu.Items.Add(rename);
-            menu.Items.Add(separator);
+            menu.Items.Add(new Separator());
             menu.Items.Add(remove);
+            menu.Items.Add(new Separator());
+            menu.Items.Add(properties);
 
             menu.PlacementTarget = target;
             menu.IsOpen = true;
