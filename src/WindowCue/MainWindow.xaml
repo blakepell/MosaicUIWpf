@@ -69,22 +69,24 @@
                     <TextBlock FontSize="14" Text="⋮" />
                     <Button.ContextMenu>
                         <ContextMenu>
-                            <MenuItem
-                                Click="DockMenuItem_Click"
-                                Header="Dock → Left"
-                                Tag="Left" />
-                            <MenuItem
-                                Click="DockMenuItem_Click"
-                                Header="Dock → Right"
-                                Tag="Right" />
-                            <MenuItem
-                                Click="DockMenuItem_Click"
-                                Header="Dock → Top"
-                                Tag="Top" />
-                            <MenuItem
-                                Click="DockMenuItem_Click"
-                                Header="Dock → Bottom"
-                                Tag="Bottom" />
+                            <MenuItem Header="Dock" Tag="Dock">
+                                <MenuItem
+                                    Click="DockMenuItem_Click"
+                                    Header="Dock → Left"
+                                    Tag="Left" />
+                                <MenuItem
+                                    Click="DockMenuItem_Click"
+                                    Header="Dock → Right"
+                                    Tag="Right" />
+                                <MenuItem
+                                    Click="DockMenuItem_Click"
+                                    Header="Dock → Top"
+                                    Tag="Top" />
+                                <MenuItem
+                                    Click="DockMenuItem_Click"
+                                    Header="Dock → Bottom"
+                                    Tag="Bottom" />
+                            </MenuItem>
                             <Separator />
                             <MenuItem Click="ToggleTheme_Click" Header="Toggle Theme" />
                             <Separator />
