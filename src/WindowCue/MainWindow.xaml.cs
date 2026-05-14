@@ -275,6 +275,18 @@ namespace WindowCue
             AppServices.GetRequiredService<ThemeManager>().ToggleTheme();
         }
 
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var settings = AppServices.GetService<AppSettings>();
+            if (settings == null)
+            {
+                return;
+            }
+
+            var dialog = new Views.ObjectPropertiesDialog(settings) { Owner = this };
+            dialog.ShowDialog();
+        }
+
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

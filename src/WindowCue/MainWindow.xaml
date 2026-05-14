@@ -90,6 +90,8 @@
                             <Separator />
                             <MenuItem Click="RemoveAll_Click" Header="Remove All" />
                             <Separator />
+                            <MenuItem Click="Settings_Click" Header="Settings" />
+                            <Separator />
                             <MenuItem Click="Exit_Click" Header="Exit" />
                         </ContextMenu>
                     </Button.ContextMenu>
