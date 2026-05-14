@@ -88,11 +88,10 @@
                                     Tag="Bottom" />
                             </MenuItem>
                             <Separator />
+                            <MenuItem Click="Settings_Click" Header="Settings" />
                             <MenuItem Click="ToggleTheme_Click" Header="Toggle Theme" />
                             <Separator />
                             <MenuItem Click="RemoveAll_Click" Header="Remove All" />
-                            <Separator />
-                            <MenuItem Click="Settings_Click" Header="Settings" />
                             <Separator />
                             <MenuItem Click="Exit_Click" Header="Exit" />
                         </ContextMenu>
