@@ -14,6 +14,7 @@
 		<Title>Mosaic UI for WPF</Title>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Assets\app-two-pane-48.png" />
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
 		<None Remove="Assets\badge-48.png" />
@@ -70,6 +71,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Assets\app-two-pane-48.png" />
 		<Resource Include="Assets\avatar-48.png" />
 		<Resource Include="Assets\avatar.jpg" />
 		<Resource Include="Assets\badge-48.png" />

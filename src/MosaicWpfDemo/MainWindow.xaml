@@ -565,7 +565,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.TwoPaneViewExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:TwoPaneView}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TwoPaneViewExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/app-two-pane-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
