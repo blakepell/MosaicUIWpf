@@ -66,6 +66,38 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         // Expose buffer for colorizer
         internal TerminalCell[,] Buffer => _buf;
 
+        // Number of scrollback lines currently shown ahead of the active screen.
+        // The alternate screen buffer never shows scrollback.
+        internal int VisibleScrollbackCount => _useAltBuffer ? 0 : _scrollback.Count;
+
+        // Total number of document lines (scrollback + active screen).
+        internal int TotalRows => VisibleScrollbackCount + Rows;
+
+        /// <summary>
+        /// Returns the attributes for a cell addressed by document line (0-based, scrollback first)
+        /// and column. Out-of-range requests return default attributes.
+        /// </summary>
+        internal TerminalAttributes GetCellAttributes(int documentLine, int col)
+        {
+            int sbCount = VisibleScrollbackCount;
+
+            if (documentLine < sbCount)
+            {
+                var row = _scrollback[documentLine];
+                return col >= 0 && col < row.Length ? row[col].Attrs : TerminalAttributes.Default;
+            }
+
+            int screenRow = documentLine - sbCount;
+
+            if (screenRow >= 0 && screenRow < Rows && col >= 0 && col < Columns &&
+                screenRow < _buf.GetLength(0) && col < _buf.GetLength(1))
+            {
+                return _buf[screenRow, col].Attrs;
+            }
+
+            return TerminalAttributes.Default;
+        }
+
         // Screen geometry & buffer
         private TerminalCell[,] _buf = new TerminalCell[1, 1];
 
@@ -103,13 +135,57 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private int _savedCurRow, _savedCurCol;
         private bool _useAltBuffer = false;
 
+        // Scrollback history (main screen only). Lines that scroll off the top of a
+        // full-screen scroll region are captured here so the user can scroll up to review them.
+        private TerminalScrollback _scrollback = new(1000);
+        private TerminalCell[]? _recycledLine;
+        private bool _scrollbackDirty;
+
         // Modes
         private bool _originMode = false; // DECOM - cursor relative to scroll region
         private bool _autowrapPending = false; // Deferred autowrap
+        private bool _autoWrap = true; // DECAWM - automatic wrap at right margin
+        private bool _applicationCursorKeys = false; // DECCKM - cursor keys send SS3 sequences
+        private bool _applicationKeypad = false; // DECKPAM/DECKPNM - keypad application mode
+        private bool _cursorVisible = true; // DECTCEM - text cursor enable
+        private bool _insertMode = false; // IRM - insert vs replace
+        private bool _newLineMode = false; // LNM - LF also performs CR
+        private bool _bracketedPaste = false; // DEC 2004 - bracketed paste mode
+
+        // Saved cursor state (DECSC / DECRC, CSI s / CSI u).
+        private TerminalAttributes _savedAttrs = TerminalAttributes.Default;
+        private bool _savedOriginMode;
+        private bool _hasSavedCursor;
+
+        // Horizontal tab stops (true = stop set at that column).
+        private bool[] _tabStops = [];
+
+        // Character sets (DEC line-drawing support). G0/G1 are designated via ESC ( / ESC )
+        // and selected into GL via SI (G0) / SO (G1).
+        private enum CharSet
+        {
+            Ascii,
+            DecSpecialGraphics
+        }
+
+        private CharSet _g0Charset = CharSet.Ascii;
+        private CharSet _g1Charset = CharSet.Ascii;
+        private bool _shiftOut = false; // false = G0 in GL (SI), true = G1 in GL (SO)
+        private char _scsTarget = '('; // which G set the next designator byte applies to
+        private char _lastGraphicChar = '\0'; // last printed glyph, used by REP (CSI b)
+        private BlockCaretRenderer? _caretRenderer;
+
+        private CharSet ActiveCharset => _shiftOut ? _g1Charset : _g0Charset;
 
         private readonly Lock _lock = new();
         private readonly SemaphoreSlim _sendGate = new(1, 1);
         private readonly StringBuilder _pendingRemoteInput = new();
+
+        // Stateful UTF-8 decoder for Add(byte[]). Keeping a single decoder instance lets
+        // multi-byte sequences that are split across separate Add calls (network packets)
+        // be reassembled correctly. Invalid byte sequences are emitted as U+FFFD.
+        private readonly Decoder _utf8Decoder = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: false).GetDecoder();
+        private char[] _decodeBuffer = new char[1024];
         private string[] _lineCache = [];
         private bool _isRemoteInputFlushQueued;
         private bool _isLoaded;
@@ -160,6 +236,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             new PropertyMetadata(false));
 
         /// <summary>
+        /// Identifies the <see cref="MaxScrollbackLines"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MaxScrollbackLinesProperty = DependencyProperty.Register(
+            nameof(MaxScrollbackLines),
+            typeof(int),
+            typeof(VT52Terminal),
+            new PropertyMetadata(1000, OnMaxScrollbackLinesChanged));
+
+        /// <summary>
         /// Gets or sets the terminal connection used for remote input and output.
         /// </summary>
         public ITerminalConnection? Connection
@@ -204,6 +289,29 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             set => SetValue(LocalEchoProperty, value);
         }
 
+        /// <summary>
+        /// Gets or sets the maximum number of scrolled-off lines retained for scrollback.
+        /// Set to 0 to disable scrollback. Defaults to 1000. Only the main screen has scrollback;
+        /// the alternate screen buffer never contributes history.
+        /// </summary>
+        public int MaxScrollbackLines
+        {
+            get => (int)GetValue(MaxScrollbackLinesProperty);
+            set => SetValue(MaxScrollbackLinesProperty, value);
+        }
+
+        private static void OnMaxScrollbackLinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var terminal = (VT52Terminal)d;
+            int value = Math.Max(0, (int)e.NewValue);
+
+            lock (terminal._lock)
+            {
+                terminal._scrollback.SetCapacity(value);
+                terminal.UpdateDocument(forceFullReplace: true);
+            }
+        }
+
         /// <summary>Fired when the terminal needs to transmit bytes back to the host (e.g., ESC / Z identify).</summary>
         public event Action<byte[]?>? Transmit;
 
@@ -217,6 +325,17 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         /// <c>false</c> when returning to the main screen.
         /// </summary>
         public event Action<bool>? AlternateScreenChanged;
+
+        /// <summary>
+        /// Raised when the remote host sets the window/icon title via an OSC sequence
+        /// (OSC 0, OSC 1, or OSC 2). The string argument is the requested title text.
+        /// </summary>
+        public event Action<string>? TitleChanged;
+
+        /// <summary>
+        /// Gets the most recent window title requested by the remote host via an OSC sequence.
+        /// </summary>
+        public string Title { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets whether the terminal is currently displaying the alternate screen buffer.
@@ -243,7 +362,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             TextArea.TextView.Options.EnableEmailHyperlinks = false;
             TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
-            this.TextArea.TextView.BackgroundRenderers.Add(new BlockCaretRenderer(this.TextArea));
+            this.TextArea.TextView.BackgroundRenderers.Add(new TerminalBackgroundRenderer(this));
+            this.TextArea.TextView.BackgroundRenderers.Add(_caretRenderer = new BlockCaretRenderer(this.TextArea));
             this.TextArea.TextView.LineTransformers.Add(new VT52Colorizer(this));
 
             Reset(24, 80);
@@ -496,7 +616,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             return e.Key == Key.System ? e.SystemKey : e.Key;
         }
 
-        private static string? GetKeySequence(KeyEventArgs e)
+        private string? GetKeySequence(KeyEventArgs e)
         {
             Key key = NormalizeKey(e);
 
@@ -510,24 +630,69 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return GetFunctionKeySequence(key);
             }
 
+            int mod = GetXtermModifier();
+
+            // Cursor and editing keys honor application cursor key mode (DECCKM) and keyboard modifiers.
+            switch (key)
+            {
+                case Key.Up:
+                    return CursorKey('A', mod);
+                case Key.Down:
+                    return CursorKey('B', mod);
+                case Key.Right:
+                    return CursorKey('C', mod);
+                case Key.Left:
+                    return CursorKey('D', mod);
+                case Key.Home:
+                    return CursorKey('H', mod);
+                case Key.End:
+                    return CursorKey('F', mod);
+            }
+
             return key switch
             {
-                Key.Up => "\x1b[A",
-                Key.Down => "\x1b[B",
-                Key.Left => "\x1b[D",
-                Key.Right => "\x1b[C",
-                Key.Home => "\x1b[H",
-                Key.End => "\x1b[F",
-                Key.Insert => "\x1b[2~",
-                Key.Delete => "\x1b[3~",
-                Key.PageUp => "\x1b[5~",
-                Key.PageDown => "\x1b[6~",
-                Key.Enter or Key.Return => "\r",
+                Key.Insert => EditKey(2, mod),
+                Key.Delete => EditKey(3, mod),
+                Key.PageUp => EditKey(5, mod),
+                Key.PageDown => EditKey(6, mod),
+                Key.Enter or Key.Return => _newLineMode ? "\r\n" : "\r",
                 Key.Back => "\x7f",
                 Key.Tab => "\t",
                 Key.Escape => "\x1b",
                 _ => null
             };
+        }
+
+        /// <summary>
+        /// Computes the xterm modifier parameter (1 + bit flags) for the current keyboard modifiers.
+        /// </summary>
+        private static int GetXtermModifier()
+        {
+            var m = Keyboard.Modifiers;
+            int mod = 0;
+            if ((m & ModifierKeys.Shift) == ModifierKeys.Shift) mod += 1;
+            if ((m & ModifierKeys.Alt) == ModifierKeys.Alt) mod += 2;
+            if ((m & ModifierKeys.Control) == ModifierKeys.Control) mod += 4;
+            return mod + 1;
+        }
+
+        /// <summary>
+        /// Builds a cursor-key sequence, choosing CSI/SS3 form based on application cursor key mode
+        /// and inserting a modifier parameter when modifier keys are held.
+        /// </summary>
+        private string CursorKey(char final, int mod)
+        {
+            if (mod > 1)
+            {
+                return $"\x1b[1;{mod}{final}";
+            }
+
+            return _applicationCursorKeys ? $"\x1bO{final}" : $"\x1b[{final}";
+        }
+
+        private static string EditKey(int code, int mod)
+        {
+            return mod > 1 ? $"\x1b[{code};{mod}~" : $"\x1b[{code}~";
         }
 
         private static string? GetFunctionKeySequence(Key key)
@@ -740,12 +905,28 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _scrollBottom = Rows;
                 _originMode = false;
                 _autowrapPending = false;
+                _autoWrap = true;
+                _applicationCursorKeys = false;
+                _applicationKeypad = false;
+                _cursorVisible = true;
+                _insertMode = false;
+                _newLineMode = false;
+                _bracketedPaste = false;
+                _hasSavedCursor = false;
+                _savedAttrs = TerminalAttributes.Default;
+                _savedOriginMode = false;
                 _altBuf = null;
                 _useAltBuffer = false;
                 _csiParams.Clear();
                 _csiCurrentParam = 0;
                 _csiHasParam = false;
                 _csiPrivateMarker = '\0';
+                _scrollback.Clear();
+                _scrollbackDirty = false;
+                _g0Charset = CharSet.Ascii;
+                _g1Charset = CharSet.Ascii;
+                _shiftOut = false;
+                ResetTabStops();
                 UpdateDocument(forceScrollTop: true);
             }
         }
@@ -788,12 +969,47 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 Rows = rows;
                 Columns = cols;
                 _buf = newBuf;
+
+                // If we are on the alternate screen, the saved main buffer (_altBuf) was allocated
+                // at the old dimensions. It must be resized in lock-step, otherwise restoring it on
+                // alt-screen exit yields a buffer whose dimensions no longer match Rows/Columns and
+                // BuildLineSnapshot throws IndexOutOfRangeException.
+                if (_altBuf != null)
+                {
+                    int oldRows = _altBuf.GetLength(0);
+                    int oldCols = _altBuf.GetLength(1);
+                    var newAlt = new TerminalCell[rows, cols];
+                    for (int r = 0; r < rows; r++)
+                    {
+                        for (int c = 0; c < cols; c++)
+                        {
+                            newAlt[r, c] = defaultCell;
+                        }
+                    }
+
+                    int ar = Math.Min(rows, oldRows);
+                    int ac = Math.Min(cols, oldCols);
+                    for (int r = 0; r < ar; r++)
+                    {
+                        for (int c = 0; c < ac; c++)
+                        {
+                            newAlt[r, c] = _altBuf[r, c];
+                        }
+                    }
+
+                    _altBuf = newAlt;
+                    _altCurRow = Math.Min(_altCurRow, rows - 1);
+                    _altCurCol = Math.Min(_altCurCol, cols - 1);
+                }
+
                 _curRow = Math.Min(_curRow, Rows - 1);
                 _curCol = Math.Min(_curCol, Columns - 1);
 
                 // Adjust scroll region to new size
                 _scrollTop = Math.Min(_scrollTop, Rows);
                 _scrollBottom = Rows; // Reset to full screen on resize
+
+                ResetTabStops();
 
                 UpdateDocument();
             }
@@ -851,10 +1067,18 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             lock (_lock)
             {
-                foreach (var b in data)
+                int maxChars = _utf8Decoder.GetCharCount(data, 0, data.Length, flush: false);
+                if (maxChars > _decodeBuffer.Length)
                 {
-                    ProcessChar((char)(b & 0xFF));
+                    _decodeBuffer = new char[maxChars];
                 }
+
+                int decoded = _utf8Decoder.GetChars(data, 0, data.Length, _decodeBuffer, 0, flush: false);
+                for (int i = 0; i < decoded; i++)
+                {
+                    ProcessChar(_decodeBuffer[i]);
+                }
+
                 // Do not reset parser state here; allow incomplete sequences to continue across calls
                 UpdateDocument();
             }
@@ -934,9 +1158,9 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     HandleCsiChar(ch);
                     return;
                 case ParseState.OscString:
-                    if (ch == '\x07' || ch == '\x1B') // BEL or ESC terminates OSC
+                    if (ch == '\x07' || ch == '\x1B') // BEL or ESC (ST) terminates OSC
                     {
-                        // OSC string complete - we can ignore it for now (window titles, etc.)
+                        ProcessOsc(_oscBuffer.ToString());
                         _oscBuffer.Clear();
                         _state = ch == '\x1B' ? ParseState.Esc : ParseState.Normal;
                     }
@@ -946,9 +1170,23 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     }
                     return;
                 case ParseState.EscScs:
-                    // Consume the character set designator (B=ASCII, 0=DEC Special Graphics, etc.)
-                    // We don't actually switch character sets, just consume the byte
-                    _state = ParseState.Normal;
+                    // Apply the character set designator to the target G set.
+                    // '0' = DEC Special Graphics (line drawing); 'B'/'1'/'2'/'A' = ASCII-like.
+                    {
+                        var cs = ch == '0' ? CharSet.DecSpecialGraphics : CharSet.Ascii;
+                        switch (_scsTarget)
+                        {
+                            case '(':
+                                _g0Charset = cs;
+                                break;
+                            case ')':
+                                _g1Charset = cs;
+                                break;
+                        }
+
+                        // Keep GL in sync if it currently points at the set we just changed.
+                        _state = ParseState.Normal;
+                    }
                     return;
             }
         }
@@ -963,51 +1201,81 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 case '\b':
                     CursorLeft();
                     return; // BS
-                case '\t': // TAB every 8 cols (paint spaces over the span)
-                    {
-                        _autowrapPending = false;
-                        int next = ((_curCol / 8) + 1) * 8;
-                        int target = Math.Min(next, Columns);
-                        while (_curCol < target)
-                        {
-                            _buf[_curRow, _curCol] = new TerminalCell(' ', _currentAttrs);
-                            if (_curCol == Columns - 1)
-                            {
-                                // behave like printing a space at the margin
-                                if (_curRow < Rows - 1)
-                                {
-                                    _curRow++;
-                                }
-                                else
-                                {
-                                    ScrollUpRegion();
-                                }
-
-                                _curCol = 0;
-                                break;
-                            }
-                            _curCol++;
-                        }
-                        return;
-                    }
+                case '\t': // HT - move to next horizontal tab stop (non-destructive)
+                    _autowrapPending = false;
+                    _curCol = NextTabStop(_curCol);
+                    return;
                 case '\n':
                     LineFeed();
+                    if (_newLineMode)
+                    {
+                        _curCol = 0; // LNM: LF also performs carriage return
+                    }
                     return; // LF
                 case '\v':
                     LineFeed();
+                    if (_newLineMode)
+                    {
+                        _curCol = 0;
+                    }
                     return; // VT
                 case '\f':
                     LineFeed();
+                    if (_newLineMode)
+                    {
+                        _curCol = 0;
+                    }
                     return; // FF
                 case '\r':
                     _curCol = 0;
                     _autowrapPending = false;
                     _state = ParseState.Normal;
                     return; // CR
+                case '\x0E': // SO - invoke G1 into GL (line drawing shift-out)
+                    _shiftOut = true;
+                    return;
+                case '\x0F': // SI - invoke G0 into GL (shift-in)
+                    _shiftOut = false;
+                    return;
                 case '\0':
                     return; // NUL
                 default: return;
             }
+        }
+
+        private void ResetTabStops()
+        {
+            _tabStops = new bool[Columns];
+            for (int c = 8; c < Columns; c += 8)
+            {
+                _tabStops[c] = true;
+            }
+        }
+
+        private int NextTabStop(int col)
+        {
+            for (int c = col + 1; c < Columns; c++)
+            {
+                if (_tabStops[c])
+                {
+                    return c;
+                }
+            }
+
+            return Columns - 1;
+        }
+
+        private int PrevTabStop(int col)
+        {
+            for (int c = col - 1; c > 0; c--)
+            {
+                if (_tabStops[c])
+                {
+                    return c;
+                }
+            }
+
+            return 0;
         }
 
         private void HandleEsc(char ch)
@@ -1044,19 +1312,20 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     _curCol = 0;
                     LineFeed();
                     break;
-                case '7': // VT100: Save Cursor
-                    _savedCurRow = _curRow;
-                    _savedCurCol = _curCol;
+                case '7': // DECSC - Save Cursor (position, attributes, origin mode)
+                    SaveCursor();
                     break;
-                case '8': // VT100: Restore Cursor
-                    _curRow = _savedCurRow;
-                    _curCol = _savedCurCol;
+                case '8': // DECRC - Restore Cursor
+                    RestoreCursor();
                     break;
                 case 'c': // RIS - Full Reset
                     Reset(Rows, Columns);
                     break;
-                case '=': // DECKPAM - Keypad Application Mode (ignore)
-                case '>': // DECKPNM - Keypad Numeric Mode (ignore)
+                case '=': // DECKPAM - Keypad Application Mode
+                    _applicationKeypad = true;
+                    break;
+                case '>': // DECKPNM - Keypad Numeric Mode
+                    _applicationKeypad = false;
                     break;
                 case '(': // SCS G0 - Select Character Set
                 case ')': // SCS G1
@@ -1065,6 +1334,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 case '-': // SCS G1 (VT300)
                 case '.': // SCS G2 (VT300)
                 case '/': // SCS G3 (VT300)
+                    _scsTarget = ch;
                     _state = ParseState.EscScs;
                     return; // Don't reset to Normal - wait for designator byte
                 default: break; // unknown ESC: ignore
@@ -1138,6 +1408,29 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
+            // DECSTR - Soft Terminal Reset (CSI ! p)
+            if (_csiPrivateMarker == '!')
+            {
+                if (cmd == 'p')
+                {
+                    SoftReset();
+                }
+
+                return;
+            }
+
+            // Secondary Device Attributes (CSI > c)
+            if (_csiPrivateMarker == '>')
+            {
+                if (cmd == 'c')
+                {
+                    // Report as VT220 (terminal type 1), firmware version 0.
+                    TransmitToHost(Encoding.ASCII.GetBytes("\x1B[>1;0;0c"));
+                }
+
+                return;
+            }
+
             switch (cmd)
             {
                 case 'A': // CUU - Cursor Up
@@ -1161,11 +1454,21 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     for (int i = 0; i < Math.Max(1, p0); i++) CursorUp();
                     break;
                 case 'G': // CHA - Cursor Horizontal Absolute
+                case '`': // HPA - Horizontal Position Absolute (same as CHA)
                     _curCol = Math.Max(0, Math.Min((p0 > 0 ? p0 : 1) - 1, Columns - 1));
+                    break;
+                case 'a': // HPR - Horizontal Position Relative (cursor forward)
+                    for (int i = 0; i < Math.Max(1, p0); i++) CursorRight();
                     break;
                 case 'H': // CUP - Cursor Position
                 case 'f': // HVP - same as CUP
                     CursorPositionCsi(p0 > 0 ? p0 : 1, p1 > 0 ? p1 : 1);
+                    break;
+                case 'I': // CHT - Cursor Horizontal (forward) Tab
+                    for (int i = 0; i < Math.Max(1, p0); i++) _curCol = NextTabStop(_curCol);
+                    break;
+                case 'Z': // CBT - Cursor Backward Tab
+                    for (int i = 0; i < Math.Max(1, p0); i++) _curCol = PrevTabStop(_curCol);
                     break;
                 case 'J': // ED - Erase in Display
                     EraseInDisplay(p0);
@@ -1188,8 +1491,24 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 case 'X': // ECH - Erase Characters
                     EraseChars(Math.Max(1, p0));
                     break;
+                case 'b': // REP - Repeat preceding graphic character
+                    RepeatLastChar(Math.Max(1, p0));
+                    break;
                 case 'd': // VPA - Vertical Position Absolute
                     _curRow = Math.Max(0, Math.Min((p0 > 0 ? p0 : 1) - 1, Rows - 1));
+                    break;
+                case 'e': // VPR - Vertical Position Relative (cursor down)
+                    for (int i = 0; i < Math.Max(1, p0); i++) CursorDownNoScroll();
+                    break;
+                case 'g': // TBC - Tab Clear
+                    if (p0 == 3)
+                    {
+                        Array.Clear(_tabStops, 0, _tabStops.Length);
+                    }
+                    else if (_curCol >= 0 && _curCol < _tabStops.Length)
+                    {
+                        _tabStops[_curCol] = false;
+                    }
                     break;
                 case 'm': // SGR - Select Graphic Rendition (colors/attributes)
                     HandleSgr();
@@ -1207,21 +1526,33 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                         }
                     }
                     break;
+                case 's': // SCP / DECSC variant - Save Cursor Position
+                    SaveCursor();
+                    break;
+                case 'u': // RCP / DECRC variant - Restore Cursor Position
+                    RestoreCursor();
+                    break;
                 case 'h': // SM - Set Mode
+                    SetAnsiMode(p0, true);
+                    break;
                 case 'l': // RM - Reset Mode
-                    // Standard modes (not private) - ignore for now
+                    SetAnsiMode(p0, false);
                     break;
                 case 'n': // DSR - Device Status Report
                     if (p0 == 6) // Report Cursor Position
                     {
                         // Send CPR response: ESC [ row ; col R
                         var response = $"\x1B[{_curRow + 1};{_curCol + 1}R";
-                        TransmitToHost(System.Text.Encoding.ASCII.GetBytes(response));
+                        TransmitToHost(Encoding.ASCII.GetBytes(response));
+                    }
+                    else if (p0 == 5) // Report device status (always OK)
+                    {
+                        TransmitToHost(Encoding.ASCII.GetBytes("\x1B[0n"));
                     }
                     break;
                 case 'c': // DA - Device Attributes
-                    // Report as VT100
-                    TransmitToHost(System.Text.Encoding.ASCII.GetBytes("\x1B[?1;0c"));
+                    // Report as VT220 with no extra options.
+                    TransmitToHost(Encoding.ASCII.GetBytes("\x1B[?62;1;6c"));
                     break;
                 case 'S': // SU - Scroll Up
                     for (int i = 0; i < Math.Max(1, p0); i++) ScrollUpRegion();
@@ -1233,20 +1564,78 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             _autowrapPending = false;
         }
 
+        /// <summary>Sets or resets a standard (non-private) ANSI mode.</summary>
+        private void SetAnsiMode(int mode, bool set)
+        {
+            switch (mode)
+            {
+                case 4: // IRM - Insert/Replace Mode
+                    _insertMode = set;
+                    break;
+                case 20: // LNM - Line Feed/New Line Mode
+                    _newLineMode = set;
+                    break;
+            }
+        }
+
+        /// <summary>Repeats the last printed graphic character the supplied number of times.</summary>
+        private void RepeatLastChar(int count)
+        {
+            if (_lastGraphicChar == '\0')
+            {
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                Printable(_lastGraphicChar);
+            }
+        }
+
+        /// <summary>
+        /// DECSTR soft reset: restores the common modes and cursor state without clearing the screen.
+        /// </summary>
+        private void SoftReset()
+        {
+            _currentAttrs = TerminalAttributes.Default;
+            _originMode = false;
+            _autoWrap = true;
+            _autowrapPending = false;
+            _applicationCursorKeys = false;
+            _applicationKeypad = false;
+            _cursorVisible = true;
+            _insertMode = false;
+            _newLineMode = false;
+            _scrollTop = 1;
+            _scrollBottom = Rows;
+            _hasSavedCursor = false;
+            _g0Charset = CharSet.Ascii;
+            _g1Charset = CharSet.Ascii;
+            _shiftOut = false;
+            SetCaretVisible(true);
+        }
+
         private void SetDecPrivateMode(int mode, bool set)
         {
             switch (mode)
             {
-                case 1: // DECCKM - Cursor Keys Mode (application vs normal) - affects key sending
+                case 1: // DECCKM - Cursor Keys Mode (application vs normal)
+                    _applicationCursorKeys = set;
                     break;
                 case 6: // DECOM - Origin Mode
                     _originMode = set;
                     CursorPositionCsi(1, 1); // Move to origin
                     break;
-                case 7: // DECAWM - Autowrap Mode - we always autowrap
+                case 7: // DECAWM - Autowrap Mode
+                    _autoWrap = set;
+                    if (!set)
+                    {
+                        _autowrapPending = false;
+                    }
                     break;
                 case 25: // DECTCEM - Text Cursor Enable Mode (show/hide cursor)
-                    // Could control caret visibility if needed
+                    _cursorVisible = set;
+                    SetCaretVisible(set);
                     break;
                 case 1049: // Alternate Screen Buffer (with save/restore cursor)
                 case 47: // Alternate Screen Buffer (simple)
@@ -1286,13 +1675,95 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                         }
                     }
                     break;
-                case 2004: // Bracketed Paste Mode - ignore
+                case 2004: // Bracketed Paste Mode
+                    _bracketedPaste = set;
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Processes a completed OSC (Operating System Command) string. Currently handles
+        /// window/icon title commands (OSC 0/1/2); other commands are ignored.
+        /// </summary>
+        private void ProcessOsc(string osc)
+        {
+            if (string.IsNullOrEmpty(osc))
+            {
+                return;
+            }
+
+            int sep = osc.IndexOf(';');
+            if (sep < 0)
+            {
+                return;
+            }
+
+            string code = osc.Substring(0, sep);
+            string text = osc.Substring(sep + 1);
+
+            // OSC 0 = icon name + window title, 1 = icon name, 2 = window title.
+            if (code is "0" or "1" or "2")
+            {
+                Title = text;
+                var handler = TitleChanged;
+                if (handler != null)
+                {
+                    if (Dispatcher.CheckAccess())
+                    {
+                        handler(text);
+                    }
+                    else
+                    {
+                        Dispatcher.BeginInvoke(() => handler(text), DispatcherPriority.Background);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Toggles the block caret visibility (DECTCEM). Marshals to the UI thread when needed.
+        /// </summary>
+        private void SetCaretVisible(bool visible)
+        {
+            if (_caretRenderer == null)
+            {
+                return;
+            }
+
+            void Apply()
+            {
+                _caretRenderer.Visible = visible;
+                TextArea.TextView.InvalidateLayer(ICSharpCode.AvalonEdit.Rendering.KnownLayer.Caret);
+            }
+
+            if (Dispatcher.CheckAccess())
+            {
+                Apply();
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(Apply, DispatcherPriority.Render);
             }
         }
 
         private void Printable(char ch)
         {
+            // Zero-width and combining characters do not occupy a grid cell. Skipping them
+            // (rather than storing them in their own cell) keeps the fixed-width column grid
+            // aligned, which matters for full-screen TUI applications. This control renders one
+            // code point per column via AvalonEdit, so true combining-mark composition is not
+            // attempted.
+            if (IsZeroWidth(ch))
+            {
+                return;
+            }
+
+            // Translate through the active character set (DEC special graphics / line drawing).
+            if (_shiftOut ? _g1Charset == CharSet.DecSpecialGraphics : _g0Charset == CharSet.DecSpecialGraphics)
+            {
+                ch = MapSpecialGraphics(ch);
+            }
+
             // Handle deferred autowrap
             if (_autowrapPending)
             {
@@ -1315,16 +1786,124 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _curCol = 0;
             }
 
+            // Insert mode (IRM): shift the remainder of the line right before writing.
+            if (_insertMode && _curCol < Columns - 1)
+            {
+                int rowOffset = _curRow * Columns;
+                int moveCount = Columns - _curCol - 1;
+                Array.Copy(_buf, rowOffset + _curCol, _buf, rowOffset + _curCol + 1, moveCount);
+            }
+
             _buf[_curRow, _curCol] = new TerminalCell(ch, _currentAttrs);
+            _lastGraphicChar = ch;
 
             if (_curCol == Columns - 1)
             {
-                // Deferred autowrap - don't move cursor yet
-                _autowrapPending = true;
+                // At the right margin: defer the wrap only when autowrap (DECAWM) is enabled.
+                // With autowrap disabled the cursor stays put and further glyphs overwrite the
+                // last cell.
+                if (_autoWrap)
+                {
+                    _autowrapPending = true;
+                }
+
                 return;
             }
 
             _curCol++;
+        }
+
+        /// <summary>
+        /// Maps a byte from the DEC Special Graphics character set to its Unicode equivalent
+        /// (box-drawing and line-drawing glyphs). Characters outside the 0x5F-0x7E range are
+        /// returned unchanged.
+        /// </summary>
+        private static char MapSpecialGraphics(char ch)
+        {
+            return ch switch
+            {
+                '\x5F' => ' ',      // blank
+                '\x60' => '\u25C6', // ◆ diamond
+                'a' => '\u2592',    // ▒ checkerboard
+                'b' => '\u2409',    // HT symbol
+                'c' => '\u240C',    // FF symbol
+                'd' => '\u240D',    // CR symbol
+                'e' => '\u240A',    // LF symbol
+                'f' => '\u00B0',    // ° degree
+                'g' => '\u00B1',    // ± plus/minus
+                'h' => '\u2424',    // NL symbol
+                'i' => '\u240B',    // VT symbol
+                'j' => '\u2518',    // ┘ lower-right corner
+                'k' => '\u2510',    // ┐ upper-right corner
+                'l' => '\u250C',    // ┌ upper-left corner
+                'm' => '\u2514',    // └ lower-left corner
+                'n' => '\u253C',    // ┼ crossing lines
+                'o' => '\u23BA',    // ⎺ scan line 1
+                'p' => '\u23BB',    // ⎻ scan line 3
+                'q' => '\u2500',    // ─ horizontal line
+                'r' => '\u23BC',    // ⎼ scan line 7
+                's' => '\u23BD',    // ⎽ scan line 9
+                't' => '\u251C',    // ├ left tee
+                'u' => '\u2524',    // ┤ right tee
+                'v' => '\u2534',    // ┴ bottom tee
+                'w' => '\u252C',    // ┬ top tee
+                'x' => '\u2502',    // │ vertical line
+                'y' => '\u2264',    // ≤ less-than-or-equal
+                'z' => '\u2265',    // ≥ greater-than-or-equal
+                '{' => '\u03C0',    // π pi
+                '|' => '\u2260',    // ≠ not equal
+                '}' => '\u00A3',    // £ pound
+                '~' => '\u00B7',    // · centered dot
+                _ => ch
+            };
+        }
+
+        private void SaveCursor()
+        {
+            _savedCurRow = _curRow;
+            _savedCurCol = _curCol;
+            _savedAttrs = _currentAttrs;
+            _savedOriginMode = _originMode;
+            _hasSavedCursor = true;
+        }
+
+        private void RestoreCursor()
+        {
+            if (!_hasSavedCursor)
+            {
+                _curRow = 0;
+                _curCol = 0;
+                return;
+            }
+
+            _curRow = Math.Min(_savedCurRow, Rows - 1);
+            _curCol = Math.Min(_savedCurCol, Columns - 1);
+            _currentAttrs = _savedAttrs;
+            _originMode = _savedOriginMode;
+            _autowrapPending = false;
+        }
+
+        /// <summary>
+        /// Returns true for zero-width characters (combining marks, zero-width spaces/joiners)
+        /// that should not advance the cursor or occupy a terminal cell.
+        /// </summary>
+        private static bool IsZeroWidth(char ch)
+        {
+            if (ch < 0x0300)
+            {
+                return false;
+            }
+
+            switch (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch))
+            {
+                case System.Globalization.UnicodeCategory.NonSpacingMark:
+                case System.Globalization.UnicodeCategory.EnclosingMark:
+                case System.Globalization.UnicodeCategory.Format:
+                    // U+00AD soft hyphen is a Format char but is conventionally rendered; keep it.
+                    return ch != 0x00AD;
+                default:
+                    return false;
+            }
         }
 
         private void CursorRight()
@@ -1455,12 +2034,37 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             int bottom = _scrollBottom - 1;
             var blankCell = new TerminalCell(' ', TerminalAttributes.Default);
 
+            // Capture the departing top line into scrollback only when the whole screen is
+            // scrolling (no custom margins) and we are not on the alternate screen.
+            if (!_useAltBuffer && top == 0 && bottom == Rows - 1 && _scrollback.Capacity > 0)
+            {
+                PushScrollbackLine(0);
+            }
+
             if (bottom > top)
             {
                 Array.Copy(_buf, (top + 1) * Columns, _buf, top * Columns, (bottom - top) * Columns);
             }
 
             FillRow(bottom, 0, Columns, blankCell);
+        }
+
+        private void PushScrollbackLine(int row)
+        {
+            var line = _recycledLine;
+
+            if (line == null || line.Length != Columns)
+            {
+                line = new TerminalCell[Columns];
+            }
+
+            for (int c = 0; c < Columns; c++)
+            {
+                line[c] = _buf[row, c];
+            }
+
+            _recycledLine = _scrollback.AddAndRecycle(line);
+            _scrollbackDirty = true;
         }
 
         private void ScrollDownRegion()
@@ -1521,8 +2125,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                         _buf[_curRow, c] = blankCell;
                     }
                     break;
+                case 3: // Erase entire screen + scrollback buffer
+                    _scrollback.Clear();
+                    _scrollbackDirty = true;
+                    FillRect(0, 0, Rows, Columns, ' ');
+                    break;
                 case 2: // Erase entire screen
-                case 3: // Erase entire screen + scrollback (treat as 2)
                     FillRect(0, 0, Rows, Columns, ' ');
                     break;
             }
@@ -1738,33 +2346,41 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     // Standard foreground colors (30-37)
                     case >= 30 and <= 37:
                         _currentAttrs.Foreground = (byte)(p - 30);
+                        _currentAttrs.DefaultForeground = false;
                         break;
                     case 38: // Extended foreground color
                         i = ParseExtendedColor(i, ref _currentAttrs.Foreground);
+                        _currentAttrs.DefaultForeground = false;
                         break;
                     case 39: // Default foreground
                         _currentAttrs.Foreground = 7;
+                        _currentAttrs.DefaultForeground = true;
                         break;
 
                     // Standard background colors (40-47)
                     case >= 40 and <= 47:
                         _currentAttrs.Background = (byte)(p - 40);
+                        _currentAttrs.DefaultBackground = false;
                         break;
                     case 48: // Extended background color
                         i = ParseExtendedColor(i, ref _currentAttrs.Background);
+                        _currentAttrs.DefaultBackground = false;
                         break;
                     case 49: // Default background
                         _currentAttrs.Background = 0;
+                        _currentAttrs.DefaultBackground = true;
                         break;
 
                     // Bright foreground colors (90-97)
                     case >= 90 and <= 97:
                         _currentAttrs.Foreground = (byte)(p - 90 + 8);
+                        _currentAttrs.DefaultForeground = false;
                         break;
 
                     // Bright background colors (100-107)
                     case >= 100 and <= 107:
                         _currentAttrs.Background = (byte)(p - 100 + 8);
+                        _currentAttrs.DefaultBackground = false;
                         break;
                 }
             }
@@ -1806,25 +2422,52 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             g = Math.Clamp(g, 0, 255);
             b = Math.Clamp(b, 0, 255);
 
-            // Check grayscale ramp (232-255)
-            if (r == g && g == b)
-            {
-                if (r < 8) return 16; // black
-                if (r > 248) return 231; // white
-                return (byte)(232 + (r - 8) / 10);
-            }
+            // Standard xterm cube levels.
+            ReadOnlySpan<int> levels = [0, 95, 135, 175, 215, 255];
 
-            // Map to 6x6x6 color cube (16-231)
-            int ri = (r < 48) ? 0 : (r < 115) ? 1 : (r - 35) / 40;
-            int gi = (g < 48) ? 0 : (g < 115) ? 1 : (g - 35) / 40;
-            int bi = (b < 48) ? 0 : (b < 115) ? 1 : (b - 35) / 40;
-            return (byte)(16 + 36 * ri + 6 * gi + bi);
+            int ri = NearestLevel(r, levels);
+            int gi = NearestLevel(g, levels);
+            int bi = NearestLevel(b, levels);
+
+            int cubeR = levels[ri], cubeG = levels[gi], cubeB = levels[bi];
+            int cubeIndex = 16 + 36 * ri + 6 * gi + bi;
+            int cubeDist = Distance(r, g, b, cubeR, cubeG, cubeB);
+
+            // Candidate grayscale ramp value (232-255 map to 8..238 in steps of 10).
+            int avg = (r + g + b) / 3;
+            int grayIdx = Math.Clamp((avg - 8 + 5) / 10, 0, 23);
+            int grayVal = 8 + grayIdx * 10;
+            int grayDist = Distance(r, g, b, grayVal, grayVal, grayVal);
+
+            return grayDist < cubeDist ? (byte)(232 + grayIdx) : (byte)cubeIndex;
+        }
+
+        private static int NearestLevel(int value, ReadOnlySpan<int> levels)
+        {
+            int best = 0;
+            int bestDist = int.MaxValue;
+            for (int i = 0; i < levels.Length; i++)
+            {
+                int d = Math.Abs(levels[i] - value);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    best = i;
+                }
+            }
+            return best;
+        }
+
+        private static int Distance(int r1, int g1, int b1, int r2, int g2, int b2)
+        {
+            int dr = r1 - r2, dg = g1 - g2, db = b1 - b2;
+            return dr * dr + dg * dg + db * db;
         }
 
         // ======================
         // Rendering
         // ======================
-        private void UpdateDocument(bool forceScrollTop = false)
+        private void UpdateDocument(bool forceScrollTop = false, bool forceFullReplace = false)
         {
             int curRow = _curRow;
             int curCol = _curCol;
@@ -1837,22 +2480,60 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            ApplyIncrementalDocumentUpdate(curRow, curCol, forceScrollTop);
+            ApplyIncrementalDocumentUpdate(curRow, curCol, forceScrollTop, forceFullReplace);
         }
 
         private string[] BuildLineSnapshot()
         {
-            var lines = new string[Rows];
+            int sbCount = VisibleScrollbackCount;
+            var lines = new string[sbCount + Rows];
             var chars = new char[Columns];
+
+            for (int i = 0; i < sbCount; i++)
+            {
+                var row = _scrollback[i];
+                int n = Math.Min(Columns, row.Length);
+
+                for (int c = 0; c < n; c++)
+                {
+                    chars[c] = row[c].Char;
+                }
+
+                for (int c = n; c < Columns; c++)
+                {
+                    chars[c] = ' ';
+                }
+
+                lines[i] = new string(chars);
+            }
+
+            int bufRows = _buf.GetLength(0);
+            int bufCols = _buf.GetLength(1);
 
             for (int r = 0; r < Rows; r++)
             {
-                for (int c = 0; c < Columns; c++)
+                if (r < bufRows)
                 {
-                    chars[c] = _buf[r, c].Char;
+                    int n = Math.Min(Columns, bufCols);
+                    for (int c = 0; c < n; c++)
+                    {
+                        chars[c] = _buf[r, c].Char;
+                    }
+
+                    for (int c = n; c < Columns; c++)
+                    {
+                        chars[c] = ' ';
+                    }
+                }
+                else
+                {
+                    for (int c = 0; c < Columns; c++)
+                    {
+                        chars[c] = ' ';
+                    }
                 }
 
-                lines[r] = new string(chars);
+                lines[sbCount + r] = new string(chars);
             }
 
             return lines;
@@ -1871,17 +2552,20 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             return sb.ToString();
         }
 
-        private void ApplyIncrementalDocumentUpdate(int curRow, int curCol, bool forceScrollTop)
+        private void ApplyIncrementalDocumentUpdate(int curRow, int curCol, bool forceScrollTop, bool forceFullReplace)
         {
             if (Document == null)
             {
                 Document = new TextDocument();
             }
 
+            bool stickToBottom = IsScrolledToBottom();
             var lines = BuildLineSnapshot();
             bool requiresFullReplace = forceScrollTop ||
-                                       Document.LineCount < Rows ||
-                                       _lineCache.Length != Rows ||
+                                       forceFullReplace ||
+                                       _scrollbackDirty ||
+                                       Document.LineCount < lines.Length ||
+                                       _lineCache.Length != lines.Length ||
                                        (_lineCache.Length > 0 && _lineCache[0].Length != Columns);
 
             if (requiresFullReplace)
@@ -1894,7 +2578,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             try
             {
-                for (int r = 0; r < Rows; r++)
+                for (int r = 0; r < lines.Length; r++)
                 {
                     if (string.Equals(lines[r], _lineCache[r], StringComparison.Ordinal))
                     {
@@ -1920,7 +2604,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             }
 
             _lineCache = lines;
-            UpdateCaret(curRow, curCol, forceScrollTop);
+            UpdateCaret(curRow, curCol, forceScrollTop, stickToBottom);
         }
 
         private void ApplyFullDocumentUpdate(string text, string[] lines, int curRow, int curCol, bool forceScrollTop)
@@ -1929,6 +2613,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 Document = new TextDocument();
             }
+
+            bool stickToBottom = IsScrolledToBottom();
 
             Document.BeginUpdate();
             try
@@ -1941,12 +2627,14 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             }
 
             _lineCache = lines;
-            UpdateCaret(curRow, curCol, forceScrollTop);
+            _scrollbackDirty = false;
+            UpdateCaret(curRow, curCol, forceScrollTop, stickToBottom);
         }
 
-        private void UpdateCaret(int curRow, int curCol, bool forceScrollTop)
+        private void UpdateCaret(int curRow, int curCol, bool forceScrollTop, bool stickToBottom)
         {
-            int targetLine = Math.Max(1, Math.Min(curRow + 1, Document.LineCount));
+            int offset = VisibleScrollbackCount;
+            int targetLine = Math.Max(1, Math.Min(offset + curRow + 1, Document.LineCount));
             var line = Document.GetLineByNumber(targetLine);
             int targetColumn = Math.Max(1, Math.Min(curCol + 1, line.Length + 1)); // allow caret after last char
             var position = TextArea.Caret.Position;
@@ -1956,44 +2644,42 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 TextArea.Caret.Position = new TextViewPosition(targetLine, targetColumn);
             }
 
-            if (!IsLineVisible(targetLine))
-            {
-                TextArea.Caret.BringCaretToView();
-            }
-
-            // Keep nano header visible at the very top when we're on it.
+            // Keep the header pinned at the very top when explicitly requested (e.g., after Reset).
             if (forceScrollTop)
             {
                 ScrollTo(1, 1);
+                return;
+            }
+
+            // Follow new output only when the view was already at the bottom. If the user has
+            // scrolled up into the scrollback history, leave the viewport where they left it.
+            if (stickToBottom)
+            {
+                ScrollToEnd();
             }
         }
 
-        private bool IsLineVisible(int lineNumber)
+        /// <summary>
+        /// Returns true when the viewport is at (or within one line of) the bottom of the document,
+        /// or when the document is short enough that no scrolling is possible.
+        /// </summary>
+        private bool IsScrolledToBottom()
         {
-            var textView = TextArea.TextView;
+            double extent = ExtentHeight;
+            double viewport = ViewportHeight;
 
-            if (!textView.VisualLinesValid)
+            if (extent <= 0 || viewport <= 0 || extent <= viewport)
             {
-                return false;
+                return true;
             }
 
-            var visualLines = textView.VisualLines;
-
-            if (visualLines.Count == 0)
+            double lineHeight = TextArea.TextView.DefaultLineHeight;
+            if (lineHeight <= 0)
             {
-                return false;
+                lineHeight = 1;
             }
 
-            foreach (var visualLine in visualLines)
-            {
-                if (visualLine.FirstDocumentLine.LineNumber <= lineNumber &&
-                    visualLine.LastDocumentLine.LineNumber >= lineNumber)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (extent - viewport - VerticalOffset) <= lineHeight + 1;
         }
 
         #region Context menu command handlers
@@ -2030,8 +2716,23 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             try
             {
                 text = Clipboard.GetText();
-                Add(text);
-                this.Connection.Send(text);
+
+                if (string.IsNullOrEmpty(text))
+                {
+                    return;
+                }
+
+                // Normalize line endings to CR which is what hosts expect from a terminal.
+                text = text.Replace("\r\n", "\r").Replace("\n", "\r");
+
+                if (_bracketedPaste)
+                {
+                    this.Connection.Send("\x1b[200~" + text + "\x1b[201~");
+                }
+                else
+                {
+                    this.Connection.Send(text);
+                }
             }
             catch
             {

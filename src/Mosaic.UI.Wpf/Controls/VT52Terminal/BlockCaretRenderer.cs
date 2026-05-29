@@ -44,12 +44,23 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public KnownLayer Layer => KnownLayer.Caret;
 
         /// <summary>
+        /// Gets or sets whether the block caret is drawn. Set to <see langword="false"/> to honor
+        /// the DECTCEM (hide cursor) terminal mode.
+        /// </summary>
+        public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// Draw the block caret.
         /// </summary>
         /// <param name="textView"></param>
         /// <param name="drawingContext"></param>
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
+            if (!Visible)
+            {
+                return;
+            }
+
             var caret = _textArea.Caret;
 
             // Determine the visual position of the caret.

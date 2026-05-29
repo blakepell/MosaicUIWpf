@@ -45,6 +45,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         // Cache for 256-color palette brushes
         private static readonly Brush[] Color256Cache = new Brush[256];
 
+        // Cache for dimmed (50% brightness) palette brushes, lazily populated.
+        private static readonly Brush?[] DimColorCache = new Brush?[256];
+
+        // Cache derived bold/italic typefaces keyed by base family + style flags to avoid per-run allocation.
+        private readonly Dictionary<(string family, bool bold, bool italic), Typeface> _typefaceCache = new();
+
         static VT52Colorizer()
         {
             // Freeze standard colors for performance
@@ -94,21 +100,24 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         protected override void ColorizeLine(DocumentLine line)
         {
             int lineNumber = line.LineNumber - 1; // Convert to 0-based
-            if (lineNumber < 0 || lineNumber >= _terminal.BufferRows)
+            if (lineNumber < 0 || lineNumber >= _terminal.TotalRows)
             {
                 return;
             }
 
-            var buffer = _terminal.Buffer;
-            int cols = Math.Min(_terminal.BufferColumns, line.Length);
+            int cols = line.Length;
+            if (cols <= 0)
+            {
+                return;
+            }
 
             // Track runs of identical attributes for efficiency
             int runStart = 0;
-            TerminalAttributes currentAttrs = buffer[lineNumber, 0].Attrs;
+            TerminalAttributes currentAttrs = _terminal.GetCellAttributes(lineNumber, 0);
 
             for (int col = 1; col <= cols; col++)
             {
-                TerminalAttributes attrs = col < cols ? buffer[lineNumber, col].Attrs : default;
+                TerminalAttributes attrs = col < cols ? _terminal.GetCellAttributes(lineNumber, col) : default;
                 bool endOfRun = col == cols || attrs != currentAttrs;
 
                 if (endOfRun && runStart < col)
@@ -122,10 +131,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private void ApplyAttributes(int startOffset, int endOffset, TerminalAttributes attrs)
         {
-            // Skip if default attributes (light gray on black, no styling)
-            bool isDefault = attrs.Foreground == 7 && attrs.Background == 0 &&
+            // Background is drawn at full line-height by TerminalBackgroundRenderer.
+            // Here we only handle foreground color, text decorations, and typeface.
+            bool isDefault = attrs.DefaultForeground && !attrs.Reverse &&
                             !attrs.Bold && !attrs.Dim && !attrs.Italic &&
-                            !attrs.Underline && !attrs.Reverse && !attrs.Strikethrough;
+                            !attrs.Underline && !attrs.Strikethrough;
 
             if (isDefault)
             {
@@ -136,47 +146,32 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 ChangeLinePart(startOffset, endOffset, element =>
                 {
-                    var fg = attrs.Foreground;
-                    var bg = attrs.Background;
+                    byte fg = attrs.Foreground;
+                    bool fgDefault = attrs.DefaultForeground;
 
-                    // Handle reverse video
+                    // Reverse video: effective fg = original bg.
                     if (attrs.Reverse)
                     {
-                        (fg, bg) = (bg, fg);
+                        byte bg = attrs.Background;
+                        if (attrs.DefaultBackground) bg = 0; // default bg = black (index 0)
+                        fg = bg;
+                        fgDefault = false;
                     }
 
-                    // Apply bold as bright (add 8 to color index for standard colors)
-                    if (attrs.Bold && fg < 8)
+                    // Bold promotes standard colors to their bright variant.
+                    if (attrs.Bold && !fgDefault && fg < 8)
                     {
                         fg = (byte)(fg + 8);
                     }
 
-                    // Apply foreground color
-                    if (fg != 7 || attrs.Reverse) // Not default gray
+                    // Foreground color.
+                    if (!fgDefault)
                     {
-                        var fgBrush = GetBrush(fg);
-                        if (attrs.Dim && fgBrush is SolidColorBrush solidBrush)
-                        {
-                            // Dim: reduce brightness by 50%
-                            var c = solidBrush.Color;
-                            var dimmed = new SolidColorBrush(Color.FromRgb(
-                                (byte)(c.R / 2), (byte)(c.G / 2), (byte)(c.B / 2)));
-                            dimmed.Freeze();
-                            element.TextRunProperties.SetForegroundBrush(dimmed);
-                        }
-                        else
-                        {
-                            element.TextRunProperties.SetForegroundBrush(fgBrush);
-                        }
+                        var fgBrush = attrs.Dim ? GetDimBrush(fg) : GetPaletteBrush(fg);
+                        element.TextRunProperties.SetForegroundBrush(fgBrush);
                     }
 
-                    // Apply background color
-                    if (bg != 0 || attrs.Reverse) // Not default black
-                    {
-                        element.TextRunProperties.SetBackgroundBrush(GetBrush(bg));
-                    }
-
-                    // Apply text decorations
+                    // Text decorations.
                     TextDecorationCollection? decorations = null;
                     if (attrs.Underline)
                     {
@@ -193,20 +188,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                         element.TextRunProperties.SetTextDecorations(decorations);
                     }
 
-                    // Apply italic via typeface
-                    if (attrs.Italic)
+                    // Bold/italic typeface (cached).
+                    if (attrs.Bold || attrs.Italic)
                     {
                         var tf = element.TextRunProperties.Typeface;
-                        element.TextRunProperties.SetTypeface(new Typeface(
-                            tf.FontFamily, FontStyles.Italic, tf.Weight, tf.Stretch));
-                    }
-
-                    // Apply bold via typeface weight
-                    if (attrs.Bold)
-                    {
-                        var tf = element.TextRunProperties.Typeface;
-                        element.TextRunProperties.SetTypeface(new Typeface(
-                            tf.FontFamily, tf.Style, FontWeights.Bold, tf.Stretch));
+                        element.TextRunProperties.SetTypeface(GetTypeface(tf, attrs.Bold, attrs.Italic));
                     }
                 });
             }
@@ -216,7 +202,47 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             }
         }
 
-        private static Brush GetBrush(byte colorIndex)
+        private Typeface GetTypeface(Typeface baseTypeface, bool bold, bool italic)
+        {
+            string family = baseTypeface.FontFamily.Source;
+            var key = (family, bold, italic);
+
+            if (_typefaceCache.TryGetValue(key, out var cached))
+            {
+                return cached;
+            }
+
+            var tf = new Typeface(
+                baseTypeface.FontFamily,
+                italic ? FontStyles.Italic : baseTypeface.Style,
+                bold ? FontWeights.Bold : baseTypeface.Weight,
+                baseTypeface.Stretch);
+
+            _typefaceCache[key] = tf;
+            return tf;
+        }
+
+        private static Brush GetDimBrush(byte colorIndex)
+        {
+            var cached = DimColorCache[colorIndex];
+            if (cached != null)
+            {
+                return cached;
+            }
+
+            if (GetPaletteBrush(colorIndex) is SolidColorBrush solid)
+            {
+                var c = solid.Color;
+                var dimmed = new SolidColorBrush(Color.FromRgb((byte)(c.R / 2), (byte)(c.G / 2), (byte)(c.B / 2)));
+                dimmed.Freeze();
+                DimColorCache[colorIndex] = dimmed;
+                return dimmed;
+            }
+
+            return GetPaletteBrush(colorIndex);
+        }
+
+        internal static Brush GetPaletteBrush(byte colorIndex)
         {
             if (colorIndex < Color256Cache.Length)
             {

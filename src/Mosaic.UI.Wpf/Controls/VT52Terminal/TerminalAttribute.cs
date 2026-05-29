@@ -17,6 +17,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
     {
         public byte Foreground; // 0-15 for standard, 16-255 for 256-color, 0 = default
         public byte Background; // 0-15 for standard, 16-255 for 256-color, 0 = default
+        public bool DefaultForeground; // true when no explicit fg color is set (use theme default)
+        public bool DefaultBackground; // true when no explicit bg color is set (use theme default)
         public bool Bold;
         public bool Dim;
         public bool Italic;
@@ -26,10 +28,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public bool Hidden;
         public bool Strikethrough;
 
-        public static TerminalAttributes Default => new() { Foreground = 7, Background = 0 };
+        public static TerminalAttributes Default => new() { Foreground = 7, Background = 0, DefaultForeground = true, DefaultBackground = true };
 
         public bool Equals(TerminalAttributes other) =>
             Foreground == other.Foreground && Background == other.Background &&
+            DefaultForeground == other.DefaultForeground && DefaultBackground == other.DefaultBackground &&
             Bold == other.Bold && Dim == other.Dim && Italic == other.Italic &&
             Underline == other.Underline && Blink == other.Blink && Reverse == other.Reverse &&
             Hidden == other.Hidden && Strikethrough == other.Strikethrough;
@@ -41,6 +44,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             var hash = new HashCode();
             hash.Add(Foreground);
             hash.Add(Background);
+            hash.Add(DefaultForeground);
+            hash.Add(DefaultBackground);
             hash.Add(Bold);
             hash.Add(Dim);
             hash.Add(Italic);
