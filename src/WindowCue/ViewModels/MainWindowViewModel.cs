@@ -160,7 +160,7 @@ namespace WindowCue.ViewModels
                 return;
             }
 
-            // Handle is stale — try to find a fresh handle by PID
+            // Handle is stale — try to find a fresh handle by the original PID first.
             var freshHandle = _focusService.FindWindowForProcess(item.ProcessId);
             if (freshHandle != IntPtr.Zero)
             {
@@ -171,6 +171,15 @@ namespace WindowCue.ViewModels
                     item.UnavailableReason = null;
                     return;
                 }
+            }
+
+            // The original process is gone or its window is unreachable. The application may
+            // have been re-launched under a new PID (e.g. Visual Studio re-opened on the same
+            // solution), so try to re-bind to the best-matching live window by executable /
+            // process identity and fuzzy window-title similarity.
+            if (TryRebindItem(item))
+            {
+                return;
             }
 
             // Check whether the process itself is still alive.
@@ -197,12 +206,56 @@ namespace WindowCue.ViewModels
             item.UnavailableReason = "Window is no longer available.";
         }
 
+        /// <summary>
+        /// Attempts to re-bind a pinned window item to the best-matching live window using
+        /// executable / process identity and fuzzy window-title similarity. On success the
+        /// item's handle, PID, title and identity fields are refreshed and it is marked
+        /// available. When <paramref name="focus"/> is <see langword="true"/> the matched
+        /// window is also brought to the foreground.
+        /// </summary>
+        /// <returns><see langword="true"/> if a matching window was found and the item re-bound.</returns>
+        private bool TryRebindItem(ToolbarItemViewModel item, bool focus = true)
+        {
+            if (item.TargetType != PinnedTargetType.Window)
+            {
+                return false;
+            }
+
+            var match = _enumService.TryRebind(item.ExecutablePath, item.ProcessName, item.WindowTitle);
+            if (match == null)
+            {
+                return false;
+            }
+
+            if (focus)
+            {
+                _focusService.FocusWindow(match.Handle);
+            }
+
+            item.WindowHandle = match.Handle;
+            item.ProcessId = match.ProcessId;
+            item.WindowTitle = match.Title;
+            item.ProcessName = match.ProcessName;
+            item.ExecutablePath = match.ExecutablePath;
+
+            if (item.Icon == null)
+            {
+                item.Icon = _iconService.ExtractIcon(match.Handle, match.ExecutablePath);
+            }
+
+            item.IsAvailable = true;
+            item.UnavailableReason = null;
+            return true;
+        }
+
         // ── Process monitor ───────────────────────────────────────────────────
 
         /// <summary>
-        /// Fires every 5 seconds to remove pinned window items whose process has exited.
-        /// The liveness checks run on the thread pool to avoid blocking the UI thread.
-        /// Browser-tab items are skipped — their lifecycle is managed by the browser.
+        /// Fires every 5 seconds to reconcile pinned window items whose process has exited.
+        /// Each dead item is first re-bound to a matching live window (handling apps that were
+        /// relaunched under a new PID); only items with no matching window are removed. The
+        /// liveness checks run on the thread pool to avoid blocking the UI thread. Browser-tab
+        /// items are skipped — their lifecycle is managed by the browser.
         /// </summary>
         private async void OnProcessMonitorTick(object? sender, EventArgs e)
         {
@@ -241,6 +294,13 @@ namespace WindowCue.ViewModels
 
             foreach (var dead in deadItems)
             {
+                // The original process exited, but the application may have been relaunched
+                // under a new PID. Try to re-bind to a matching live window before removing.
+                if (TryRebindItem(dead, focus: false))
+                {
+                    continue;
+                }
+
                 Items.Remove(dead);
             }
         }

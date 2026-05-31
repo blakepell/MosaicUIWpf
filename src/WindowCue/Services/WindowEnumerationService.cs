@@ -149,48 +149,87 @@ namespace WindowCue.Services
         }
 
         /// <summary>
-        /// Attempts to find a currently-running window that matches the given saved item data.
-        /// Tries in priority order: executable path → process name → window title substring.
+        /// The minimum composite score a candidate window must reach to be considered a
+        /// confident re-bind. Scores below this are treated as "no match".
+        /// </summary>
+        public const double MatchThreshold = 0.45d;
+
+        /// <summary>
+        /// Attempts to find the currently-running window that best matches the given saved
+        /// item data. Process identity (executable path, then process name) establishes that
+        /// a candidate is the same application; the recorded window title then disambiguates
+        /// between multiple instances using a fuzzy similarity score. This allows WindowCue
+        /// to re-bind to the correct window even after its process ID has changed.
         /// </summary>
         public WindowInfo? TryRebind(string? executablePath, string processName, string windowTitle)
         {
-            var windows = GetVisibleWindows();
+            return FindBestMatch(GetVisibleWindows(), executablePath, processName, windowTitle, out _);
+        }
 
-            // Priority 1: exact executable path
-            if (!string.IsNullOrWhiteSpace(executablePath))
+        /// <summary>
+        /// Scores every supplied window against the saved identity / title and returns the
+        /// highest-scoring candidate, or <see langword="null"/> when none reaches
+        /// <see cref="MatchThreshold"/>. The winning score is returned via
+        /// <paramref name="confidence"/> (0.0–1.0).
+        /// </summary>
+        public WindowInfo? FindBestMatch(
+            IReadOnlyList<WindowInfo> windows,
+            string? executablePath,
+            string processName,
+            string windowTitle,
+            out double confidence)
+        {
+            confidence = 0d;
+            WindowInfo? best = null;
+
+            foreach (var window in windows)
             {
-                var match = windows.FirstOrDefault(w =>
-                    string.Equals(w.ExecutablePath, executablePath, StringComparison.OrdinalIgnoreCase));
-                if (match != null)
+                double score = ScoreCandidate(window, executablePath, processName, windowTitle);
+                if (score > confidence)
                 {
-                    return match;
+                    confidence = score;
+                    best = window;
                 }
             }
 
-            // Priority 2: process name
-            if (!string.IsNullOrWhiteSpace(processName))
+            return confidence >= MatchThreshold ? best : null;
+        }
+
+        /// <summary>
+        /// Produces a 0.0–1.0 composite match score for a single candidate window.
+        /// Identity (same executable or process) is weighted equally with title similarity;
+        /// a candidate that shares no identity is rejected unless its title is an almost-exact
+        /// match (covering apps whose executable path could not be read).
+        /// </summary>
+        private static double ScoreCandidate(
+            WindowInfo candidate,
+            string? executablePath,
+            string processName,
+            string windowTitle)
+        {
+            bool exeMatch = !string.IsNullOrWhiteSpace(executablePath)
+                && string.Equals(candidate.ExecutablePath, executablePath, StringComparison.OrdinalIgnoreCase);
+
+            bool nameMatch = !string.IsNullOrWhiteSpace(processName)
+                && string.Equals(candidate.ProcessName, processName, StringComparison.OrdinalIgnoreCase);
+
+            double identity = exeMatch ? 1.0d : nameMatch ? 0.7d : 0.0d;
+            double titleSimilarity = WindowTitleMatcher.Similarity(windowTitle, candidate.Title);
+
+            // Require shared process identity, unless the title is an almost-exact match.
+            if (identity <= 0d && titleSimilarity < 0.9d)
             {
-                var match = windows.FirstOrDefault(w =>
-                    string.Equals(w.ProcessName, processName, StringComparison.OrdinalIgnoreCase));
-                if (match != null)
-                {
-                    return match;
-                }
+                return 0d;
             }
 
-            // Priority 3: window title substring (bidirectional)
-            if (!string.IsNullOrWhiteSpace(windowTitle))
+            // With no saved title to compare against, fall back to identity alone so a
+            // single running instance still re-binds.
+            if (string.IsNullOrWhiteSpace(windowTitle))
             {
-                var match = windows.FirstOrDefault(w =>
-                    w.Title.Contains(windowTitle, StringComparison.OrdinalIgnoreCase) ||
-                    windowTitle.Contains(w.Title, StringComparison.OrdinalIgnoreCase));
-                if (match != null)
-                {
-                    return match;
-                }
+                return identity;
             }
 
-            return null;
+            return (identity * 0.5d) + (titleSimilarity * 0.5d);
         }
     }
 }
