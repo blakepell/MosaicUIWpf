@@ -182,9 +182,10 @@ namespace WindowCue.ViewModels
                 return;
             }
 
-            // Check whether the process itself is still alive.
-            // If the process is gone, remove the item entirely.
-            // If it is alive (e.g. a tray app that hid its window), just gray it out.
+            // The original process is gone or its window is unreachable, and no live window
+            // could be matched even by partial title similarity. Leave the item in place but
+            // mark it inactive (grayed out) rather than removing it — the user can re-bind by
+            // clicking again later, or prune it with "Remove Inactive".
             bool processAlive;
             try
             {
@@ -196,14 +197,10 @@ namespace WindowCue.ViewModels
                 processAlive = false;
             }
 
-            if (!processAlive)
-            {
-                Items.Remove(item);
-                return;
-            }
-
             item.IsAvailable = false;
-            item.UnavailableReason = "Window is no longer available.";
+            item.UnavailableReason = processAlive
+                ? "Window is no longer available."
+                : "Application is not currently running.";
         }
 
         /// <summary>
@@ -252,10 +249,12 @@ namespace WindowCue.ViewModels
 
         /// <summary>
         /// Fires every 5 seconds to reconcile pinned window items whose process has exited.
-        /// Each dead item is first re-bound to a matching live window (handling apps that were
-        /// relaunched under a new PID); only items with no matching window are removed. The
-        /// liveness checks run on the thread pool to avoid blocking the UI thread. Browser-tab
-        /// items are skipped — their lifecycle is managed by the browser.
+        /// Each dead item is first re-bound to a matching live window (handling apps relaunched
+        /// under a new PID, including partial title matches). Items with no matching window are
+        /// marked inactive (grayed out) rather than removed, so they auto-reactivate if the app
+        /// returns and can be pruned via "Remove Inactive". The liveness checks run on the
+        /// thread pool to avoid blocking the UI thread. Browser-tab items are skipped — their
+        /// lifecycle is managed by the browser.
         /// </summary>
         private async void OnProcessMonitorTick(object? sender, EventArgs e)
         {
@@ -295,13 +294,17 @@ namespace WindowCue.ViewModels
             foreach (var dead in deadItems)
             {
                 // The original process exited, but the application may have been relaunched
-                // under a new PID. Try to re-bind to a matching live window before removing.
+                // under a new PID. Try to re-bind to a matching live window (including partial
+                // title matches) before giving up.
                 if (TryRebindItem(dead, focus: false))
                 {
                     continue;
                 }
 
-                Items.Remove(dead);
+                // No live window matched — mark the item inactive (grayed out) instead of
+                // removing it. The user can prune these via "Remove Inactive".
+                dead.IsAvailable = false;
+                dead.UnavailableReason = "Application is not currently running.";
             }
         }
 

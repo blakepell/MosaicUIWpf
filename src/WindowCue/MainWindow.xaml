@@ -92,6 +92,7 @@
                             <MenuItem Click="ToggleTheme_Click" Header="Toggle Theme" />
                             <Separator />
                             <MenuItem Click="RemoveAll_Click" Header="Remove All" />
+                            <MenuItem Click="RemoveInactive_Click" Header="Remove Inactive" />
                             <Separator />
                             <MenuItem Click="Exit_Click" Header="Exit" />
                         </ContextMenu>

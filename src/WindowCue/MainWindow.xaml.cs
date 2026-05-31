@@ -305,6 +305,20 @@ namespace WindowCue
                 _vm.Items.Clear();
             }
         }
+
+        private void RemoveInactive_Click(object sender, RoutedEventArgs e)
+        {
+            var inactive = _vm.Items.Where(i => !i.IsAvailable).ToList();
+            if (inactive.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in inactive)
+            {
+                _vm.Items.Remove(item);
+            }
+        }
     }
 }
 
