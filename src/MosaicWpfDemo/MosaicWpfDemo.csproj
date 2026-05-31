@@ -148,6 +148,13 @@
 			<Link>LinkedSources\ShadowPanelExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ScalingTextBlockExample.xaml">
+			<Link>LinkedSources\ScalingTextBlockExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ScalingTextBlockExample.xaml.cs">
+			<Link>LinkedSources\ScalingTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ShadowTextBlockExample.xaml">
 			<Link>LinkedSources\ShadowTextBlockExample.xaml</Link>
 		</EmbeddedResource>
