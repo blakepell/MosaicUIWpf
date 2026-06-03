@@ -113,7 +113,15 @@
                                     VerticalAlignment="Center"
                                     FontWeight="SemiBold"
                                     Text="Preview" />
-                                <Button MinWidth="110" Content="Action Button" />
+                                <Button MinWidth="110" Content="Action Button" Padding="4" />
+                                <Button
+                                    Width="72"
+                                    Height="28"
+                                    Margin="0,0,8,0"
+                                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
+                                    Content="OK"
+                                    IsDefault="True" />
+
                                 <TextBlock
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
