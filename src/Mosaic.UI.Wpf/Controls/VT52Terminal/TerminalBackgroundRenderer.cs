@@ -8,9 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
-using System.Windows;
-using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace Mosaic.UI.Wpf.Controls.VT52Terminal

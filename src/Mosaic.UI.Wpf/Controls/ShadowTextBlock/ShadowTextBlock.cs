@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.ComponentModel;
 using System.Windows.Media.Effects;
 
 namespace Mosaic.UI.Wpf.Controls

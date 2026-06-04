@@ -8,12 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Windows.Media;
-
 namespace Mosaic.UI.Wpf.Extensions
 {
     /// <summary>

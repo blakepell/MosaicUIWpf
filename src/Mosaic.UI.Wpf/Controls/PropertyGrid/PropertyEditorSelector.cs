@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
 
 namespace Mosaic.UI.Wpf.Controls
 {

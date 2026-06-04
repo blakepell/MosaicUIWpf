@@ -10,6 +10,8 @@
 
 global using Argus.Extensions;
 global using Argus.Memory;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using Mosaic.UI.Wpf.Extensions;
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel;
@@ -28,6 +30,3 @@ global using System.Windows.Controls;
 global using System.Windows.Input;
 global using System.Windows.Media;
 global using System.Windows.Threading;
-global using System.Xml;
-global using CommunityToolkit.Mvvm.ComponentModel;
-global using Mosaic.UI.Wpf.Extensions;

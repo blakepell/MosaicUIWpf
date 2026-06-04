@@ -8,10 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-
 namespace Mosaic.UI.Wpf.Behaviors
 {
     /// <summary>
@@ -47,7 +43,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         /// </summary>
         /// <param name="element">The <see cref="DependencyObject"/> for which to set the property value. Cannot be <see langword="null"/>.</param>
         /// <param name="value">The new value to set for the <see cref="IsModifiedProperty"/>.</param>
-        public static void SetIsModified(DependencyObject element, bool value) 
+        public static void SetIsModified(DependencyObject element, bool value)
             => element.SetValue(IsModifiedProperty, value);
 
         /// <summary>

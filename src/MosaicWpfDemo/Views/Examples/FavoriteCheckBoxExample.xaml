@@ -28,9 +28,9 @@
         <StackPanel Orientation="Horizontal">
             <controls:FavoriteCheckBox
                 Margin="0,0,8,0"
-                IsChecked="{Binding IsFavorite, Mode=TwoWay}"
-                HoverBrush="Pink"
                 CheckedBrush="Red"
+                HoverBrush="Pink"
+                IsChecked="{Binding IsFavorite, Mode=TwoWay}"
                 Symbol="&#x2665;"
                 SymbolSize="24" />
             <TextBlock VerticalAlignment="Center" Text="Heart favorite" />

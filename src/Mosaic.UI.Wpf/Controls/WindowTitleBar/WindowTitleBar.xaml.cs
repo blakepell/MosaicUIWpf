@@ -9,7 +9,6 @@
  */
 
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace Mosaic.UI.Wpf.Controls
 {

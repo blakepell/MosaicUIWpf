@@ -9,9 +9,7 @@
  */
 
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows.Data;
-using System.Windows.Input;
 
 // ReSharper disable CheckNamespace
 
@@ -232,7 +230,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         static ValidationSummaryPanel()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ValidationSummaryPanel), 
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ValidationSummaryPanel),
                 new FrameworkPropertyMetadata(typeof(ValidationSummaryPanel)));
         }
 
@@ -280,7 +278,7 @@ namespace Mosaic.UI.Wpf.Controls
         private FrameworkElement? FindParentContainer()
         {
             DependencyObject? current = this.Parent;
-            
+
             while (current != null)
             {
                 if (current is Panel or ContentControl or Window)
@@ -377,7 +375,7 @@ namespace Mosaic.UI.Wpf.Controls
                     foreach (var error in errors)
                     {
                         var propertyName = GetPropertyNameFromBinding(element, error);
-                        
+
                         Errors.Add(new ValidationError
                         {
                             Message = error.ErrorContent?.ToString() ?? "Validation error",
