@@ -336,6 +336,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  FavoriteCheckBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/favorite-48.png"
+                    Text="FavoriteCheckBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="FavoriteCheckBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.FavoriteCheckBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FavoriteCheckBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:FavoriteCheckBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FavoriteCheckBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/favorite-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  GravatarImage  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -31,6 +31,7 @@
 		<None Remove="Assets\drive-48.png" />
 		<None Remove="Assets\dropdown-field-48.png" />
 		<None Remove="Assets\edit-property-48.png" />
+		<None Remove="Assets\favorite-48.png" />
 		<None Remove="Assets\flip-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
@@ -90,6 +91,7 @@
 		<Resource Include="Assets\drive-48.png" />
 		<Resource Include="Assets\dropdown-field-48.png" />
 		<Resource Include="Assets\edit-property-48.png" />
+		<Resource Include="Assets\favorite-48.png" />
 		<Resource Include="Assets\flip-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
@@ -258,6 +260,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\EditableTextBlockExample.xaml.cs">
 			<Link>LinkedSources\EditableTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml">
+			<Link>LinkedSources\FavoriteCheckBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml.cs">
+			<Link>LinkedSources\FavoriteCheckBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">
@@ -500,5 +509,4 @@
 	</ItemGroup>
 
 </Project>
-
 
