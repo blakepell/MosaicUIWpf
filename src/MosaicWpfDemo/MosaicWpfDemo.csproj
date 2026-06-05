@@ -20,6 +20,7 @@
 		<None Remove="Assets\badge-48.png" />
 		<None Remove="Assets\black-and-white-48.png" />
 		<None Remove="Assets\bug-48.png" />
+		<None Remove="Assets\button-48.png" />
 		<None Remove="Assets\chat-48.png" />
 		<None Remove="Assets\checkbox-list-48.png" />
 		<None Remove="Assets\circle-48.png" />
@@ -79,6 +80,7 @@
 		<Resource Include="Assets\badge-48.png" />
 		<Resource Include="Assets\black-and-white-48.png" />
 		<Resource Include="Assets\bug-48.png" />
+		<Resource Include="Assets\button-48.png" />
 		<Resource Include="Assets\chat-48.png" />
 		<Resource Include="Assets\checkbox-list-48.png">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -178,6 +180,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\AdaptiveImageExample.xaml.cs">
 			<Link>LinkedSources\AdaptiveImageExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\AccentButtonExample.xaml">
+			<Link>LinkedSources\AccentButtonExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\AccentButtonExample.xaml.cs">
+			<Link>LinkedSources\AccentButtonExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml">

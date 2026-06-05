@@ -7,6 +7,16 @@
     <!--  MOSAIC CUSTOM COLORS  -->
     <Color x:Key="{x:Static themes:MosaicTheme.AccentColor}">#FF0078D7</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.AccentHoverColor}">#FF1E87E0</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentHoverBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentHoverColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.FluentGreenColor}">#FF13A10E</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.FluentGreenBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.FluentGreenHoverColor}">#FF22B01D</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.FluentGreenHoverBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenHoverColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.FluentRedColor}">#FFE74856</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.FluentRedBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentRedColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.FluentRedHoverColor}">#FFF1707A</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.FluentRedHoverBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentRedHoverColor}}" />
 
     <Color x:Key="{x:Static themes:MosaicTheme.AccentBorderColor}">#FF005A9E</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.AccentBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderColor}}" />

@@ -9,6 +9,16 @@
         // General Accents
         public static ComponentResourceKey AccentBrush { get; } = new(typeof(MosaicTheme), "AccentBrush");
         public static ComponentResourceKey AccentColor { get; } = new(typeof(MosaicTheme), "AccentColor");
+        public static ComponentResourceKey AccentHoverBrush { get; } = new(typeof(MosaicTheme), "AccentHoverBrush");
+        public static ComponentResourceKey AccentHoverColor { get; } = new(typeof(MosaicTheme), "AccentHoverColor");
+        public static ComponentResourceKey FluentGreenBrush { get; } = new(typeof(MosaicTheme), "FluentGreenBrush");
+        public static ComponentResourceKey FluentGreenColor { get; } = new(typeof(MosaicTheme), "FluentGreenColor");
+        public static ComponentResourceKey FluentGreenHoverBrush { get; } = new(typeof(MosaicTheme), "FluentGreenHoverBrush");
+        public static ComponentResourceKey FluentGreenHoverColor { get; } = new(typeof(MosaicTheme), "FluentGreenHoverColor");
+        public static ComponentResourceKey FluentRedBrush { get; } = new(typeof(MosaicTheme), "FluentRedBrush");
+        public static ComponentResourceKey FluentRedColor { get; } = new(typeof(MosaicTheme), "FluentRedColor");
+        public static ComponentResourceKey FluentRedHoverBrush { get; } = new(typeof(MosaicTheme), "FluentRedHoverBrush");
+        public static ComponentResourceKey FluentRedHoverColor { get; } = new(typeof(MosaicTheme), "FluentRedHoverColor");
 
         public static ComponentResourceKey AccentBorderBrush { get; } = new(typeof(MosaicTheme), "AccentBorderBrush");
         public static ComponentResourceKey AccentBorderColor { get; } = new(typeof(MosaicTheme), "AccentBorderColor");

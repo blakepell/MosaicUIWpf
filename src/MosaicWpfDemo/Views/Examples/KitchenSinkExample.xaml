@@ -32,7 +32,6 @@
             Grid.Row="1"
             VerticalAlignment="Top"
             Orientation="Vertical">
-
             <TextBlock
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

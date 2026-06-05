@@ -1,0 +1,153 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style x:Key="{x:Type controls:AccentButton}" TargetType="{x:Type controls:AccentButton}">
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="MinWidth" Value="72" />
+        <Setter Property="Padding" Value="10,3" />
+        <Setter Property="Background" Value="{DynamicResource Button.Static.Background}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:AccentButton}">
+                    <Border
+                        x:Name="PART_Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            Focusable="False"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource Button.Disabled.Background}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource Button.Disabled.Border}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Button.Disabled.Foreground}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="ThemeAccent" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentHoverBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="ThemeAccent" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="Gray" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="Gray" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBorderBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="FluentGreen" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenHoverBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="FluentGreen" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="FluentRed" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedHoverBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="AccentButtonType" Value="FluentRed" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </MultiTrigger>
+                        <Trigger Property="AccentButtonType" Value="Default">
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="AccentButtonType" Value="ThemeAccent">
+                <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </Trigger>
+            <Trigger Property="AccentButtonType" Value="Gray">
+                <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+            </Trigger>
+            <Trigger Property="AccentButtonType" Value="FluentGreen">
+                <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenBrush}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentGreenBrush}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </Trigger>
+            <Trigger Property="AccentButtonType" Value="FluentRed">
+                <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </Trigger>
+            <Trigger Property="AccentButtonType" Value="Default">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

@@ -120,6 +120,24 @@
 
                 <mosaic:SideMenuHeader Text="CONTROLS" />
 
+                <!--  AccentButton  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/button-48.png"
+                    Text="AccentButton">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="AccentButton" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AccentButtonExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AccentButtonExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AccentButton}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AccentButtonExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/button-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  AdaptiveImage  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
