@@ -57,6 +57,7 @@
 		<None Remove="Assets\text-48.png" />
 		<None Remove="Assets\toggle-48.png" />
 		<None Remove="Assets\toggle2-48.png" />
+		<None Remove="Assets\toolbox-48.png" />
 		<None Remove="Assets\typeahead-46.png" />
 		<None Remove="Assets\typing-48.png" />
 		<None Remove="Assets\vs-add-16.png" />
@@ -116,6 +117,7 @@
 		<Resource Include="Assets\text-48.png" />
 		<Resource Include="Assets\toggle-48.png" />
 		<Resource Include="Assets\toggle2-48.png" />
+		<Resource Include="Assets\toolbox-48.png" />
 		<Resource Include="Assets\typeahead-46.png" />
 		<Resource Include="Assets\typing-48.png" />
 		<Resource Include="Assets\vs-add-16.png" />
@@ -339,6 +341,13 @@
 			<Link>LinkedSources\SearchBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\NativeControlsExample.xaml">
+			<Link>LinkedSources\NativeControlsExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\NativeControlsExample.xaml.cs">
+			<Link>LinkedSources\NativeControlsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SplitButtonExample.xaml">
 			<Link>LinkedSources\SplitButtonExample.xaml</Link>
 		</EmbeddedResource>
@@ -509,4 +518,3 @@
 	</ItemGroup>
 
 </Project>
-
