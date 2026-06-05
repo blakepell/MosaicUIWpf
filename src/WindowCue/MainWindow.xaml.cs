@@ -321,4 +321,3 @@ namespace WindowCue
         }
     }
 }
-

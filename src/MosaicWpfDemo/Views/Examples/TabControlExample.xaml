@@ -8,9 +8,15 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <mosaic:TabControl Margin="0,10,0,0" ActiveIndicatorPlacement="Bottom">
+    <mosaic:TabControl
+        Margin="0,10,0,0"
+        ActiveIndicatorPlacement="Bottom"
+        EnableDragAndDropReordering="True">
         <mosaic:TabItem Header="Tab 1">
-            <TextBlock Margin="5" Text="This is the content of tab 1." />
+            <StackPanel Orientation="Vertical">
+                <TextBlock Margin="5,5,5,5" Text="This is the content of tab 1. With the EnableDragAndDropReordering " />
+                <TextBlock Margin="5,0,5,5" Text="property you can re-order Tab 1 and Tab 2 by dragging and dropping."></TextBlock>
+            </StackPanel>
         </mosaic:TabItem>
         <mosaic:TabItem Header="Tab 2">
             <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">

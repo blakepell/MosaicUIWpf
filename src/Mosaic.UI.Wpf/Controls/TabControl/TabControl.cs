@@ -44,9 +44,44 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(ActiveIndicatorPlacementProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="EnableDragAndDropReordering"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EnableDragAndDropReorderingProperty = DependencyProperty.Register(
+            nameof(EnableDragAndDropReordering), typeof(bool), typeof(TabControl), new FrameworkPropertyMetadata(false, OnEnableDragAndDropReorderingChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether tab items can be reordered by dragging and dropping them.
+        /// </summary>
+        public bool EnableDragAndDropReordering
+        {
+            get => (bool)GetValue(EnableDragAndDropReorderingProperty);
+            set => SetValue(EnableDragAndDropReorderingProperty, value);
+        }
+
         static TabControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TabControl), new FrameworkPropertyMetadata(typeof(TabControl)));
+        }
+
+        /// <summary>
+        /// Applies the drag-and-drop attached properties when the reordering setting changes.
+        /// </summary>
+        private static void OnEnableDragAndDropReorderingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is TabControl tabControl)
+            {
+                ApplyDragAndDropReordering(tabControl, (bool)e.NewValue);
+            }
+        }
+
+        /// <summary>
+        /// Enables or disables Gong drag-drop reordering for the tab control.
+        /// </summary>
+        private static void ApplyDragAndDropReordering(TabControl tabControl, bool enable)
+        {
+            GongSolutions.Wpf.DragDrop.DragDrop.SetIsDragSource(tabControl, enable);
+            GongSolutions.Wpf.DragDrop.DragDrop.SetIsDropTarget(tabControl, enable);
         }
     }
 
