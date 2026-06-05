@@ -96,6 +96,8 @@ For a complete wiring example, see `MosaicTemplateApp` in the repository.
 
 ![Dark Theme](./docs/images/screen-chat1.png)
 
+![VT52 Terminal with Green Phosphor Effect](./docs/images/vt52.png)
+
 ## Light Theme
 
 ![Light Theme](./docs/images/screen-property-grid.png)
