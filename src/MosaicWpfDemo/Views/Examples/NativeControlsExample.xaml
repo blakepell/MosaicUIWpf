@@ -49,16 +49,28 @@
             </mosaic:SettingsItem>
 
             <mosaic:SettingsItem Title="ListView" Description="Native list view template." IconSource="../../Assets/toolbox-48.png">
-                <ListView Width="220" Height="120">
-                    <ListViewItem>
-                        <TextBlock Text="Item 1" />
-                    </ListViewItem>
-                    <ListViewItem>
-                        <TextBlock Text="Item 2" />
-                    </ListViewItem>
-                    <ListViewItem>
-                        <TextBlock Text="Item 3" />
-                    </ListViewItem>
+                <ListView Width="260" Height="120">
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridViewColumn Width="120" Header="Name">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="120" Header="State">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=Content}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListViewItem Content="Item 1" />
+                    <ListViewItem Content="Item 2" />
+                    <ListViewItem Content="Item 3" />
                 </ListView>
             </mosaic:SettingsItem>
 
