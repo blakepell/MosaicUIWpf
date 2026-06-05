@@ -40,7 +40,7 @@
 
         // Window
         public static ComponentResourceKey WindowBackgroundBrush { get; } = new(typeof(MosaicTheme), "WindowBackgroundBrush");
-        public static ComponentResourceKey WindowBackgroundColor{ get; } = new(typeof(MosaicTheme), "WindowBackgroundColor");
+        public static ComponentResourceKey WindowBackgroundColor { get; } = new(typeof(MosaicTheme), "WindowBackgroundColor");
         public static ComponentResourceKey WindowForegroundBrush { get; } = new(typeof(MosaicTheme), "WindowForegroundBrush");
         public static ComponentResourceKey WindowForegroundColor { get; } = new(typeof(MosaicTheme), "WindowForegroundColor");
 
@@ -56,7 +56,7 @@
 
         public static ComponentResourceKey ControlBorderBrush { get; } = new(typeof(MosaicTheme), "ControlBorderBrush");
         public static ComponentResourceKey ControlBorderColor { get; } = new(typeof(MosaicTheme), "ControlBorderColor");
-        
+
         public static ComponentResourceKey ControlSelectedBorderBrush { get; } = new(typeof(MosaicTheme), "ControlSelectedBorderBrush");
         public static ComponentResourceKey ControlSelectedBorderColor { get; } = new(typeof(MosaicTheme), "ControlSelectedBorderColor");
 
@@ -106,10 +106,10 @@
 
         public static ComponentResourceKey TabItemBackgroundBrush { get; } = new(typeof(MosaicTheme), "TabItemBackgroundBrush");
         public static ComponentResourceKey TabItemBackgroundColor { get; } = new(typeof(MosaicTheme), "TabItemBackgroundColor");
-        
+
         public static ComponentResourceKey TabItemBorderBrush { get; } = new(typeof(MosaicTheme), "TabItemBorderBrush");
         public static ComponentResourceKey TabItemBorderColor { get; } = new(typeof(MosaicTheme), "TabItemBorderColor");
-        
+
         public static ComponentResourceKey TabItemForegroundBrush { get; } = new(typeof(MosaicTheme), "TabItemForegroundBrush");
         public static ComponentResourceKey TabItemForegroundColor { get; } = new(typeof(MosaicTheme), "TabItemForegroundColor");
 
