@@ -10,6 +10,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ListView.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/GroupBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ToolBar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TreeView.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/CheckBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Menu.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Separator.xaml" />

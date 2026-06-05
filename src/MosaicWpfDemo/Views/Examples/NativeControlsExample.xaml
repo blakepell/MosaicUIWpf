@@ -96,6 +96,32 @@
             </mosaic:SettingsItem>
 
             <mosaic:SettingsItem
+                Title="TreeView"
+                Description="Native tree view template with sample nested data."
+                IconSource="../../Assets/toolbox-48.png">
+                <TreeView Width="240" Height="150">
+                    <TreeViewItem Header="Projects" IsExpanded="True">
+                        <TreeViewItem Header="Mosaic UI WPF" IsExpanded="True">
+                            <TreeViewItem Header="Controls" />
+                            <TreeViewItem Header="Themes" />
+                            <TreeViewItem Header="Docs" />
+                        </TreeViewItem>
+                        <TreeViewItem Header="MosaicWpfDemo">
+                            <TreeViewItem Header="Views" />
+                            <TreeViewItem Header="Assets" />
+                        </TreeViewItem>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Personal" IsExpanded="True">
+                        <TreeViewItem Header="Ideas" />
+                        <TreeViewItem Header="Backlog">
+                            <TreeViewItem Header="TreeView native template" />
+                            <TreeViewItem Header="Settings page polish" />
+                        </TreeViewItem>
+                    </TreeViewItem>
+                </TreeView>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
                 Title="Menu"
                 Description="Native menu template."
                 IconSource="../../Assets/toolbox-48.png">

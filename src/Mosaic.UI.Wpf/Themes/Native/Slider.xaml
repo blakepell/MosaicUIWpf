@@ -1,20 +1,18 @@
-<!-- https://github.com/WPFDevelopersOrg/WPFDevelopers/blob/master/src/WPFDevelopers.Shared/Styles/Styles.Slider.xaml -->
+<!--  https://github.com/WPFDevelopersOrg/WPFDevelopers/blob/master/src/WPFDevelopers.Shared/Styles/Styles.Slider.xaml  -->
 <ResourceDictionary
-         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
-         xmlns:common="clr-namespace:Mosaic.UI.Wpf.Common"
-         xmlns:convert="clr-namespace:Mosaic.UI.Wpf.Converters"
-         xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
-         xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="clr-namespace:Mosaic.UI.Wpf.Common"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:convert="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Animations.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <convert:CornerRadiusToSurroundConverter x:Key="CornerRadiusToSurroundConverter" />
     <system:Double x:Key="RepeatButtonSize">6</system:Double>
-    <Style
-        x:Key="SliderThumbStyle"
-        TargetType="{x:Type Thumb}">
+    <Style x:Key="SliderThumbStyle" TargetType="{x:Type Thumb}">
         <Setter Property="Width" Value="12" />
         <Setter Property="Height" Value="12" />
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
@@ -74,9 +72,7 @@
         </Setter>
     </Style>
 
-    <Style
-        x:Key="SliderRepeatButtonStyle"
-        TargetType="{x:Type controls:SliderRepeatButton}">
+    <Style x:Key="SliderRepeatButtonStyle" TargetType="{x:Type controls:SliderRepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
@@ -139,7 +135,10 @@
                     Placement="Bottom"
                     Visibility="Collapsed" />
 
-                <Track x:Name="PART_Track" Grid.Row="1" Margin="6,1,6,1">
+                <Track
+                    x:Name="PART_Track"
+                    Grid.Row="1"
+                    Margin="6,1,6,1">
                     <Track.DecreaseRepeatButton>
                         <controls:SliderRepeatButton
                             Height="{StaticResource RepeatButtonSize}"
@@ -214,7 +213,10 @@
                     Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                     Placement="Right"
                     Visibility="Collapsed" />
-                <Track x:Name="PART_Track" Grid.Column="1" Margin="1,0,1,0">
+                <Track
+                    x:Name="PART_Track"
+                    Grid.Column="1"
+                    Margin="1,0,1,0">
                     <Track.DecreaseRepeatButton>
                         <controls:SliderRepeatButton
                             Width="{StaticResource RepeatButtonSize}"
@@ -255,9 +257,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style
-        x:Key="DefaultSlider"
-        TargetType="{x:Type Slider}">
+    <Style x:Key="DefaultSlider" TargetType="{x:Type Slider}">
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
         <Setter Property="IsMoveToPointEnabled" Value="True" />
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
