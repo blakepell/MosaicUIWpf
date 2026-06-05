@@ -91,6 +91,66 @@ namespace Mosaic.UI.Wpf.Controls
     public class TabItem : System.Windows.Controls.TabItem
     {
         /// <summary>
+        /// Identifies the <see cref="HeaderFontSize"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderFontSizeProperty = DependencyProperty.Register(
+            nameof(HeaderFontSize), typeof(double), typeof(TabItem), new FrameworkPropertyMetadata(14d, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Gets or sets the font size used by the tab header.
+        /// </summary>
+        public double HeaderFontSize
+        {
+            get => (double)GetValue(HeaderFontSizeProperty);
+            set => SetValue(HeaderFontSizeProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="HeaderFontFamily"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderFontFamilyProperty = DependencyProperty.Register(
+            nameof(HeaderFontFamily), typeof(FontFamily), typeof(TabItem), new FrameworkPropertyMetadata(new FontFamily("Segoe UI"), FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Gets or sets the font family used by the tab header.
+        /// </summary>
+        public FontFamily HeaderFontFamily
+        {
+            get => (FontFamily)GetValue(HeaderFontFamilyProperty);
+            set => SetValue(HeaderFontFamilyProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="HeaderFontStyle"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderFontStyleProperty = DependencyProperty.Register(
+            nameof(HeaderFontStyle), typeof(FontStyle), typeof(TabItem), new FrameworkPropertyMetadata(FontStyles.Normal, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Gets or sets the font style used by the tab header.
+        /// </summary>
+        public FontStyle HeaderFontStyle
+        {
+            get => (FontStyle)GetValue(HeaderFontStyleProperty);
+            set => SetValue(HeaderFontStyleProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="HeaderFontWeight"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderFontWeightProperty = DependencyProperty.Register(
+            nameof(HeaderFontWeight), typeof(FontWeight), typeof(TabItem), new FrameworkPropertyMetadata(FontWeights.Bold, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Gets or sets the font weight used by the tab header.
+        /// </summary>
+        public FontWeight HeaderFontWeight
+        {
+            get => (FontWeight)GetValue(HeaderFontWeightProperty);
+            set => SetValue(HeaderFontWeightProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the ActiveIndicatorPlacement dependency property, which determines the placement of the active
         /// indicator within a <see cref="TabItem"/>.
         /// </summary>

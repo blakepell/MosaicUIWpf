@@ -67,6 +67,10 @@
                                         Margin="15,6,15,6"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        TextElement.FontFamily="{TemplateBinding HeaderFontFamily}"
+                                        TextElement.FontSize="{TemplateBinding HeaderFontSize}"
+                                        TextElement.FontStyle="{TemplateBinding HeaderFontStyle}"
+                                        TextElement.FontWeight="{TemplateBinding HeaderFontWeight}"
                                         ContentSource="Header" />
                                 </StackPanel>
                             </Border>
@@ -113,12 +117,6 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="True">
-                            <Setter TargetName="ContentSite" Property="TextElement.FontFamily" Value="Segoe UI" />
-                            <Setter TargetName="ContentSite" Property="TextElement.FontSize" Value="14" />
-                            <Setter TargetName="ContentSite" Property="TextElement.FontWeight" Value="Bold" />
-                        </Trigger>
-
                         <!--  Handle indicator placement  -->
                         <Trigger Property="ActiveIndicatorPlacement" Value="Top">
                             <Setter TargetName="TopSelectionIndicator" Property="Visibility" Value="Visible" />
