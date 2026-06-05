@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:System="clr-namespace:System;assembly=System.Runtime"
+    xmlns:common="clr-namespace:Mosaic.UI.Wpf.Common;assembly=Mosaic.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
@@ -99,7 +100,10 @@
                 Title="TreeView"
                 Description="Native tree view template with sample nested data."
                 IconSource="../../Assets/toolbox-48.png">
-                <TreeView Width="240" Height="150">
+                <TreeView
+                    Width="240"
+                    Height="150"
+                    common:TreeViewHelper.IsExpansionAnimation="True">
                     <TreeViewItem Header="Projects" IsExpanded="True">
                         <TreeViewItem Header="Mosaic UI WPF" IsExpanded="True">
                             <TreeViewItem Header="Controls" />
@@ -119,6 +123,7 @@
                         </TreeViewItem>
                     </TreeViewItem>
                 </TreeView>
+
             </mosaic:SettingsItem>
 
             <mosaic:SettingsItem

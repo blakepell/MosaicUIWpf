@@ -27,6 +27,16 @@ namespace Mosaic.UI.Wpf.Common
                 new FrameworkPropertyMetadata(false));
 
         /// <summary>
+        /// Identifies the attached property that enables expand and collapse animation integration.
+        /// </summary>
+        public static readonly DependencyProperty IsExpansionAnimationProperty =
+            DependencyProperty.RegisterAttached(
+                "IsExpansionAnimation",
+                typeof(bool),
+                typeof(TreeViewHelper),
+                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
+
+        /// <summary>
         /// Gets the scroll animation setting.
         /// </summary>
         /// <param name="obj">The object that owns the attached property.</param>
@@ -44,6 +54,26 @@ namespace Mosaic.UI.Wpf.Common
         public static void SetIsScrollAnimation(DependencyObject obj, object value)
         {
             obj.SetValue(IsScrollAnimationProperty, value);
+        }
+
+        /// <summary>
+        /// Sets a value that indicates whether expand and collapse animation is enabled.
+        /// </summary>
+        /// <param name="obj">The object that owns the attached property.</param>
+        /// <param name="value"><see langword="true" /> to enable animation; otherwise, <see langword="false" />.</param>
+        public static void SetIsExpansionAnimation(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsExpansionAnimationProperty, value);
+        }
+
+        /// <summary>
+        /// Gets a value that indicates whether expand and collapse animation is enabled.
+        /// </summary>
+        /// <param name="obj">The object that owns the attached property.</param>
+        /// <returns><see langword="true" /> if animation is enabled; otherwise, <see langword="false" />.</returns>
+        public static bool GetIsExpansionAnimation(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsExpansionAnimationProperty);
         }
 
         /// <summary>

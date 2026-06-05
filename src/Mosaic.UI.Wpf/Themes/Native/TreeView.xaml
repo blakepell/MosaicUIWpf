@@ -179,15 +179,7 @@
                         </Border>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ExpansionStates">
-                                <VisualState x:Name="Expanded">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="PART_ItemsHost"
-                                            Storyboard.TargetProperty="(Border.RenderTransform).(ScaleTransform.ScaleY)"
-                                            To="1"
-                                            Duration="00:00:.2" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Expanded" />
                                 <VisualState x:Name="Collapsed" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
@@ -199,10 +191,45 @@
                         </Trigger>
                         <Trigger Property="IsExpanded" Value="False">
                             <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_ItemsHost" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleY="0" />
+                                </Setter.Value>
+                            </Setter>
                         </Trigger>
                         <Trigger Property="HasItems" Value="False">
                             <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsExpanded" Value="True" />
+                                <Condition Property="helpers:TreeViewHelper.IsExpansionAnimation" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_ItemsHost" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleY="1" />
+                                </Setter.Value>
+                            </Setter>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsExpanded" Value="True" />
+                                <Condition Property="helpers:TreeViewHelper.IsExpansionAnimation" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="PART_ItemsHost"
+                                            Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                            To="1"
+                                            Duration="00:00:.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.EnterActions>
+                        </MultiTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
                             <Setter TargetName="PART_Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
