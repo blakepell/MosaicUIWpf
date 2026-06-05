@@ -15,5 +15,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Separator.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DatePicker.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Calendar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/RadioButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
