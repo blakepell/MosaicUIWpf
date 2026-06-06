@@ -880,6 +880,24 @@
 
                 <mosaic:SideMenuHeader Text="BEHAVIORS" />
 
+                <!--  Button Open Context Menu  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/button-48.png"
+                    Text="Button Open Context Menu">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Button Open Context Menu" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ButtonOpenContextMenuExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ButtonOpenContextMenuExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:OpenContextMenuBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ButtonOpenContextMenuExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/button-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Blinking Behavior  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

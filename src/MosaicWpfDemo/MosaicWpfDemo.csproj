@@ -144,6 +144,13 @@
 			<Link>LinkedSources\DebugExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ButtonOpenContextMenuExample.xaml">
+			<Link>LinkedSources\ButtonOpenContextMenuExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ButtonOpenContextMenuExample.xaml.cs">
+			<Link>LinkedSources\ButtonOpenContextMenuExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\BlinkingBehaviorExample.xaml">
 			<Link>LinkedSources\BlinkingBehaviorExample.xaml</Link>
 		</EmbeddedResource>
