@@ -70,9 +70,9 @@
                         Text="Kitchen Sink Example page" />
                     <!--  Blank example surface: add controls here  -->
                     <Border
+                        Width="500"
                         MinHeight="300"
                         Padding="6"
-                        Width="500"
                         Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                         BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1"

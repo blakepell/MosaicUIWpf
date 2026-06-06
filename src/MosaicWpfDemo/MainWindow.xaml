@@ -2,6 +2,7 @@
     x:Class="WpfDemo.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
@@ -878,6 +879,24 @@
                 </mosaic:SideMenuItem>
 
                 <mosaic:SideMenuHeader Text="BEHAVIORS" />
+
+                <!--  TextBox Behaviors  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/text-48.png"
+                    Text="TextBox Behaviors">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="TextBox Behaviors" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.TextBoxBehaviorsExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.TextBoxBehaviorsExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:TextBoxCopyBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TextBoxBehaviorsExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
 
                 <!--  VT Terminal  -->
                 <mosaic:SideMenuItem

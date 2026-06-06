@@ -336,6 +336,13 @@
 			<Link>LinkedSources\TabControlExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\TextBoxBehaviorsExample.xaml">
+			<Link>LinkedSources\TextBoxBehaviorsExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\TextBoxBehaviorsExample.xaml.cs">
+			<Link>LinkedSources\TextBoxBehaviorsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\TypingProgressExample.xaml">
 			<Link>LinkedSources\TypingProgressExample.xaml</Link>
 		</EmbeddedResource>

@@ -67,11 +67,11 @@
                                         Margin="15,6,15,6"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        ContentSource="Header"
                                         TextElement.FontFamily="{TemplateBinding HeaderFontFamily}"
                                         TextElement.FontSize="{TemplateBinding HeaderFontSize}"
                                         TextElement.FontStyle="{TemplateBinding HeaderFontStyle}"
-                                        TextElement.FontWeight="{TemplateBinding HeaderFontWeight}"
-                                        ContentSource="Header" />
+                                        TextElement.FontWeight="{TemplateBinding HeaderFontWeight}" />
                                 </StackPanel>
                             </Border>
 
