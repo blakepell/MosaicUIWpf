@@ -35,6 +35,7 @@
 		<None Remove="Assets\edit-property-48.png" />
 		<None Remove="Assets\favorite-48.png" />
 		<None Remove="Assets\flip-48.png" />
+		<None Remove="Assets\folder2-open-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
 		<None Remove="Assets\labeled-separator-96.png" />
@@ -100,6 +101,7 @@
 		<Resource Include="Assets\edit-property-48.png" />
 		<Resource Include="Assets\favorite-48.png" />
 		<Resource Include="Assets\flip-48.png" />
+		<Resource Include="Assets\folder2-open-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
 		<Resource Include="Assets\labeled-separator-96.png" />
@@ -172,6 +174,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\GridViewBehaviorsExample.xaml.cs">
 			<Link>LinkedSources\GridViewBehaviorsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\OpenWindowBehaviorExample.xaml">
+			<Link>LinkedSources\OpenWindowBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\OpenWindowBehaviorExample.xaml.cs">
+			<Link>LinkedSources\OpenWindowBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml">

@@ -1006,6 +1006,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  OpenWindow Behavior  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/folder2-open-48.png"
+                    Text="OpenWindowBehavior">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="OpenWindowBehavior" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.OpenWindowBehaviorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.OpenWindowBehaviorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:OpenWindowBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:OpenWindowBehaviorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/home-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TextBox Behaviors  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
