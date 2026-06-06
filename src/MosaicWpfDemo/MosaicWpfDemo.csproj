@@ -15,6 +15,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Assets\app-two-pane-48.png" />
+		<None Remove="Assets\arrow-down-48.png" />
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
 		<None Remove="Assets\badge-48.png" />
@@ -64,6 +65,7 @@
 		<None Remove="Assets\vs-add-16.png" />
 		<None Remove="Assets\warning-48.png" />
 		<None Remove="Assets\Xml.Dark.xshd" />
+		<None Remove="Assets\zoom-in-48.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Assets\app.ico" />
@@ -75,6 +77,7 @@
 
 	<ItemGroup>
 		<Resource Include="Assets\app-two-pane-48.png" />
+		<Resource Include="Assets\arrow-down-48.png" />
 		<Resource Include="Assets\avatar-48.png" />
 		<Resource Include="Assets\avatar.jpg" />
 		<Resource Include="Assets\badge-48.png" />
@@ -131,6 +134,7 @@
 		<EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
 		<Resource Include="Assets\panel-right-48.png" />
 		<Resource Include="Assets\panel-right-96.png" />
+		<Resource Include="Assets\zoom-in-48.png" />
 		<EmbeddedResource Include="Assets\Xml.Dark.xshd" />
 
 		<EmbeddedResource Include="Views\Examples\DebugExample.xaml">
@@ -215,6 +219,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\BadgeExample.xaml.cs">
 			<Link>LinkedSources\BadgeExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ItemsAutoScrollBehaviorExample.xaml">
+			<Link>LinkedSources\ItemsAutoScrollBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ItemsAutoScrollBehaviorExample.xaml.cs">
+			<Link>LinkedSources\ItemsAutoScrollBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\FontZoomExample.xaml">
