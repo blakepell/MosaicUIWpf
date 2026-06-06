@@ -158,6 +158,13 @@
 			<Link>LinkedSources\BlinkingBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\FocusBehaviorExample.xaml">
+			<Link>LinkedSources\FocusBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FocusBehaviorExample.xaml.cs">
+			<Link>LinkedSources\FocusBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml">
 			<Link>LinkedSources\AsteriskTextBlockExample.xaml</Link>
 		</EmbeddedResource>

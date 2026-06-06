@@ -1,0 +1,67 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.FocusBehaviorExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="Control that receives focus on load" />
+
+            <Border
+                Padding="12"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel>
+                    <TextBlock Margin="0,0,0,8" Text="The TextBox below gets focus as soon as the page loads." />
+                    <TextBox
+                        x:Name="FocusTextBox"
+                        Margin="0,0,0,8"
+                        Padding="6"
+                        Text="I should have focus when the demo opens.">
+                        <i:Interaction.Behaviors>
+                            <mosaic:FocusBehavior />
+                        </i:Interaction.Behaviors>
+                    </TextBox>
+                    <TextBlock
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}"
+                        TextWrapping="Wrap"
+                        Text="The caret should appear here without a click." />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="A comparison control without the behavior" />
+
+            <Border
+                Padding="12"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel>
+                    <TextBox Margin="0,0,0,8" Padding="6" Text="This box does not auto-focus." />
+                    <TextBlock
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}"
+                        TextWrapping="Wrap"
+                        Text="Click in this box to compare the difference." />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>
