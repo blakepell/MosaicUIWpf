@@ -1,0 +1,31 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.CloseWindowOnEscapeExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="12">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock
+                Margin="0,0,0,8"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="CloseWindowOnEscape" />
+
+            <TextBlock
+                Margin="0,0,0,16"
+                Text="Click the button to open a window, then press Escape to close it."
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+
+            <Button
+                Padding="12,8"
+                HorizontalAlignment="Center"
+                Click="OpenWindowButton_Click"
+                Content="Open window" />
+        </StackPanel>
+    </Grid>
+</UserControl>

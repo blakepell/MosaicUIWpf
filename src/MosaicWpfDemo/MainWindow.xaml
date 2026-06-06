@@ -1024,6 +1024,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  CloseWindowOnEscape Behavior  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/folder2-open-48.png"
+                    Text="CloseWindowOnEscape">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="CloseWindowOnEscape" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.CloseWindowOnEscapeExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.CloseWindowOnEscapeExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:CloseWindowOnEscapeBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:CloseWindowOnEscapeExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/folder2-open-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TextBox Behaviors  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
