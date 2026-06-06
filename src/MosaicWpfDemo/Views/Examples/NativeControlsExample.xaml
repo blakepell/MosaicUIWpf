@@ -103,7 +103,7 @@
                 <TreeView
                     Width="240"
                     Height="150"
-                    common:TreeViewHelper.IsExpansionAnimation="True">
+                    common:TreeViewHelper.IsExpansionAnimation="False">
                     <TreeViewItem Header="Projects" IsExpanded="True">
                         <TreeViewItem Header="Mosaic UI WPF" IsExpanded="True">
                             <TreeViewItem Header="Controls" />
@@ -222,6 +222,19 @@
                     <Button Content="Save" />
                 </ToolBar>
             </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="Progress Bar"
+                Description="The WPF progress bar"
+                IconSource="../../Assets/toolbox-48.png">
+                <ProgressBar
+                    Width="200"
+                    Height="20"
+                    Maximum="100"
+                    Minimum="0"
+                    Value="50" />
+            </mosaic:SettingsItem>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>
