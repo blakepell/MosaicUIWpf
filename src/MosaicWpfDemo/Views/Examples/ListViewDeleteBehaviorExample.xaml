@@ -1,0 +1,50 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ListViewDeleteBehaviorExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock
+                Margin="0,0,0,8"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="ListView Delete Behavior" />
+            <TextBlock Text="Select one or more items and press Delete to remove them. Confirm delete is enabled in this demo." TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Border
+            Grid.Row="2"
+            Padding="12"
+            Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"
+            BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+            BorderThickness="1"
+            CornerRadius="4">
+            <ListView x:Name="ItemsListView" ItemsSource="{Binding Items}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn
+                            Width="240"
+                            DisplayMemberBinding="{Binding}"
+                            Header="Item" />
+                    </GridView>
+                </ListView.View>
+                <i:Interaction.Behaviors>
+                    <behaviors:ListViewDeleteBehavior ConfirmDelete="True" />
+                </i:Interaction.Behaviors>
+            </ListView>
+        </Border>
+    </Grid>
+</UserControl>

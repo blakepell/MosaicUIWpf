@@ -40,6 +40,7 @@
 		<None Remove="Assets\labeled-separator-96.png" />
 		<None Remove="Assets\link-48.png" />
 		<None Remove="Assets\list-48.png" />
+		<None Remove="Assets\list-remove.96.png" />
 		<None Remove="Assets\numbers-input-48.png" />
 		<None Remove="Assets\panel-right-48.png" />
 		<None Remove="Assets\panel-right-96.png" />
@@ -104,6 +105,7 @@
 		<Resource Include="Assets\labeled-separator-96.png" />
 		<Resource Include="Assets\link-48.png" />
 		<Resource Include="Assets\list-48.png" />
+		<Resource Include="Assets\list-remove.96.png" />
 		<Resource Include="Assets\numbers-input-48.png" />
 		<Resource Include="Assets\password-48.png" />
 		<Resource Include="Assets\password-lock-48.png" />
@@ -254,6 +256,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\ItemsAutoScrollBehaviorExample.xaml.cs">
 			<Link>LinkedSources\ItemsAutoScrollBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ListViewDeleteBehaviorExample.xaml">
+			<Link>LinkedSources\ListViewDeleteBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ListViewDeleteBehaviorExample.xaml.cs">
+			<Link>LinkedSources\ListViewDeleteBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\FontZoomExample.xaml">

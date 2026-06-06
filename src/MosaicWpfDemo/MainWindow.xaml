@@ -970,6 +970,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ListView Delete Behavior  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/list-remove.96.png"
+                    Text="ListView Delete Behavior">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ListView Delete Behavior" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ListViewDeleteBehaviorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ListViewDeleteBehaviorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:ListViewDeleteBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ListViewDeleteBehaviorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/list-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Font Zoom  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
