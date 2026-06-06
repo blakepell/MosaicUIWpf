@@ -9,6 +9,8 @@
  */
 
 using Microsoft.Xaml.Behaviors;
+using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -83,6 +85,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             _searchTimer.Tick += SearchTimer_Tick;
 
             AssociatedObject.TextChanged += SearchBox_TextChanged;
+            AssociatedObject.Loaded += SearchBox_Loaded;
         }
 
         /// <summary>
@@ -92,6 +95,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         {
             base.OnDetaching();
 
+            AssociatedObject.Loaded -= SearchBox_Loaded;
             AssociatedObject.TextChanged -= SearchBox_TextChanged;
 
             if (_searchTimer == null)
@@ -101,6 +105,11 @@ namespace Mosaic.UI.Wpf.Behaviors
 
             _searchTimer.Tick -= SearchTimer_Tick;
             _searchTimer.Stop();
+        }
+
+        private void SearchBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            ApplyFilter();
         }
 
         /// <summary>
@@ -123,7 +132,11 @@ namespace Mosaic.UI.Wpf.Behaviors
         private void SearchTimer_Tick(object? sender, EventArgs e)
         {
             _searchTimer?.Stop();
+            ApplyFilter();
+        }
 
+        private void ApplyFilter()
+        {
             if (TargetDataGrid == null)
             {
                 return;
@@ -150,15 +163,52 @@ namespace Mosaic.UI.Wpf.Behaviors
                     return false;
                 }
 
-                string? fieldSearch = item.ToString();
-
-                if (string.IsNullOrWhiteSpace(fieldSearch))
+                if (string.IsNullOrWhiteSpace(searchText))
                 {
-                    return false;
+                    return true;
                 }
 
-                return fieldSearch.Contains(searchText, StringComparison.OrdinalIgnoreCase);
+                if (ContainsSearchText(item, searchText))
+                {
+                    return true;
+                }
+
+                foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(item))
+                {
+                    object? value;
+
+                    try
+                    {
+                        value = property.GetValue(item);
+                    }
+                    catch
+                    {
+                        // A failing property getter should not prevent the remaining
+                        // displayed row values from participating in the filter.
+                        continue;
+                    }
+
+                    if (ContainsSearchText(value, searchText))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             };
+        }
+
+        private static bool ContainsSearchText(object? value, string searchText)
+        {
+            if (value == null)
+            {
+                return false;
+            }
+
+            string? text = Convert.ToString(value, CultureInfo.CurrentCulture);
+
+            return !string.IsNullOrWhiteSpace(text)
+                && text.Contains(searchText, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }
