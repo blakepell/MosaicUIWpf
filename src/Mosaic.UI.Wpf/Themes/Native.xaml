@@ -18,5 +18,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Calendar.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/RadioButton.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Slider.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DataGrid.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
