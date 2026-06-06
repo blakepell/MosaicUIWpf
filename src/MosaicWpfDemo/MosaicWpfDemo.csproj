@@ -141,6 +141,13 @@
 		<Resource Include="Assets\zoom-in-48.png" />
 		<EmbeddedResource Include="Assets\Xml.Dark.xshd" />
 
+		<EmbeddedResource Include="Views\Examples\DataGridBehaviorsExample.xaml">
+			<Link>LinkedSources\DataGridBehaviorsExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\DataGridBehaviorsExample.xaml.cs">
+			<Link>LinkedSources\DataGridBehaviorsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\DebugExample.xaml">
 			<Link>LinkedSources\DebugExample.xaml</Link>
 		</EmbeddedResource>

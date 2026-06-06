@@ -1042,6 +1042,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  DataGrid Behaviors  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/search-48.png"
+                    Text="DataGrid Behaviors">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="DataGrid Behaviors" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DataGridBehaviorsExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DataGridBehaviorsExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:DataGridFilterBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DataGridBehaviorsExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/search-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TextBox Behaviors  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
