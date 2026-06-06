@@ -934,6 +934,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  GridView Behaviors  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/list-48.png"
+                    Text="GridView Behaviors">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="GridView Behaviors" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.GridViewBehaviorsExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.GridViewBehaviorsExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:GridViewSortBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:GridViewBehaviorsExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/list-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Items Auto Scroll Behavior  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

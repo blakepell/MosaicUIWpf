@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -18,7 +18,10 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0">
-            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="Control that receives focus on load" />
+            <TextBlock
+                Margin="0,0,0,8"
+                FontWeight="SemiBold"
+                Text="Control that receives focus on load" />
 
             <Border
                 Padding="12"
@@ -39,14 +42,17 @@
                     </TextBox>
                     <TextBlock
                         Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}"
-                        TextWrapping="Wrap"
-                        Text="The caret should appear here without a click." />
+                        Text="The caret should appear here without a click."
+                        TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </StackPanel>
 
         <StackPanel Grid.Column="2">
-            <TextBlock Margin="0,0,0,8" FontWeight="SemiBold" Text="A comparison control without the behavior" />
+            <TextBlock
+                Margin="0,0,0,8"
+                FontWeight="SemiBold"
+                Text="A comparison control without the behavior" />
 
             <Border
                 Padding="12"
@@ -55,11 +61,14 @@
                 BorderThickness="1"
                 CornerRadius="4">
                 <StackPanel>
-                    <TextBox Margin="0,0,0,8" Padding="6" Text="This box does not auto-focus." />
+                    <TextBox
+                        Margin="0,0,0,8"
+                        Padding="6"
+                        Text="This box does not auto-focus." />
                     <TextBlock
                         Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}"
-                        TextWrapping="Wrap"
-                        Text="Click in this box to compare the difference." />
+                        Text="Click in this box to compare the difference."
+                        TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
         </StackPanel>

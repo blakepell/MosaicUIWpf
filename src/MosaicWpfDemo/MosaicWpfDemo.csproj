@@ -165,6 +165,13 @@
 			<Link>LinkedSources\FocusBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\GridViewBehaviorsExample.xaml">
+			<Link>LinkedSources\GridViewBehaviorsExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\GridViewBehaviorsExample.xaml.cs">
+			<Link>LinkedSources\GridViewBehaviorsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml">
 			<Link>LinkedSources\AsteriskTextBlockExample.xaml</Link>
 		</EmbeddedResource>
