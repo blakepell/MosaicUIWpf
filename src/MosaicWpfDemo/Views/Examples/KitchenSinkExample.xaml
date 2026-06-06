@@ -15,89 +15,107 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Menu inserted in grid row 0  -->
-        <Menu Grid.Row="0">
-            <MenuItem Header="_File">
-                <MenuItem Header="New">
-                    <MenuItem Header="Text File" />
-                    <MenuItem Header="Markdown File" />
-                </MenuItem>
-                <Separator />
-                <MenuItem Header="E_xit" />
-            </MenuItem>
-            <MenuItem Header="_Action" />
-        </Menu>
+        <mosaic:TabControl
+            Grid.Row="0"
+            Margin="0,10,0,0"
+            ActiveIndicatorPlacement="Bottom"
+            EnableDragAndDropReordering="True">
+            <mosaic:TabItem Header="Property Grid">
+                <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=Grid}}">
+                    <mosaic:PropertyGrid Margin="8" Object="{Binding}" />
+                </Grid>
+            </mosaic:TabItem>
 
-        <StackPanel
-            Grid.Row="1"
-            VerticalAlignment="Top"
-            Orientation="Vertical">
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Text="Right-click me">
-                <TextBlock.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Open" />
-                        <MenuItem Header="Save" />
-                        <Separator />
-                        <MenuItem Header="Exit" />
-                    </ContextMenu>
-                </TextBlock.ContextMenu>
-            </TextBlock>
-
-            <TextBlock
-                Margin="0,0,0,8"
-                FontSize="18"
-                FontWeight="SemiBold"
-                Text="Kitchen Sink Example page" />
-            <!--  Blank example surface: add controls here  -->
-            <Border
-                MinHeight="300"
-                Padding="6"
-                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                BorderThickness="1"
-                CornerRadius="4">
+            <mosaic:TabItem Header="Menu">
                 <StackPanel Orientation="Vertical">
-                    <mosaic:PropertyGrid Object="{Binding}" />
+                    <Menu Margin="2">
+                        <MenuItem Header="_File">
+                            <MenuItem Header="New">
+                                <MenuItem Header="Text File" />
+                                <MenuItem Header="Markdown File" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="E_xit" />
+                        </MenuItem>
+                        <MenuItem Header="_Action" />
+                    </Menu>
 
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Username:" />
-                        <TextBox
-                            Width="250"
-                            Margin="0,4,0,0"
-                            HorizontalAlignment="Left"
-                            Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Account Type:" />
-                        <ComboBox>
-                            <ComboBoxItem>User</ComboBoxItem>
-                            <ComboBoxItem>Admin</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="0,0,0,0" Text="Enter username:" />
-                        <ComboBox IsEditable="True">
-                            <ComboBoxItem>bpell</ComboBoxItem>
-                            <ComboBoxItem>isaac</ComboBoxItem>
-                            <ComboBoxItem>lucy</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-
-                    <mosaic:ToggleButton Margin="0,6,0,0" />
-
-                    <CheckBox Margin="4,2,0,0">
-                        <TextBlock Text="Enabled" />
-                    </CheckBox>
-
-                    <DatePicker></DatePicker>
-
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="Right-click me">
+                        <TextBlock.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Open" />
+                                <MenuItem Header="Save" />
+                                <Separator />
+                                <MenuItem Header="Exit" />
+                            </ContextMenu>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
                 </StackPanel>
-            </Border>
-        </StackPanel>
+            </mosaic:TabItem>
+
+            <mosaic:TabItem Header="Other Controls">
+                <StackPanel
+                    Margin="8"
+                    VerticalAlignment="Top"
+                    Orientation="Vertical">
+
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="Kitchen Sink Example page" />
+                    <!--  Blank example surface: add controls here  -->
+                    <Border
+                        MinHeight="300"
+                        Padding="6"
+                        Width="500"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Margin="0,0,0,0" Text="Username:" />
+                                <TextBox
+                                    Width="250"
+                                    Margin="0,4,0,0"
+                                    HorizontalAlignment="Left"
+                                    Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Margin="0,0,0,0" Text="Account Type:" />
+                                <ComboBox>
+                                    <ComboBoxItem>User</ComboBoxItem>
+                                    <ComboBoxItem>Admin</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Margin="0,0,0,0" Text="Enter username:" />
+                                <ComboBox IsEditable="True">
+                                    <ComboBoxItem>bpell</ComboBoxItem>
+                                    <ComboBoxItem>isaac</ComboBoxItem>
+                                    <ComboBoxItem>lucy</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <mosaic:ToggleButton Margin="0,6,0,0" />
+
+                            <CheckBox Margin="4,2,0,0">
+                                <TextBlock Text="Enabled" />
+                            </CheckBox>
+
+                            <DatePicker />
+
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </mosaic:TabItem>
+        </mosaic:TabControl>
     </Grid>
 </UserControl>

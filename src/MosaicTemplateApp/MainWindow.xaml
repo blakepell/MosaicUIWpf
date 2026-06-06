@@ -5,7 +5,7 @@
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicTemplateApp.Views"
-    Title=""
+    Title="MosaicTemplateApp"
     Width="1000"
     Height="600"
     theme:WindowChromeBehavior.CaptionHeight="0"
