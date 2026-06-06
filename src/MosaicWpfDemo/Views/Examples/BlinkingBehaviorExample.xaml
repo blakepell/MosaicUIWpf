@@ -19,12 +19,12 @@
             <Slider
                 x:Name="BlinkDurationSlider"
                 Width="220"
-                Minimum="0.5"
-                Maximum="5.0"
-                SmallChange="0.25"
-                LargeChange="0.25"
-                TickFrequency="0.25"
                 IsSnapToTickEnabled="True"
+                LargeChange="0.25"
+                Maximum="5.0"
+                Minimum="0.5"
+                SmallChange="0.25"
+                TickFrequency="0.25"
                 Value="0.5" />
 
             <Border
@@ -39,9 +39,7 @@
                     FontWeight="SemiBold"
                     Text="Blinking Behavior">
                     <i:Interaction.Behaviors>
-                        <behaviors:BlinkingBehavior
-                            BlinkDuration="{Binding ElementName=BlinkDurationSlider, Path=Value}"
-                            IsBlinking="True" />
+                        <behaviors:BlinkingBehavior BlinkDuration="{Binding ElementName=BlinkDurationSlider, Path=Value}" IsBlinking="True" />
                     </i:Interaction.Behaviors>
                 </TextBlock>
             </Border>

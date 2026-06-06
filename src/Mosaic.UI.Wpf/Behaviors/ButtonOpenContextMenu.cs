@@ -9,7 +9,9 @@
  */
 
 using Microsoft.Xaml.Behaviors;
+using System.ComponentModel;
 using System.Windows.Controls.Primitives;
+using System.Windows.Controls;
 
 namespace Mosaic.UI.Wpf.Behaviors
 {
@@ -26,13 +28,30 @@ namespace Mosaic.UI.Wpf.Behaviors
     ///         </ContextMenu>
     ///     </Button.ContextMenu>
     ///     <i:Interaction.Behaviors>
-    ///         <behaviors:OpenContextMenuBehavior />
+    ///         <behaviors:OpenContextMenuBehavior Placement="Right" />
     ///     </i:Interaction.Behaviors>
     /// </Button>
     /// ]]>
     /// </example>
     public class OpenContextMenuBehavior : Behavior<ButtonBase>
     {
+        /// <summary>
+        /// The placement of the context menu relative to the button.
+        /// </summary>
+        [Category("Common")]
+        [Description("The placement of the context menu relative to the button.")]
+        public static readonly DependencyProperty PlacementProperty =
+            DependencyProperty.Register(nameof(Placement), typeof(PlacementMode), typeof(OpenContextMenuBehavior), new PropertyMetadata(PlacementMode.Bottom));
+
+        /// <summary>
+        /// The placement of the context menu relative to the button.
+        /// </summary>
+        public PlacementMode Placement
+        {
+            get => (PlacementMode)GetValue(PlacementProperty);
+            set => SetValue(PlacementProperty, value);
+        }
+
         /// <summary>
         /// Called when the behavior is attached to the button.
         /// </summary>
@@ -61,6 +80,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             if (AssociatedObject.ContextMenu is ContextMenu menu)
             {
                 menu.PlacementTarget = AssociatedObject;
+                menu.Placement = Placement;
                 menu.IsOpen = true;
             }
         }

@@ -16,7 +16,10 @@
                 Text="Click the button to open its text menu."
                 TextAlignment="Center" />
 
-            <Button Padding="12,8" HorizontalAlignment="Center" Content="Open menu">
+            <Button
+                Padding="12,8"
+                HorizontalAlignment="Center"
+                Content="Open menu">
                 <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Copy" />
@@ -26,7 +29,7 @@
                 </Button.ContextMenu>
 
                 <i:Interaction.Behaviors>
-                    <behaviors:OpenContextMenuBehavior />
+                    <behaviors:OpenContextMenuBehavior Placement="Right" />
                 </i:Interaction.Behaviors>
             </Button>
         </StackPanel>
