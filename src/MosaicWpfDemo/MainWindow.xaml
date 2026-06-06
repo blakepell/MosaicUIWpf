@@ -880,6 +880,24 @@
 
                 <mosaic:SideMenuHeader Text="BEHAVIORS" />
 
+                <!--  Font Zoom  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/text-48.png"
+                    Text="Font Zoom">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Font Zoom" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.FontZoomExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FontZoomExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:FrameworkElementZoomFontSizeOnMouseWheelBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FontZoomExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TextBox Behaviors  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

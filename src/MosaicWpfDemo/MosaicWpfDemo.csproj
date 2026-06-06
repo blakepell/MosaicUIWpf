@@ -217,6 +217,13 @@
 			<Link>LinkedSources\BadgeExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\FontZoomExample.xaml">
+			<Link>LinkedSources\FontZoomExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FontZoomExample.xaml.cs">
+			<Link>LinkedSources\FontZoomExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\BindablePasswordBoxExample.xaml">
 			<Link>LinkedSources\BindablePasswordBoxExample.xaml</Link>
 		</EmbeddedResource>
