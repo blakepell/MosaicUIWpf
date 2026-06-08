@@ -1,0 +1,51 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.FileDropperExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+
+        <!--  Accepts any file (default *.*).  -->
+        <TextBlock Margin="0,0,0,6" Text="Accepts any file (*.*):" />
+        <controls:FileDropper
+            Width="320"
+            HorizontalAlignment="Left"
+            FileDrop="FileDropper_OnFileDrop" />
+
+        <!--  Restricted to images. AcceptedFileTypes is an ObservableCollection&lt;string&gt;.  -->
+        <TextBlock Margin="0,20,0,6" Text="Accepts images only:" />
+        <controls:FileDropper
+            Width="320"
+            HorizontalAlignment="Left"
+            FileDrop="FileDropper_OnFileDrop"
+            Prompt="Drop images here">
+            <controls:FileDropper.AcceptedFileTypes>
+                <sys:String>*.png</sys:String>
+                <sys:String>*.jpg</sys:String>
+                <sys:String>*.jpeg</sys:String>
+                <sys:String>*.gif</sys:String>
+                <sys:String>*.bmp</sys:String>
+            </controls:FileDropper.AcceptedFileTypes>
+        </controls:FileDropper>
+
+        <!--  Output of the most recent drop.  -->
+        <TextBlock Margin="0,20,0,6" Text="Last dropped files:" />
+        <TextBox
+            x:Name="DroppedFilesTextBox"
+            Width="500"
+            Height="120"
+            HorizontalAlignment="Left"
+            VerticalContentAlignment="Top"
+            IsReadOnly="True"
+            TextWrapping="NoWrap"
+            VerticalScrollBarVisibility="Auto" />
+
+    </StackPanel>
+</UserControl>

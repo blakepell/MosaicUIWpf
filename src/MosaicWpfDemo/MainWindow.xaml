@@ -337,6 +337,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  FileDropper  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/folder2-open-48.png"
+                    Text="FileDropper">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="FileDropper" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.FileDropperExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FileDropperExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:FileDropper}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FileDropperExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/folder2-open-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  FlipPanel  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

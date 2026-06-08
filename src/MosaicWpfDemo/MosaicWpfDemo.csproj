@@ -357,6 +357,12 @@
 		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml.cs">
 			<Link>LinkedSources\FavoriteCheckBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileDropperExample.xaml">
+			<Link>LinkedSources\FileDropperExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileDropperExample.xaml.cs">
+			<Link>LinkedSources\FileDropperExample.xaml.cs</Link>
+		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">
 			<Link>LinkedSources\HyperlinkExample.xaml</Link>

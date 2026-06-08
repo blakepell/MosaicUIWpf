@@ -1,0 +1,92 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  Cloud-upload icon used as the default content of the FileDropper.  -->
+    <Geometry x:Key="FileDropperUploadGeometry">M19.35,10.04C18.67,6.59 15.64,4 12,4C9.11,4 6.6,5.64 5.35,8.04C2.34,8.36 0,10.91 0,14A6,6 0 0,0 6,20H19A5,5 0 0,0 24,15C24,12.36 21.95,10.22 19.35,10.04M14,13V17H10V13H7L12,8L17,13H14Z</Geometry>
+
+    <Style TargetType="{x:Type controls:FileDropper}">
+        <Setter Property="MinHeight" Value="140" />
+        <Setter Property="MinWidth" Value="220" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:FileDropper}">
+                    <Border
+                        x:Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Top line: prompt  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
+                                FontWeight="SemiBold"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Prompt}"
+                                TextAlignment="Center" />
+
+                            <!--  Middle: upload icon  -->
+                            <Viewbox
+                                Grid.Row="1"
+                                Width="48"
+                                Height="48"
+                                Margin="0,10"
+                                HorizontalAlignment="Center">
+                                <Path
+                                    x:Name="PART_Icon"
+                                    Data="{StaticResource FileDropperUploadGeometry}"
+                                    Fill="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                                    Stretch="Uniform" />
+                            </Viewbox>
+
+                            <!--  Bottom line: accepted file types  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                HorizontalAlignment="Center"
+                                FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Opacity="0.75"
+                                Text="{TemplateBinding AcceptedFileTypesDisplay}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="DragState" Value="Valid">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SuccessBrush}}" />
+                            <Setter TargetName="PART_Icon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.SuccessBrush}}" />
+                        </Trigger>
+                        <Trigger Property="DragState" Value="Invalid">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+                            <Setter TargetName="PART_Icon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

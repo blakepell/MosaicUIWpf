@@ -9,6 +9,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/BindablePasswordBox/BindablePasswordBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/CheckBoxList/CheckBoxList.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/EditableTextBlock/EditableTextBlock.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FileDropper/FileDropper.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FlipPanel/FlipPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FavoriteCheckBox/FavoriteCheckBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
