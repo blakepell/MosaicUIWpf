@@ -1,0 +1,28 @@
+﻿<Window
+    x:Class="MosaicWpfDemo.Dialogs.SampleDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="http://schemas.apexgate.net/wpf/mosaic"
+    Title="Sample Dialog"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    ThemeMode="Dark"
+    Width="360"
+    Height="220"
+    mc:Ignorable="d">
+    <b:Interaction.Behaviors>
+        <behaviors:CloseWindowOnEscapeBehavior />
+    </b:Interaction.Behaviors>
+    <Grid Margin="12">
+        <TextBlock
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="18"
+            FontWeight="SemiBold"
+            Text="Press escape to close." />
+    </Grid>
+</Window>

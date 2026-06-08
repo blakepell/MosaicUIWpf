@@ -87,6 +87,20 @@ namespace Mosaic.UI.Wpf.Controls
         private bool _reuseContentInstance;
 
         /// <summary>
+        /// Gets or sets the type of <see cref="System.Windows.Window"/> to show as a dialog when this
+        /// item is activated. Null by default (no dialog).
+        /// </summary>
+        [ObservableProperty]
+        private Type? _dialogContentType;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="DialogContentType"/> is shown modally
+        /// (ShowDialog) or as a modeless window (Show). True by default.
+        /// </summary>
+        [ObservableProperty]
+        private bool _dialogIsModal = true;
+
+        /// <summary>
         /// Gets or sets the source of the image.
         /// </summary>
         [ObservableProperty]

@@ -295,12 +295,50 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            SelectedItem = item;
+            // Only update the selection (and therefore the content view) when this item has content.
+            // A dialog-only item shows its dialog but leaves the current selection highlighted so the
+            // menu selection keeps matching what is displayed in the content area.
+            if (item.ContentType != null || item.DialogContentType == null)
+            {
+                SelectedItem = item;
+            }
+
+            if (item.DialogContentType != null)
+            {
+                ShowItemDialog(item);
+            }
 
             // Execute command if available
             if (item.Command?.CanExecute(item.CommandParameter) == true)
             {
                 item.Command.Execute(item.CommandParameter);
+            }
+        }
+
+        /// <summary>
+        /// Shows the <see cref="SideMenuItem.DialogContentType"/> as a dialog (modal) or modeless window.
+        /// When shown modally the dialog's owner is set to the window hosting this menu.
+        /// </summary>
+        private void ShowItemDialog(SideMenuItem item)
+        {
+            if (item.DialogContentType == null || !typeof(Window).IsAssignableFrom(item.DialogContentType))
+            {
+                return;
+            }
+
+            if (Activator.CreateInstance(item.DialogContentType) is not Window window)
+            {
+                return;
+            }
+
+            if (item.DialogIsModal)
+            {
+                window.Owner = Window.GetWindow(this);
+                window.ShowDialog();
+            }
+            else
+            {
+                window.Show();
             }
         }
 

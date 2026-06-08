@@ -49,7 +49,20 @@ namespace Mosaic.UI.Wpf.Behaviors
         {
             if (e.Key == Key.Escape)
             {
-                AssociatedObject.DialogResult = false;
+                // Only set the dialog result if the owner is not null. This will throw an exception otherwise.
+                if (AssociatedObject.Owner != null)
+                {
+                    try
+                    {
+                        AssociatedObject.DialogResult = false;
+                    }
+                    catch 
+                    { 
+                        // Don't crash the program since it's difficult for the caller to handle an exception
+                        // from a Behavior.
+                    }
+                }
+
                 AssociatedObject.Close();
             }
         }
