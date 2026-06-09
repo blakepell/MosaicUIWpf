@@ -249,7 +249,7 @@
                             <ContentPresenter
                                 x:Name="HeaderPresenter"
                                 Grid.Column="0"
-                                Margin="6,4,0,4"
+                                Margin="6,4,4,4"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 ContentSource="Header"
@@ -261,6 +261,8 @@
                             <Button
                                 x:Name="CloseButton"
                                 Grid.Column="1"
+                                Margin="0,0,0,0"
+
                                 automation:AutomationProperties.Name="{Binding Document.Title, RelativeSource={RelativeSource TemplatedParent}, StringFormat=Close {0}}"
                                 Command="{x:Static controls:DocumentContainer.CloseDocumentCommand}"
                                 CommandParameter="{Binding Document, RelativeSource={RelativeSource TemplatedParent}}"
