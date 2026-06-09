@@ -153,6 +153,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | StringListEditor | A StringListEditor component. |
 | SymbolRating | A symbol rating component. |
 | SystemDropShadowChrome | Creates a theme specific look for drop shadow effects. |
+| DocumentContainer | Displays an observable collection of closable, reorderable documents as tabs. |
 | TabControl | Represents a tab control that allows users to switch between multiple tabs. |
 | ToggleButton | Represents a button control that can switch between two states: checked and unchecked. This implementation looks like a theme styled switch. |
 | ToggleSwitch | Represents a toggle switch control that allows users to switch between two states, such as "On" and "Off". |

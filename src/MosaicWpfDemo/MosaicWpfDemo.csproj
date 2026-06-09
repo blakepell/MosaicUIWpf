@@ -413,6 +413,13 @@
 			<Link>LinkedSources\NumericTextBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\DocumentContainerExample.xaml">
+			<Link>LinkedSources\DocumentContainerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\DocumentContainerExample.xaml.cs">
+			<Link>LinkedSources\DocumentContainerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\TabControlExample.xaml">
 			<Link>LinkedSources\TabControlExample.xaml</Link>
 		</EmbeddedResource>

@@ -47,6 +47,7 @@ For detailed property/event/example documentation, read the individual file list
 | `CheckBoxList` | `ListBox` | Input | Multi-select list that shows checkboxes beside each item | [CheckBoxList.md](controls/CheckBoxList.md) |
 | `ClipBorder` | `Border` | Layout | Border that clips child content to its `CornerRadius` | [ClipBorder.md](controls/ClipBorder.md) |
 | `ColorPicker` | `UserControl` | Input | Visual color picker with hex input and preset colors | [ColorPicker.md](controls/ColorPicker.md) |
+| `DocumentContainer` | `TabControl` | Navigation | Closable, reorderable document tabs with active-document tracking | [DocumentContainer.md](controls/DocumentContainer.md) |
 | `EditableTextBlock` | `Control` | Input | Inline editable text that toggles between view/edit mode | [EditableTextBlock.md](controls/EditableTextBlock.md) |
 | `FlipPanel` | `ContentControl` | Display | Animated flip panel with front and back content faces | [FlipPanel.md](controls/FlipPanel.md) |
 | `GravatarImage` | `Image` | Media | Loads and displays a Gravatar avatar from an email address | [GravatarImage.md](controls/GravatarImage.md) |

@@ -319,6 +319,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Document Container  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/tab-control-48.png"
+                    Text="Document Container">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Document Container" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DocumentContainerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DocumentContainerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:DocumentContainer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DocumentContainerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/tab-control-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  EditableTextBlock  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -1,0 +1,75 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.DocumentContainerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Margin="0,0,0,10"
+            Text="Drag tabs to reorder them. Closable documents show an x button and Ctrl+F4 closes the active document."
+            TextWrapping="Wrap" />
+
+        <mosaic:DocumentContainer
+            Grid.Row="1"
+            ActiveDocument="{Binding ActiveDocument, Mode=TwoWay}"
+            Documents="{Binding Documents}"
+            DocumentClosed="OnDocumentClosed"
+            DocumentClosing="OnDocumentClosing"
+            TabOverflowMode="{Binding TabOverflowMode}">
+            <mosaic:DocumentContainer.HeaderContent>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Height="24" Width="24"
+                        Command="{Binding AddDocumentCommand}"
+                        Content="+" />
+                </StackPanel>
+            </mosaic:DocumentContainer.HeaderContent>
+        </mosaic:DocumentContainer>
+
+        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{Binding Status}"
+                TextWrapping="Wrap" />
+
+            <mosaic:SimpleStackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button
+                    Margin="0,0,6,0"
+                    Padding="6,2,6,2"
+                    Command="{Binding SetOverflowModeCommand}"
+                    CommandParameter="{x:Static mosaic:DocumentTabOverflowMode.Wrap}"
+                    Content="Wrap" />
+                <Button
+                    Margin="0,0,6,0"
+                    Padding="6,2,6,2"
+                    Command="{Binding SetOverflowModeCommand}"
+                    CommandParameter="{x:Static mosaic:DocumentTabOverflowMode.Scroll}"
+                    Content="Scroll" />
+
+                <mosaic:Shield
+                    Margin="12,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Label="Active Document"
+                    Value="{Binding ActiveDocument.Title, TargetNullValue=No active document}" />
+
+            </mosaic:SimpleStackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

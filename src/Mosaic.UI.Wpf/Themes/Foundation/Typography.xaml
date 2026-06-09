@@ -11,6 +11,8 @@
     <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeSmall}">11</sys:Double>
     <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeNormal}">12</sys:Double>
     <sys:Double x:Key="{x:Static themes:MosaicTheme.FontSizeLarge}">14</sys:Double>
+    <!--  WPF font sizes use device-independent units; 13.333 units equals 10 points.  -->
+    <sys:Double x:Key="{x:Static themes:MosaicTheme.DocumentTabHeaderFontSize}">13.333</sys:Double>
 
     <Style x:Key="Mosaic.Text.Body" TargetType="{x:Type TextBlock}">
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />

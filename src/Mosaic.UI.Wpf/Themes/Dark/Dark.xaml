@@ -129,6 +129,20 @@
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColor}">#FFF1F1F1</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemForegroundColor}}" />
 
+    <!--  Document tabs  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabStripBackgroundColor}">#FF252526</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabStripBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabStripBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabBackgroundColor}">#FF2D2D30</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabHoverBackgroundColor}">#FF37373D</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabHoverBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabSelectedBackgroundColor}">#FF1E1E1E</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabSelectedBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabBorderColor}">#FF3F3F46</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabForegroundColor}">#FFF1F1F1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.DocumentTabForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabForegroundColor}}" />
+
     <!--  Sidebar  -->
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FF333337</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}}" />

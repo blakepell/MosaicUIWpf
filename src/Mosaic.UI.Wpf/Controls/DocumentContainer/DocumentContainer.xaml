@@ -1,0 +1,304 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:automation="clr-namespace:System.Windows.Automation;assembly=PresentationCore"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style x:Key="Mosaic.DocumentCloseButton" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Margin" Value="4,0,0,0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabForegroundBrush}}" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="CloseButtonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="2">
+                        <Viewbox
+                            Width="7"
+                            Height="7"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Focusable="False">
+                            <Path
+                                Data="M 0,0 L 8,8 M 8,0 L 0,8"
+                                Stroke="{TemplateBinding Foreground}"
+                                StrokeEndLineCap="Square"
+                                StrokeThickness="1.5" />
+                        </Viewbox>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CloseButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedHoverBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="CloseButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.FluentRedBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="CloseButtonBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="CloseButtonBorder" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Mosaic.DocumentTabScrollButton" TargetType="{x:Type primitives:RepeatButton}">
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabForegroundBrush}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type primitives:RepeatButton}">
+                    <Border
+                        x:Name="ScrollButtonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Focusable="False" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ScrollButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ScrollButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:DocumentContainer}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabSelectedBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DocumentContainer}">
+                    <Grid KeyboardNavigation.TabNavigation="Local">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Background="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabStripBackgroundBrush}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <primitives:RepeatButton
+                                x:Name="ScrollLeftButton"
+                                Grid.Column="0"
+                                automation:AutomationProperties.Name="Scroll document tabs left"
+                                Command="{x:Static controls:DocumentContainer.ScrollTabsLeftCommand}"
+                                CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                Style="{StaticResource Mosaic.DocumentTabScrollButton}"
+                                Visibility="Collapsed">
+                                <Path
+                                    Width="6"
+                                    Height="10"
+                                    Data="M 6,0 L 0,5 L 6,10"
+                                    Stretch="Fill"
+                                    Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type primitives:RepeatButton}}}"
+                                    StrokeLineJoin="Round"
+                                    StrokeThickness="1.5" />
+                            </primitives:RepeatButton>
+
+                            <ScrollViewer
+                                x:Name="PART_TabScrollViewer"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                CanContentScroll="False"
+                                HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Disabled">
+                                <ItemsPresenter Panel.ZIndex="1" KeyboardNavigation.TabIndex="1" />
+                            </ScrollViewer>
+
+                            <primitives:RepeatButton
+                                x:Name="ScrollRightButton"
+                                Grid.Column="2"
+                                automation:AutomationProperties.Name="Scroll document tabs right"
+                                Command="{x:Static controls:DocumentContainer.ScrollTabsRightCommand}"
+                                CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                Style="{StaticResource Mosaic.DocumentTabScrollButton}"
+                                Visibility="Collapsed">
+                                <Path
+                                    Width="6"
+                                    Height="10"
+                                    Data="M 0,0 L 6,5 L 0,10"
+                                    Stretch="Fill"
+                                    Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type primitives:RepeatButton}}}"
+                                    StrokeLineJoin="Round"
+                                    StrokeThickness="1.5" />
+                            </primitives:RepeatButton>
+
+                            <ContentPresenter
+                                Grid.Column="3"
+                                Margin="6,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding HeaderContent}"
+                                ContentTemplate="{TemplateBinding HeaderContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding HeaderContentTemplateSelector}" />
+                        </Grid>
+
+                        <Border
+                            Grid.Row="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            KeyboardNavigation.DirectionalNavigation="Contained"
+                            KeyboardNavigation.TabIndex="2"
+                            KeyboardNavigation.TabNavigation="Local">
+                            <ContentPresenter
+                                x:Name="PART_SelectedContentHost"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                ContentSource="SelectedContent" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabOverflowMode" Value="Scroll">
+                            <Setter TargetName="ScrollLeftButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ScrollRightButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_TabScrollViewer" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="PART_TabScrollViewer" Property="Grid.ColumnSpan" Value="1" />
+                            <Setter TargetName="PART_TabScrollViewer" Property="HorizontalScrollBarVisibility" Value="Hidden" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="TabOverflowMode" Value="Scroll">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type controls:DocumentTabItem}">
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="MaxWidth" Value="240" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabBorderBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DocumentTabItem}">
+                    <Border
+                        x:Name="OuterBorder"
+                        Padding="0,0,4,0"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0,0,1,1"
+                        CornerRadius="4,4,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter
+                                x:Name="HeaderPresenter"
+                                Grid.Column="0"
+                                Margin="6,4,0,4"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                ContentSource="Header"
+                                RecognizesAccessKey="True"
+                                TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                TextElement.FontSize="{TemplateBinding FontSize}"
+                                TextElement.Foreground="{TemplateBinding Foreground}" />
+
+                            <Button
+                                x:Name="CloseButton"
+                                Grid.Column="1"
+                                automation:AutomationProperties.Name="{Binding Document.Title, RelativeSource={RelativeSource TemplatedParent}, StringFormat=Close {0}}"
+                                Command="{x:Static controls:DocumentContainer.CloseDocumentCommand}"
+                                CommandParameter="{Binding Document, RelativeSource={RelativeSource TemplatedParent}}"
+                                CommandTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}"
+                                FontFamily="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}"
+                                FontSize="12"
+                                Style="{StaticResource Mosaic.DocumentCloseButton}"
+                                ToolTip="Close document" />
+
+                            <Border
+                                x:Name="SelectionIndicator"
+                                Grid.ColumnSpan="2"
+                                Height="1"
+                                VerticalAlignment="Bottom"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{Binding ActiveTabBackground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
+                            <Setter Property="Foreground" Value="{Binding ActiveTabForeground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
+                            <Setter TargetName="CloseButton" Property="Foreground" Value="{Binding ActiveTabForeground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
+                            <Setter TargetName="SelectionIndicator" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="CanClose" Value="False">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="CloseButton" Property="IsEnabled" Value="False" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

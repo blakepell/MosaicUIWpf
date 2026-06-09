@@ -48,6 +48,13 @@
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColor}">#FFFFFFFF</Color>
 
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabStripBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabHoverBackgroundColor}">#FF1E1E1E</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabSelectedBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabBorderColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.DocumentTabForegroundColor}">#FFFFFFFF</Color>
+
     <Color x:Key="{x:Static themes:MosaicTheme.InfoColor}">#FF80FFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SuccessColor}">#FF7CFC00</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.WarningColor}">#FFFFFF00</Color>

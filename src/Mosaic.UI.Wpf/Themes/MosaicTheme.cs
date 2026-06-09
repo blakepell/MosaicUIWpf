@@ -123,6 +123,66 @@
         public static ComponentResourceKey TabItemForegroundBrush { get; } = new(typeof(MosaicTheme), "TabItemForegroundBrush");
         public static ComponentResourceKey TabItemForegroundColor { get; } = new(typeof(MosaicTheme), "TabItemForegroundColor");
 
+        /// <summary>
+        /// Gets the resource key for the document tab strip background brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabStripBackgroundBrush { get; } = new(typeof(MosaicTheme), "DocumentTabStripBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the document tab strip background color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabStripBackgroundColor { get; } = new(typeof(MosaicTheme), "DocumentTabStripBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the default document tab background brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabBackgroundBrush { get; } = new(typeof(MosaicTheme), "DocumentTabBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the default document tab background color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabBackgroundColor { get; } = new(typeof(MosaicTheme), "DocumentTabBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the document tab pointer-over background brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabHoverBackgroundBrush { get; } = new(typeof(MosaicTheme), "DocumentTabHoverBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the document tab pointer-over background color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabHoverBackgroundColor { get; } = new(typeof(MosaicTheme), "DocumentTabHoverBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the selected document tab background brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "DocumentTabSelectedBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the selected document tab background color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "DocumentTabSelectedBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the document tab border brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabBorderBrush { get; } = new(typeof(MosaicTheme), "DocumentTabBorderBrush");
+
+        /// <summary>
+        /// Gets the resource key for the document tab border color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabBorderColor { get; } = new(typeof(MosaicTheme), "DocumentTabBorderColor");
+
+        /// <summary>
+        /// Gets the resource key for the document tab foreground brush.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabForegroundBrush { get; } = new(typeof(MosaicTheme), "DocumentTabForegroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the document tab foreground color.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabForegroundColor { get; } = new(typeof(MosaicTheme), "DocumentTabForegroundColor");
+
         public static ComponentResourceKey SidebarSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundColor");
         public static ComponentResourceKey SidebarSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundBrush");
 
@@ -137,5 +197,9 @@
         public static ComponentResourceKey FontSizeSmall { get; } = new(typeof(MosaicTheme), "FontSizeSmall");
         public static ComponentResourceKey FontSizeNormal { get; } = new(typeof(MosaicTheme), "FontSizeNormal");
         public static ComponentResourceKey FontSizeLarge { get; } = new(typeof(MosaicTheme), "FontSizeLarge");
+        /// <summary>
+        /// Gets the resource key for the document tab header font size.
+        /// </summary>
+        public static ComponentResourceKey DocumentTabHeaderFontSize { get; } = new(typeof(MosaicTheme), "DocumentTabHeaderFontSize");
     }
 }
