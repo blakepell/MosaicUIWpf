@@ -1,0 +1,507 @@
+using AvalonDock.Commands;
+using AvalonDock.Converters;
+using AvalonDock.Layout;
+using AvalonDock.Themes;
+using Microsoft.Windows.Shell;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Input;
+
+namespace AvalonDock.Controls
+{
+    /// <summary>
+    /// Represents the layout anchorable floating window control.
+    /// </summary>
+    public class LayoutAnchorableFloatingWindowControl : LayoutFloatingWindowControl, IOverlayWindowHost
+    {
+        private readonly LayoutAnchorableFloatingWindow _model;
+        private OverlayWindow _overlayWindow;
+        private List<IDropArea> _dropAreas;
+
+        static LayoutAnchorableFloatingWindowControl()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(LayoutAnchorableFloatingWindowControl), new FrameworkPropertyMetadata(typeof(LayoutAnchorableFloatingWindowControl)));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutAnchorableFloatingWindowControl"/> class.
+        /// </summary>
+        /// <param name="model">The layout model.</param>
+        /// <param name="isContentImmutable">The is content immutable.</param>
+        internal LayoutAnchorableFloatingWindowControl(LayoutAnchorableFloatingWindow model, bool isContentImmutable)
+           : base(model, isContentImmutable)
+        {
+            _model = model;
+            HideWindowCommand = new RelayCommand<object>(OnExecuteHideWindowCommand, CanExecuteHideWindowCommand);
+            CloseWindowCommand = new RelayCommand<object>(OnExecuteCloseWindowCommand, CanExecuteCloseWindowCommand);
+            Activated += LayoutAnchorableFloatingWindowControl_Activated;
+            UpdateThemeResources();
+            MinWidth = _model.RootPanel.CalculatedDockMinWidth();
+            MinHeight = _model.RootPanel.CalculatedDockMinHeight();
+            if (_model.Root is LayoutRoot root)
+            {
+                root.Updated += OnRootUpdated;
+            }
+
+            _model.IsVisibleChanged += _model_IsVisibleChanged;
+        }
+
+        private void OnRootUpdated(object sender, EventArgs e)
+        {
+            if (_model?.RootPanel == null)
+            {
+                return;
+            }
+
+            MinWidth = _model.RootPanel.CalculatedDockMinWidth();
+            MinHeight = _model.RootPanel.CalculatedDockMinHeight();
+        }
+
+        private void LayoutAnchorableFloatingWindowControl_Activated(object sender, EventArgs e)
+        {
+            // Issue similar to: http://avalondock.codeplex.com/workitem/15036
+            var visibilityBinding = GetBindingExpression(VisibilityProperty);
+            if (visibilityBinding == null && Visibility == Visibility.Visible)
+            {
+                SetVisibilityBinding();
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutAnchorableFloatingWindowControl"/> class.
+        /// </summary>
+        /// <param name="model">The layout model.</param>
+        internal LayoutAnchorableFloatingWindowControl(LayoutAnchorableFloatingWindow model)
+            : this(model, false)
+        {
+        }
+
+        /// <inheritdoc/>
+        public override ILayoutElement Model => _model;
+
+        /// <summary>
+        /// <see cref="SingleContentLayoutItem"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SingleContentLayoutItemProperty = DependencyProperty.Register(nameof(SingleContentLayoutItem), typeof(LayoutItem), typeof(LayoutAnchorableFloatingWindowControl),
+                new FrameworkPropertyMetadata(null, OnSingleContentLayoutItemChanged));
+
+        /// <summary>
+        /// Gets or sets the single content layout item.
+        /// </summary>
+        [Bindable(true)]
+        [Description("Gets/sets the layout item of the selected content when shown in a single anchorable pane.")]
+        [Category("Anchorable")]
+        public LayoutItem SingleContentLayoutItem
+        {
+            get => (LayoutItem)GetValue(SingleContentLayoutItemProperty);
+            set => SetValue(SingleContentLayoutItemProperty, value);
+        }
+
+        /// <summary>Handles changes to the <see cref="SingleContentLayoutItem"/> property.</summary>
+        private static void OnSingleContentLayoutItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((LayoutAnchorableFloatingWindowControl)d).OnSingleContentLayoutItemChanged(e);
+
+        /// <summary>
+        /// Raises the single content layout item changed event.
+        /// </summary>
+        /// <param name="e">The event arguments.</param>
+        protected virtual void OnSingleContentLayoutItemChanged(DependencyPropertyChangedEventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// Gets the hide window command.
+        /// </summary>
+        public ICommand HideWindowCommand { get; }
+
+        /// <summary>
+        /// Gets the close window command.
+        /// </summary>
+        public ICommand CloseWindowCommand { get; }
+
+        /// <inheritdoc/>
+        DockingManager IOverlayWindowHost.Manager => _model.Root.Manager;
+
+        /// <inheritdoc/>
+        public override void EnableBindings()
+        {
+            _model.PropertyChanged += _model_PropertyChanged;
+            SetVisibilityBinding();
+            if (Model.Root is LayoutRoot layoutRoot)
+            {
+                layoutRoot.Updated += OnRootUpdated;
+            }
+
+            base.EnableBindings();
+        }
+
+        /// <inheritdoc/>
+        public override void DisableBindings()
+        {
+            if (Model.Root is LayoutRoot layoutRoot)
+            {
+                layoutRoot.Updated -= OnRootUpdated;
+            }
+
+            BindingOperations.ClearBinding(_model, VisibilityProperty);
+            _model.PropertyChanged -= _model_PropertyChanged;
+            base.DisableBindings();
+        }
+
+        /// <inheritdoc/>
+        bool IOverlayWindowHost.HitTestScreen(Point dragPoint)
+        {
+            return HitTest(this.TransformToDeviceDPI(dragPoint));
+        }
+
+        bool HitTest(Point dragPoint)
+        {
+            if (dragPoint == default(Point))
+            {
+                return false;
+            }
+
+            var detectionRect = new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), this.TransformActualSizeToAncestor());
+            return detectionRect.Contains(dragPoint);
+        }
+
+        /// <inheritdoc/>
+        void IOverlayWindowHost.HideOverlayWindow()
+        {
+            _dropAreas = null;
+            _overlayWindow.Owner = null;
+            _overlayWindow.HideDropTargets();
+            _overlayWindow.Close();
+            _overlayWindow = null;
+        }
+
+        /// <inheritdoc/>
+        IOverlayWindow IOverlayWindowHost.ShowOverlayWindow(LayoutFloatingWindowControl draggingWindow)
+        {
+            CreateOverlayWindow(draggingWindow);
+            _overlayWindow.EnableDropTargets();
+            _overlayWindow.Show();
+            return _overlayWindow;
+        }
+
+        /// <inheritdoc/>
+        IEnumerable<IDropArea> IOverlayWindowHost.GetDropAreas(LayoutFloatingWindowControl draggingWindow)
+        {
+            if (_dropAreas != null)
+            {
+                return _dropAreas;
+            }
+
+            _dropAreas = new List<IDropArea>();
+            if (draggingWindow.Model is LayoutDocumentFloatingWindow)
+            {
+                return _dropAreas;
+            }
+
+            var rootVisual = (Content as FloatingWindowContentHost).RootVisual;
+            foreach (var areaHost in rootVisual.FindVisualChildren<LayoutAnchorablePaneControl>())
+            {
+                _dropAreas.Add(new DropArea<LayoutAnchorablePaneControl>(areaHost, DropAreaType.AnchorablePane));
+            }
+
+            foreach (var areaHost in rootVisual.FindVisualChildren<LayoutDocumentPaneControl>())
+            {
+                _dropAreas.Add(new DropArea<LayoutDocumentPaneControl>(areaHost, DropAreaType.DocumentPane));
+            }
+
+            return _dropAreas;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+            var manager = _model.Root.Manager;
+            Content = manager.CreateUIElementForModel(_model.RootPanel);
+            // SetBinding(VisibilityProperty, new Binding("IsVisible") { Source = _model, Converter = new BoolToVisibilityConverter(), Mode = BindingMode.OneWay, ConverterParameter = Visibility.Hidden });
+
+            // Issue: http://avalondock.codeplex.com/workitem/15036
+            IsVisibleChanged += LayoutAnchorableFloatingWindowControl_IsVisibleChanged;
+            SetBinding(SingleContentLayoutItemProperty, new Binding("Model.SinglePane.SelectedContent") { Source = this, Converter = new LayoutItemFromLayoutModelConverter() });
+            _model.PropertyChanged += _model_PropertyChanged;
+        }
+
+        /// <inheritdoc/>
+        protected override void OnClosed(EventArgs e)
+        {
+            var root = Model?.Root;
+            if (root != null)
+            {
+                if (root is LayoutRoot layoutRoot)
+                {
+                    layoutRoot.Updated -= OnRootUpdated;
+                }
+
+                root.Manager?.RemoveFloatingWindow(this);
+                root.CollectGarbage();
+            }
+
+            if (_overlayWindow != null)
+            {
+                _overlayWindow.Close();
+                _overlayWindow = null;
+            }
+
+            base.OnClosed(e);
+            if (!CloseInitiatedByUser)
+            {
+                root?.FloatingWindows.Remove(_model);
+            }
+
+            // We have to clear binding instead of creating a new empty binding.
+            BindingOperations.ClearBinding(_model, VisibilityProperty);
+
+            _model.PropertyChanged -= _model_PropertyChanged;
+            _model.IsVisibleChanged -= _model_IsVisibleChanged;
+            Activated -= LayoutAnchorableFloatingWindowControl_Activated;
+            IsVisibleChanged -= LayoutAnchorableFloatingWindowControl_IsVisibleChanged;
+            BindingOperations.ClearBinding(this, VisibilityProperty);
+            BindingOperations.ClearBinding(this, SingleContentLayoutItemProperty);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            var canHide = HideWindowCommand.CanExecute(null);
+            if (CloseInitiatedByUser && !KeepContentVisibleOnClose && !canHide)
+            {
+                e.Cancel = true;
+            }
+
+            base.OnClosing(e);
+        }
+
+        /// <inheritdoc/>
+        protected override IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case Win32Helper.WM_ACTIVATE:
+                    var isInactive = ((int)wParam & 0xFFFF) == Win32Helper.WA_INACTIVE;
+                    if (_model.IsSinglePane)
+                    {
+                        LayoutFloatingWindowControlHelper.ActiveTheContentOfSinglePane(this, !isInactive);
+                    }
+                    else
+                    {
+                        LayoutFloatingWindowControlHelper.ActiveTheContentOfMultiPane(this, !isInactive);
+                    }
+
+                    handled = true;
+                    break;
+
+                case Win32Helper.WM_NCRBUTTONUP:
+                    if (wParam.ToInt32() == Win32Helper.HT_CAPTION)
+                    {
+                        var windowChrome = WindowChrome.GetWindowChrome(this);
+                        if (windowChrome != null)
+                        {
+                            if (OpenContextMenu())
+                            {
+                                handled = true;
+                            }
+
+                            windowChrome.ShowSystemMenu = _model.Root.Manager.ShowSystemMenu && !handled;
+                        }
+                    }
+
+                    break;
+            }
+
+            return base.FilterMessage(hwnd, msg, wParam, lParam, ref handled);
+        }
+
+        /// <inheritdoc/>
+        internal override void UpdateThemeResources(Theme oldTheme = null)
+        {
+            base.UpdateThemeResources(oldTheme);
+            _overlayWindow?.UpdateThemeResources(oldTheme);
+        }
+
+        private void _model_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(LayoutAnchorableFloatingWindow.RootPanel):
+                    if (_model.RootPanel == null)
+                    {
+                        InternalClose();
+                    }
+
+                    break;
+
+                case nameof(LayoutAnchorableFloatingWindow.IsVisible):
+                    if (_model.IsVisible != IsVisible)
+                    {
+                        Visibility = _model.IsVisible ? Visibility.Visible : Visibility.Hidden;
+                    }
+
+                    break;
+            }
+        }
+
+        private void _model_IsVisibleChanged(object sender, EventArgs e)
+        {
+            if (!IsVisible && _model.IsVisible)
+            {
+                Show();
+            }
+        }
+
+        private void CreateOverlayWindow(LayoutFloatingWindowControl draggingWindow)
+        {
+            if (_overlayWindow == null)
+            {
+                _overlayWindow = new OverlayWindow(this);
+            }
+
+            // Usually, the overlay window is made a child of the main window. However, if the floating
+            // window being dragged isn't also a child of the main window (because OwnedByDockingManagerWindow
+            // is set to false to allow the parent window to be minimized independently of floating windows)
+            if (draggingWindow?.OwnedByDockingManagerWindow ?? true)
+            {
+                _overlayWindow.Owner = GetWindow(_model.Root.Manager);
+            }
+            else
+            {
+                _overlayWindow.Owner = null;
+            }
+
+            var rectWindow = new Rect(this.PointToScreenDPIWithoutFlowDirection(new Point()), this.TransformActualSizeToAncestor());
+            _overlayWindow.Left = rectWindow.Left;
+            _overlayWindow.Top = rectWindow.Top;
+            _overlayWindow.Width = rectWindow.Width;
+            _overlayWindow.Height = rectWindow.Height;
+        }
+
+        private bool OpenContextMenu()
+        {
+            var ctxMenu = _model.Root.Manager.AnchorableContextMenu;
+            if (ctxMenu == null || SingleContentLayoutItem == null)
+            {
+                return false;
+            }
+
+            ctxMenu.PlacementTarget = null;
+            ctxMenu.Placement = PlacementMode.MousePoint;
+            ctxMenu.DataContext = SingleContentLayoutItem;
+            ctxMenu.IsOpen = true;
+            return true;
+        }
+
+        private void SetVisibilityBinding()
+        {
+            SetBinding(
+              VisibilityProperty,
+              new Binding(nameof(IsVisible))
+              {
+                  Source = _model,
+                  Converter = new BoolToVisibilityConverter(),
+                  Mode = BindingMode.OneWay,
+                  ConverterParameter = Visibility.Hidden
+              });
+        }
+
+        /// <summary>IsVisibleChanged Event Handler.</summary>
+        private void LayoutAnchorableFloatingWindowControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var visibilityBinding = GetBindingExpression(VisibilityProperty);
+            if (IsVisible && visibilityBinding == null)
+            {
+                SetBinding(VisibilityProperty, new Binding(nameof(IsVisible))
+                { Source = _model, Converter = new BoolToVisibilityConverter(), Mode = BindingMode.OneWay, ConverterParameter = Visibility.Hidden });
+            }
+        }
+
+        private bool CanExecuteHideWindowCommand(object parameter)
+        {
+            var manager = Model?.Root?.Manager;
+            if (manager == null)
+            {
+                return false;
+            }
+
+            var canExecute = false;
+            foreach (var anchorable in Model.Descendents().OfType<LayoutAnchorable>().ToArray())
+            {
+                if (!anchorable.CanHide)
+                {
+                    canExecute = false;
+                    break;
+                }
+
+                var anchorableLayoutItem = manager.GetLayoutItemFromModel(anchorable) as LayoutAnchorableItem;
+                if (anchorableLayoutItem?.HideCommand == null || !anchorableLayoutItem.HideCommand.CanExecute(parameter))
+                {
+                    canExecute = false;
+                    break;
+                }
+
+                canExecute = true;
+            }
+
+            return canExecute;
+        }
+
+        private void OnExecuteHideWindowCommand(object parameter)
+        {
+            var manager = Model.Root.Manager;
+            foreach (var anchorable in Model.Descendents().OfType<LayoutAnchorable>().ToArray())
+            {
+                var anchorableLayoutItem = manager.GetLayoutItemFromModel(anchorable) as LayoutAnchorableItem;
+                anchorableLayoutItem.HideCommand.Execute(parameter);
+            }
+
+            Hide(); // Bring toolwindows inside hidden FloatingWindow back requires restart of app
+        }
+
+        private bool CanExecuteCloseWindowCommand(object parameter)
+        {
+            var manager = Model?.Root?.Manager;
+            if (manager == null)
+            {
+                return false;
+            }
+
+            var canExecute = false;
+            foreach (var anchorable in Model.Descendents().OfType<LayoutAnchorable>().ToArray())
+            {
+                if (!anchorable.CanClose)
+                {
+                    canExecute = false;
+                    break;
+                }
+
+                var anchorableLayoutItem = manager.GetLayoutItemFromModel(anchorable) as LayoutAnchorableItem;
+                if (anchorableLayoutItem?.CloseCommand == null || !anchorableLayoutItem.CloseCommand.CanExecute(parameter))
+                {
+                    canExecute = false;
+                    break;
+                }
+
+                canExecute = true;
+            }
+
+            return canExecute;
+        }
+
+        private void OnExecuteCloseWindowCommand(object parameter)
+        {
+            var manager = Model.Root.Manager;
+            foreach (var anchorable in Model.Descendents().OfType<LayoutAnchorable>().ToArray())
+            {
+                var anchorableLayoutItem = manager.GetLayoutItemFromModel(anchorable) as LayoutAnchorableItem;
+                anchorableLayoutItem.CloseCommand.Execute(parameter);
+            }
+        }
+    }
+}

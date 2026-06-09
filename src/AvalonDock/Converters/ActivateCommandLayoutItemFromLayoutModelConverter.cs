@@ -1,0 +1,54 @@
+﻿using System;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Markup;
+using AvalonDock.Layout;
+
+namespace AvalonDock.Converters
+{
+	/// <summary>
+	/// Represents the activate Command Layout Item From Layout Model Converter.
+	/// </summary>
+	public class ActivateCommandLayoutItemFromLayoutModelConverter : MarkupExtension, IValueConverter
+	{
+		/// <inheritdoc/>
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			// when this converter is called layout could be constructing so many properties here are potentially not valid
+			if (!(value is LayoutContent layoutModel))
+            {
+                return null;
+            }
+
+            if (layoutModel.Root == null)
+            {
+                return null;
+            }
+
+            if (layoutModel.Root.Manager == null)
+            {
+                return null;
+            }
+
+            var layoutItemModel = layoutModel.Root.Manager.GetLayoutItemFromModel(layoutModel);
+			if (layoutItemModel == null)
+            {
+                return Binding.DoNothing;
+            }
+
+            return layoutItemModel.ActivateCommand;
+		}
+
+		/// <inheritdoc/>
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc/>
+		public override object ProvideValue(IServiceProvider serviceProvider)
+		{
+			return ConverterCreater.Get<ActivateCommandLayoutItemFromLayoutModelConverter>();
+		}
+	}
+}

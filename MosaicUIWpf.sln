@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.5.11723.231 stable
+VisualStudioVersion = 18.5.11723.231
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mosaic.UI.Wpf", "src\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj", "{6D0A3F06-1E2F-55C6-5823-193FDC200572}"
 EndProject
@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7F2E
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowCue", "src\WindowCue\WindowCue.csproj", "{D677F4F1-001E-41D3-BADD-0D0CADBC832D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonDock", "src\AvalonDock\AvalonDock.csproj", "{1F248880-48C9-E576-842B-9B8685F68AF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +48,10 @@ Global
 		{D677F4F1-001E-41D3-BADD-0D0CADBC832D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D677F4F1-001E-41D3-BADD-0D0CADBC832D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D677F4F1-001E-41D3-BADD-0D0CADBC832D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F248880-48C9-E576-842B-9B8685F68AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F248880-48C9-E576-842B-9B8685F68AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F248880-48C9-E576-842B-9B8685F68AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F248880-48C9-E576-842B-9B8685F68AF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
