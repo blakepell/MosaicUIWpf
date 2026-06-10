@@ -1,3 +1,4 @@
+using AvalonDock.Layout;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -5,7 +6,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
@@ -15,7 +15,7 @@ namespace AvalonDock.Controls
     public class LayoutAnchorSideControl : Control, ILayoutControl
     {
         private readonly LayoutAnchorSide _model;
-        private readonly ObservableCollection<LayoutAnchorGroupControl> _childViews = new();
+        private readonly ObservableCollection<LayoutAnchorGroupControl> _childViews = [];
 
         /// <summary>
         /// Initializes static members of the <see cref="LayoutAnchorSideControl"/> class.

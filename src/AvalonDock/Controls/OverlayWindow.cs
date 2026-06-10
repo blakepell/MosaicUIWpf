@@ -1,11 +1,11 @@
+using AvalonDock.Layout;
+using AvalonDock.Themes;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
-using AvalonDock.Layout;
-using AvalonDock.Themes;
 
 namespace AvalonDock.Controls
 {
@@ -53,7 +53,7 @@ namespace AvalonDock.Controls
         private Path _previewBox;
         private readonly IOverlayWindowHost _host;
         private LayoutFloatingWindowControl _floatingWindow;
-        private readonly List<IDropArea> _visibleAreas = new();
+        private readonly List<IDropArea> _visibleAreas = [];
 
         /// <summary>
         /// Initializes static members of the <see cref="OverlayWindow"/> class.

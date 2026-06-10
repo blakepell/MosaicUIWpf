@@ -445,8 +445,8 @@ namespace AvalonDock.Controls.Shell.Standard
                 message = ToString();
             }
 #if DEBUG
-			else
-				message += " (" + ToString() + ")";
+            else
+                message += " (" + ToString() + ")";
 #endif
             // Wow.  Reflection in a throw call.  Later on this may turn out to have been a bad idea.
             // If you're throwing an exception I assume it's OK for me to take some time to give it back.
@@ -479,10 +479,10 @@ namespace AvalonDock.Controls.Shell.Standard
             }
             else
             {
-                var cons = e.GetType().GetConstructor(new[] { typeof(string) });
+                var cons = e.GetType().GetConstructor([typeof(string)]);
                 if (null != cons)
                 {
-                    e = cons.Invoke(new object[] { message }) as Exception;
+                    e = cons.Invoke([message]) as Exception;
                     Assert.IsNotNull(e);
                 }
             }

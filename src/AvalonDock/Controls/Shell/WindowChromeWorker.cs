@@ -114,28 +114,27 @@ namespace Microsoft.Windows.Shell
         /// </summary>
         public WindowChromeWorker()
         {
-            _messageTable = new List<HANDLE_MESSAGE>
-            {
-                new(WM.SETTEXT,               _HandleSetTextOrIcon),
-                new(WM.SETICON,               _HandleSetTextOrIcon),
-                new(WM.NCACTIVATE,            _HandleNCActivate),
-                new(WM.NCCALCSIZE,            _HandleNCCalcSize),
-                new(WM.NCHITTEST,             _HandleNCHitTest),
-                new(WM.NCRBUTTONUP,           _HandleNCRButtonUp),
-                new(WM.SIZE,                  _HandleSize),
-                new(WM.WINDOWPOSCHANGED,      _HandleWindowPosChanged),
-                new(WM.DWMCOMPOSITIONCHANGED, _HandleDwmCompositionChanged),
-            };
+            _messageTable =
+            [
+                new(WM.SETTEXT, _HandleSetTextOrIcon),
+                new(WM.SETICON, _HandleSetTextOrIcon),
+                new(WM.NCACTIVATE, _HandleNCActivate),
+                new(WM.NCCALCSIZE, _HandleNCCalcSize),
+                new(WM.NCHITTEST, _HandleNCHitTest),
+                new(WM.NCRBUTTONUP, _HandleNCRButtonUp),
+                new(WM.SIZE, _HandleSize),
+                new(WM.WINDOWPOSCHANGED, _HandleWindowPosChanged),
+                new(WM.DWMCOMPOSITIONCHANGED, _HandleDwmCompositionChanged)
+            ];
 
             if (Utility.IsPresentationFrameworkVersionLessThan4)
             {
-                _messageTable.AddRange(new[]
-                {
-                   new HANDLE_MESSAGE(WM.SETTINGCHANGE,         _HandleSettingChange),
+                _messageTable.AddRange([
+                    new HANDLE_MESSAGE(WM.SETTINGCHANGE,         _HandleSettingChange),
                    new HANDLE_MESSAGE(WM.ENTERSIZEMOVE,         _HandleEnterSizeMove),
                    new HANDLE_MESSAGE(WM.EXITSIZEMOVE,          _HandleExitSizeMove),
-                   new HANDLE_MESSAGE(WM.MOVE,                  _HandleMove),
-                });
+                   new HANDLE_MESSAGE(WM.MOVE,                  _HandleMove)
+                ]);
             }
         }
 

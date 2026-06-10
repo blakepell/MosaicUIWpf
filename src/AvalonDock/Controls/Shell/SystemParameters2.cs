@@ -446,30 +446,26 @@ namespace Microsoft.Windows.Shell
             _UpdateTable = new Dictionary<WM, List<_SystemMetricUpdate>>
             {
                 {
-                    WM.THEMECHANGED,
-                    new List<_SystemMetricUpdate>
-                    {
+                    WM.THEMECHANGED, [
                         _UpdateThemeInfo,
                         _UpdateHighContrast,
                         _UpdateWindowCornerRadius,
-                        _UpdateCaptionButtonLocation,
-                    }
+                        _UpdateCaptionButtonLocation
+                    ]
                 },
                 {
-                    WM.SETTINGCHANGE,
-                    new List<_SystemMetricUpdate>
-                    {
+                    WM.SETTINGCHANGE, [
                         _UpdateCaptionHeight,
                         _UpdateWindowResizeBorderThickness,
                         _UpdateSmallIconSize,
                         _UpdateHighContrast,
                         _UpdateWindowNonClientFrameThickness,
-                        _UpdateCaptionButtonLocation,
-                    }
+                        _UpdateCaptionButtonLocation
+                    ]
                 },
-                { WM.DWMNCRENDERINGCHANGED, new List<_SystemMetricUpdate> { _UpdateIsGlassEnabled } },
-                { WM.DWMCOMPOSITIONCHANGED, new List<_SystemMetricUpdate> { _UpdateIsGlassEnabled } },
-                { WM.DWMCOLORIZATIONCOLORCHANGED, new List<_SystemMetricUpdate> { _UpdateGlassColor } },
+                { WM.DWMNCRENDERINGCHANGED, [_UpdateIsGlassEnabled] },
+                { WM.DWMCOMPOSITIONCHANGED, [_UpdateIsGlassEnabled] },
+                { WM.DWMCOLORIZATIONCOLORCHANGED, [_UpdateGlassColor] },
             };
         }
 

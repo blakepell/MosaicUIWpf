@@ -28,7 +28,7 @@ namespace AvalonDock.Controls
         protected DropTarget(T targetElement, Rect detectionRect, DropTargetType type)
         {
             _targetElement = targetElement;
-            _detectionRect = new[] { detectionRect };
+            _detectionRect = [detectionRect];
             _type = type;
         }
 

@@ -16,11 +16,11 @@ namespace AvalonDock.Controls
         private LayoutFloatingWindowControl _floatingWindow;
 
         // A list of hosts that can display an overlaywindow and offer a drop target (docking position)
-        private List<IOverlayWindowHost> _overlayWindowHosts = new();
+        private List<IOverlayWindowHost> _overlayWindowHosts = [];
 
         private IOverlayWindowHost _currentHost;
         private IOverlayWindow _currentWindow;
-        private List<IDropArea> _currentWindowAreas = new();
+        private List<IDropArea> _currentWindowAreas = [];
         private IDropTarget _currentDropTarget;
         private bool _isDrag;
 
@@ -123,7 +123,7 @@ namespace AvalonDock.Controls
                 _currentDropTarget = null;
             }
 
-            List<IDropArea> areasToRemove = new List<IDropArea>();
+            List<IDropArea> areasToRemove = [];
             _currentWindowAreas.ForEach(a =>
             {
                 // is mouse still inside this area?

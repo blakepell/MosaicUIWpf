@@ -196,7 +196,7 @@ namespace AvalonDock.Controls
                 return _dropAreas;
             }
 
-            _dropAreas = new List<IDropArea>();
+            _dropAreas = [];
             if (draggingWindow.Model is LayoutDocumentFloatingWindow)
             {
                 return _dropAreas;

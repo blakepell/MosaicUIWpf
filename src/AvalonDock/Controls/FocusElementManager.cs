@@ -16,7 +16,7 @@ namespace AvalonDock.Controls
     /// </summary>
     internal static class FocusElementManager
     {
-        private static List<DockingManager> _managers = new();
+        private static List<DockingManager> _managers = [];
         private static FullWeakDictionary<ILayoutElement, IInputElement> _modelFocusedElement = new();
         private static WeakDictionary<ILayoutElement, IntPtr> _modelFocusedWindowHandle = new();
         private static WeakReference _lastFocusedElement;

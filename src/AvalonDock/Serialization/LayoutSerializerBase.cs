@@ -226,10 +226,10 @@ namespace AvalonDock.Serialization
         {
             _previousAnchorables = Manager.Layout?.Descendents()
                 .OfType<ISerializableLayoutAnchorable>().ToArray()
-                ?? Array.Empty<ISerializableLayoutAnchorable>();
+                ?? [];
             _previousDocuments = Manager.Layout?.Descendents()
                 .OfType<ISerializableLayoutDocument>().ToArray()
-                ?? Array.Empty<ISerializableLayoutDocument>();
+                ?? [];
         }
 
         private void StartDeserialization()

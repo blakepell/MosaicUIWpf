@@ -1,8 +1,8 @@
+using AvalonDock.Layout;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
@@ -327,7 +327,7 @@ namespace AvalonDock.Controls
                         pathFigure.IsFilled = true;
                         pathFigure.Freeze();
 
-                        return new PathGeometry(new[] { pathFigure });
+                        return new PathGeometry([pathFigure]);
                     }
             }
 

@@ -1569,7 +1569,7 @@ public class ToggleDockingManager : DockingManager
 
     private void RegisterToolboxesFromBars()
     {
-        ToggleDockButtonBar[] allBars = { _leftTopBar, _leftBottomBar, _rightTopBar, _rightBottomBar, _bottomLeftBar, _bottomRightBar };
+        ToggleDockButtonBar[] allBars = [_leftTopBar, _leftBottomBar, _rightTopBar, _rightBottomBar, _bottomLeftBar, _bottomRightBar];
         foreach (var bar in allBars)
         {
             if (bar == null)

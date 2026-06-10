@@ -169,7 +169,7 @@ namespace AvalonDock.Serialization.Dto
         public bool CanDock { get; set; }
 
         /// <summary>Gets or sets the child elements.</summary>
-        public List<LayoutPositionableGroupDto> Children { get; set; } = new();
+        public List<LayoutPositionableGroupDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ namespace AvalonDock.Serialization.Dto
         public string Orientation { get; set; }
 
         /// <summary>Gets or sets the child document panes and pane groups.</summary>
-        public List<LayoutPositionableGroupDto> Children { get; set; } = new();
+        public List<LayoutPositionableGroupDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ namespace AvalonDock.Serialization.Dto
         public bool ShowHeader { get; set; }
 
         /// <summary>Gets or sets the child content items.</summary>
-        public List<LayoutContentDto> Children { get; set; } = new();
+        public List<LayoutContentDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -208,7 +208,7 @@ namespace AvalonDock.Serialization.Dto
         public string Orientation { get; set; }
 
         /// <summary>Gets or sets the child anchorable panes and pane groups.</summary>
-        public List<LayoutPositionableGroupDto> Children { get; set; } = new();
+        public List<LayoutPositionableGroupDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -223,7 +223,7 @@ namespace AvalonDock.Serialization.Dto
         public string Name { get; set; }
 
         /// <summary>Gets or sets the child anchorables.</summary>
-        public List<LayoutAnchorableDto> Children { get; set; } = new();
+        public List<LayoutAnchorableDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -232,7 +232,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutAnchorSideDto : LayoutElementDto
     {
         /// <summary>Gets or sets the child anchor groups.</summary>
-        public List<LayoutAnchorGroupDto> Children { get; set; } = new();
+        public List<LayoutAnchorGroupDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -247,7 +247,7 @@ namespace AvalonDock.Serialization.Dto
         public string PreviousContainerId { get; set; }
 
         /// <summary>Gets or sets the child anchorables.</summary>
-        public List<LayoutAnchorableDto> Children { get; set; } = new();
+        public List<LayoutAnchorableDto> Children { get; set; } = [];
     }
 
     /// <summary>
@@ -299,9 +299,9 @@ namespace AvalonDock.Serialization.Dto
         public LayoutAnchorSideDto BottomSide { get; set; }
 
         /// <summary>Gets or sets the floating windows.</summary>
-        public List<LayoutFloatingWindowDto> FloatingWindows { get; set; } = new();
+        public List<LayoutFloatingWindowDto> FloatingWindows { get; set; } = [];
 
         /// <summary>Gets or sets the hidden anchorables.</summary>
-        public List<LayoutAnchorableDto> Hidden { get; set; } = new();
+        public List<LayoutAnchorableDto> Hidden { get; set; } = [];
     }
 }

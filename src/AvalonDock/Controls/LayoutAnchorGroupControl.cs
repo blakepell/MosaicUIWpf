@@ -13,7 +13,7 @@ namespace AvalonDock.Controls
     /// </summary>
     public class LayoutAnchorGroupControl : Control, ILayoutControl
     {
-        private ObservableCollection<LayoutAnchorControl> _childViews = new();
+        private ObservableCollection<LayoutAnchorControl> _childViews = [];
         private LayoutAnchorGroup _model;
         private bool _isSubscribed;
 

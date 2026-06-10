@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace AvalonDock.Layout
 {
@@ -14,7 +13,7 @@ namespace AvalonDock.Layout
     public abstract class LayoutGroup<T> : LayoutGroupBase, ILayoutGroup
         where T : class, ILayoutElement
     {
-        private readonly ObservableCollection<T> _children = new();
+        private readonly ObservableCollection<T> _children = [];
         private bool _isVisible = true;
 
         /// <summary>

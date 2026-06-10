@@ -12,8 +12,8 @@ namespace AvalonDock.Controls
         where TKey : class
         where TValue : class
     {
-        private readonly List<WeakReference<TKey>> _keys = new();
-        private readonly List<WeakReference<TValue>> _values = new();
+        private readonly List<WeakReference<TKey>> _keys = [];
+        private readonly List<WeakReference<TValue>> _values = [];
 
         /// <summary>
         /// Gets or sets the value associated with the specified index.

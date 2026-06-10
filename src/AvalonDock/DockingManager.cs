@@ -50,12 +50,12 @@ namespace AvalonDock
         /// <summary>
         /// Stores the currently visible floating window controls.
         /// </summary>
-        private readonly List<LayoutFloatingWindowControl> _fwList = new();
+        private readonly List<LayoutFloatingWindowControl> _fwList = [];
 
         /// <summary>
         /// Stores floating window controls that are temporarily hidden while the manager is unloaded.
         /// </summary>
-        private readonly List<LayoutFloatingWindowControl> _fwHiddenList = new();
+        private readonly List<LayoutFloatingWindowControl> _fwHiddenList = [];
 
         /// <summary>
         /// References the overlay window used for drag-and-drop feedback.
@@ -75,7 +75,7 @@ namespace AvalonDock
         /// <summary>
         /// Stores the layout items attached to the current layout content elements.
         /// </summary>
-        private readonly List<LayoutItem> _layoutItems = new();
+        private readonly List<LayoutItem> _layoutItems = [];
 
         /// <summary>
         /// Indicates whether layout item creation is temporarily suspended.
@@ -1708,7 +1708,7 @@ namespace AvalonDock
         /// <summary>
         /// Stores weak references to the logical children maintained by the docking manager.
         /// </summary>
-        private readonly List<WeakReference> _logicalChildren = new();
+        private readonly List<WeakReference> _logicalChildren = [];
 
         /// <inheritdoc/>
         protected override IEnumerator LogicalChildren => _logicalChildren.Select(ch => ch.GetValueOrDefault<object>()).GetEnumerator();
@@ -1811,7 +1811,7 @@ namespace AvalonDock
                 return _areas;
             }
 
-            _areas = new List<IDropArea>();
+            _areas = [];
             var isDraggingDocuments = draggingWindow.Model is LayoutDocumentFloatingWindow;
             if (!isDraggingDocuments)
             {
@@ -2421,7 +2421,7 @@ namespace AvalonDock
         private LayoutDocument GetDocumentToActivate(LayoutDocument previousDocument)
         {
             ILayoutContainer parentContainer = previousDocument.Parent;
-            IEnumerable<LayoutDocument> siblingDocuments = parentContainer?.Children.OfType<LayoutDocument>() ?? Enumerable.Empty<LayoutDocument>();
+            IEnumerable<LayoutDocument> siblingDocuments = parentContainer?.Children.OfType<LayoutDocument>() ?? [];
 
             foreach (var childPair in siblingDocuments.Zip(siblingDocuments.Skip(1), Tuple.Create))
             {

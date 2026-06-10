@@ -301,7 +301,7 @@ namespace AvalonDock.Controls
                 return _dropAreas;
             }
 
-            _dropAreas = new List<IDropArea>();
+            _dropAreas = [];
             var isDraggingDocuments = draggingWindow.Model is LayoutDocumentFloatingWindow;
 
             // Determine if floatingWindow is configured to dock as document or not

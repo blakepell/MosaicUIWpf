@@ -397,7 +397,7 @@ namespace AvalonDock.Controls
         private readonly LayoutAnchorable _sourceAnchorable;
         private readonly ToggleDockingManager _manager;
         private readonly Window _ownerWindow;
-        private readonly List<DropZone> _dropZones = new();
+        private readonly List<DropZone> _dropZones = [];
 
         // Visual for the dragged button ghost
         private readonly VisualBrush _ghostBrush;

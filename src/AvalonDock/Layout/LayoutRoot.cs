@@ -206,7 +206,7 @@ namespace AvalonDock.Layout
             {
                 if (_floatingWindows == null)
                 {
-                    _floatingWindows = new ObservableCollection<LayoutFloatingWindow>();
+                    _floatingWindows = [];
                     _floatingWindows.CollectionChanged += _floatingWindows_CollectionChanged;
                 }
 
@@ -223,7 +223,7 @@ namespace AvalonDock.Layout
             {
                 if (_hiddenAnchorables == null)
                 {
-                    _hiddenAnchorables = new ObservableCollection<LayoutAnchorable>();
+                    _hiddenAnchorables = [];
                     _hiddenAnchorables.CollectionChanged += _hiddenAnchorables_CollectionChanged;
                 }
 

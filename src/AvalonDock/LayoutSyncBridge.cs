@@ -21,8 +21,8 @@ namespace AvalonDock
         private ObservableCollection<object> _anchorableModels;
         private bool _isSyncing;
         private readonly Dictionary<object, AnchorSide> _contentToSide = new(ReferenceEqualityComparer.Default);
-        private readonly List<(INotifyCollectionChanged Source, NotifyCollectionChangedEventHandler Handler)> _collectionSubscriptions = new();
-        private readonly List<INotifyPropertyChanged> _dockPropertySubscriptions = new();
+        private readonly List<(INotifyCollectionChanged Source, NotifyCollectionChangedEventHandler Handler)> _collectionSubscriptions = [];
+        private readonly List<INotifyPropertyChanged> _dockPropertySubscriptions = [];
 
         /// <summary>
         /// Gets a read-only view of the content-to-side mapping populated during tree walk.
@@ -45,8 +45,8 @@ namespace AvalonDock
         /// </summary>
         public void Attach()
         {
-            _documentModels = new ObservableCollection<object>();
-            _anchorableModels = new ObservableCollection<object>();
+            _documentModels = [];
+            _anchorableModels = [];
 
             CollectDockables(_rootDock);
 

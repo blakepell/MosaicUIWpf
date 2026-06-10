@@ -263,13 +263,13 @@ namespace Microsoft.Windows.Shell
         /// <summary>
         /// The bound Properties field.
         /// </summary>
-        private static readonly List<_SystemParameterBoundProperty> _BoundProperties = new()
-        {
+        private static readonly List<_SystemParameterBoundProperty> _BoundProperties =
+        [
             new _SystemParameterBoundProperty { DependencyProperty = CornerRadiusProperty, SystemParameterPropertyName = "WindowCornerRadius" },
             new _SystemParameterBoundProperty { DependencyProperty = CaptionHeightProperty, SystemParameterPropertyName = "WindowCaptionHeight" },
             new _SystemParameterBoundProperty { DependencyProperty = ResizeBorderThicknessProperty, SystemParameterPropertyName = "WindowResizeBorderThickness" },
-            new _SystemParameterBoundProperty { DependencyProperty = GlassFrameThicknessProperty, SystemParameterPropertyName = "WindowNonClientFrameThickness" },
-        };
+            new _SystemParameterBoundProperty { DependencyProperty = GlassFrameThicknessProperty, SystemParameterPropertyName = "WindowNonClientFrameThickness" }
+        ];
 
         /// <summary>
         /// Executes the on Property Changed That Requires Repaint operation.
