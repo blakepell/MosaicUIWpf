@@ -1351,7 +1351,7 @@
                             Padding="1,0"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{DynamicResource {x:Static reskeys:ResourceKeys.Background}}"
-                            BorderThickness="0,0,0,1">
+                            BorderThickness="0,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -1359,7 +1359,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.ColumnSpan="2" Background="Transparent" />
                                 <ContentPresenter
-                                    Margin="4,0,4,1"
+                                    Margin="6,0,4,1"
                                     VerticalAlignment="Bottom"
                                     Content="{Binding Model, RelativeSource={RelativeSource TemplatedParent}}"
                                     ContentTemplate="{Binding DocumentHeaderTemplate, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type avalonDock:DockingManager}, Mode=FindAncestor}}"
