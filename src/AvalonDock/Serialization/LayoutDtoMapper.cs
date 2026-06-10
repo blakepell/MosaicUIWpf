@@ -1,10 +1,9 @@
+using AvalonDock.Layout;
+using AvalonDock.Serialization.Dto;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using AvalonDock.Core.Serialization;
-using AvalonDock.Core.Serialization.Dto;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Serialization
 {

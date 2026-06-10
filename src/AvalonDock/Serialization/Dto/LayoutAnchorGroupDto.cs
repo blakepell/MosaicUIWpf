@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace AvalonDock.Core.Serialization.Dto
+namespace AvalonDock.Serialization.Dto
 {
     /// <summary>
     /// DTO for a layout anchor group.

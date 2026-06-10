@@ -1,4 +1,6 @@
-namespace AvalonDock.Core
+using AvalonDock.Core;
+
+namespace AvalonDock.Interfaces
 {
     /// <summary>
     /// Represents the fundamental unit of dockable content in the layout system.

@@ -1,4 +1,4 @@
-﻿using AvalonDock.Core.Serialization;
+﻿using AvalonDock.Serialization;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

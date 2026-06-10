@@ -1,5 +1,5 @@
 using AvalonDock.Controls;
-using AvalonDock.Core;
+using AvalonDock.Interfaces;
 using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;

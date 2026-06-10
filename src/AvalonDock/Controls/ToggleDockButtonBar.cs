@@ -1,3 +1,5 @@
+using AvalonDock.Interfaces;
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,8 +10,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using AvalonDock.Core;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using AvalonDock.Serialization;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Serialization;
-using AvalonDock.Core.Serialization;
 
 namespace AvalonDock.Layout
 {

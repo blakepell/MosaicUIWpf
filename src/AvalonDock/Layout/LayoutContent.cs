@@ -1,5 +1,5 @@
 ﻿using AvalonDock.Controls;
-using AvalonDock.Core.Serialization;
+using AvalonDock.Serialization;
 using System;
 using System.ComponentModel;
 using System.Linq;

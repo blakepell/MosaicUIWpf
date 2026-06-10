@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace Standard
+namespace AvalonDock.Controls.Shell.Standard
 {
     /// <summary>Represents the Win32Error structure.</summary>
     [StructLayout(LayoutKind.Explicit)]

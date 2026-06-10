@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Standard
+namespace AvalonDock.Controls.Shell.Standard
 {
     /// <summary>
 	/// DoubleUtil uses fixed eps to provide fuzzy comparison functionality for doubles.

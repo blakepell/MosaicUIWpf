@@ -1,7 +1,6 @@
 using AvalonDock.Controls;
-using AvalonDock.Core;
 using AvalonDock.Core.Events;
-using AvalonDock.Core.Serialization;
+using AvalonDock.Interfaces;
 using AvalonDock.Layout;
 using AvalonDock.Serialization;
 using AvalonDock.Themes;
@@ -141,52 +140,52 @@ namespace AvalonDock
         private readonly ILayoutDtoMapper _dtoMapper;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.DocumentClosing"/> event.
+        /// Backs the <see cref="IDockingManager.DocumentClosing"/> event.
         /// </summary>
         private event EventHandler<DocumentCancelEventArgs> _coreDocumentClosing;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.DocumentClosed"/> event.
+        /// Backs the <see cref="IDockingManager.DocumentClosed"/> event.
         /// </summary>
         private event EventHandler<DocumentEventArgs> _coreDocumentClosed;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.AnchorableClosing"/> event.
+        /// Backs the <see cref="IDockingManager.AnchorableClosing"/> event.
         /// </summary>
         private event EventHandler<AnchorableCancelEventArgs> _coreAnchorableClosing;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.AnchorableClosed"/> event.
+        /// Backs the <see cref="IDockingManager.AnchorableClosed"/> event.
         /// </summary>
         private event EventHandler<AnchorableEventArgs> _coreAnchorableClosed;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.AnchorableHiding"/> event.
+        /// Backs the <see cref="IDockingManager.AnchorableHiding"/> event.
         /// </summary>
         private event EventHandler<AnchorableCancelEventArgs> _coreAnchorableHiding;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.AnchorableHidden"/> event.
+        /// Backs the <see cref="IDockingManager.AnchorableHidden"/> event.
         /// </summary>
         private event EventHandler<AnchorableEventArgs> _coreAnchorableHidden;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.ContentFloating"/> event.
+        /// Backs the <see cref="IDockingManager.ContentFloating"/> event.
         /// </summary>
         private event EventHandler<ContentCancelEventArgs> _coreContentFloating;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.ContentFloated"/> event.
+        /// Backs the <see cref="IDockingManager.ContentFloated"/> event.
         /// </summary>
         private event EventHandler<ContentEventArgs> _coreContentFloated;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.ContentDocking"/> event.
+        /// Backs the <see cref="IDockingManager.ContentDocking"/> event.
         /// </summary>
         private event EventHandler<ContentCancelEventArgs> _coreContentDocking;
 
         /// <summary>
-        /// Backs the <see cref="Core.IDockingManager.ContentDocked"/> event.
+        /// Backs the <see cref="IDockingManager.ContentDocked"/> event.
         /// </summary>
         private event EventHandler<ContentEventArgs> _coreContentDocked;
 

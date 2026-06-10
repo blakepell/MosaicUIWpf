@@ -15,7 +15,7 @@ using System.Text;
 
 #pragma warning disable CS0169 // Field is never used
 #pragma warning disable SYSLIB0004
-namespace Standard
+namespace AvalonDock.Controls.Shell.Standard
 {
     // Some COM interfaces and Win32 structures are already declared in the framework.
     // Interesting ones to remember in System.Runtime.InteropServices.ComTypes are:

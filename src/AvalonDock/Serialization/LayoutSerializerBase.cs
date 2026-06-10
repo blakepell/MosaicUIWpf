@@ -1,12 +1,12 @@
 #nullable disable
-using AvalonDock.Core.Serialization;
-using AvalonDock.Core.Serialization.Dto;
+using AvalonDock.Interfaces;
+using AvalonDock.Serialization.Dto;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace AvalonDock.Core
+namespace AvalonDock.Serialization
 {
     /// <summary>
     /// Event args for the layout serialization callback, allowing the client

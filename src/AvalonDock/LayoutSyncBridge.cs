@@ -1,11 +1,12 @@
+using AvalonDock.Core;
+using AvalonDock.Interfaces;
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using AvalonDock.Core;
-using AvalonDock.Layout;
 
 namespace AvalonDock
 {

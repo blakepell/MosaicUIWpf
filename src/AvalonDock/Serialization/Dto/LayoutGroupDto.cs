@@ -1,7 +1,7 @@
 #nullable disable
 using System.Xml.Serialization;
 
-namespace AvalonDock.Core.Serialization.Dto
+namespace AvalonDock.Serialization.Dto
 {
     /// <summary>
     /// Abstract DTO base for layout containers (groups).

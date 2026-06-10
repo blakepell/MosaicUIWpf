@@ -1,7 +1,7 @@
+using AvalonDock.Interfaces;
+using AvalonDock.Serialization.Dto;
 using System.IO;
 using System.Xml.Serialization;
-using AvalonDock.Core;
-using AvalonDock.Core.Serialization.Dto;
 
 namespace AvalonDock.Serialization
 {

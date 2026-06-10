@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Standard
+namespace AvalonDock.Controls.Shell.Standard
 {
     /// <summary>
     /// Represents the message Window.

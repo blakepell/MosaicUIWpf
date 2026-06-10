@@ -2,6 +2,7 @@
     Copyright Microsoft Corporation. All Rights Reserved.
 \**************************************************************************/
 
+using AvalonDock.Controls.Shell.Standard;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +12,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Standard;
 
 namespace Microsoft.Windows.Shell
 {

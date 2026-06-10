@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
-namespace Standard
+namespace AvalonDock.Controls.Shell.Standard
 {
     using FILETIME = FILETIME;
 
@@ -992,7 +992,7 @@ namespace Standard
 
     /// <summary>COM interface for Windows shell links.</summary>
     [ComImport]
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid(IID.ShellLink)]
     internal interface IShellLinkW
     {
