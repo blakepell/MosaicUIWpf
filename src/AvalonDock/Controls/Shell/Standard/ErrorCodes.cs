@@ -203,7 +203,7 @@ namespace AvalonDock.Controls.Shell.Standard
 
     /// <summary>Represents the HRESULT structure.</summary>
     [StructLayout(LayoutKind.Explicit)]
-    internal struct HRESULT
+    internal struct HRESULT : IEquatable<HRESULT>
     {
         /// <summary>The _value value.</summary>
         [FieldOffset(0)]
@@ -501,6 +501,11 @@ namespace AvalonDock.Controls.Shell.Standard
             ((HRESULT)Win32Error.GetLastError()).ThrowIfFailed();
             // Only expecting to call this when we're expecting a failed GetLastError()
             Assert.Fail();
+        }
+
+        public bool Equals(HRESULT other)
+        {
+            return _value == other._value;
         }
     }
 }
