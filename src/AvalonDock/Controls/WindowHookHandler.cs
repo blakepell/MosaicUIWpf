@@ -93,8 +93,7 @@ namespace AvalonDock.Controls
                 {
                     using (_insideActivateEvent.Enter())
                     {
-                        // if (Activate != null)
-                        //    Activate(this, new WindowActivateEventArgs(wParam));
+
                     }
                 }
             }

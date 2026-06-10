@@ -118,7 +118,6 @@ namespace AvalonDock.Controls
             if (_windowHandler != null)
             {
                 _windowHandler.FocusChanged -= WindowFocusChanging;
-                // _windowHandler.Activate -= new EventHandler<WindowActivateEventArgs>(WindowActivating);
                 _windowHandler.Detach();
                 _windowHandler = null;
             }
