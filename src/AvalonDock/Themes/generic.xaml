@@ -117,7 +117,8 @@
                                         Padding="{TemplateBinding Padding}"
                                         Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="1,1,1,0">
+                                        BorderThickness="1,1,1,0"
+                                        CornerRadius="4,4,0,0">
                                         <ContentPresenter
                                             x:Name="Content"
                                             HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
