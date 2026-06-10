@@ -17,9 +17,6 @@ namespace AvalonDock.Core
         /// <summary>Gets or sets the parent dockable that owns this one.</summary>
         IDockable? Owner { get; set; }
 
-        /// <summary>Gets or sets the factory that created this dockable.</summary>
-        IFactory? Factory { get; set; }
-
         /// <summary>Gets or sets a value indicating whether this dockable can be closed.</summary>
         bool CanClose { get; set; }
 
