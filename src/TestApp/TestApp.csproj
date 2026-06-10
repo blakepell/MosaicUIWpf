@@ -15,10 +15,10 @@
     <ItemGroup>
         <Resource Include="**\*.png" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\AvalonDock\AvalonDock.csproj" />
+    </ItemGroup>
     <PropertyGroup>
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Components\AvalonDock\AvalonDock.csproj" />
-    </ItemGroup>
 </Project>
