@@ -6,16 +6,16 @@ using System.Windows.Markup;
 
 namespace AvalonDock.Converters
 {
-	/// <summary>
-	/// Represents the inverse Bool To Visibility Converter.
-	/// </summary>
-	[ValueConversion(typeof(bool), typeof(Visibility))]
-	public class InverseBoolToVisibilityConverter : MarkupExtension, IValueConverter
-	{
-		/// <inheritdoc/>
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (!(value is bool))
+    /// <summary>
+    /// Represents the inverse Bool To Visibility Converter.
+    /// </summary>
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class InverseBoolToVisibilityConverter : MarkupExtension, IValueConverter
+    {
+        /// <inheritdoc/>
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is not bool b)
             {
                 throw new ArgumentException("Invalid argument type. Expected argument: bool.", nameof(value));
             }
@@ -25,19 +25,19 @@ namespace AvalonDock.Converters
                 throw new ArgumentException("Invalid return type. Expected type: Visibility", nameof(targetType));
             }
 
-            var val = !(bool)value;
-			if (val)
+            var val = !b;
+            if (val)
             {
                 return Visibility.Visible;
             }
 
             return parameter is Visibility ? parameter : Visibility.Collapsed;
-		}
+        }
 
-		/// <inheritdoc/>
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (!(value is Visibility))
+        /// <inheritdoc/>
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is not Visibility val)
             {
                 throw new ArgumentException("Invalid argument type. Expected argument: Visibility.", nameof(value));
             }
@@ -47,14 +47,13 @@ namespace AvalonDock.Converters
                 throw new ArgumentException("Invalid return type. Expected type: bool", nameof(targetType));
             }
 
-            Visibility val = (Visibility)value;
-			return val != Visibility.Visible;
-		}
+            return val != Visibility.Visible;
+        }
 
-		/// <inheritdoc/>
-		public override object ProvideValue(IServiceProvider serviceProvider)
-		{
-			return ConverterCreater.Get<InverseBoolToVisibilityConverter>();
-		}
-	}
+        /// <inheritdoc/>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return ConverterCreater.Get<InverseBoolToVisibilityConverter>();
+        }
+    }
 }
