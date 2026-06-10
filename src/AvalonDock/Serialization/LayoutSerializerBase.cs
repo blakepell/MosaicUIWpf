@@ -148,7 +148,7 @@ namespace AvalonDock.Serialization
                     previous = _previousAnchorables.FirstOrDefault(a => a.ContentId == lcToFix.ContentId);
                 }
 
-                if (previous != null && previous.Title != null)
+                if (previous is { Title: not null })
                 {
                     lcToFix.Title = previous.Title;
                 }

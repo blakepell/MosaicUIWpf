@@ -80,7 +80,7 @@ namespace AvalonDock.Core
         /// <returns><c>true</c> if the anchorable is docked; <c>false</c> if auto-hidden or not found.</returns>
         public static bool IsAnchorableOpen(this IDockLayoutService service, IDockable anchorable)
         {
-            return anchorable is IToolbox toolbox && toolbox.IsOpen;
+            return anchorable is IToolbox { IsOpen: true };
         }
 
         /// <summary>Gets a value indicating whether any anchorable on the specified side is docked.</summary>

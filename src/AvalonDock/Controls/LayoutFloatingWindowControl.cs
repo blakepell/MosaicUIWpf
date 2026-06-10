@@ -168,7 +168,7 @@ namespace AvalonDock.Controls
 
         private static void OwnedByDockingManagerWindowPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is LayoutFloatingWindowControl w && w.IsLoaded)
+            if (d is LayoutFloatingWindowControl { IsLoaded: true } w)
             {
                 w.UpdateOwnership();
             }
@@ -210,7 +210,7 @@ namespace AvalonDock.Controls
 
         private static void OnResizeBorderThicknessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is LayoutFloatingWindowControl w && w.IsLoaded)
+            if (d is LayoutFloatingWindowControl { IsLoaded: true } w)
             {
                 w.ApplyResizeBorderThickness();
             }
@@ -649,7 +649,7 @@ namespace AvalonDock.Controls
                 return null;
             }
 
-            if (lfwc.IsLoaded && lfwc.IsContentImmutable)
+            if (lfwc is { IsLoaded: true, IsContentImmutable: true })
             {
                 return lfwc.Content;
             }

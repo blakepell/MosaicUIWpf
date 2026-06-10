@@ -358,7 +358,7 @@ namespace AvalonDock.Controls
         /// <summary>Coerces the <see cref="CloseCommand"/>  value.</summary>
         private static object CoerceCloseCommandValue(DependencyObject d, object value) => value;
 
-        private bool CanExecuteCloseCommand(object parameter) => LayoutElement != null && LayoutElement.CanClose;
+        private bool CanExecuteCloseCommand(object parameter) => LayoutElement is { CanClose: true };
 
         private void ExecuteCloseCommand(object parameter) => Close();
 
@@ -399,7 +399,7 @@ namespace AvalonDock.Controls
         /// <summary>Coerces the <see cref="FloatCommand"/> value.</summary>
         private static object CoerceFloatCommandValue(DependencyObject d, object value) => value;
 
-        private bool CanExecuteFloatCommand(object anchorable) => LayoutElement != null && LayoutElement.CanFloat && LayoutElement.FindParent<LayoutFloatingWindow>() == null;
+        private bool CanExecuteFloatCommand(object anchorable) => LayoutElement is { CanFloat: true } && LayoutElement.FindParent<LayoutFloatingWindow>() == null;
 
         /// <summary>Executes to float the content of this LayoutItem in a separate <see cref="LayoutFloatingWindowControl"/>.</summary>
         /// <param name="parameter">The command parameter.</param>
@@ -609,18 +609,17 @@ namespace AvalonDock.Controls
                 return false;
             }
 
-            if (LayoutElement is LayoutDocument layoutDocument && !layoutDocument.CanMove)
+            if (LayoutElement is LayoutDocument { CanMove: false })
             {
                 return false;
             }
 
             var parentDocumentGroup = LayoutElement.FindParent<LayoutDocumentPaneGroup>();
             return (parentDocumentGroup == null ||
-                      parentDocumentGroup.ChildrenCount == 1 ||
-                      parentDocumentGroup.Root.Manager.AllowMixedOrientation ||
-                      parentDocumentGroup.Orientation == Orientation.Horizontal) &&
-                     LayoutElement.Parent is LayoutDocumentPane parentDocumentPane &&
-                     parentDocumentPane.ChildrenCount > 1;
+                    parentDocumentGroup.ChildrenCount == 1 ||
+                    parentDocumentGroup.Root.Manager.AllowMixedOrientation ||
+                    parentDocumentGroup.Orientation == Orientation.Horizontal) &&
+                   LayoutElement.Parent is LayoutDocumentPane { ChildrenCount: > 1 };
         }
 
         private void ExecuteNewVerticalTabGroupCommand(object parameter)
@@ -680,18 +679,17 @@ namespace AvalonDock.Controls
                 return false;
             }
 
-            if (LayoutElement is LayoutDocument layoutDocument && !layoutDocument.CanMove)
+            if (LayoutElement is LayoutDocument { CanMove: false })
             {
                 return false;
             }
 
             var parentDocumentGroup = LayoutElement.FindParent<LayoutDocumentPaneGroup>();
             return (parentDocumentGroup == null ||
-                      parentDocumentGroup.ChildrenCount == 1 ||
-                      parentDocumentGroup.Root.Manager.AllowMixedOrientation ||
-                      parentDocumentGroup.Orientation == Orientation.Vertical) &&
-                     LayoutElement.Parent is LayoutDocumentPane parentDocumentPane &&
-                     parentDocumentPane.ChildrenCount > 1;
+                    parentDocumentGroup.ChildrenCount == 1 ||
+                    parentDocumentGroup.Root.Manager.AllowMixedOrientation ||
+                    parentDocumentGroup.Orientation == Orientation.Vertical) &&
+                   LayoutElement.Parent is LayoutDocumentPane { ChildrenCount: > 1 };
         }
 
         private void ExecuteNewHorizontalTabGroupCommand(object parameter)

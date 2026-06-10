@@ -189,7 +189,7 @@ namespace AvalonDock.Controls
                 var manager = Model?.Root.Manager;
                 var anchor = manager?.FindVisualChildren<LayoutAnchorControl>().Where(c => c.Model == Model).FirstOrDefault();
 
-                return anchor != null && anchor.IsMouseOver;
+                return anchor is { IsMouseOver: true };
                 // location = anchor.PointToScreenDPI(new Point());
             }
         }
@@ -276,17 +276,14 @@ namespace AvalonDock.Controls
 
                 if (viewboxes.Any())
                 {
-                    if (_manager.TransformToAncestor(viewboxes[viewboxes.Count - 1]) is Transform transform)
+                    if (_manager.TransformToAncestor(viewboxes[viewboxes.Count - 1]) is Transform { Value.IsIdentity: false } transform)
                     {
-                        if (!transform.Value.IsIdentity)
-                        {
-                            var origin = transform.Transform(new Point());
+                        var origin = transform.Transform(new Point());
 
-                            var newTransformGroup = new TransformGroup();
-                            newTransformGroup.Children.Add(transform);
-                            newTransformGroup.Children.Add(new TranslateTransform(-origin.X, -origin.Y));
-                            return newTransformGroup;
-                        }
+                        var newTransformGroup = new TransformGroup();
+                        newTransformGroup.Children.Add(transform);
+                        newTransformGroup.Children.Add(new TranslateTransform(-origin.X, -origin.Y));
+                        return newTransformGroup;
                     }
                 }
 
@@ -561,7 +558,7 @@ namespace AvalonDock.Controls
 
             var trToWnd = TransformToAncestor(rootVisual);
             var transformedDelta = trToWnd.Transform(new Point(e.HorizontalChange, e.VerticalChange)) - trToWnd.Transform(new Point());
-            if (ChildLayoutTransform is Transform transform && !transform.Value.IsIdentity)
+            if (ChildLayoutTransform is Transform { Value.IsIdentity: false } transform)
             {
                 transformedDelta = transform.Transform(new Point() + transformedDelta) - new Point();
             }

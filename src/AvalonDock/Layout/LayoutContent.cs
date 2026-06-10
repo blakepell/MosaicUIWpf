@@ -309,7 +309,7 @@ namespace AvalonDock.Layout
 
                 _previousContainer = value;
                 RaisePropertyChanged(nameof(PreviousContainer));
-                if (_previousContainer is ILayoutPaneSerializable paneSerializable && paneSerializable.Id == null)
+                if (_previousContainer is ILayoutPaneSerializable { Id: null } paneSerializable)
                 {
                     paneSerializable.Id = Guid.NewGuid().ToString();
                 }

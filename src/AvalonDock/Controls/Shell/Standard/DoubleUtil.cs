@@ -34,7 +34,7 @@ namespace AvalonDock.Controls.Shell.Standard
             }
 
             double delta = value1 - value2;
-            return (delta < Epsilon) && (delta > -Epsilon);
+            return delta is < Epsilon and > -Epsilon;
         }
 
         /// <summary>

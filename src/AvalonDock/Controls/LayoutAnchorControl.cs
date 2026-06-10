@@ -86,7 +86,7 @@ namespace AvalonDock.Controls
         {
             base.OnMouseDoubleClick(e);
 
-            if (!e.Handled && e.ChangedButton == MouseButton.Left
+            if (e is { Handled: false, ChangedButton: MouseButton.Left }
                 && _model.Root.Manager.AllowAnchorDoubleClickDock)
             {
                 _model.Root.Manager.ExecuteAutoHideCommand(_model);

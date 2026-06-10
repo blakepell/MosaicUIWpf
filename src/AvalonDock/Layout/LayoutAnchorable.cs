@@ -495,7 +495,7 @@ namespace AvalonDock.Layout
 
             if (left || right)
             {
-                if (manager.Layout.RootPanel.Orientation == Orientation.Vertical && manager.Layout.RootPanel.ChildrenCount > 1)
+                if (manager.Layout.RootPanel is { Orientation: Orientation.Vertical, ChildrenCount: > 1 })
                 {
                     manager.Layout.RootPanel = new LayoutPanel(manager.Layout.RootPanel);
                 }
@@ -512,7 +512,7 @@ namespace AvalonDock.Layout
             }
             else
             {
-                if (manager.Layout.RootPanel.Orientation == Orientation.Horizontal && manager.Layout.RootPanel.ChildrenCount > 1)
+                if (manager.Layout.RootPanel is { Orientation: Orientation.Horizontal, ChildrenCount: > 1 })
                 {
                     manager.Layout.RootPanel = new LayoutPanel(manager.Layout.RootPanel);
                 }
@@ -647,7 +647,7 @@ namespace AvalonDock.Layout
                 var previousContainer = ((ILayoutPreviousContainer)parentGroup).PreviousContainer as LayoutAnchorablePane;
 
                 // If previousContainer was removed from the tree (detached), treat as null
-                if (previousContainer != null && previousContainer.Root == null)
+                if (previousContainer is { Root: null })
                 {
                     previousContainer = null;
                 }

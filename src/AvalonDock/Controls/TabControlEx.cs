@@ -61,20 +61,17 @@ namespace AvalonDock.Controls
             // exchange ContentPresenter for Grid
             var topGrid = (Grid)GetVisualChild(0);
 
-            if (topGrid != null)
+            if (topGrid is { Children.Count: > 2 })
             {
-                if (topGrid.Children != null && topGrid.Children.Count > 2)
+                if (topGrid.Children[1] is Border)
                 {
-                    if (topGrid.Children[1] is Border)
-                    {
-                        var border = (Border)topGrid.Children[1];
-                        border.Child = ItemsHolderPanel;
-                    }
-                    else if (topGrid.Children[2] is Border)
-                    {
-                        var border = (Border)topGrid.Children[2];
-                        border.Child = ItemsHolderPanel;
-                    }
+                    var border = (Border)topGrid.Children[1];
+                    border.Child = ItemsHolderPanel;
+                }
+                else if (topGrid.Children[2] is Border)
+                {
+                    var border = (Border)topGrid.Children[2];
+                    border.Child = ItemsHolderPanel;
                 }
             }
 

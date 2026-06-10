@@ -514,13 +514,13 @@ namespace AvalonDock.Controls
             double leftBarWidth = 0;
             double rightBarWidth = 0;
 
-            if (_manager._injectedLeftDockPanel != null && _manager._injectedLeftDockPanel.IsVisible)
+            if (_manager._injectedLeftDockPanel is { IsVisible: true })
             {
                 var leftBarRect = _manager._injectedLeftDockPanel.GetScreenArea();
                 leftBarWidth = leftBarRect.Width;
             }
 
-            if (_manager._rightTopBar != null && _manager._rightTopBar.IsVisible)
+            if (_manager._rightTopBar is { IsVisible: true })
             {
                 var rightBarRect = _manager._rightTopBar.GetScreenArea();
                 rightBarWidth = rightBarRect.Width;
@@ -615,7 +615,7 @@ namespace AvalonDock.Controls
             // Exclude the bottom-dock bar area from the panel zone
             double bottomBarHeight = 0;
             var bottomDockBar = topZone.ToString().StartsWith("Left") ? _manager._bottomLeftBar : _manager._bottomRightBar;
-            if (bottomDockBar != null && bottomDockBar.IsVisible)
+            if (bottomDockBar is { IsVisible: true })
             {
                 var bbScreen = bottomDockBar.GetScreenArea();
                 bottomBarHeight = bbScreen.Height;
@@ -630,7 +630,7 @@ namespace AvalonDock.Controls
             // Find actual separator position
             var separator = topZone.ToString().StartsWith("Left") ? _manager._leftSeparator : _manager._rightSeparator;
             double splitY;
-            if (separator != null && separator.IsVisible)
+            if (separator is { IsVisible: true })
             {
                 var sepScreen = separator.GetScreenArea();
                 splitY = sepScreen.Top + sepScreen.Height / 2.0 - managerScreenPos.Y;
@@ -838,7 +838,7 @@ namespace AvalonDock.Controls
                             null, zone.Rect, 2, 2);
 
                         // Draw insertion line if available
-                        if (zone.InsertionLineStart.HasValue && zone.InsertionLineEnd.HasValue)
+                        if (zone is { InsertionLineStart: not null, InsertionLineEnd: not null })
                         {
                             var linePen = new Pen(new SolidColorBrush(Color.FromArgb(0xCC, 0x00, 0x7A, 0xCC)), 3)
                             {

@@ -102,6 +102,7 @@
                         BorderThickness="0" />
 
                     <Path
+                        Grid.Column="0"
                         Width="25"
                         Height="12.5"
                         Data="F1M1,15L8,1 15,15z"
@@ -199,6 +200,7 @@
                         BorderThickness="0" />
 
                     <Path
+                        Grid.Row="0"
                         Width="25"
                         Height="12.5"
                         Data="F1M1,15L8,1 15,15z"
@@ -469,6 +471,7 @@
                     BorderThickness="0" />
 
                 <Path
+                    Grid.Column="0"
                     Width="25"
                     Height="12.5"
                     Data="F1M1,15L8,1 15,15z"
@@ -517,6 +520,7 @@
                     BorderThickness="0" />
 
                 <Path
+                    Grid.Row="0"
                     Width="25"
                     Height="12.5"
                     Data="F1M1,15L8,1 15,15z"

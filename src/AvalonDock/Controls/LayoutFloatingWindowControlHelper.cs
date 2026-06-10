@@ -29,14 +29,14 @@ namespace AvalonDock.Controls
                 selector = fwc.Model
                     .Descendents()
                         .OfType<LayoutAnchorablePane>()
-                            .FirstOrDefault(p => p.ChildrenCount > 0 && p.SelectedContent != null);
+                            .FirstOrDefault(p => p is { ChildrenCount: > 0, SelectedContent: not null });
             }
             else if (fwc is LayoutDocumentFloatingWindowControl)
             {
                 selector = fwc.Model
                     .Descendents()
                         .OfType<LayoutDocumentPane>()
-                            .FirstOrDefault(p => p.ChildrenCount > 0 && p.SelectedContent != null);
+                            .FirstOrDefault(p => p is { ChildrenCount: > 0, SelectedContent: not null });
             }
             else
             {
@@ -74,7 +74,7 @@ namespace AvalonDock.Controls
                 if (fwc is LayoutAnchorableFloatingWindowControl)
                 {
                     var paneControl = GetLayoutControlByMousePosition<LayoutAnchorablePaneControl>(fwc);
-                    if (paneControl != null && paneControl.Model is LayoutAnchorablePane pane)
+                    if (paneControl is { Model: LayoutAnchorablePane pane })
                     {
                         if (pane.SelectedContent != null)
                         {
@@ -91,7 +91,7 @@ namespace AvalonDock.Controls
                 else if (fwc is LayoutDocumentFloatingWindowControl)
                 {
                     var paneControl = GetLayoutControlByMousePosition<LayoutDocumentPaneControl>(fwc);
-                    if (paneControl != null && paneControl.Model is LayoutDocumentPane pane)
+                    if (paneControl is { Model: LayoutDocumentPane pane })
                     {
                         if (pane.SelectedContent != null)
                         {
@@ -139,7 +139,7 @@ namespace AvalonDock.Controls
             if (index != -1)
             {
                 anchorablePane.SelectedContentIndex = index;
-                if (anchorablePane.SelectedContent != null && !anchorablePane.SelectedContent.IsActive)
+                if (anchorablePane.SelectedContent is { IsActive: false })
                 {
                     anchorablePane.SelectedContent.IsActive = true;
                 }
@@ -156,7 +156,7 @@ namespace AvalonDock.Controls
             if (index != -1)
             {
                 documentPane.SelectedContentIndex = index;
-                if (documentPane.SelectedContent != null && !documentPane.SelectedContent.IsActive)
+                if (documentPane.SelectedContent is { IsActive: false })
                 {
                     documentPane.SelectedContent.IsActive = true;
                 }

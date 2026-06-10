@@ -79,7 +79,7 @@ namespace AvalonDock
         {
             SubscribeDockPropertyChanges(node);
 
-            if (node is IDocumentDock docDock && docDock.VisibleDockables != null)
+            if (node is IDocumentDock { VisibleDockables: not null } docDock)
             {
                 foreach (var child in docDock.VisibleDockables)
                 {
@@ -91,7 +91,7 @@ namespace AvalonDock
 
                 SubscribeCollection(docDock.VisibleDockables, OnDocumentCollectionChanged);
             }
-            else if (node is IToolDock toolDock && toolDock.VisibleDockables != null)
+            else if (node is IToolDock { VisibleDockables: not null } toolDock)
             {
                 var side = AlignmentToAnchorSide(toolDock.Alignment);
                 foreach (var child in toolDock.VisibleDockables)
@@ -106,12 +106,12 @@ namespace AvalonDock
 
                 SubscribeCollection(toolDock.VisibleDockables, OnAnchorableCollectionChanged);
             }
-            else if (node is IDock containerDock && containerDock.VisibleDockables != null)
+            else if (node is IDock { VisibleDockables: not null } containerDock)
             {
                 SubscribeCollection(containerDock.VisibleDockables, OnDockStructureChanged);
             }
 
-            if (node is IDock dock && dock.VisibleDockables != null)
+            if (node is IDock { VisibleDockables: not null } dock)
             {
                 foreach (var child in dock.VisibleDockables)
                 {
@@ -416,7 +416,7 @@ namespace AvalonDock
                 }
             }
 
-            if (node is IDock dock && dock.VisibleDockables != null)
+            if (node is IDock { VisibleDockables: not null } dock)
             {
                 foreach (var child in dock.VisibleDockables)
                 {
@@ -477,7 +477,7 @@ namespace AvalonDock
 
         private void RebuildDocumentsFromTree(IDockable node)
         {
-            if (node is IDocumentDock docDock && docDock.VisibleDockables != null)
+            if (node is IDocumentDock { VisibleDockables: not null } docDock)
             {
                 foreach (var child in docDock.VisibleDockables)
                 {
@@ -488,7 +488,7 @@ namespace AvalonDock
                 }
             }
 
-            if (node is IDock dock && dock.VisibleDockables != null)
+            if (node is IDock { VisibleDockables: not null } dock)
             {
                 foreach (var child in dock.VisibleDockables)
                 {
@@ -509,7 +509,7 @@ namespace AvalonDock
 
         private void RebuildAnchorablesFromTree(IDockable node)
         {
-            if (node is IToolDock toolDock && toolDock.VisibleDockables != null)
+            if (node is IToolDock { VisibleDockables: not null } toolDock)
             {
                 var side = AlignmentToAnchorSide(toolDock.Alignment);
                 foreach (var child in toolDock.VisibleDockables)
@@ -523,7 +523,7 @@ namespace AvalonDock
                 }
             }
 
-            if (node is IDock dock && dock.VisibleDockables != null)
+            if (node is IDock { VisibleDockables: not null } dock)
             {
                 foreach (var child in dock.VisibleDockables)
                 {
@@ -549,7 +549,7 @@ namespace AvalonDock
                 return toolDock;
             }
 
-            if (node is IDock dock && dock.VisibleDockables != null)
+            if (node is IDock { VisibleDockables: not null } dock)
             {
                 foreach (var child in dock.VisibleDockables)
                 {

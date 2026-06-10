@@ -34,7 +34,10 @@
                         </Grid.RowDefinitions>
                         <!--  Following border is required to catch mouse events  -->
                         <Border Grid.RowSpan="2" Background="Transparent" />
-                        <Grid Panel.ZIndex="1" Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type avalonDockControls:LayoutDocumentPaneControl}}, Path=Model.ShowHeader, Converter={avalonDockConverters:BoolToVisibilityConverter}}">
+                        <Grid
+                            Grid.Row="0"
+                            Panel.ZIndex="1"
+                            Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type avalonDockControls:LayoutDocumentPaneControl}}, Path=Model.ShowHeader, Converter={avalonDockConverters:BoolToVisibilityConverter}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -941,6 +944,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.ColumnSpan="3" Background="Transparent" />
                                 <ContentPresenter
+                                    Grid.Column="0"
                                     Content="{Binding Model, RelativeSource={RelativeSource TemplatedParent}}"
                                     ContentTemplate="{Binding DocumentHeaderTemplate, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type avalonDock:DockingManager}, Mode=FindAncestor}}"
                                     ContentTemplateSelector="{Binding DocumentHeaderTemplateSelector, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type avalonDock:DockingManager}, Mode=FindAncestor}}" />
@@ -1353,6 +1357,7 @@
                                     </Grid>
                                     <TextBlock
                                         x:Name="selectedElementDescription"
+                                        Grid.Row="0"
                                         VerticalAlignment="Center"
                                         Text="{Binding SelectedDocument.LayoutElement.Description}"
                                         TextTrimming="CharacterEllipsis" />

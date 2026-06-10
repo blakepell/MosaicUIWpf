@@ -357,7 +357,7 @@ namespace AvalonDock.Controls
                 yield break;
             }
             // big part of code for getting type
-            if (layoutAnchorableFloatingWindow.SinglePane is LayoutAnchorablePane layoutAnchorablePane && (layoutAnchorableFloatingWindow.IsSinglePane && layoutAnchorablePane.SelectedContent != null))
+            if (layoutAnchorableFloatingWindow is { SinglePane: LayoutAnchorablePane { SelectedContent: not null }, IsSinglePane: true })
             {
                 var layoutAnchorable = ((LayoutAnchorablePane)layoutAnchorableFloatingWindow.SinglePane).SelectedContent as LayoutAnchorable;
                 yield return layoutAnchorable;
@@ -407,7 +407,7 @@ namespace AvalonDock.Controls
             var canExecute = false;
             foreach (var content in Model.Descendents().OfType<LayoutContent>().ToArray())
             {
-                if (content is LayoutAnchorable anchorable && !anchorable.CanHide || !content.CanClose)
+                if (content is LayoutAnchorable { CanHide: false } || !content.CanClose)
                 {
                     canExecute = false;
                     break;

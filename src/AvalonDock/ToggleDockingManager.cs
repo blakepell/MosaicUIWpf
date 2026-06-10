@@ -497,7 +497,7 @@ public class ToggleDockingManager : DockingManager
 
         foreach (var anc in Layout.Descendents().OfType<LayoutAnchorable>().ToList())
         {
-            if (anc.Content is IToolbox toolbox && toolbox.IsOpenByDefault)
+            if (anc.Content is IToolbox { IsOpenByDefault: true } toolbox)
             {
                 ToggleAnchorable(anc, toolbox.Zone);
             }
@@ -743,7 +743,7 @@ public class ToggleDockingManager : DockingManager
         LayoutAnchorablePaneGroup? group = null;
         foreach (var child in root.RootPanel.Children)
         {
-            if (child is LayoutAnchorablePaneGroup g && g.Orientation == Orientation.Horizontal)
+            if (child is LayoutAnchorablePaneGroup { Orientation: Orientation.Horizontal } g)
             {
                 group = g;
                 break;
@@ -857,7 +857,7 @@ public class ToggleDockingManager : DockingManager
         }
 
         var previousContainer = ((ILayoutPreviousContainer)parentGroup).PreviousContainer as LayoutAnchorablePane;
-        if (previousContainer != null && previousContainer.Root == null)
+        if (previousContainer is { Root: null })
         {
             previousContainer = null;
         }
@@ -971,7 +971,7 @@ public class ToggleDockingManager : DockingManager
         var leftBottom = new List<LayoutAnchorable>();
         foreach (var anc in leftAnchorables)
         {
-            if (anc.Content is IToolbox t && t.Zone == DockZone.LeftBottom)
+            if (anc.Content is IToolbox { Zone: DockZone.LeftBottom })
             {
                 leftBottom.Add(anc);
             }
@@ -985,7 +985,7 @@ public class ToggleDockingManager : DockingManager
         var rightBottom = new List<LayoutAnchorable>();
         foreach (var anc in rightAnchorables)
         {
-            if (anc.Content is IToolbox t && t.Zone == DockZone.RightBottom)
+            if (anc.Content is IToolbox { Zone: DockZone.RightBottom })
             {
                 rightBottom.Add(anc);
             }
@@ -999,7 +999,7 @@ public class ToggleDockingManager : DockingManager
         var bottomRight = new List<LayoutAnchorable>();
         foreach (var anc in bottomAnchorables)
         {
-            if (anc.Content is IToolbox t && t.Zone == DockZone.BottomRight)
+            if (anc.Content is IToolbox { Zone: DockZone.BottomRight })
             {
                 bottomRight.Add(anc);
             }
@@ -1207,7 +1207,7 @@ public class ToggleDockingManager : DockingManager
     {
         var docked = Layout.Descendents()
             .OfType<LayoutAnchorable>()
-            .Where(a => a.Parent is LayoutAnchorablePane && !a.IsFloating)
+            .Where(a => a is { Parent: LayoutAnchorablePane, IsFloating: false })
             .ToList();
         foreach (var a in docked)
         {
@@ -1228,7 +1228,7 @@ public class ToggleDockingManager : DockingManager
 
         foreach (var item in bar.Items)
         {
-            if (item is ToggleDockButton btn && btn.Anchorable != null && !btn.Anchorable.IsAutoHidden)
+            if (item is ToggleDockButton { Anchorable.IsAutoHidden: false } btn)
             {
                 AutoHideFromDock(btn.Anchorable, bar.Zone);
             }
@@ -1255,7 +1255,7 @@ public class ToggleDockingManager : DockingManager
 
         foreach (var item in bar.Items)
         {
-            if (item is ToggleDockButton btn && btn.Anchorable != null)
+            if (item is ToggleDockButton { Anchorable: not null } btn)
             {
                 btn.IsChecked = !btn.Anchorable.IsAutoHidden;
                 btn.IsAnchorableFocused = !btn.Anchorable.IsAutoHidden
@@ -1303,7 +1303,7 @@ public class ToggleDockingManager : DockingManager
         }
 
         // Fallback
-        if (anchorable.Parent is LayoutAnchorGroup group && group.Parent is LayoutAnchorSide side)
+        if (anchorable.Parent is LayoutAnchorGroup { Parent: LayoutAnchorSide side })
         {
             switch (side.Side)
             {
@@ -1579,7 +1579,7 @@ public class ToggleDockingManager : DockingManager
 
             foreach (var item in bar.Items)
             {
-                if (item is ToggleDockButton btn && btn.Anchorable?.Content is IToolbox toolbox)
+                if (item is ToggleDockButton { Anchorable.Content: IToolbox toolbox } btn)
                 {
                     RegisterToolbox(toolbox, btn.Anchorable);
                 }

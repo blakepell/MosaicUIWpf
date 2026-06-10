@@ -100,7 +100,7 @@ namespace AvalonDock.Commands
         /// Executes the execute operation.
         /// </summary>
         /// <param name="parameter">The converter parameter.</param>
-        public virtual void Execute(object parameter)
+        public virtual void Execute(object? parameter)
         {
             var val = parameter;
 

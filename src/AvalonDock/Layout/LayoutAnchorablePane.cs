@@ -187,7 +187,7 @@ namespace AvalonDock.Layout
             Trace.Write(new string(' ', tab * 4));
             Trace.WriteLine("AnchorablePane()");
 
-            foreach (LayoutElement child in Children)
+            foreach (LayoutAnchorable child in Children)
             {
                 child.ConsoleDump(tab + 1);
             }
@@ -217,7 +217,7 @@ namespace AvalonDock.Layout
             get
             {
                 var parentFloatingWindow = this.FindParent<LayoutAnchorableFloatingWindow>();
-                return parentFloatingWindow != null && parentFloatingWindow.IsSinglePane;
+                return parentFloatingWindow is { IsSinglePane: true };
                 // return Parent != null && Parent.ChildrenCount == 1 && Parent.Parent is LayoutFloatingWindow;
             }
         }

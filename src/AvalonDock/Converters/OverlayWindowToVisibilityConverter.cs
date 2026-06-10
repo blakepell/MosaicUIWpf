@@ -15,7 +15,7 @@ namespace AvalonDock.Converters
         /// <inheritdoc/>
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            bool isHostedInFloatingWindow = value is OverlayWindow overlayWindow && overlayWindow.IsHostedInFloatingWindow;
+            bool isHostedInFloatingWindow = value is OverlayWindow { IsHostedInFloatingWindow: true };
             if (parameter == null || !bool.TryParse(parameter.ToString(), out bool isLarge))
             {
                 isLarge = false;

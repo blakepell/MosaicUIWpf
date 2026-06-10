@@ -500,7 +500,7 @@ namespace AvalonDock
 
                 foreach (var fw in _fwList.ToArray())
                 {
-                    if (fw.Model is LayoutAnchorableFloatingWindow window && window.RootPanel.IsMaximized)
+                    if (fw.Model is LayoutAnchorableFloatingWindow { RootPanel.IsMaximized: true })
                     {
                         fw.WindowState = WindowState.Normal;
                         fw.Show();
@@ -1878,7 +1878,7 @@ namespace AvalonDock
                 yield break;
             }
             // big part of code for getting type
-            if (layoutAnchorableFloatingWindow.SinglePane is LayoutAnchorablePane layoutAnchorablePane && (layoutAnchorableFloatingWindow.IsSinglePane && layoutAnchorablePane.SelectedContent != null))
+            if (layoutAnchorableFloatingWindow is { SinglePane: LayoutAnchorablePane { SelectedContent: not null }, IsSinglePane: true })
             {
                 var layoutAnchorable = ((LayoutAnchorablePane)layoutAnchorableFloatingWindow.SinglePane).SelectedContent as LayoutAnchorable;
                 yield return layoutAnchorable;
@@ -2046,7 +2046,7 @@ namespace AvalonDock
                         newFW.Hide();
                     }
 
-                    if (panegroup != null && panegroup.IsMaximized)
+                    if (panegroup is { IsMaximized: true })
                     {
                         newFW.WindowState = WindowState.Maximized;
                     }
@@ -2088,7 +2088,7 @@ namespace AvalonDock
                 newFW.ShowInTaskbar = false;
                 newFW.Show();
                 // Do not set the WindowState before showing or it will be lost
-                if (paneForExtensions != null && paneForExtensions.IsMaximized)
+                if (paneForExtensions is { IsMaximized: true })
                 {
                     newFW.WindowState = WindowState.Maximized;
                 }
@@ -2254,7 +2254,7 @@ namespace AvalonDock
             while (currentHandle != IntPtr.Zero)
             {
                 var ctrl = _fwList.FirstOrDefault(fw => new WindowInteropHelper(fw).Handle == currentHandle);
-                if (ctrl != null && ctrl.Model.Root != null && ctrl.Model.Root.Manager == this)
+                if (ctrl is { Model.Root: not null } && ctrl.Model.Root.Manager == this)
                 {
                     yield return ctrl;
                 }
@@ -2585,7 +2585,7 @@ namespace AvalonDock
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                if (e.IsDown && e.Key == Key.Tab)
+                if (e is { IsDown: true, Key: Key.Tab })
                 {
                     if (CanShowNavigatorWindow && !IsNavigatorWindowActive)
                     {
@@ -3606,9 +3606,7 @@ namespace AvalonDock
                 destPane.SelectedContentIndex = currentSelectedContentIndex;
             }
 
-            LayoutFloatingWindow fw;
-            LayoutFloatingWindowControl fwc;
-            fw = new LayoutAnchorableFloatingWindow
+            LayoutFloatingWindow fw = new LayoutAnchorableFloatingWindow
             {
                 RootPanel = new LayoutAnchorablePaneGroup(destPane)
                 {
@@ -3621,7 +3619,7 @@ namespace AvalonDock
 
             Layout.FloatingWindows.Add(fw);
 
-            fwc = new LayoutAnchorableFloatingWindowControl((LayoutAnchorableFloatingWindow)fw, isContentImmutable)
+            LayoutFloatingWindowControl fwc = new LayoutAnchorableFloatingWindowControl((LayoutAnchorableFloatingWindow)fw, isContentImmutable)
             {
                 Width = fwWidth,
                 Height = fwHeight,
@@ -3643,7 +3641,7 @@ namespace AvalonDock
                 return null;
             }
 
-            if (contentModel is LayoutAnchorable contentModelAsAnchorable && contentModelAsAnchorable.IsAutoHidden)
+            if (contentModel is LayoutAnchorable { IsAutoHidden: true } contentModelAsAnchorable)
             {
                 contentModelAsAnchorable.ToggleAutoHide();
             }

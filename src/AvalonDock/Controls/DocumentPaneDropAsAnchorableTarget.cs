@@ -58,14 +58,12 @@ namespace AvalonDock.Controls
             {
                 case DropTargetType.DocumentPaneDockAsAnchorableBottom:
                     {
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.ChildrenCount == 1)
+                        if (parentGroupPanel is { ChildrenCount: 1 })
                         {
                             parentGroupPanel.Orientation = Orientation.Vertical;
                         }
 
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.Orientation == Orientation.Vertical)
+                        if (parentGroupPanel is { Orientation: Orientation.Vertical })
                         {
                             parentGroupPanel.Children.Insert(
                                 parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel) + 1,
@@ -88,14 +86,12 @@ namespace AvalonDock.Controls
 
                 case DropTargetType.DocumentPaneDockAsAnchorableTop:
                     {
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.ChildrenCount == 1)
+                        if (parentGroupPanel is { ChildrenCount: 1 })
                         {
                             parentGroupPanel.Orientation = Orientation.Vertical;
                         }
 
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.Orientation == Orientation.Vertical)
+                        if (parentGroupPanel is { Orientation: Orientation.Vertical })
                         {
                             parentGroupPanel.Children.Insert(
                                 parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel),
@@ -118,14 +114,12 @@ namespace AvalonDock.Controls
 
                 case DropTargetType.DocumentPaneDockAsAnchorableLeft:
                     {
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.ChildrenCount == 1)
+                        if (parentGroupPanel is { ChildrenCount: 1 })
                         {
                             parentGroupPanel.Orientation = Orientation.Horizontal;
                         }
 
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.Orientation == Orientation.Horizontal)
+                        if (parentGroupPanel is { Orientation: Orientation.Horizontal })
                         {
                             parentGroupPanel.Children.Insert(
                                 parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel),
@@ -148,14 +142,12 @@ namespace AvalonDock.Controls
 
                 case DropTargetType.DocumentPaneDockAsAnchorableRight:
                     {
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.ChildrenCount == 1)
+                        if (parentGroupPanel is { ChildrenCount: 1 })
                         {
                             parentGroupPanel.Orientation = Orientation.Horizontal;
                         }
 
-                        if (parentGroupPanel != null &&
-                            parentGroupPanel.Orientation == Orientation.Horizontal)
+                        if (parentGroupPanel is { Orientation: Orientation.Horizontal })
                         {
                             parentGroupPanel.Children.Insert(
                                 parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel) + 1,

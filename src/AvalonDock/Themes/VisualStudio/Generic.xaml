@@ -474,7 +474,7 @@
                                 x:Name="DragHandleGeometryPlaceholder"
                                 Fill="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveGrip}}"
                                 Visibility="Collapsed" />
-                            <DockPanel>
+                            <DockPanel Grid.Column="0">
                                 <Border
                                     Padding="2,0,4,0"
                                     HorizontalAlignment="Left"
@@ -1359,6 +1359,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.ColumnSpan="2" Background="Transparent" />
                                 <ContentPresenter
+                                    Grid.Column="0"
                                     Margin="6,0,4,1"
                                     VerticalAlignment="Bottom"
                                     Content="{Binding Model, RelativeSource={RelativeSource TemplatedParent}}"
@@ -1968,7 +1969,7 @@
                                         Fill="{DynamicResource {x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveGrip}}"
                                         Visibility="Collapsed" />
 
-                                    <DockPanel>
+                                    <DockPanel Grid.Column="0">
                                         <Border
                                             Padding="2,0,4,0"
                                             HorizontalAlignment="Left"
@@ -2373,6 +2374,7 @@
                                     Fill="#75FFFFFF"
                                     Visibility="Collapsed" />
                                 <ContentPresenter
+                                    Grid.Row="0"
                                     Grid.RowSpan="2"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -2467,6 +2469,7 @@
                                     </Grid>
                                     <TextBlock
                                         x:Name="selectedElementDescription"
+                                        Grid.Row="0"
                                         VerticalAlignment="Center"
                                         Text="{Binding SelectedDocument.LayoutElement.Description}"
                                         TextTrimming="CharacterEllipsis" />

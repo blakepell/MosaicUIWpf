@@ -134,7 +134,7 @@ namespace AvalonDock.Layout
         {
             if (Parent is LayoutDocumentPaneGroup)
             {
-                return ChildrenCount > 0 && Children.Any(c => (c is LayoutDocument document && document.IsVisible) || c is LayoutAnchorable);
+                return ChildrenCount > 0 && Children.Any(c => c is LayoutDocument { IsVisible: true } || c is LayoutAnchorable);
             }
 
             return true;
@@ -205,7 +205,7 @@ namespace AvalonDock.Layout
             get
             {
                 var parentFloatingWindow = this.FindParent<LayoutDocumentFloatingWindow>();
-                return parentFloatingWindow != null && parentFloatingWindow.IsSinglePane;
+                return parentFloatingWindow is { IsSinglePane: true };
                 // return Parent != null && Parent.ChildrenCount == 1 && Parent.Parent is LayoutFloatingWindow;
             }
         }
@@ -217,7 +217,7 @@ namespace AvalonDock.Layout
             Trace.Write(new string(' ', tab * 4));
             Trace.WriteLine("DocumentPane()");
 
-            foreach (LayoutElement child in Children)
+            foreach (LayoutContent child in Children)
             {
                 child.ConsoleDump(tab + 1);
             }

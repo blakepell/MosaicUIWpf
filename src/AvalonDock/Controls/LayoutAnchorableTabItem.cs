@@ -112,12 +112,9 @@ namespace AvalonDock.Controls
             base.OnMouseLeftButtonDown(e);
 
             // Start a drag & drop action for a LayoutAnchorable
-            if (Model is LayoutAnchorable anchorAble)
+            if (Model is LayoutAnchorable { CanMove: false })
             {
-                if (!anchorAble.CanMove)
-                {
-                    return;
-                }
+                return;
             }
 
             _isMouseDown = true;
@@ -174,12 +171,12 @@ namespace AvalonDock.Controls
             var model = Model;
             var container = model.Parent;
             var containerPane = model.Parent as ILayoutPane;
-            if (containerPane is LayoutAnchorablePane layoutAnchorablePane && !layoutAnchorablePane.CanRepositionItems)
+            if (containerPane is LayoutAnchorablePane { CanRepositionItems: false })
             {
                 return;
             }
 
-            if (containerPane.Parent is LayoutAnchorablePaneGroup layoutAnchorablePaneGroup && !layoutAnchorablePaneGroup.CanRepositionItems)
+            if (containerPane.Parent is LayoutAnchorablePaneGroup { CanRepositionItems: false })
             {
                 return;
             }

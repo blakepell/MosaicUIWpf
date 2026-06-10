@@ -487,8 +487,7 @@ namespace AvalonDock.Layout
                     foreach (var contentReferencingEmptyPane in layoutContents
                         .Where(c => ((ILayoutPreviousContainer)c).PreviousContainer == emptyPane))
                     {
-                        if (contentReferencingEmptyPane is LayoutAnchorable anchorable &&
-                            !anchorable.IsVisible)
+                        if (contentReferencingEmptyPane is LayoutAnchorable { IsVisible: false })
                         {
                             continue;
                         }
@@ -656,7 +655,7 @@ namespace AvalonDock.Layout
             UpdateActiveContentProperty();
 
 #if DEBUG
-            Debug.Assert(!this.Descendents().OfType<LayoutAnchorablePane>().Any(a => a.ChildrenCount == 0 && a.IsVisible));
+            Debug.Assert(!this.Descendents().OfType<LayoutAnchorablePane>().Any(a => a is { ChildrenCount: 0, IsVisible: true }));
             // DumpTree(true);
 #if TRACE
             RootPanel.ConsoleDump(4);
@@ -821,14 +820,14 @@ namespace AvalonDock.Layout
         private void InternalSetActiveContent(LayoutContent currentValue, LayoutContent newActiveContent)
         {
             RaisePropertyChanging(nameof(ActiveContent));
-            if (currentValue != null && currentValue.IsActive)
+            if (currentValue is { IsActive: true })
             {
                 currentValue.IsActive = false;
             }
 
             _activeContent = new WeakReference(newActiveContent);
             currentValue = ActiveContent;
-            if (currentValue != null && !currentValue.IsActive)
+            if (currentValue is { IsActive: false })
             {
                 currentValue.IsActive = true;
             }

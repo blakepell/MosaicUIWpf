@@ -1,9 +1,9 @@
+using AvalonDock.Layout;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
@@ -44,8 +44,7 @@ namespace AvalonDock.Controls
 
                         if (_manager.Layout.RootPanel.Orientation == Orientation.Horizontal)
                         {
-                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup layoutAnchorablePaneGroup &&
-                                layoutAnchorablePaneGroup.Orientation == Orientation.Horizontal)
+                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup { Orientation: Orientation.Horizontal } layoutAnchorablePaneGroup)
                             {
                                 var childrenToTransfer = layoutAnchorablePaneGroup.Children.ToArray();
                                 for (int i = 0; i < childrenToTransfer.Length; i++)
@@ -84,8 +83,7 @@ namespace AvalonDock.Controls
 
                         if (_manager.Layout.RootPanel.Orientation == Orientation.Horizontal)
                         {
-                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup layoutAnchorablePaneGroup &&
-                                layoutAnchorablePaneGroup.Orientation == Orientation.Horizontal)
+                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup { Orientation: Orientation.Horizontal } layoutAnchorablePaneGroup)
                             {
                                 var childrenToTransfer = layoutAnchorablePaneGroup.Children.ToArray();
                                 for (int i = 0; i < childrenToTransfer.Length; i++)
@@ -124,8 +122,7 @@ namespace AvalonDock.Controls
 
                         if (_manager.Layout.RootPanel.Orientation == Orientation.Vertical)
                         {
-                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup layoutAnchorablePaneGroup &&
-                                layoutAnchorablePaneGroup.Orientation == Orientation.Vertical)
+                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup { Orientation: Orientation.Vertical } layoutAnchorablePaneGroup)
                             {
                                 var childrenToTransfer = layoutAnchorablePaneGroup.Children.ToArray();
                                 for (int i = 0; i < childrenToTransfer.Length; i++)
@@ -164,8 +161,7 @@ namespace AvalonDock.Controls
 
                         if (_manager.Layout.RootPanel.Orientation == Orientation.Vertical)
                         {
-                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup layoutAnchorablePaneGroup &&
-                                layoutAnchorablePaneGroup.Orientation == Orientation.Vertical)
+                            if (floatingWindow.RootPanel is LayoutAnchorablePaneGroup { Orientation: Orientation.Vertical } layoutAnchorablePaneGroup)
                             {
                                 var childrenToTransfer = layoutAnchorablePaneGroup.Children.ToArray();
                                 for (int i = 0; i < childrenToTransfer.Length; i++)

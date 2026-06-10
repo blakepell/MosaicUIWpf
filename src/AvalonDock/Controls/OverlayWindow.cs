@@ -642,8 +642,7 @@ namespace AvalonDock.Controls
                                 }
                             }
                             else if (parentDocumentPaneGroup == null &&
-                                layoutDocumentPane != null &&
-                                layoutDocumentPane.ChildrenCount == 0)
+                                     layoutDocumentPane is { ChildrenCount: 0 })
                             {
                                 _documentPaneFullDropTargetLeft.Visibility = Visibility.Hidden;
                                 _documentPaneFullDropTargetRight.Visibility = Visibility.Hidden;
@@ -747,8 +746,7 @@ namespace AvalonDock.Controls
                                 }
                             }
                             else if (parentDocumentPaneGroup == null &&
-                                layoutDocumentPane != null &&
-                                layoutDocumentPane.ChildrenCount == 0)
+                                     layoutDocumentPane is { ChildrenCount: 0 })
                             {
                                 _documentPaneDropTargetLeft.Visibility = Visibility.Hidden;
                                 _documentPaneDropTargetRight.Visibility = Visibility.Hidden;
