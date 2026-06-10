@@ -35,7 +35,7 @@ namespace AvalonDock
         /// <summary>
         /// References the current theme resource dictionary when a <see cref="DictionaryTheme"/> is active.
         /// </summary>
-        private ResourceDictionary currentThemeResourceDictionary;
+        private ResourceDictionary _currentThemeResourceDictionary;
 
         /// <summary>
         /// Manages the auto-hide window lifecycle for this docking manager.
@@ -1386,10 +1386,10 @@ namespace AvalonDock
             {
                 if (oldTheme is DictionaryTheme) // We are using AvalonDock's own DictionaryTheme class
                 {
-                    if (currentThemeResourceDictionary != null)
+                    if (_currentThemeResourceDictionary != null)
                     {
-                        resources.MergedDictionaries.Remove(currentThemeResourceDictionary);
-                        currentThemeResourceDictionary = null;
+                        resources.MergedDictionaries.Remove(_currentThemeResourceDictionary);
+                        _currentThemeResourceDictionary = null;
                     }
                 }
                 else // We are using standard ResourceDictionaries
@@ -1408,8 +1408,8 @@ namespace AvalonDock
             {
                 if (e.NewValue as Theme is DictionaryTheme theme)
                 {
-                    currentThemeResourceDictionary = theme.ThemeResourceDictionary;
-                    resources.MergedDictionaries.Add(currentThemeResourceDictionary);
+                    _currentThemeResourceDictionary = theme.ThemeResourceDictionary;
+                    resources.MergedDictionaries.Add(_currentThemeResourceDictionary);
                 }
                 else // We are using standard ResourceDictionaries -> Add new theme resource
                 {
