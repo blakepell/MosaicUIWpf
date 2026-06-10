@@ -1152,7 +1152,7 @@ namespace AvalonDock
         /// Implements the backing store of the <see cref="AutoHideDelay"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty AutoHideDelayProperty =
-            DependencyProperty.Register("AutoHideDelay", typeof(int), typeof(DockingManager),
+            DependencyProperty.Register(nameof(AutoHideDelay), typeof(int), typeof(DockingManager),
                                         new UIPropertyMetadata(500));
 
         /// <summary>
@@ -1457,7 +1457,7 @@ namespace AvalonDock
         /// <summary>
         /// GridSplitterVerticalStyle Dependency Property
         /// </summary>
-        public static readonly DependencyProperty GridSplitterVerticalStyleProperty = DependencyProperty.Register("GridSplitterVerticalStyle", typeof(Style), typeof(DockingManager),
+        public static readonly DependencyProperty GridSplitterVerticalStyleProperty = DependencyProperty.Register(nameof(GridSplitterVerticalStyle), typeof(Style), typeof(DockingManager),
                 new FrameworkPropertyMetadata((Style)null));
 
         /// <summary>
@@ -1473,7 +1473,7 @@ namespace AvalonDock
         /// <summary>
         /// GridSplitterHorizontalStyle Dependency Property
         /// </summary>
-        public static readonly DependencyProperty GridSplitterHorizontalStyleProperty = DependencyProperty.Register("GridSplitterHorizontalStyle", typeof(Style), typeof(DockingManager),
+        public static readonly DependencyProperty GridSplitterHorizontalStyleProperty = DependencyProperty.Register(nameof(GridSplitterHorizontalStyle), typeof(Style), typeof(DockingManager),
                 new FrameworkPropertyMetadata((Style)null));
 
         /// <summary>
@@ -1675,7 +1675,7 @@ namespace AvalonDock
 
         /// <summary><see cref="AutoWindowSizeWhenOpened"/> dependency property.</summary>
         public static readonly DependencyProperty AutoWindowSizeWhenOpenedProperty =
-            DependencyProperty.Register("AutoWindowSizeWhenOpened", typeof(bool), typeof(DockingManager), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(AutoWindowSizeWhenOpened), typeof(bool), typeof(DockingManager), new PropertyMetadata(false));
 
         /// <summary><see cref="AllowMovingFloatingWindowWithKeyboard"/> dependency property.</summary>
         public static readonly DependencyProperty AllowMovingFloatingWindowWithKeyboardProperty =

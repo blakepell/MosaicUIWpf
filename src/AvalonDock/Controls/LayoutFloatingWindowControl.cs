@@ -155,7 +155,7 @@ namespace AvalonDock.Controls
         /// <see cref="OwnedByDockingManagerWindow"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty OwnedByDockingManagerWindowProperty =
-            DependencyProperty.Register("OwnedByDockingManagerWindow", typeof(bool), typeof(LayoutFloatingWindowControl), new PropertyMetadata(true, OwnedByDockingManagerWindowPropertyChanged));
+            DependencyProperty.Register(nameof(OwnedByDockingManagerWindow), typeof(bool), typeof(LayoutFloatingWindowControl), new PropertyMetadata(true, OwnedByDockingManagerWindowPropertyChanged));
 
         /// <summary>
         /// Gets or sets a value indicating whether the owned by docking manager window flag is set.
@@ -178,7 +178,7 @@ namespace AvalonDock.Controls
         /// <see cref="AllowMinimize"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty AllowMinimizeProperty =
-            DependencyProperty.Register("AllowMinimize", typeof(bool), typeof(LayoutFloatingWindowControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(AllowMinimize), typeof(bool), typeof(LayoutFloatingWindowControl), new PropertyMetadata(false));
 
         /// <summary>
         /// Gets or sets a value indicating whether the allow minimize flag is set.

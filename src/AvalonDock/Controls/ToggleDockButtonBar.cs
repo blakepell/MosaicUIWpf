@@ -646,7 +646,7 @@ namespace AvalonDock.Controls
             // Top half → topZone
             _dropZones.Add(new DropZone
             {
-                Rect = new Rect(panelRect.X, panelRect.Y, panelRect.Width, topHeight),
+                Rect = panelRect with { Height = topHeight },
                 Zone = topZone,
                 Label = null,
                 InsertionLineStart = new Point(panelRect.X + 2, splitY),
@@ -656,7 +656,7 @@ namespace AvalonDock.Controls
             // Bottom half → bottomZone
             _dropZones.Add(new DropZone
             {
-                Rect = new Rect(panelRect.X, splitY, panelRect.Width, bottomHeight),
+                Rect = panelRect with { Y = splitY, Height = bottomHeight },
                 Zone = bottomZone,
                 Label = null,
                 InsertionLineStart = new Point(panelRect.X + 2, splitY),

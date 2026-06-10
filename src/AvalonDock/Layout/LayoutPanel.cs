@@ -55,7 +55,7 @@ namespace AvalonDock.Layout
         /// Using a DependencyProperty as the backing store for thhe <see cref="CanDock"/> property.
         /// </summary>
         public static readonly DependencyProperty CanDockProperty =
-            DependencyProperty.Register("CanDock", typeof(bool),
+            DependencyProperty.Register(nameof(CanDock), typeof(bool),
                 typeof(LayoutPanel), new PropertyMetadata(true));
 
         /// <summary>
