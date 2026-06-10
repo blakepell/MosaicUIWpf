@@ -18,8 +18,8 @@
     xmlns:local="clr-namespace:TestApp"
     xmlns:winformsIntegration="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
     Title="MainWindow"
-    Width="800"
-    Height="600"
+    Width="1024"
+    Height="768"
     Background="{Binding Background, ElementName=dockManager}"
     UseLayoutRounding="True">
     <Grid x:Name="layoutRoot">
@@ -132,7 +132,7 @@
             </DockingManager.DocumentHeaderTemplate>
             <LayoutRoot PropertyChanged="OnLayoutRootPropertyChanged">
                 <LayoutPanel Orientation="Horizontal">
-                    <LayoutAnchorablePane DockWidth="50">
+                    <LayoutAnchorablePane DockWidth="200">
                         <LayoutAnchorable
                             x:Name="WinFormsWindow"
                             Title="WinForms Window"
@@ -174,7 +174,7 @@
                             </LayoutDocument>
                         </LayoutDocumentPane>
                     </LayoutDocumentPaneGroup>
-                    <LayoutAnchorablePaneGroup DockWidth="50">
+                    <LayoutAnchorablePaneGroup DockWidth="250">
                         <LayoutAnchorablePane>
                             <LayoutAnchorable
                                 Title="Tool Window 1"
