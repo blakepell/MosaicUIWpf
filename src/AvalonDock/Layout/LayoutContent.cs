@@ -651,7 +651,7 @@ namespace AvalonDock.Layout
                 return contentAsComparable.CompareTo(other.Content);
             }
 
-            return string.Compare(Title, other.Title);
+            return String.CompareOrdinal(Title, other.Title);
         }
 
         /// <summary>

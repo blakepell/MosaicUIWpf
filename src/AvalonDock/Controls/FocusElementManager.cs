@@ -92,14 +92,12 @@ namespace AvalonDock.Controls
         internal static void SetFocusOnLastElement(ILayoutElement model)
         {
             bool focused = false;
-            IInputElement objectToFocus;
-            if (_modelFocusedElement.GetValue(model, out objectToFocus))
+            if (_modelFocusedElement.GetValue(model, out var objectToFocus))
             {
                 focused = objectToFocus == Keyboard.Focus(objectToFocus);
             }
 
-            IntPtr handleToFocus;
-            if (_modelFocusedWindowHandle.GetValue(model, out handleToFocus))
+            if (_modelFocusedWindowHandle.GetValue(model, out var handleToFocus))
             {
                 focused = IntPtr.Zero != Win32Helper.SetFocus(handleToFocus);
             }

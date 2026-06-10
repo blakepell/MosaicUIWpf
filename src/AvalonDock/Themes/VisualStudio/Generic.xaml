@@ -2635,7 +2635,6 @@
                                 Margin="1,1,1,0"
                                 VerticalAlignment="Center"
                                 Focusable="False"
-                                Style="{StaticResource AvalonDockThemeArcButtonStyle}"
                                 ToolTip="Options"
                                 Visibility="{Binding ShowHeaderOptionsButton, RelativeSource={RelativeSource AncestorType={x:Type avalonDock:ToggleDockingManager}}, FallbackValue=Visible, Converter={avalonDockConverters:BoolToVisibilityConverter}}">
                                 <Canvas
@@ -2678,7 +2677,6 @@
                                 VerticalAlignment="Center"
                                 Command="{Binding Path=LayoutItem.AutoHideCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 Focusable="False"
-                                Style="{StaticResource AvalonDockThemeArcButtonStyle}"
                                 ToolTip="Minimize"
                                 Visibility="{Binding ShowHeaderMinimizeButton, RelativeSource={RelativeSource AncestorType={x:Type avalonDock:ToggleDockingManager}}, FallbackValue=Visible, Converter={avalonDockConverters:BoolToVisibilityConverter}}">
                                 <Path

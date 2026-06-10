@@ -13,7 +13,7 @@ namespace AvalonDock.Controls.Shell.Standard
 {
     /// <summary>Represents the Win32Error structure.</summary>
     [StructLayout(LayoutKind.Explicit)]
-    internal struct Win32Error
+    internal readonly struct Win32Error : IEquatable<Win32Error>
     {
         /// <summary>The _value value.</summary>
         [FieldOffset(0)]
@@ -160,6 +160,11 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <param name="errRight">The errRight value.</param>
         /// <returns>The result of the operation.</returns>
         public static bool operator !=(Win32Error errLeft, Win32Error errRight) => errLeft != errRight;
+
+        public bool Equals(Win32Error other)
+        {
+            return _value == other._value;
+        }
     }
 
     /// <summary>Defines Facility values.</summary>
