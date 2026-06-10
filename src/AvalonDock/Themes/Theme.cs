@@ -20,7 +20,6 @@ namespace AvalonDock.Themes
         /// </summary>
         public string Name => GetType().Name.Replace("Theme", string.Empty);
 
-        /// <inheritdoc/>
         Uri ResourceUri => GetResourceUri();
 
         /// <summary>
