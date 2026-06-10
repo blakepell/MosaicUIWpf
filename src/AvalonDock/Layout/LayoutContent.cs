@@ -749,7 +749,7 @@ namespace AvalonDock.Layout
             if (PreviousContainer != null)
             {
                 var currentContainer = Parent;
-                var currentContainerIndex = currentContainer is ILayoutGroup ? (currentContainer as ILayoutGroup).IndexOfChild(this) : -1;
+                var currentContainerIndex = currentContainer is ILayoutGroup group ? group.IndexOfChild(this) : -1;
                 var previousContainerAsLayoutGroup = PreviousContainer as ILayoutGroup;
 
                 if (PreviousContainerIndex < previousContainerAsLayoutGroup.ChildrenCount)

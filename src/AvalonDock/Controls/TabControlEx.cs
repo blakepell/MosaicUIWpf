@@ -232,7 +232,7 @@ namespace AvalonDock.Controls
 
             // the actual child to be added.  cp.Tag is a reference to the TabItem
             cp = new ContentPresenter();
-            cp.Content = (item is TabItem) ? (item as TabItem).Content : item;
+            cp.Content = (item is TabItem tabItem) ? tabItem.Content : item;
             cp.ContentTemplate = SelectedContentTemplate;
             cp.ContentTemplateSelector = SelectedContentTemplateSelector;
             cp.ContentStringFormat = SelectedContentStringFormat;
@@ -244,9 +244,9 @@ namespace AvalonDock.Controls
 
         private ContentPresenter FindChildContentPresenter(object data)
         {
-            if (data is TabItem)
+            if (data is TabItem item)
             {
-                data = (data as TabItem).Content;
+                data = item.Content;
             }
 
             if (data == null)

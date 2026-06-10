@@ -334,10 +334,7 @@ namespace AvalonDock.Controls
             {
                 foreach (var areaHost in rootVisual.FindVisualChildren<LayoutDocumentPaneControl>())
                 {
-                    if (areaHost is LayoutDocumentPaneControl)
-                    {
-                        _dropAreas.Add(new DropArea<LayoutDocumentPaneControl>(areaHost, DropAreaType.DocumentPane));
-                    }
+                    _dropAreas.Add(new DropArea<LayoutDocumentPaneControl>(areaHost, DropAreaType.DocumentPane));
                 }
             }
 

@@ -654,7 +654,7 @@ namespace AvalonDock.Controls
                 return lfwc.Content;
             }
 
-            return new FloatingWindowContentHost((LayoutFloatingWindowControl)sender) { Content = content as UIElement };
+            return new FloatingWindowContentHost(lfwc) { Content = content as UIElement };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

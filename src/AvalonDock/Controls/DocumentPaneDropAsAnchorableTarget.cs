@@ -242,16 +242,15 @@ namespace AvalonDock.Controls
             containerPaneGroup = null;
             containerPanel = null;
 
-            if (documentPane.Parent is LayoutPanel)
+            if (documentPane.Parent is LayoutPanel panel)
             {
                 containerPaneGroup = null;
-                containerPanel = documentPane.Parent as LayoutPanel;
+                containerPanel = panel;
                 return true;
             }
 
-            if (documentPane.Parent is LayoutDocumentPaneGroup)
+            if (documentPane.Parent is LayoutDocumentPaneGroup currentDocumentPaneGroup)
             {
-                var currentDocumentPaneGroup = documentPane.Parent as LayoutDocumentPaneGroup;
                 while (!(currentDocumentPaneGroup.Parent is LayoutPanel))
                 {
                     currentDocumentPaneGroup = currentDocumentPaneGroup.Parent as LayoutDocumentPaneGroup;

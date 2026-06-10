@@ -1957,58 +1957,57 @@ namespace AvalonDock
         [SuppressMessage("Maintainability", "CA1506:Avoid excessive class coupling")]
         internal UIElement CreateUIElementForModel(ILayoutElement model)
         {
-            if (model is LayoutPanel)
+            if (model is LayoutPanel panel)
             {
-                return new LayoutPanelControl(model as LayoutPanel);
+                return new LayoutPanelControl(panel);
             }
 
-            if (model is LayoutAnchorablePaneGroup)
+            if (model is LayoutAnchorablePaneGroup group)
             {
-                return new LayoutAnchorablePaneGroupControl(model as LayoutAnchorablePaneGroup);
+                return new LayoutAnchorablePaneGroupControl(group);
             }
 
-            if (model is LayoutDocumentPaneGroup)
+            if (model is LayoutDocumentPaneGroup paneGroup)
             {
-                return new LayoutDocumentPaneGroupControl(model as LayoutDocumentPaneGroup);
+                return new LayoutDocumentPaneGroupControl(paneGroup);
             }
 
-            if (model is LayoutAnchorSide)
+            if (model is LayoutAnchorSide side)
             {
-                var templateModelView = new LayoutAnchorSideControl(model as LayoutAnchorSide);
+                var templateModelView = new LayoutAnchorSideControl(side);
                 templateModelView.SetBinding(TemplateProperty, new Binding(AnchorSideTemplateProperty.Name) { Source = this });
                 return templateModelView;
             }
 
-            if (model is LayoutAnchorGroup)
+            if (model is LayoutAnchorGroup anchorGroup)
             {
-                var templateModelView = new LayoutAnchorGroupControl(model as LayoutAnchorGroup);
+                var templateModelView = new LayoutAnchorGroupControl(anchorGroup);
                 templateModelView.SetBinding(TemplateProperty, new Binding(AnchorGroupTemplateProperty.Name) { Source = this });
                 return templateModelView;
             }
 
-            if (model is LayoutDocumentPane)
+            if (model is LayoutDocumentPane pane)
             {
-                var templateModelView = new LayoutDocumentPaneControl(model as LayoutDocumentPane, IsVirtualizingDocument);
+                var templateModelView = new LayoutDocumentPaneControl(pane, IsVirtualizingDocument);
                 templateModelView.SetBinding(StyleProperty, new Binding(DocumentPaneControlStyleProperty.Name) { Source = this });
                 return templateModelView;
             }
 
-            if (model is LayoutAnchorablePane)
+            if (model is LayoutAnchorablePane anchorablePane)
             {
-                var templateModelView = new LayoutAnchorablePaneControl(model as LayoutAnchorablePane, IsVirtualizingAnchorable);
+                var templateModelView = new LayoutAnchorablePaneControl(anchorablePane, IsVirtualizingAnchorable);
                 templateModelView.SetBinding(StyleProperty, new Binding(AnchorablePaneControlStyleProperty.Name) { Source = this });
                 return templateModelView;
             }
 
-            if (model is LayoutAnchorableFloatingWindow)
+            if (model is LayoutAnchorableFloatingWindow modelFw)
             {
                 if (DesignerProperties.GetIsInDesignMode(this))
                 {
                     return null;
                 }
 
-                var modelFW = model as LayoutAnchorableFloatingWindow;
-                var newFW = new LayoutAnchorableFloatingWindowControl(modelFW)
+                var newFW = new LayoutAnchorableFloatingWindowControl(modelFw)
                 {
                     // Owner = Window.GetWindow(this)
                 };
@@ -2021,7 +2020,7 @@ namespace AvalonDock
                 // Floating Window can also contain only Pane Groups at its base (issue #27) so we check for
                 // RootPanel (which is a LayoutAnchorablePaneGroup) and make sure the window is positioned back
                 // in current (or nearest) monitor
-                var panegroup = modelFW.RootPanel;
+                var panegroup = modelFw.RootPanel;
                 if (panegroup != null)
                 {
                     panegroup.KeepInsideNearestMonitor();  // Check position is valid in current setup
@@ -2055,15 +2054,14 @@ namespace AvalonDock
                 return newFW;
             }
 
-            if (model is LayoutDocumentFloatingWindow)
+            if (model is LayoutDocumentFloatingWindow fw)
             {
                 if (DesignerProperties.GetIsInDesignMode(this))
                 {
                     return null;
                 }
 
-                var modelFW = model as LayoutDocumentFloatingWindow;
-                var newFW = new LayoutDocumentFloatingWindowControl(modelFW)
+                var newFW = new LayoutDocumentFloatingWindowControl(fw)
                 {
                     // Owner = Window.GetWindow(this)
                 };
@@ -2073,7 +2071,7 @@ namespace AvalonDock
                 // Fill list before calling Show (issue #254)
                 _fwList.Add(newFW);
 
-                var paneForExtensions = modelFW.RootPanel;
+                var paneForExtensions = fw.RootPanel;
                 if (paneForExtensions != null)
                 {
                     // ensure that floating window position is inside current (or nearest) monitor
@@ -3589,7 +3587,7 @@ namespace AvalonDock
             var currentSelectedContentIndex = paneModel.SelectedContentIndex;
             while (paneModel.Children.Count > 0)
             {
-                var contentModel = paneModel.Children[paneModel.Children.Count - 1];
+                var contentModel = paneModel.Children[^1];
 
                 if (savePreviousContainer)
                 {
@@ -3684,9 +3682,8 @@ namespace AvalonDock
 
             LayoutFloatingWindow fw;
             LayoutFloatingWindowControl fwc;
-            if (contentModel is LayoutAnchorable)
+            if (contentModel is LayoutAnchorable anchorableContent)
             {
-                var anchorableContent = contentModel as LayoutAnchorable;
                 fw = new LayoutAnchorableFloatingWindow
                 {
                     RootPanel = new LayoutAnchorablePaneGroup(new LayoutAnchorablePane(anchorableContent)
@@ -3707,8 +3704,8 @@ namespace AvalonDock
                 {
                     Width = fwWidth,
                     Height = fwHeight,
-                    Left = contentModel.FloatingLeft,
-                    Top = contentModel.FloatingTop
+                    Left = anchorableContent.FloatingLeft,
+                    Top = anchorableContent.FloatingTop
                 };
             }
             else

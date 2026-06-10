@@ -6,41 +6,41 @@ using System.Windows.Markup;
 
 namespace AvalonDock.Converters
 {
-	/// <summary>
-	/// Represents the bool To Visibility Converter.
-	/// </summary>
-	[ValueConversion(typeof(bool), typeof(Visibility))]
-	public class BoolToVisibilityConverter : MarkupExtension, IValueConverter
-	{
-		/// <inheritdoc/>
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			switch (value)
-			{
-				case bool val when targetType == typeof(Visibility):
-					if (val)
+    /// <summary>
+    /// Represents the bool To Visibility Converter.
+    /// </summary>
+    [ValueConversion(typeof(bool), typeof(Visibility))]
+    public class BoolToVisibilityConverter : MarkupExtension, IValueConverter
+    {
+        /// <inheritdoc/>
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            switch (value)
+            {
+                case bool val when targetType == typeof(Visibility):
+                    if (val)
                     {
                         return Visibility.Visible;
                     }
 
                     return parameter is Visibility ? parameter : Visibility.Collapsed;
 
-				case null when parameter is Visibility:
-					return parameter;
+                case null when parameter is Visibility:
+                    return parameter;
 
-				case null:
-					return Visibility.Collapsed;
+                case null:
+                    return Visibility.Collapsed;
 
-				default:
-					return Visibility.Visible;
-					// throw new ArgumentException("Invalid argument/return type. Expected argument: bool and return type: Visibility");
-			}
-		}
+                default:
+                    return Visibility.Visible;
+                    // throw new ArgumentException("Invalid argument/return type. Expected argument: bool and return type: Visibility");
+            }
+        }
 
-		/// <inheritdoc/>
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if (!(value is Visibility))
+        /// <inheritdoc/>
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is not Visibility visibility)
             {
                 throw new ArgumentException("Invalid argument type. Expected argument: Visibility.", nameof(value));
             }
@@ -50,13 +50,13 @@ namespace AvalonDock.Converters
                 throw new ArgumentException("Invalid return type. Expected type: bool", nameof(targetType));
             }
 
-            return (Visibility)value == Visibility.Visible;
-		}
+            return visibility == Visibility.Visible;
+        }
 
-		/// <inheritdoc/>
-		public override object ProvideValue(IServiceProvider serviceProvider)
-		{
-			return ConverterCreater.Get<BoolToVisibilityConverter>();
-		}
-	}
+        /// <inheritdoc/>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return ConverterCreater.Get<BoolToVisibilityConverter>();
+        }
+    }
 }

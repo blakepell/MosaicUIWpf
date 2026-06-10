@@ -276,7 +276,7 @@ namespace AvalonDock.Controls
 
                 if (viewboxes.Any())
                 {
-                    if (_manager.TransformToAncestor(viewboxes[viewboxes.Count - 1]) is Transform { Value.IsIdentity: false } transform)
+                    if (_manager.TransformToAncestor(viewboxes[^1]) is Transform { Value.IsIdentity: false } transform)
                     {
                         var origin = transform.Transform(new Point());
 
