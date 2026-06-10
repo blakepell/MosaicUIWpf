@@ -23,20 +23,20 @@ namespace AvalonDock.MVVMTestApp
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var serializer = new XmlLayoutSerializer(dockManager);
+            var serializer = new JsonLayoutSerializer(dockManager);
             serializer.LayoutSerializationCallback += (s, args) =>
             {
                 args.Content = args.Content;
             };
 
-            if (File.Exists(@".\AvalonDock.config"))
-                serializer.Deserialize(@".\AvalonDock.config");
+            if (File.Exists(@".\AvalonDock.json"))
+                serializer.Deserialize(@".\AvalonDock.json");
         }
 
         private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
         {
-            var serializer = new XmlLayoutSerializer(dockManager);
-            serializer.Serialize(@".\AvalonDock.config");
+            var serializer = new JsonLayoutSerializer(dockManager);
+            serializer.Serialize(@".\AvalonDock.json");
         }
 
 
@@ -57,12 +57,12 @@ namespace AvalonDock.MVVMTestApp
 
         private bool CanLoadLayout()
         {
-            return File.Exists(@".\AvalonDock.Layout.config");
+            return File.Exists(@".\AvalonDock.Layout.json");
         }
 
         private void OnLoadLayout()
         {
-            var layoutSerializer = new XmlLayoutSerializer(dockManager);
+            var layoutSerializer = new JsonLayoutSerializer(dockManager);
 
             // Here I've implemented the LayoutSerializationCallback just to show
             //  a way to feed layout desarialization with content loaded at runtime
@@ -78,7 +78,7 @@ namespace AvalonDock.MVVMTestApp
                     //    File.Exists(e.Model.ContentId))
                     //    e.Content = Workspace.This.Open(e.Model.ContentId);
                 };
-            layoutSerializer.Deserialize(@".\AvalonDock.Layout.config");
+            layoutSerializer.Deserialize(@".\AvalonDock.Layout.json");
         }
 
 
@@ -105,8 +105,8 @@ namespace AvalonDock.MVVMTestApp
 
         private void OnSaveLayout()
         {
-            var layoutSerializer = new XmlLayoutSerializer(dockManager);
-            layoutSerializer.Serialize(@".\AvalonDock.Layout.config");
+            var layoutSerializer = new JsonLayoutSerializer(dockManager);
+            layoutSerializer.Serialize(@".\AvalonDock.Layout.json");
         }
 
 

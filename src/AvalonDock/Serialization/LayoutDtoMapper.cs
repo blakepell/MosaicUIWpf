@@ -1,7 +1,6 @@
 using AvalonDock.Layout;
 using AvalonDock.Serialization.Dto;
 using System;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -227,14 +226,9 @@ namespace AvalonDock.Serialization
             dto.FloatingHeight = content.FloatingHeight;
             dto.IsMaximized = content.IsMaximized;
             dto.CanClose = content.CanClose;
-            dto.CanCloseDefault = content._canCloseDefault;
             dto.CanFloat = content.CanFloat;
             dto.CanShowOnHover = content.CanShowOnHover;
-
-            if (content.LastActivationTimeStamp != null)
-            {
-                dto.LastActivationTimeStamp = content.LastActivationTimeStamp.Value.ToString(CultureInfo.InvariantCulture);
-            }
+            dto.LastActivationTimeStamp = content.LastActivationTimeStamp;
 
             // PreviousContainer info
             var prevContainer = content as ILayoutPreviousContainer;
@@ -577,7 +571,7 @@ namespace AvalonDock.Serialization
 
             if (dto.LastActivationTimeStamp != null)
             {
-                content.LastActivationTimeStamp = DateTime.Parse(dto.LastActivationTimeStamp, CultureInfo.InvariantCulture);
+                content.LastActivationTimeStamp = dto.LastActivationTimeStamp;
             }
 
             if (dto.PreviousContainerId != null)

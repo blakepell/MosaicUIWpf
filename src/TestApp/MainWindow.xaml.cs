@@ -135,14 +135,14 @@ namespace TestApp
             var currentContentsList = dockManager.Layout.Descendents().OfType<LayoutContent>().Where(c => c.ContentId != null).ToArray();
 
             string fileName = (sender as MenuItem).Header.ToString();
-            var serializer = new XmlLayoutSerializer(dockManager);
+            var serializer = new JsonLayoutSerializer(dockManager);
             //serializer.LayoutSerializationCallback += (s, args) =>
             //    {
             //        var prevContent = currentContentsList.FirstOrDefault(c => c.ContentId == args.Model.ContentId);
             //        if (prevContent != null)
             //            args.Content = prevContent.Content;
             //    };
-            using (var stream = new StreamReader($@".\AvalonDock_{fileName}.config"))
+            using (var stream = new StreamReader($@".\AvalonDock_{fileName}.json"))
                 serializer.Deserialize(stream);
         }
 
@@ -150,8 +150,8 @@ namespace TestApp
         private void OnSaveLayout(object sender, RoutedEventArgs e)
         {
             string fileName = (sender as MenuItem).Header.ToString();
-            var serializer = new XmlLayoutSerializer(dockManager);
-            using (var stream = new StreamWriter($@".\AvalonDock_{fileName}.config"))
+            var serializer = new JsonLayoutSerializer(dockManager);
+            using (var stream = new StreamWriter($@".\AvalonDock_{fileName}.json"))
                 serializer.Serialize(stream);
         }
 
