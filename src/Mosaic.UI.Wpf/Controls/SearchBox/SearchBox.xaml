@@ -4,6 +4,8 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <Style x:Key="{x:Type controls:SearchBox}" TargetType="{x:Type controls:SearchBox}">
+        <!--  Set the background to the theme, then let the control override with TemplateBinding  -->
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Padding" Value="5,4,0,0" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -135,7 +137,9 @@
                                 Height="{TemplateBinding Height}"
                                 Margin="0,0,0,0"
                                 Padding="5,4,0,0"
-                                Panel.ZIndex="1" />
+                                Panel.ZIndex="1"
+                                Background="{TemplateBinding Background}"
+                                Foreground="{TemplateBinding Foreground}" />
                         </DockPanel>
 
                     </Border>
