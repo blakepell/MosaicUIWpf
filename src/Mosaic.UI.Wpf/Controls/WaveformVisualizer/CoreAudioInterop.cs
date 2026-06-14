@@ -11,6 +11,24 @@
 namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 {
     /// <summary>
+    /// Provides safe release behavior for runtime callable COM wrappers.
+    /// </summary>
+    internal static class CoreAudioCom
+    {
+        /// <summary>
+        /// Releases the specified object when it is represented by a runtime callable wrapper.
+        /// </summary>
+        /// <param name="instance">The possible runtime callable wrapper to release.</param>
+        public static void Release(object? instance)
+        {
+            if (instance is not null && Marshal.IsComObject(instance))
+            {
+                Marshal.ReleaseComObject(instance);
+            }
+        }
+    }
+
+    /// <summary>
     /// Specifies the direction of audio data flow.
     /// </summary>
     internal enum EDataFlow { Render, Capture, All }
@@ -31,6 +49,11 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
     [Flags]
     internal enum AudioClientStreamFlags : uint
     {
+        /// <summary>
+        /// Uses no optional audio stream behavior.
+        /// </summary>
+        None = 0,
+
         /// <summary>
         /// Captures the audio stream played by a render endpoint.
         /// </summary>
@@ -126,7 +149,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// <summary>
         /// Enumerates audio endpoint devices.
         /// </summary>
-        void EnumAudioEndpoints(EDataFlow dataFlow, uint stateMask, out object devices);
+        void EnumAudioEndpoints(EDataFlow dataFlow, uint stateMask, out IMMDeviceCollection devices);
         /// <summary>
         /// Gets the default audio endpoint for a data flow and role.
         /// </summary>
@@ -150,6 +173,25 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
     }
 
     /// <summary>
+    /// Enumerates Windows multimedia audio endpoint devices.
+    /// </summary>
+    [ComImport]
+    [Guid("0BD7A1BE-7A1A-44DB-8397-CC5392387B5E")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IMMDeviceCollection
+    {
+        /// <summary>
+        /// Gets the number of devices in the collection.
+        /// </summary>
+        void GetCount(out uint count);
+
+        /// <summary>
+        /// Gets the device at the specified index.
+        /// </summary>
+        void Item(uint deviceIndex, out IMMDevice device);
+    }
+
+    /// <summary>
     /// Represents a Windows multimedia audio endpoint device.
     /// </summary>
     [ComImport]
@@ -169,13 +211,47 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// <summary>
         /// Opens the property store for the device.
         /// </summary>
-        void OpenPropertyStore(uint storageMode, out object properties);
+        void OpenPropertyStore(uint storageMode, out IPropertyStore properties);
 
         /// <summary>
         /// Gets the endpoint device identifier.
         /// </summary>
         [PreserveSig]
         int GetId([MarshalAs(UnmanagedType.LPWStr)] out string id);
+    }
+
+    /// <summary>
+    /// Reads properties associated with a Windows audio endpoint.
+    /// </summary>
+    [ComImport]
+    [Guid("886D8EEB-8CF2-4446-8D02-CDBA1DBDCF99")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IPropertyStore
+    {
+        /// <summary>
+        /// Gets the number of properties in the store.
+        /// </summary>
+        void GetCount(out uint propertyCount);
+
+        /// <summary>
+        /// Gets the key at the specified index.
+        /// </summary>
+        void GetAt(uint propertyIndex, out PropertyKey key);
+
+        /// <summary>
+        /// Gets the value associated with the specified key.
+        /// </summary>
+        void GetValue(ref PropertyKey key, out PropVariant value);
+
+        /// <summary>
+        /// Sets the value associated with the specified key.
+        /// </summary>
+        void SetValue(ref PropertyKey key, ref PropVariant value);
+
+        /// <summary>
+        /// Saves changes to the property store.
+        /// </summary>
+        void Commit();
     }
 
     /// <summary>
@@ -315,5 +391,47 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// Stores the property identifier.
         /// </summary>
         public uint PropertyId;
+    }
+
+    /// <summary>
+    /// Stores a value returned by a Windows property store.
+    /// </summary>
+    [StructLayout(LayoutKind.Explicit)]
+    internal struct PropVariant
+    {
+        /// <summary>
+        /// Stores the variant type.
+        /// </summary>
+        [FieldOffset(0)]
+        public ushort VariantType;
+
+        /// <summary>
+        /// Stores a pointer value.
+        /// </summary>
+        [FieldOffset(8)]
+        public IntPtr PointerValue;
+
+        /// <summary>
+        /// Gets the string represented by this value.
+        /// </summary>
+        /// <returns>The represented string, or <see langword="null" /> when the value is not a string.</returns>
+        public readonly string? GetString()
+        {
+            const ushort StringVariantType = 31;
+            return VariantType == StringVariantType && PointerValue != IntPtr.Zero
+                ? Marshal.PtrToStringUni(PointerValue)
+                : null;
+        }
+
+        /// <summary>
+        /// Releases memory owned by this value.
+        /// </summary>
+        public void Clear()
+        {
+            PropVariantClear(ref this);
+        }
+
+        [DllImport("ole32.dll")]
+        private static extern int PropVariantClear(ref PropVariant value);
     }
 }

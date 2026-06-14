@@ -11,7 +11,7 @@
 namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 {
     /// <summary>
-    /// Captures and buffers loopback samples from a Windows audio render device.
+    /// Captures and buffers samples from a Windows audio endpoint.
     /// </summary>
     internal sealed class AudioCapture : IDisposable
     {
@@ -43,14 +43,16 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         }
 
         /// <summary>
-        /// Initializes loopback capture for the specified audio device.
+        /// Initializes capture for the specified audio device.
         /// </summary>
-        /// <param name="device">The audio render device to capture.</param>
+        /// <param name="device">The audio endpoint to capture.</param>
+        /// <param name="streamFlags">A bitwise combination of the enumeration values that specifies the capture options.</param>
         /// <exception cref="InvalidOperationException">The audio device does not provide a mix format.</exception>
         /// <exception cref="NotSupportedException">The device uses an unsupported sample format.</exception>
-        public void Initialize(IMMDevice device)
+        public void Initialize(IMMDevice device, AudioClientStreamFlags streamFlags)
         {
             ReleaseAudioInterfaces();
+            ClearSamples();
 
             Guid audioClientId = typeof(IAudioClient).GUID;
             device.Activate(ref audioClientId, ClsCtx.All, IntPtr.Zero, out object client);
@@ -71,7 +73,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                 Guid sessionId = Guid.Empty;
                 audioClient.Initialize(
                     AudioClientShareMode.Shared,
-                    AudioClientStreamFlags.Loopback,
+                    streamFlags,
                     bufferDuration,
                     0,
                     formatPointer,
@@ -108,7 +110,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             captureThread = new Thread(CaptureLoop)
             {
                 IsBackground = true,
-                Name = "WASAPI loopback capture"
+                Name = "WASAPI waveform capture"
             };
             captureThread.Start();
         }
@@ -279,17 +281,25 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             }
         }
 
+        private void ClearSamples()
+        {
+            lock (sampleLock)
+            {
+                sampleBuffer.Clear();
+            }
+        }
+
         private void ReleaseAudioInterfaces()
         {
             if (captureClient is not null)
             {
-                Marshal.ReleaseComObject(captureClient);
+                CoreAudioCom.Release(captureClient);
                 captureClient = null;
             }
 
             if (audioClient is not null)
             {
-                Marshal.ReleaseComObject(audioClient);
+                CoreAudioCom.Release(audioClient);
                 audioClient = null;
             }
         }

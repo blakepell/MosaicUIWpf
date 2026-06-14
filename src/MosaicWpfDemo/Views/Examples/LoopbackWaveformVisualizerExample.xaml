@@ -12,11 +12,33 @@
         <CheckBox
             x:Name="ListeningToggle"
             Margin="0,0,0,10"
-            Content="Listen to system audio"
+            Content="Listen for audio"
             IsChecked="True" />
 
+        <TextBlock
+            Margin="0,0,0,6"
+            FontWeight="SemiBold"
+            Text="System output" />
+
         <mosaic:LoopbackWaveformVisualizer
-            Height="240"
+            Height="180"
+            Margin="0,0,0,16"
+            IsListening="{Binding IsChecked, ElementName=ListeningToggle}" />
+
+        <TextBlock
+            Margin="0,0,0,6"
+            FontWeight="SemiBold"
+            Text="Audio input" />
+
+        <ComboBox
+            Margin="0,0,0,10"
+            DisplayMemberPath="Name"
+            ItemsSource="{Binding InputDevices, ElementName=InputVisualizer}"
+            SelectedItem="{Binding SelectedInputDevice, ElementName=InputVisualizer, Mode=TwoWay}" />
+
+        <mosaic:InputWaveformVisualizer
+            x:Name="InputVisualizer"
+            Height="180"
             IsListening="{Binding IsChecked, ElementName=ListeningToggle}" />
     </StackPanel>
 </UserControl>

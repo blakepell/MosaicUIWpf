@@ -11,7 +11,7 @@
 namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 {
     /// <summary>
-    /// Tracks the default console render device and redirects audio capture when it changes.
+    /// Tracks the default console render device and redirects loopback capture when it changes.
     /// </summary>
     /// <param name="capture">The loopback capture instance to manage.</param>
     internal sealed class DeviceTracker(AudioCapture capture) : IMMNotificationClient, IDisposable
@@ -54,16 +54,18 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         {
             lock (stateLock)
             {
-                if (!isStarted)
+                if (isStarted)
                 {
-                    return;
+                    capture.Stop();
+                    if (deviceEnumerator is not null)
+                    {
+                        deviceEnumerator.UnregisterEndpointNotificationCallback(this);
+                    }
                 }
 
-                capture.Stop();
                 if (deviceEnumerator is not null)
                 {
-                    deviceEnumerator.UnregisterEndpointNotificationCallback(this);
-                    Marshal.ReleaseComObject(deviceEnumerator);
+                    CoreAudioCom.Release(deviceEnumerator);
                     deviceEnumerator = null;
                 }
 
@@ -115,12 +117,12 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             deviceEnumerator!.GetDefaultAudioEndpoint(EDataFlow.Render, ERole.Console, out IMMDevice device);
             try
             {
-                capture.Initialize(device);
+                capture.Initialize(device, AudioClientStreamFlags.Loopback);
                 capture.Start();
             }
             finally
             {
-                Marshal.ReleaseComObject(device);
+                CoreAudioCom.Release(device);
             }
         }
     }
