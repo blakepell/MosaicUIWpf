@@ -15,6 +15,8 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
     /// </summary>
     public abstract class WaveformVisualizerBase : FrameworkElement
     {
+        private static readonly Brush DefaultWaveformBrush = CreateFrozenBrush(Color.FromRgb(0, 191, 255));
+
         /// <summary>
         /// Identifies the <see cref="IsListening"/> dependency property.
         /// </summary>
@@ -24,12 +26,24 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             typeof(WaveformVisualizerBase),
             new FrameworkPropertyMetadata(true, OnIsListeningChanged));
 
+        /// <summary>
+        /// Identifies the <see cref="WaveformBrush"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty WaveformBrushProperty = DependencyProperty.Register(
+            nameof(WaveformBrush),
+            typeof(Brush),
+            typeof(WaveformVisualizerBase),
+            new FrameworkPropertyMetadata(
+                DefaultWaveformBrush,
+                FrameworkPropertyMetadataOptions.AffectsRender,
+                OnWaveformBrushChanged));
+
         private static readonly Brush BackgroundBrush = CreateFrozenBrush(Color.FromRgb(10, 14, 20));
-        private static readonly Pen WaveformPen = CreateFrozenPen(Color.FromRgb(0, 191, 255));
 
         private readonly object captureLock = new();
         private readonly SemaphoreSlim lifecycleLock = new(1, 1);
         private readonly DispatcherTimer renderTimer;
+        private Pen waveformPen;
         private CancellationTokenSource? lifecycleCancellation;
         private AudioCapture? capture;
         private IDisposable? captureSession;
@@ -40,6 +54,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         protected WaveformVisualizerBase()
         {
             SnapsToDevicePixels = true;
+            waveformPen = new Pen(WaveformBrush, 1);
             renderTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(60),
                 DispatcherPriority.Render,
@@ -64,6 +79,18 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         {
             get => (bool)GetValue(IsListeningProperty);
             set => SetValue(IsListeningProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the brush used to draw the waveform.
+        /// </summary>
+        /// <value>
+        /// The brush used to draw the waveform. The default is deep sky blue.
+        /// </value>
+        public Brush WaveformBrush
+        {
+            get => (Brush)GetValue(WaveformBrushProperty);
+            set => SetValue(WaveformBrushProperty, value);
         }
 
         /// <inheritdoc/>
@@ -104,7 +131,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             }
 
             geometry.Freeze();
-            drawingContext.DrawGeometry(null, WaveformPen, geometry);
+            drawingContext.DrawGeometry(null, waveformPen, geometry);
         }
 
         /// <summary>
@@ -143,6 +170,14 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             {
                 visualizer.QueueListeningChange(false);
             }
+        }
+
+        private static void OnWaveformBrushChanged(
+            DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs e)
+        {
+            WaveformVisualizerBase visualizer = (WaveformVisualizerBase)dependencyObject;
+            visualizer.waveformPen = new Pen((Brush)e.NewValue, 1);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -273,11 +308,5 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             return brush;
         }
 
-        private static Pen CreateFrozenPen(Color color)
-        {
-            Pen pen = new(CreateFrozenBrush(color), 1);
-            pen.Freeze();
-            return pen;
-        }
     }
 }
