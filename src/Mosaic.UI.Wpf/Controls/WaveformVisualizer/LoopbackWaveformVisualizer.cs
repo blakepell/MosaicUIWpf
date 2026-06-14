@@ -31,7 +31,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         }
 
         /// <inheritdoc/>
-        private protected override IDisposable CreateCaptureSession(AudioCapture capture)
+        private protected override IDisposable CreateCaptureSession(AudioCapture capture, object? state)
         {
             DeviceTracker tracker = new(capture, ReportError);
             tracker.Start();

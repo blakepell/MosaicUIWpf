@@ -151,11 +151,18 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         }
 
         /// <summary>
+        /// Creates an immutable snapshot of control state needed to initialize capture.
+        /// </summary>
+        /// <returns>The state passed to <see cref="CreateCaptureSession(AudioCapture, object?)"/>.</returns>
+        private protected virtual object? CreateCaptureSessionState() => null;
+
+        /// <summary>
         /// Creates and starts a capture session that writes samples to the specified capture buffer.
         /// </summary>
         /// <param name="capture">The capture buffer that receives endpoint samples.</param>
+        /// <param name="state">The control state captured on the dispatcher thread.</param>
         /// <returns>A capture session that releases its audio resources when disposed.</returns>
-        private protected abstract IDisposable CreateCaptureSession(AudioCapture capture);
+        private protected abstract IDisposable CreateCaptureSession(AudioCapture capture, object? state);
 
         /// <summary>
         /// Restarts capture when the control is loaded and listening.
@@ -271,7 +278,10 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                     IDisposable? newSession = null;
                     try
                     {
-                        newSession = await Task.Run(() => CreateCaptureSession(newCapture), cancellationToken);
+                        object? captureSessionState = CreateCaptureSessionState();
+                        newSession = await Task.Run(
+                            () => CreateCaptureSession(newCapture, captureSessionState),
+                            cancellationToken);
                         cancellationToken.ThrowIfCancellationRequested();
 
                         if (!IsLoaded || !IsListening)

@@ -130,11 +130,13 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             }
         }
 
-        private protected override IDisposable CreateCaptureSession(AudioCapture capture)
+        private protected override object? CreateCaptureSessionState() => SelectedInputDevice?.Id;
+
+        private protected override IDisposable CreateCaptureSession(AudioCapture capture, object? state)
         {
             InputDeviceTracker tracker = new(
                 capture,
-                SelectedInputDevice?.Id,
+                (string?)state,
                 RefreshInputDevices,
                 ReportError);
             tracker.Start();

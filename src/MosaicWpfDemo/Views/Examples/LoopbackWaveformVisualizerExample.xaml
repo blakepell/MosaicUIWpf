@@ -23,7 +23,8 @@
         <mosaic:LoopbackWaveformVisualizer
             Height="180"
             Margin="0,0,0,16"
-            IsListening="{Binding IsChecked, ElementName=ListeningToggle}" />
+            IsListening="{Binding IsChecked, ElementName=ListeningToggle}"
+            OnError="InputVisualizer_OnOnError" />
 
         <TextBlock
             Margin="0,0,0,6"
@@ -39,6 +40,7 @@
         <mosaic:InputWaveformVisualizer
             x:Name="InputVisualizer"
             Height="180"
-            IsListening="{Binding IsChecked, ElementName=ListeningToggle}" />
+            IsListening="{Binding IsChecked, ElementName=ListeningToggle}"
+            OnError="InputVisualizer_OnOnError" />
     </StackPanel>
 </UserControl>

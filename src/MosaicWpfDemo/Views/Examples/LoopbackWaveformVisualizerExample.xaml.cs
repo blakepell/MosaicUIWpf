@@ -8,6 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Windows;
+
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class LoopbackWaveformVisualizerExample
@@ -15,6 +17,11 @@ namespace MosaicWpfDemo.Views.Examples
         public LoopbackWaveformVisualizerExample()
         {
             InitializeComponent();
+        }
+
+        private void InputVisualizer_OnOnError(object? sender, Exception e)
+        {
+            MessageBox.Show(e.Message);
         }
     }
 }
