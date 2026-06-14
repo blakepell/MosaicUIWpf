@@ -16,6 +16,7 @@
 	<ItemGroup>
 		<None Remove="Assets\app-two-pane-48.png" />
 		<None Remove="Assets\arrow-down-48.png" />
+		<None Remove="Assets\audio-48.png" />
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
 		<None Remove="Assets\badge-48.png" />
@@ -80,6 +81,7 @@
 	<ItemGroup>
 		<Resource Include="Assets\app-two-pane-48.png" />
 		<Resource Include="Assets\arrow-down-48.png" />
+		<Resource Include="Assets\audio-48.png" />
 		<Resource Include="Assets\avatar-48.png" />
 		<Resource Include="Assets\avatar.jpg" />
 		<Resource Include="Assets\badge-48.png" />
@@ -404,6 +406,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\LabeledSeparatorExample.xaml.cs">
 			<Link>LinkedSources\LabeledSeparatorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\LoopbackWaveformVisualizerExample.xaml">
+			<Link>LinkedSources\LoopbackWaveformVisualizerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\LoopbackWaveformVisualizerExample.xaml.cs">
+			<Link>LinkedSources\LoopbackWaveformVisualizerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\NumericTextBoxExample.xaml">

@@ -9,6 +9,7 @@
     xmlns:terminal="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
+    xmlns:waveform="clr-namespace:Mosaic.UI.Wpf.Controls.WaveformVisualizer;assembly=Mosaic.UI.Wpf"
     Title="Mosaic UI WPF Demo"
     Width="1200"
     Height="800"
@@ -495,6 +496,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:LabeledSeparator}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:LabeledSeparatorExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/labeled-separator-96.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Loopback Waveform Visualizer  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/audio-48.png"
+                    Text="Loopback Waveform Visualizer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Loopback Waveform Visualizer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type waveform:LoopbackWaveformVisualizer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:LoopbackWaveformVisualizerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
