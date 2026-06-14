@@ -27,7 +27,10 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         private static readonly Brush BackgroundBrush = CreateFrozenBrush(Color.FromRgb(10, 14, 20));
         private static readonly Pen WaveformPen = CreateFrozenPen(Color.FromRgb(0, 191, 255));
 
+        private readonly object captureLock = new();
+        private readonly SemaphoreSlim lifecycleLock = new(1, 1);
         private readonly DispatcherTimer renderTimer;
+        private CancellationTokenSource? lifecycleCancellation;
         private AudioCapture? capture;
         private IDisposable? captureSession;
 
@@ -69,7 +72,13 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             base.OnRender(drawingContext);
             drawingContext.DrawRectangle(BackgroundBrush, null, new Rect(RenderSize));
 
-            double[] samples = capture?.GetRecentSamples() ?? [];
+            AudioCapture? currentCapture;
+            lock (captureLock)
+            {
+                currentCapture = capture;
+            }
+
+            double[] samples = currentCapture?.GetRecentSamples() ?? [];
             if (!IsListening || samples.Length < 2 || RenderSize.Width <= 0 || RenderSize.Height <= 0)
             {
                 return;
@@ -115,8 +124,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                 return;
             }
 
-            StopListening();
-            StartListening();
+            QueueListeningChange(true);
         }
 
         private static void OnIsListeningChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -129,11 +137,11 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 
             if ((bool)e.NewValue)
             {
-                visualizer.StartListening();
+                visualizer.QueueListeningChange(true);
             }
             else
             {
-                visualizer.StopListening();
+                visualizer.QueueListeningChange(false);
             }
         }
 
@@ -141,45 +149,121 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         {
             if (IsListening && !DesignerProperties.GetIsInDesignMode(this))
             {
-                StartListening();
+                QueueListeningChange(true);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            StopListening();
+            QueueListeningChange(false);
         }
 
-        private void StartListening()
+        private void QueueListeningChange(bool shouldListen)
         {
-            if (captureSession is not null)
-            {
-                return;
-            }
+            CancellationTokenSource cancellation = new();
+            CancellationTokenSource? previousCancellation = Interlocked.Exchange(
+                ref lifecycleCancellation,
+                cancellation);
+            previousCancellation?.Cancel();
+            _ = ChangeListeningAsync(shouldListen, cancellation);
+        }
 
-            AudioCapture newCapture = new();
+        private async Task ChangeListeningAsync(
+            bool shouldListen,
+            CancellationTokenSource cancellation)
+        {
+            CancellationToken cancellationToken = cancellation.Token;
             try
             {
-                IDisposable newSession = CreateCaptureSession(newCapture);
-                capture = newCapture;
-                captureSession = newSession;
-                renderTimer.Start();
+                await lifecycleLock.WaitAsync(cancellationToken);
+                try
+                {
+                    (AudioCapture? oldCapture, IDisposable? oldSession) = DetachCaptureSession();
+                    renderTimer.Stop();
+                    InvalidateVisual();
+
+                    if (oldSession is not null)
+                    {
+                        await Task.Run(oldSession.Dispose);
+                    }
+                    else
+                    {
+                        oldCapture?.Dispose();
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (!shouldListen)
+                    {
+                        return;
+                    }
+
+                    AudioCapture newCapture = new();
+                    IDisposable? newSession = null;
+                    try
+                    {
+                        newSession = await Task.Run(() => CreateCaptureSession(newCapture), cancellationToken);
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        if (!IsLoaded || !IsListening)
+                        {
+                            await Task.Run(newSession.Dispose);
+                            return;
+                        }
+
+                        lock (captureLock)
+                        {
+                            capture = newCapture;
+                            captureSession = newSession;
+                        }
+
+                        renderTimer.Start();
+                    }
+                    catch
+                    {
+                        if (newSession is not null)
+                        {
+                            await Task.Run(newSession.Dispose);
+                        }
+                        else
+                        {
+                            newCapture.Dispose();
+                        }
+
+                        throw;
+                    }
+                }
+                finally
+                {
+                    lifecycleLock.Release();
+                }
+            }
+            catch (OperationCanceledException)
+            {
             }
             catch
             {
-                newCapture.Dispose();
-                SetCurrentValue(IsListeningProperty, false);
-                throw;
+                if (IsLoaded)
+                {
+                    SetCurrentValue(IsListeningProperty, false);
+                }
+            }
+            finally
+            {
+                Interlocked.CompareExchange(ref lifecycleCancellation, null, cancellation);
+                cancellation.Dispose();
             }
         }
 
-        private void StopListening()
+        private (AudioCapture? Capture, IDisposable? Session) DetachCaptureSession()
         {
-            renderTimer.Stop();
-            captureSession?.Dispose();
-            captureSession = null;
-            capture = null;
-            InvalidateVisual();
+            lock (captureLock)
+            {
+                AudioCapture? detachedCapture = capture;
+                IDisposable? detachedSession = captureSession;
+                capture = null;
+                captureSession = null;
+                return (detachedCapture, detachedSession);
+            }
         }
 
         private static Brush CreateFrozenBrush(Color color)

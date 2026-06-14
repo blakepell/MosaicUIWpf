@@ -505,7 +505,7 @@
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/audio-48.png"
-                    Text="Loopback Waveform Visualizer">
+                    Text="Waveform Visualizer">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
                             <mosaic:SideMenuParameter Key="Title" Value="Loopback Waveform Visualizer" />

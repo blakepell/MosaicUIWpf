@@ -38,6 +38,8 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             new FrameworkPropertyMetadata(null, OnSelectedInputDeviceChanged));
 
         private readonly ObservableCollection<AudioInputDevice> inputDevices = [];
+        private readonly SemaphoreSlim refreshLock = new(1, 1);
+        private CancellationTokenSource? refreshCancellation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InputWaveformVisualizer"/> class.
@@ -50,6 +52,8 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             {
                 RefreshInputDevices();
             }
+
+            Unloaded += (_, _) => CancelInputDeviceRefresh();
         }
 
         /// <summary>
@@ -73,28 +77,53 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         }
 
         /// <summary>
-        /// Refreshes the collection of available audio input devices.
+        /// Starts an asynchronous refresh of the available audio input devices.
         /// </summary>
         public void RefreshInputDevices()
         {
-            if (!Dispatcher.CheckAccess())
+            _ = ObserveInputDeviceRefreshAsync();
+        }
+
+        /// <summary>
+        /// Refreshes the collection of available audio input devices without blocking the UI thread.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous refresh operation.</returns>
+        public async Task RefreshInputDevicesAsync()
+        {
+            CancellationTokenSource cancellation = new();
+            CancellationTokenSource? previousCancellation = Interlocked.Exchange(
+                ref refreshCancellation,
+                cancellation);
+            previousCancellation?.Cancel();
+
+            try
             {
-                Dispatcher.BeginInvoke(RefreshInputDevices);
-                return;
+                await refreshLock.WaitAsync(cancellation.Token).ConfigureAwait(false);
+                try
+                {
+                    List<AudioInputDevice> devices = await Task.Run(
+                        AudioInputDeviceEnumerator.GetDevices,
+                        cancellation.Token).ConfigureAwait(false);
+                    cancellation.Token.ThrowIfCancellationRequested();
+
+                    await Dispatcher.InvokeAsync(
+                        () => ApplyInputDevices(devices),
+                        DispatcherPriority.DataBind,
+                        cancellation.Token);
+                }
+                finally
+                {
+                    refreshLock.Release();
+                }
             }
-
-            string? selectedId = SelectedInputDevice?.Id;
-            List<AudioInputDevice> devices = AudioInputDeviceEnumerator.GetDevices();
-
-            inputDevices.Clear();
-            foreach (AudioInputDevice device in devices)
+            catch (OperationCanceledException)
             {
-                inputDevices.Add(device);
             }
-
-            AudioInputDevice selectedDevice = inputDevices.FirstOrDefault(device => device.Id == selectedId)
-                ?? inputDevices[0];
-            SetCurrentValue(SelectedInputDeviceProperty, selectedDevice);
+            finally
+            {
+                Interlocked.CompareExchange(ref refreshCancellation, null, cancellation);
+                cancellation.Dispose();
+            }
         }
 
         private protected override IDisposable CreateCaptureSession(AudioCapture capture)
@@ -109,6 +138,39 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             DependencyPropertyChangedEventArgs e)
         {
             ((InputWaveformVisualizer)dependencyObject).RestartListening();
+        }
+
+        private void ApplyInputDevices(List<AudioInputDevice> devices)
+        {
+            string? selectedId = SelectedInputDevice?.Id;
+
+            inputDevices.Clear();
+            foreach (AudioInputDevice device in devices)
+            {
+                inputDevices.Add(device);
+            }
+
+            AudioInputDevice selectedDevice = inputDevices.FirstOrDefault(device => device.Id == selectedId)
+                ?? inputDevices[0];
+            SetCurrentValue(SelectedInputDeviceProperty, selectedDevice);
+        }
+
+        private async Task ObserveInputDeviceRefreshAsync()
+        {
+            try
+            {
+                await RefreshInputDevicesAsync();
+            }
+            catch (COMException exception)
+            {
+                Debug.WriteLine(exception);
+            }
+        }
+
+        private void CancelInputDeviceRefresh()
+        {
+            CancellationTokenSource? cancellation = Interlocked.Exchange(ref refreshCancellation, null);
+            cancellation?.Cancel();
         }
     }
 }

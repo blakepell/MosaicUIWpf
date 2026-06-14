@@ -8,10 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Mosaic.UI.Wpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Mosaic.UI.Wpf.Controls;
 
 namespace MosaicWpfDemo.Views
 {
