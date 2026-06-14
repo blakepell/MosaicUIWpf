@@ -500,24 +500,6 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
-                <!--  Loopback Waveform Visualizer  -->
-                <mosaic:SideMenuItem
-                    ContentType="{x:Type views:ShellView}"
-                    ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/audio-48.png"
-                    Text="Waveform Visualizer">
-                    <mosaic:SideMenuItem.ParameterCollection>
-                        <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="Waveform Visualizer" />
-                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml" />
-                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml.cs" />
-                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type waveform:LoopbackWaveformVisualizer}" />
-                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:LoopbackWaveformVisualizerExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-48.png" />
-                        </mosaic:SideMenuParameterCollection>
-                    </mosaic:SideMenuItem.ParameterCollection>
-                </mosaic:SideMenuItem>
-
                 <!--  Numeric Text Box  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
@@ -929,6 +911,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type terminal:VT52Terminal}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:VT52TerminalExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/terminal-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Loopback Waveform Visualizer  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/audio-48.png"
+                    Text="Waveform Visualizer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Waveform Visualizer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type waveform:LoopbackWaveformVisualizer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:LoopbackWaveformVisualizerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
