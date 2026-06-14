@@ -29,7 +29,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// <returns>A list of selectable audio input endpoints.</returns>
         public static List<AudioInputDevice> GetDevices()
         {
-            List<AudioInputDevice> devices = [new AudioInputDevice(null, "Default input device", true)];
+            List<AudioInputDevice> devices = [new(null, "Default input device", true)];
             IMMDeviceEnumerator enumerator = (IMMDeviceEnumerator)new MMDeviceEnumerator();
             try
             {

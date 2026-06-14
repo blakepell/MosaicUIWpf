@@ -40,7 +40,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 
         private static readonly Brush BackgroundBrush = CreateFrozenBrush(Color.FromRgb(10, 14, 20));
 
-        private readonly object captureLock = new();
+        private readonly Lock captureLock = new();
         private readonly SemaphoreSlim lifecycleLock = new(1, 1);
         private readonly DispatcherTimer renderTimer;
         private Pen waveformPen;
@@ -93,12 +93,28 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             set => SetValue(WaveformBrushProperty, value);
         }
 
+        /// <summary>
+        /// Occurs when audio capture, device enumeration, or waveform rendering fails.
+        /// </summary>
+        public event EventHandler<Exception>? OnError;
+
         /// <inheritdoc/>
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            drawingContext.DrawRectangle(BackgroundBrush, null, new Rect(RenderSize));
+            try
+            {
+                RenderWaveform(drawingContext);
+            }
+            catch (Exception exception)
+            {
+                ReportError(exception);
+            }
+        }
 
+        private void RenderWaveform(DrawingContext drawingContext)
+        {
+            drawingContext.DrawRectangle(BackgroundBrush, null, new Rect(RenderSize));
             AudioCapture? currentCapture;
             lock (captureLock)
             {
@@ -152,6 +168,25 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             }
 
             QueueListeningChange(true);
+        }
+
+        /// <summary>
+        /// Reports an operational error to registered handlers without allowing handler exceptions to escape.
+        /// </summary>
+        /// <param name="exception">The exception to report.</param>
+        protected void ReportError(Exception exception)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                if (!Dispatcher.HasShutdownStarted && !Dispatcher.HasShutdownFinished)
+                {
+                    _ = Dispatcher.BeginInvoke(() => RaiseError(exception));
+                }
+
+                return;
+            }
+
+            RaiseError(exception);
         }
 
         private static void OnIsListeningChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -232,7 +267,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                         return;
                     }
 
-                    AudioCapture newCapture = new();
+                    AudioCapture newCapture = new(ReportError);
                     IDisposable? newSession = null;
                     try
                     {
@@ -275,8 +310,9 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             catch (OperationCanceledException)
             {
             }
-            catch
+            catch (Exception exception)
             {
+                ReportError(exception);
                 if (IsLoaded)
                 {
                     SetCurrentValue(IsListeningProperty, false);
@@ -298,6 +334,27 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                 capture = null;
                 captureSession = null;
                 return (detachedCapture, detachedSession);
+            }
+        }
+
+        private void RaiseError(Exception exception)
+        {
+            EventHandler<Exception>? handlers = OnError;
+            if (handlers is null)
+            {
+                return;
+            }
+
+            foreach (EventHandler<Exception> handler in handlers.GetInvocationList().Cast<EventHandler<Exception>>())
+            {
+                try
+                {
+                    handler(this, exception);
+                }
+                catch
+                {
+                    // Error handlers must not destabilize audio capture or WPF rendering.
+                }
             }
         }
 

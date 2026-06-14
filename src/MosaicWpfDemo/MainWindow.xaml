@@ -508,7 +508,7 @@
                     Text="Waveform Visualizer">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="Loopback Waveform Visualizer" />
+                            <mosaic:SideMenuParameter Key="Title" Value="Waveform Visualizer" />
                             <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml" />
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.LoopbackWaveformVisualizerExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type waveform:LoopbackWaveformVisualizer}" />

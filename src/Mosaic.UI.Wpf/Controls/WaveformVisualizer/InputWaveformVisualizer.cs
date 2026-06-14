@@ -119,6 +119,10 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             catch (OperationCanceledException)
             {
             }
+            catch (Exception exception)
+            {
+                ReportError(exception);
+            }
             finally
             {
                 Interlocked.CompareExchange(ref refreshCancellation, null, cancellation);
@@ -128,7 +132,11 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 
         private protected override IDisposable CreateCaptureSession(AudioCapture capture)
         {
-            InputDeviceTracker tracker = new(capture, SelectedInputDevice?.Id, RefreshInputDevices);
+            InputDeviceTracker tracker = new(
+                capture,
+                SelectedInputDevice?.Id,
+                RefreshInputDevices,
+                ReportError);
             tracker.Start();
             return tracker;
         }
@@ -157,14 +165,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
 
         private async Task ObserveInputDeviceRefreshAsync()
         {
-            try
-            {
-                await RefreshInputDevicesAsync();
-            }
-            catch (COMException exception)
-            {
-                Debug.WriteLine(exception);
-            }
+            await RefreshInputDevicesAsync();
         }
 
         private void CancelInputDeviceRefresh()

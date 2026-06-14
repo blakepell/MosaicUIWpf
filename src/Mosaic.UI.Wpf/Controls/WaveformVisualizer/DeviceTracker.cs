@@ -14,7 +14,10 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
     /// Tracks the default console render device and redirects loopback capture when it changes.
     /// </summary>
     /// <param name="capture">The loopback capture instance to manage.</param>
-    internal sealed class DeviceTracker(AudioCapture capture) : IMMNotificationClient, IDisposable
+    /// <param name="reportError">The callback used to report device notification failures.</param>
+    internal sealed class DeviceTracker(
+        AudioCapture capture,
+        Action<Exception> reportError) : IMMNotificationClient, IDisposable
     {
         private readonly object stateLock = new();
         private IMMDeviceEnumerator? deviceEnumerator;
@@ -90,13 +93,20 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                 return;
             }
 
-            lock (stateLock)
+            try
             {
-                if (isStarted)
+                lock (stateLock)
                 {
-                    capture.Stop();
-                    StartDefaultDevice();
+                    if (isStarted)
+                    {
+                        capture.Stop();
+                        StartDefaultDevice();
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                reportError(exception);
             }
         }
 

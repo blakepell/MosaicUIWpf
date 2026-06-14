@@ -20,6 +20,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         private readonly AudioCapture capture;
         private readonly string? deviceId;
         private readonly Action devicesChanged;
+        private readonly Action<Exception> reportError;
         private readonly object stateLock = new();
         private IMMDeviceEnumerator? deviceEnumerator;
         private bool isStarted;
@@ -30,11 +31,17 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// <param name="capture">The capture buffer that receives endpoint samples.</param>
         /// <param name="deviceId">The selected endpoint identifier, or <see langword="null" /> to follow the default endpoint.</param>
         /// <param name="devicesChanged">The callback invoked when the available endpoints change.</param>
-        public InputDeviceTracker(AudioCapture capture, string? deviceId, Action devicesChanged)
+        /// <param name="reportError">The callback used to report device notification failures.</param>
+        public InputDeviceTracker(
+            AudioCapture capture,
+            string? deviceId,
+            Action devicesChanged,
+            Action<Exception> reportError)
         {
             this.capture = capture;
             this.deviceId = deviceId;
             this.devicesChanged = devicesChanged;
+            this.reportError = reportError;
         }
 
         /// <summary>
@@ -100,52 +107,77 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                 return;
             }
 
-            devicesChanged();
-            if (deviceId is null)
+            HandleNotification(() =>
             {
-                RestartCapture();
-            }
+                devicesChanged();
+                if (deviceId is null)
+                {
+                    RestartCapture();
+                }
+            });
         }
 
         /// <inheritdoc/>
         public void OnDeviceStateChanged(string? changedDeviceId, uint newState)
         {
-            devicesChanged();
-            if (deviceId == changedDeviceId)
+            HandleNotification(() =>
             {
-                if ((newState & ActiveDeviceState) != 0)
+                devicesChanged();
+                if (deviceId == changedDeviceId)
                 {
-                    RestartCapture();
+                    if ((newState & ActiveDeviceState) != 0)
+                    {
+                        RestartCapture();
+                    }
+                    else
+                    {
+                        capture.Stop();
+                    }
                 }
-                else
-                {
-                    capture.Stop();
-                }
-            }
+            });
         }
 
         /// <inheritdoc/>
         public void OnDeviceAdded(string? addedDeviceId)
         {
-            devicesChanged();
-            if (deviceId == addedDeviceId)
+            HandleNotification(() =>
             {
-                RestartCapture();
-            }
+                devicesChanged();
+                if (deviceId == addedDeviceId)
+                {
+                    RestartCapture();
+                }
+            });
         }
 
         /// <inheritdoc/>
         public void OnDeviceRemoved(string? removedDeviceId)
         {
-            devicesChanged();
-            if (deviceId == removedDeviceId)
+            HandleNotification(() =>
             {
-                capture.Stop();
-            }
+                devicesChanged();
+                if (deviceId == removedDeviceId)
+                {
+                    capture.Stop();
+                }
+            });
         }
 
         /// <inheritdoc/>
-        public void OnPropertyValueChanged(string? changedDeviceId, PropertyKey key) => devicesChanged();
+        public void OnPropertyValueChanged(string? changedDeviceId, PropertyKey key) =>
+            HandleNotification(devicesChanged);
+
+        private void HandleNotification(Action notification)
+        {
+            try
+            {
+                notification();
+            }
+            catch (Exception exception)
+            {
+                reportError(exception);
+            }
+        }
 
         private void RestartCapture()
         {

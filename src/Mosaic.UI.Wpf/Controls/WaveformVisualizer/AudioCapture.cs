@@ -20,8 +20,9 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         private static readonly Guid IeeeFloatSubFormat = new("00000003-0000-0010-8000-00AA00389B71");
         private static readonly Guid PcmSubFormat = new("00000001-0000-0010-8000-00AA00389B71");
 
-        private readonly object sampleLock = new();
+        private readonly Lock sampleLock = new();
         private readonly Queue<double> sampleBuffer = new(MaxBufferSize);
+        private readonly Action<Exception> reportError;
         private IAudioClient? audioClient;
         private IAudioCaptureClient? captureClient;
         private WaveFormatEx waveFormat;
@@ -29,6 +30,15 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         private volatile bool isCapturing;
         private bool isFloat;
         private ushort bitsPerSample;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AudioCapture"/> class.
+        /// </summary>
+        /// <param name="reportError">The callback used to report background capture failures.</param>
+        public AudioCapture(Action<Exception> reportError)
+        {
+            this.reportError = reportError;
+        }
 
         /// <summary>
         /// Gets a snapshot of the most recently captured audio samples.
@@ -187,9 +197,10 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
             {
                 // Stopping the audio client can interrupt a pending COM call.
             }
-            catch (COMException)
+            catch (Exception exception)
             {
                 isCapturing = false;
+                reportError(exception);
             }
         }
 
