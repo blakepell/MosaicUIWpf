@@ -15,6 +15,30 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
     /// </summary>
     internal static class CoreAudioCom
     {
+        private static readonly Guid MMDeviceEnumeratorClassId = new("BCDE0395-E52F-467C-8E3D-C4579291692E");
+
+        /// <summary>
+        /// Creates a Windows multimedia device enumerator without binding the runtime callable wrapper
+        /// to an assembly-specific COM coclass.
+        /// </summary>
+        /// <returns>The multimedia device enumerator interface.</returns>
+        public static IMMDeviceEnumerator CreateDeviceEnumerator()
+        {
+            Type enumeratorType = Type.GetTypeFromCLSID(MMDeviceEnumeratorClassId, throwOnError: true)!;
+            object enumerator = Activator.CreateInstance(enumeratorType)
+                ?? throw new InvalidOperationException("Failed to create the Windows multimedia device enumerator.");
+
+            try
+            {
+                return (IMMDeviceEnumerator)enumerator;
+            }
+            catch
+            {
+                Release(enumerator);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Releases the specified object when it is represented by a runtime callable wrapper.
         /// </summary>
@@ -130,13 +154,6 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         /// </summary>
         public Guid SubFormat;
     }
-
-    /// <summary>
-    /// Creates Windows multimedia device enumerators.
-    /// </summary>
-    [ComImport]
-    [Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
-    internal class MMDeviceEnumerator;
 
     /// <summary>
     /// Enumerates and monitors Windows multimedia audio devices.

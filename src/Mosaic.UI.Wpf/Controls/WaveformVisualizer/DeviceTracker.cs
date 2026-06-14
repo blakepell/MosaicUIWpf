@@ -35,7 +35,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
                     return;
                 }
 
-                deviceEnumerator = (IMMDeviceEnumerator)new MMDeviceEnumerator();
+                deviceEnumerator = CoreAudioCom.CreateDeviceEnumerator();
                 try
                 {
                     Marshal.ThrowExceptionForHR(deviceEnumerator.RegisterEndpointNotificationCallback(this));

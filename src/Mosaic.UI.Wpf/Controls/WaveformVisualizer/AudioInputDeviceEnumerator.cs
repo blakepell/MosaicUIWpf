@@ -30,7 +30,7 @@ namespace Mosaic.UI.Wpf.Controls.WaveformVisualizer
         public static List<AudioInputDevice> GetDevices()
         {
             List<AudioInputDevice> devices = [new(null, "Default input device", true)];
-            IMMDeviceEnumerator enumerator = (IMMDeviceEnumerator)new MMDeviceEnumerator();
+            IMMDeviceEnumerator enumerator = CoreAudioCom.CreateDeviceEnumerator();
             try
             {
                 enumerator.EnumAudioEndpoints(EDataFlow.Capture, ActiveDeviceState, out IMMDeviceCollection collection);
