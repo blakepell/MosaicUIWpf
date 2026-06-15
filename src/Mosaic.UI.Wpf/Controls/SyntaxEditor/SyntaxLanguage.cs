@@ -36,7 +36,17 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// XML and XML-derived formats (.xml, .xaml, .config, .csproj, ...).
         /// </summary>
-        Xml
+        Xml,
+
+        /// <summary>
+        /// JavaScript source (.js, .mjs, .cjs, .jsx).
+        /// </summary>
+        JavaScript,
+
+        /// <summary>
+        /// Structured Query Language (.sql).
+        /// </summary>
+        Sql
     }
 
     /// <summary>
@@ -58,6 +68,8 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Json => "Json",
                 SyntaxLanguage.CSharp => "CSharp",
                 SyntaxLanguage.Xml => "Xml",
+                SyntaxLanguage.JavaScript => "JavaScript",
+                SyntaxLanguage.Sql => "Sql",
                 _ => null
             };
         }
@@ -85,6 +97,8 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 ".json" => SyntaxLanguage.Json,
                 ".cs" => SyntaxLanguage.CSharp,
+                ".js" or ".mjs" or ".cjs" or ".jsx" => SyntaxLanguage.JavaScript,
+                ".sql" => SyntaxLanguage.Sql,
                 ".xml" or ".xaml" or ".config" or ".csproj" or ".xsd" or ".xsl" or ".xslt"
                     or ".manifest" or ".targets" or ".props" or ".nuspec" or ".wsdl" => SyntaxLanguage.Xml,
                 _ => SyntaxLanguage.None

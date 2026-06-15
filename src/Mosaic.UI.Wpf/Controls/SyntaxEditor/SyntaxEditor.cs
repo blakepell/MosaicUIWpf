@@ -400,11 +400,14 @@ namespace Mosaic.UI.Wpf.Controls
 
             menu.Items.Clear();
 
+            // Cut/Paste route through ApplicationCommands so they disable automatically when the editor
+            // is read-only. Copy/Select All are wired to direct handlers so they remain available
+            // regardless of read-only state.
             menu.Items.Add(CreateItem("Cut", ApplicationCommands.Cut));
-            menu.Items.Add(CreateItem("Copy", ApplicationCommands.Copy));
+            menu.Items.Add(CreateItem("Copy", (_, _) => this.Copy()));
             menu.Items.Add(CreateItem("Paste", ApplicationCommands.Paste));
             menu.Items.Add(new Separator());
-            menu.Items.Add(CreateItem("Select All", ApplicationCommands.SelectAll));
+            menu.Items.Add(CreateItem("Select All", (_, _) => this.SelectAll()));
 
             AddLanguageItems(menu);
 
@@ -431,6 +434,13 @@ namespace Mosaic.UI.Wpf.Controls
                 Command = command,
                 CommandTarget = this
             };
+        }
+
+        private static MenuItem CreateItem(string header, RoutedEventHandler onClick)
+        {
+            var item = new MenuItem { Header = header };
+            item.Click += onClick;
+            return item;
         }
 
         #endregion

@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="SQL" extensions=".sql" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Comment" foreground="#57A64A" exampleText="-- comment" />
+  <Color name="String" foreground="#D69D85" exampleText="WHERE name = 'value'" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="123.45" />
+  <Color name="Keyword" fontWeight="bold" foreground="#569CD6" exampleText="SELECT * FROM t" />
+  <Color name="DataType" foreground="#4EC9B0" exampleText="DECLARE @x INT" />
+  <Color name="Function" foreground="#DCDCAA" exampleText="COUNT(*)" />
+  <Color name="Variable" foreground="#9CDCFE" exampleText="@parameter" />
+  <Color name="Punctuation" foreground="#D4D4D4" exampleText="a, b, c" />
+
+  <RuleSet ignoreCase="true">
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>--</Begin>
+    </Span>
+
+    <Span color="String" multiline="true">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <!-- doubled single quote is an escaped quote -->
+        <Span begin="''" end="" />
+      </RuleSet>
+    </Span>
+
+    <!-- Local variables / parameters -->
+    <Rule color="Variable">
+      @[\w\d_]+
+    </Rule>
+
+    <Keywords color="Keyword">
+      <Word>ADD</Word>
+      <Word>ALL</Word>
+      <Word>ALTER</Word>
+      <Word>AND</Word>
+      <Word>ANY</Word>
+      <Word>AS</Word>
+      <Word>ASC</Word>
+      <Word>BEGIN</Word>
+      <Word>BETWEEN</Word>
+      <Word>BY</Word>
+      <Word>CASE</Word>
+      <Word>CHECK</Word>
+      <Word>COLUMN</Word>
+      <Word>COMMIT</Word>
+      <Word>CONSTRAINT</Word>
+      <Word>CREATE</Word>
+      <Word>CROSS</Word>
+      <Word>DATABASE</Word>
+      <Word>DECLARE</Word>
+      <Word>DEFAULT</Word>
+      <Word>DELETE</Word>
+      <Word>DESC</Word>
+      <Word>DISTINCT</Word>
+      <Word>DROP</Word>
+      <Word>ELSE</Word>
+      <Word>END</Word>
+      <Word>EXEC</Word>
+      <Word>EXECUTE</Word>
+      <Word>EXISTS</Word>
+      <Word>FOREIGN</Word>
+      <Word>FROM</Word>
+      <Word>FULL</Word>
+      <Word>FUNCTION</Word>
+      <Word>GO</Word>
+      <Word>GRANT</Word>
+      <Word>GROUP</Word>
+      <Word>HAVING</Word>
+      <Word>IF</Word>
+      <Word>IN</Word>
+      <Word>INDEX</Word>
+      <Word>INNER</Word>
+      <Word>INSERT</Word>
+      <Word>INTO</Word>
+      <Word>IS</Word>
+      <Word>JOIN</Word>
+      <Word>KEY</Word>
+      <Word>LEFT</Word>
+      <Word>LIKE</Word>
+      <Word>LIMIT</Word>
+      <Word>MERGE</Word>
+      <Word>MODIFY</Word>
+      <Word>NOT</Word>
+      <Word>NULL</Word>
+      <Word>OFFSET</Word>
+      <Word>ON</Word>
+      <Word>OR</Word>
+      <Word>ORDER</Word>
+      <Word>OUTER</Word>
+      <Word>PRIMARY</Word>
+      <Word>PROCEDURE</Word>
+      <Word>REFERENCES</Word>
+      <Word>RETURN</Word>
+      <Word>RETURNS</Word>
+      <Word>REVOKE</Word>
+      <Word>RIGHT</Word>
+      <Word>ROLLBACK</Word>
+      <Word>SCHEMA</Word>
+      <Word>SELECT</Word>
+      <Word>SET</Word>
+      <Word>TABLE</Word>
+      <Word>THEN</Word>
+      <Word>TOP</Word>
+      <Word>TRANSACTION</Word>
+      <Word>TRIGGER</Word>
+      <Word>TRUNCATE</Word>
+      <Word>UNION</Word>
+      <Word>UNIQUE</Word>
+      <Word>UPDATE</Word>
+      <Word>USE</Word>
+      <Word>VALUES</Word>
+      <Word>VIEW</Word>
+      <Word>WHEN</Word>
+      <Word>WHERE</Word>
+      <Word>WHILE</Word>
+      <Word>WITH</Word>
+    </Keywords>
+
+    <Keywords color="DataType">
+      <Word>BIGINT</Word>
+      <Word>BINARY</Word>
+      <Word>BIT</Word>
+      <Word>BOOL</Word>
+      <Word>BOOLEAN</Word>
+      <Word>CHAR</Word>
+      <Word>DATE</Word>
+      <Word>DATETIME</Word>
+      <Word>DATETIME2</Word>
+      <Word>DECIMAL</Word>
+      <Word>FLOAT</Word>
+      <Word>INT</Word>
+      <Word>INTEGER</Word>
+      <Word>MONEY</Word>
+      <Word>NCHAR</Word>
+      <Word>NTEXT</Word>
+      <Word>NUMERIC</Word>
+      <Word>NVARCHAR</Word>
+      <Word>REAL</Word>
+      <Word>SMALLINT</Word>
+      <Word>TEXT</Word>
+      <Word>TIME</Word>
+      <Word>TIMESTAMP</Word>
+      <Word>TINYINT</Word>
+      <Word>UNIQUEIDENTIFIER</Word>
+      <Word>VARBINARY</Word>
+      <Word>VARCHAR</Word>
+      <Word>XML</Word>
+    </Keywords>
+
+    <Keywords color="Function">
+      <Word>ABS</Word>
+      <Word>AVG</Word>
+      <Word>CAST</Word>
+      <Word>COALESCE</Word>
+      <Word>CONVERT</Word>
+      <Word>COUNT</Word>
+      <Word>GETDATE</Word>
+      <Word>ISNULL</Word>
+      <Word>LEN</Word>
+      <Word>LOWER</Word>
+      <Word>LTRIM</Word>
+      <Word>MAX</Word>
+      <Word>MIN</Word>
+      <Word>NOW</Word>
+      <Word>NULLIF</Word>
+      <Word>REPLACE</Word>
+      <Word>ROUND</Word>
+      <Word>RTRIM</Word>
+      <Word>SUBSTRING</Word>
+      <Word>SUM</Word>
+      <Word>TRIM</Word>
+      <Word>UPPER</Word>
+    </Keywords>
+
+    <!-- Digits -->
+    <Rule color="Number">
+      \b0[xX][0-9a-fA-F]+
+      |
+      (	\b\d+(\.[0-9]+)?
+      |	\.[0-9]+
+      )
+      ([eE][+-]?[0-9]+)?
+    </Rule>
+
+    <Rule color="Punctuation">
+      [?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=]+
+    </Rule>
+  </RuleSet>
+</SyntaxDefinition>

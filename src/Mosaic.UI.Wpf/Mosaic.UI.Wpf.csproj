@@ -74,6 +74,10 @@
     <EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
     <EmbeddedResource Include="Assets\Xml.Light.xshd" />
     <EmbeddedResource Include="Assets\Xml.Dark.xshd" />
+    <EmbeddedResource Include="Assets\JavaScript.Light.xshd" />
+    <EmbeddedResource Include="Assets\JavaScript.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Sql.Light.xshd" />
+    <EmbeddedResource Include="Assets\Sql.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>

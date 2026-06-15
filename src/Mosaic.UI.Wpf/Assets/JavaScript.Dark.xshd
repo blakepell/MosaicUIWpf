@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="JavaScript" extensions=".js;.mjs;.cjs;.jsx" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="String" foreground="#D69D85" exampleText="var text = &quot;Hello&quot;;" />
+  <Color name="TemplateString" foreground="#D69D85" exampleText="`Hello ${name}`" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="3.14" />
+  <Color name="Keyword" fontWeight="bold" foreground="#569CD6" exampleText="function foo() {}" />
+  <Color name="LiteralKeyword" fontWeight="bold" foreground="#569CD6" exampleText="x = true; y = null;" />
+  <Color name="MethodCall" foreground="#DCDCAA" exampleText="o.toString();" />
+  <Color name="Regex" foreground="#D16969" exampleText="/ab+c/gi" />
+  <Color name="Punctuation" foreground="#D4D4D4" exampleText="a(b.c);" />
+
+  <RuleSet>
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>//</Begin>
+    </Span>
+
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="TemplateString" multiline="true">
+      <Begin>`</Begin>
+      <End>`</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="LiteralKeyword">
+      <Word>true</Word>
+      <Word>false</Word>
+      <Word>null</Word>
+      <Word>undefined</Word>
+      <Word>NaN</Word>
+      <Word>Infinity</Word>
+      <Word>this</Word>
+      <Word>super</Word>
+    </Keywords>
+
+    <Keywords color="Keyword">
+      <Word>abstract</Word>
+      <Word>arguments</Word>
+      <Word>async</Word>
+      <Word>await</Word>
+      <Word>break</Word>
+      <Word>case</Word>
+      <Word>catch</Word>
+      <Word>class</Word>
+      <Word>const</Word>
+      <Word>continue</Word>
+      <Word>debugger</Word>
+      <Word>default</Word>
+      <Word>delete</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>enum</Word>
+      <Word>export</Word>
+      <Word>extends</Word>
+      <Word>finally</Word>
+      <Word>for</Word>
+      <Word>from</Word>
+      <Word>function</Word>
+      <Word>get</Word>
+      <Word>if</Word>
+      <Word>implements</Word>
+      <Word>import</Word>
+      <Word>in</Word>
+      <Word>instanceof</Word>
+      <Word>interface</Word>
+      <Word>let</Word>
+      <Word>new</Word>
+      <Word>of</Word>
+      <Word>package</Word>
+      <Word>private</Word>
+      <Word>protected</Word>
+      <Word>public</Word>
+      <Word>return</Word>
+      <Word>set</Word>
+      <Word>static</Word>
+      <Word>switch</Word>
+      <Word>throw</Word>
+      <Word>try</Word>
+      <Word>typeof</Word>
+      <Word>var</Word>
+      <Word>void</Word>
+      <Word>while</Word>
+      <Word>with</Word>
+      <Word>yield</Word>
+    </Keywords>
+
+    <!-- Method/function call -->
+    <Rule color="MethodCall">
+      \b
+      [\d\w_]+
+      (?=\s*\()
+    </Rule>
+
+    <!-- Digits -->
+    <Rule color="Number">
+      \b0[xX][0-9a-fA-F]+
+      |
+      (	\b\d+(\.[0-9]+)?
+      |	\.[0-9]+
+      )
+      ([eE][+-]?[0-9]+)?
+    </Rule>
+
+    <Rule color="Punctuation">
+      [?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+
+    </Rule>
+  </RuleSet>
+</SyntaxDefinition>
