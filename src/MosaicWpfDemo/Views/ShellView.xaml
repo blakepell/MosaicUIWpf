@@ -81,6 +81,8 @@
                             <controls1:SyntaxEditor
                                 x:Name="XamlEditor"
                                 Grid.Row="1"
+                                Language="Xml"
+                                FollowGlobalTheme="True"
                                 FontFamily="Consolas"
                                 FontSize="13"
                                 IsReadOnly="True"
@@ -118,8 +120,10 @@
                             </ToolBar>
 
                             <controls1:SyntaxEditor
-                                x:Name="CSharpEditor"
+                                x:Name="CSharpEditor"                                
                                 Grid.Row="1"
+                                Language="CSharp"
+                                FollowGlobalTheme="True"
                                 FontFamily="Consolas"
                                 FontSize="13"
                                 IsReadOnly="True"
