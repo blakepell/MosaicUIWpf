@@ -860,6 +860,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SyntaxEditor Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/code-48.png"
+                    Text="SyntaxEditor">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="SyntaxEditor" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SyntaxEditorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SyntaxEditorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SyntaxEditor}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SyntaxEditorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/code-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  VersionTextBlock Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

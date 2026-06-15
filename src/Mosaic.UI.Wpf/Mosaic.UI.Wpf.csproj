@@ -67,6 +67,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Syntax highlighting definitions loaded at runtime by SyntaxEditor via GetManifestResourceStream. -->
+    <EmbeddedResource Include="Assets\Json.Light.xshd" />
+    <EmbeddedResource Include="Assets\Json.Dark.xshd" />
+    <EmbeddedResource Include="Assets\CSharp.Light.xshd" />
+    <EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Xml.Light.xshd" />
+    <EmbeddedResource Include="Assets\Xml.Dark.xshd" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\document-32.png" />
     <Resource Include="Assets\folder-48.png" />
     <Resource Include="Assets\folder-open-48.png" />

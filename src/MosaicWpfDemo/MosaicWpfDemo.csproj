@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows</TargetFramework>
@@ -26,6 +26,7 @@
 		<None Remove="Assets\chat-48.png" />
 		<None Remove="Assets\checkbox-list-48.png" />
 		<None Remove="Assets\circle-48.png" />
+		<None Remove="Assets\code-48.png" />
 		<None Remove="Assets\collage-48.png" />
 		<None Remove="Assets\collage-96.png" />
 		<None Remove="Assets\color-mode-48.png" />
@@ -93,6 +94,7 @@
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Assets\circle-48.png" />
+		<Resource Include="Assets\code-48.png" />
 		<Resource Include="Assets\collage-48.png" />
 		<Resource Include="Assets\collage-96.png" />
 		<Resource Include="Assets\color-mode-48.png" />
@@ -142,6 +144,13 @@
 		<Resource Include="Assets\panel-right-96.png" />
 		<Resource Include="Assets\zoom-in-48.png" />
 		<EmbeddedResource Include="Assets\Xml.Dark.xshd" />
+
+		<EmbeddedResource Include="Views\Examples\SyntaxEditorExample.xaml">
+			<Link>LinkedSources\SyntaxEditorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SyntaxEditorExample.xaml.cs">
+			<Link>LinkedSources\SyntaxEditorExample.xaml.cs</Link>
+		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\DataGridBehaviorsExample.xaml">
 			<Link>LinkedSources\DataGridBehaviorsExample.xaml</Link>

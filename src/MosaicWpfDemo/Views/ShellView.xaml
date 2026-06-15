@@ -78,7 +78,7 @@
                                     </StackPanel>
                                 </Button>
                             </ToolBar>
-                            <avalonedit:TextEditor
+                            <controls1:SyntaxEditor
                                 x:Name="XamlEditor"
                                 Grid.Row="1"
                                 FontFamily="Consolas"
@@ -88,7 +88,7 @@
                                 <b:Interaction.Behaviors>
                                     <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=XamlResourcePath}" />
                                 </b:Interaction.Behaviors>
-                            </avalonedit:TextEditor>
+                            </controls1:SyntaxEditor>
                         </Grid>
                     </controls1:TabItem>
                     <controls1:TabItem
@@ -117,7 +117,7 @@
                                 </Button>
                             </ToolBar>
 
-                            <avalonedit:TextEditor
+                            <controls1:SyntaxEditor
                                 x:Name="CSharpEditor"
                                 Grid.Row="1"
                                 FontFamily="Consolas"
@@ -127,7 +127,7 @@
                                 <b:Interaction.Behaviors>
                                     <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=CSharpResourcePath}" />
                                 </b:Interaction.Behaviors>
-                            </avalonedit:TextEditor>
+                            </controls1:SyntaxEditor>
                         </Grid>
                     </controls1:TabItem>
                     <controls1:TabItem
