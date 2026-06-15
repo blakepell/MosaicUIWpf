@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="C" extensions=".c;.h" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="String" foreground="#D69D85" exampleText="char *s = &quot;text&quot;;" />
+  <Color name="Char" foreground="#D7BA7D" exampleText="'c'" />
+  <Color name="Preprocessor" foreground="#569CD6" exampleText="#include &lt;stdio.h&gt;" />
+  <Color name="Keyword" foreground="#569CD6" fontWeight="bold" exampleText="if (value) return;" />
+  <Color name="TypeKeyword" foreground="#4EC9B0" fontWeight="bold" exampleText="int value;" />
+  <Color name="LiteralKeyword" foreground="#569CD6" fontWeight="bold" exampleText="NULL" />
+  <Color name="FunctionCall" foreground="#DCDCAA" fontWeight="bold" exampleText="printf();" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="0x10" />
+  <Color name="Punctuation" foreground="#D4D4D4" exampleText="a(b.c);" />
+
+  <RuleSet>
+    <Span color="Preprocessor">
+      <Begin>\#</Begin>
+    </Span>
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>//</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="Char">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>auto</Word>
+      <Word>break</Word>
+      <Word>case</Word>
+      <Word>const</Word>
+      <Word>continue</Word>
+      <Word>default</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>enum</Word>
+      <Word>extern</Word>
+      <Word>for</Word>
+      <Word>goto</Word>
+      <Word>if</Word>
+      <Word>inline</Word>
+      <Word>register</Word>
+      <Word>restrict</Word>
+      <Word>return</Word>
+      <Word>sizeof</Word>
+      <Word>static</Word>
+      <Word>struct</Word>
+      <Word>switch</Word>
+      <Word>typedef</Word>
+      <Word>union</Word>
+      <Word>volatile</Word>
+      <Word>while</Word>
+    </Keywords>
+
+    <Keywords color="TypeKeyword">
+      <Word>bool</Word>
+      <Word>char</Word>
+      <Word>double</Word>
+      <Word>float</Word>
+      <Word>int</Word>
+      <Word>long</Word>
+      <Word>short</Word>
+      <Word>signed</Word>
+      <Word>unsigned</Word>
+      <Word>void</Word>
+      <Word>_Bool</Word>
+      <Word>_Complex</Word>
+      <Word>_Imaginary</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>NULL</Word>
+      <Word>true</Word>
+      <Word>false</Word>
+    </Keywords>
+
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?[uUlLfF]*</Rule>
+    <Rule color="Punctuation">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

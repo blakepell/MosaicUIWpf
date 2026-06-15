@@ -46,7 +46,22 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Structured Query Language (.sql).
         /// </summary>
-        Sql
+        Sql,
+
+        /// <summary>
+        /// Markdown documents (.md, .markdown).
+        /// </summary>
+        Markdown,
+
+        /// <summary>
+        /// C source and header files (.c, .h).
+        /// </summary>
+        C,
+
+        /// <summary>
+        /// Lua source (.lua).
+        /// </summary>
+        Lua
     }
 
     /// <summary>
@@ -70,6 +85,9 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Xml => "Xml",
                 SyntaxLanguage.JavaScript => "JavaScript",
                 SyntaxLanguage.Sql => "Sql",
+                SyntaxLanguage.Markdown => "Markdown",
+                SyntaxLanguage.C => "C",
+                SyntaxLanguage.Lua => "Lua",
                 _ => null
             };
         }
@@ -99,6 +117,9 @@ namespace Mosaic.UI.Wpf.Controls
                 ".cs" => SyntaxLanguage.CSharp,
                 ".js" or ".mjs" or ".cjs" or ".jsx" => SyntaxLanguage.JavaScript,
                 ".sql" => SyntaxLanguage.Sql,
+                ".md" or ".markdown" => SyntaxLanguage.Markdown,
+                ".c" or ".h" => SyntaxLanguage.C,
+                ".lua" => SyntaxLanguage.Lua,
                 ".xml" or ".xaml" or ".config" or ".csproj" or ".xsd" or ".xsl" or ".xslt"
                     or ".manifest" or ".targets" or ".props" or ".nuspec" or ".wsdl" => SyntaxLanguage.Xml,
                 _ => SyntaxLanguage.None

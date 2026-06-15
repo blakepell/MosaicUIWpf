@@ -78,6 +78,12 @@
     <EmbeddedResource Include="Assets\JavaScript.Dark.xshd" />
     <EmbeddedResource Include="Assets\Sql.Light.xshd" />
     <EmbeddedResource Include="Assets\Sql.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Markdown.Light.xshd" />
+    <EmbeddedResource Include="Assets\Markdown.Dark.xshd" />
+    <EmbeddedResource Include="Assets\C.Light.xshd" />
+    <EmbeddedResource Include="Assets\C.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Lua.Light.xshd" />
+    <EmbeddedResource Include="Assets\Lua.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>

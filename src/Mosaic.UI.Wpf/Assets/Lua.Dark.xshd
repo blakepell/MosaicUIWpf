@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Lua" extensions=".lua" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Comment" foreground="#57A64A" exampleText="-- comment" />
+  <Color name="String" foreground="#D69D85" exampleText="&quot;text&quot;" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="3.14" />
+  <Color name="Keyword" foreground="#569CD6" fontWeight="bold" exampleText="local value = true" />
+  <Color name="LiteralKeyword" foreground="#569CD6" fontWeight="bold" exampleText="nil" />
+  <Color name="FunctionCall" foreground="#DCDCAA" fontWeight="bold" exampleText="print()" />
+  <Color name="Punctuation" foreground="#D4D4D4" exampleText="a(b.c)" />
+
+  <RuleSet>
+    <Span color="Comment" multiline="true">
+      <Begin>--\[\[</Begin>
+      <End>\]\]</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>--</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String" multiline="true">
+      <Begin>\[\[</Begin>
+      <End>\]\]</End>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>and</Word>
+      <Word>break</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>elseif</Word>
+      <Word>end</Word>
+      <Word>for</Word>
+      <Word>function</Word>
+      <Word>goto</Word>
+      <Word>if</Word>
+      <Word>in</Word>
+      <Word>local</Word>
+      <Word>not</Word>
+      <Word>or</Word>
+      <Word>repeat</Word>
+      <Word>return</Word>
+      <Word>then</Word>
+      <Word>until</Word>
+      <Word>while</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>false</Word>
+      <Word>nil</Word>
+      <Word>true</Word>
+    </Keywords>
+
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+    <Rule color="Punctuation">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>
