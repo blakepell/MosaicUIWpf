@@ -61,7 +61,27 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Lua source (.lua).
         /// </summary>
-        Lua
+        Lua,
+
+        /// <summary>
+        /// Python source (.py, .pyw, .pyi).
+        /// </summary>
+        Python,
+
+        /// <summary>
+        /// INI and related configuration files (.ini, .cfg, .conf, .properties).
+        /// </summary>
+        Ini,
+
+        /// <summary>
+        /// Java source (.java).
+        /// </summary>
+        Java,
+
+        /// <summary>
+        /// Swift source (.swift).
+        /// </summary>
+        Swift
     }
 
     /// <summary>
@@ -88,6 +108,10 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Markdown => "Markdown",
                 SyntaxLanguage.C => "C",
                 SyntaxLanguage.Lua => "Lua",
+                SyntaxLanguage.Python => "Python",
+                SyntaxLanguage.Ini => "Ini",
+                SyntaxLanguage.Java => "Java",
+                SyntaxLanguage.Swift => "Swift",
                 _ => null
             };
         }
@@ -120,6 +144,10 @@ namespace Mosaic.UI.Wpf.Controls
                 ".md" or ".markdown" => SyntaxLanguage.Markdown,
                 ".c" or ".h" => SyntaxLanguage.C,
                 ".lua" => SyntaxLanguage.Lua,
+                ".py" or ".pyw" or ".pyi" => SyntaxLanguage.Python,
+                ".ini" or ".cfg" or ".conf" or ".properties" => SyntaxLanguage.Ini,
+                ".java" => SyntaxLanguage.Java,
+                ".swift" => SyntaxLanguage.Swift,
                 ".xml" or ".xaml" or ".config" or ".csproj" or ".xsd" or ".xsl" or ".xslt"
                     or ".manifest" or ".targets" or ".props" or ".nuspec" or ".wsdl" => SyntaxLanguage.Xml,
                 _ => SyntaxLanguage.None

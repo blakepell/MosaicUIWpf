@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Java" extensions=".java" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="// comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Char" foreground="#A31515" exampleText="'c'" />
+  <Color name="Annotation" foreground="#795E26" fontWeight="bold" exampleText="@Override" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="public class App" />
+  <Color name="TypeKeyword" foreground="#0000FF" fontWeight="bold" exampleText="int value" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="null" />
+  <Color name="MethodCall" foreground="#795E26" fontWeight="bold" exampleText="toString()" />
+  <Color name="Number" foreground="#098658" exampleText="42" />
+  <Color name="Punctuation" foreground="#000000" exampleText="a(b.c);" />
+
+  <RuleSet>
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>//</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="Char">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>abstract</Word>
+      <Word>assert</Word>
+      <Word>break</Word>
+      <Word>case</Word>
+      <Word>catch</Word>
+      <Word>class</Word>
+      <Word>const</Word>
+      <Word>continue</Word>
+      <Word>default</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>enum</Word>
+      <Word>extends</Word>
+      <Word>final</Word>
+      <Word>finally</Word>
+      <Word>for</Word>
+      <Word>goto</Word>
+      <Word>if</Word>
+      <Word>implements</Word>
+      <Word>import</Word>
+      <Word>instanceof</Word>
+      <Word>interface</Word>
+      <Word>native</Word>
+      <Word>new</Word>
+      <Word>package</Word>
+      <Word>private</Word>
+      <Word>protected</Word>
+      <Word>public</Word>
+      <Word>return</Word>
+      <Word>static</Word>
+      <Word>strictfp</Word>
+      <Word>super</Word>
+      <Word>switch</Word>
+      <Word>synchronized</Word>
+      <Word>this</Word>
+      <Word>throw</Word>
+      <Word>throws</Word>
+      <Word>transient</Word>
+      <Word>try</Word>
+      <Word>volatile</Word>
+      <Word>while</Word>
+    </Keywords>
+
+    <Keywords color="TypeKeyword">
+      <Word>boolean</Word>
+      <Word>byte</Word>
+      <Word>char</Word>
+      <Word>double</Word>
+      <Word>float</Word>
+      <Word>int</Word>
+      <Word>long</Word>
+      <Word>short</Word>
+      <Word>void</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>false</Word>
+      <Word>null</Word>
+      <Word>true</Word>
+    </Keywords>
+
+    <Rule color="Annotation">@[\w.]+</Rule>
+    <Rule color="MethodCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?[dDfFlL]?</Rule>
+    <Rule color="Punctuation">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

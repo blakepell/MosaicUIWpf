@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Ini" extensions=".ini;.cfg;.conf;.properties" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Comment" foreground="#57A64A" exampleText="; comment" />
+  <Color name="Section" foreground="#D7BA7D" fontWeight="bold" exampleText="[section]" />
+  <Color name="Key" foreground="#9CDCFE" exampleText="key" />
+  <Color name="Value" foreground="#D69D85" exampleText="value" />
+  <Color name="Boolean" foreground="#569CD6" fontWeight="bold" exampleText="true" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="42" />
+  <Color name="Operator" foreground="#D4D4D4" exampleText="=" />
+
+  <RuleSet>
+    <Span color="Comment">
+      <Begin>;</Begin>
+    </Span>
+    <Span color="Comment">
+      <Begin>\#</Begin>
+    </Span>
+    <Rule color="Section">^\s*\[[^\]]+\]\s*$</Rule>
+    <Rule color="Key">^\s*[^:=\s][^:=]*(?=\s*[:=])</Rule>
+    <Rule color="Operator">[:=]</Rule>
+    <Keywords color="Boolean">
+      <Word>true</Word>
+      <Word>false</Word>
+      <Word>yes</Word>
+      <Word>no</Word>
+      <Word>on</Word>
+      <Word>off</Word>
+    </Keywords>
+    <Rule color="Number">\b[+-]?\d+(\.\d+)?\b</Rule>
+    <Rule color="Value">(?&lt;=[:=]).+$</Rule>
+  </RuleSet>
+</SyntaxDefinition>

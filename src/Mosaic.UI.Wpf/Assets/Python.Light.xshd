@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Python" extensions=".py;.pyw;.pyi" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="# comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Number" foreground="#098658" exampleText="3.14" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="def func():" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="None" />
+  <Color name="Decorator" foreground="#795E26" fontWeight="bold" exampleText="@property" />
+  <Color name="FunctionCall" foreground="#795E26" fontWeight="bold" exampleText="print()" />
+  <Color name="Punctuation" foreground="#000000" exampleText="a(b.c)" />
+
+  <RuleSet>
+    <Span color="String" multiline="true">
+      <Begin>"""</Begin>
+      <End>"""</End>
+    </Span>
+    <Span color="String" multiline="true">
+      <Begin>'''</Begin>
+      <End>'''</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>\#</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>and</Word>
+      <Word>as</Word>
+      <Word>assert</Word>
+      <Word>async</Word>
+      <Word>await</Word>
+      <Word>break</Word>
+      <Word>class</Word>
+      <Word>continue</Word>
+      <Word>def</Word>
+      <Word>del</Word>
+      <Word>elif</Word>
+      <Word>else</Word>
+      <Word>except</Word>
+      <Word>finally</Word>
+      <Word>for</Word>
+      <Word>from</Word>
+      <Word>global</Word>
+      <Word>if</Word>
+      <Word>import</Word>
+      <Word>in</Word>
+      <Word>is</Word>
+      <Word>lambda</Word>
+      <Word>nonlocal</Word>
+      <Word>not</Word>
+      <Word>or</Word>
+      <Word>pass</Word>
+      <Word>raise</Word>
+      <Word>return</Word>
+      <Word>try</Word>
+      <Word>while</Word>
+      <Word>with</Word>
+      <Word>yield</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>False</Word>
+      <Word>None</Word>
+      <Word>True</Word>
+      <Word>self</Word>
+      <Word>cls</Word>
+    </Keywords>
+
+    <Rule color="Decorator">^\s*@[\w.]+</Rule>
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?[jJ]?</Rule>
+    <Rule color="Punctuation">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Swift" extensions=".swift" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="// comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Number" foreground="#098658" exampleText="42" />
+  <Color name="Attribute" foreground="#795E26" fontWeight="bold" exampleText="@available" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="func run()" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="nil" />
+  <Color name="FunctionCall" foreground="#795E26" fontWeight="bold" exampleText="print()" />
+  <Color name="Punctuation" foreground="#000000" exampleText="a(b.c)" />
+
+  <RuleSet>
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>//</Begin>
+    </Span>
+    <Span color="String" multiline="true">
+      <Begin>"""</Begin>
+      <End>"""</End>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>Any</Word>
+      <Word>AnyObject</Word>
+      <Word>Protocol</Word>
+      <Word>Self</Word>
+      <Word>Type</Word>
+      <Word>as</Word>
+      <Word>associatedtype</Word>
+      <Word>break</Word>
+      <Word>case</Word>
+      <Word>catch</Word>
+      <Word>class</Word>
+      <Word>continue</Word>
+      <Word>default</Word>
+      <Word>defer</Word>
+      <Word>deinit</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>enum</Word>
+      <Word>extension</Word>
+      <Word>fallthrough</Word>
+      <Word>false</Word>
+      <Word>fileprivate</Word>
+      <Word>final</Word>
+      <Word>for</Word>
+      <Word>func</Word>
+      <Word>guard</Word>
+      <Word>if</Word>
+      <Word>import</Word>
+      <Word>in</Word>
+      <Word>init</Word>
+      <Word>inout</Word>
+      <Word>internal</Word>
+      <Word>is</Word>
+      <Word>let</Word>
+      <Word>mutating</Word>
+      <Word>open</Word>
+      <Word>operator</Word>
+      <Word>private</Word>
+      <Word>protocol</Word>
+      <Word>public</Word>
+      <Word>repeat</Word>
+      <Word>required</Word>
+      <Word>rethrows</Word>
+      <Word>return</Word>
+      <Word>static</Word>
+      <Word>struct</Word>
+      <Word>subscript</Word>
+      <Word>super</Word>
+      <Word>switch</Word>
+      <Word>throw</Word>
+      <Word>throws</Word>
+      <Word>true</Word>
+      <Word>try</Word>
+      <Word>typealias</Word>
+      <Word>var</Word>
+      <Word>where</Word>
+      <Word>while</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>nil</Word>
+      <Word>self</Word>
+    </Keywords>
+
+    <Rule color="Attribute">@[\w.]+</Rule>
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+    <Rule color="Punctuation">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

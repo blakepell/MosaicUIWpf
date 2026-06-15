@@ -84,6 +84,14 @@
     <EmbeddedResource Include="Assets\C.Dark.xshd" />
     <EmbeddedResource Include="Assets\Lua.Light.xshd" />
     <EmbeddedResource Include="Assets\Lua.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Python.Light.xshd" />
+    <EmbeddedResource Include="Assets\Python.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Ini.Light.xshd" />
+    <EmbeddedResource Include="Assets\Ini.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Java.Light.xshd" />
+    <EmbeddedResource Include="Assets\Java.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Swift.Light.xshd" />
+    <EmbeddedResource Include="Assets\Swift.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>
