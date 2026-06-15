@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="VB.NET" extensions=".vb" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="' comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Number" foreground="#098658" exampleText="42" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="Public Class App" />
+  <Color name="TypeKeyword" foreground="#0000FF" fontWeight="bold" exampleText="Dim value As Integer" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="Nothing" />
+  <Color name="Attribute" foreground="#795E26" fontWeight="bold" exampleText="&lt;Obsolete&gt;" />
+  <Color name="MethodCall" foreground="#795E26" fontWeight="bold" exampleText="ToString()" />
+  <Color name="Operator" foreground="#000000" exampleText="=" />
+
+  <RuleSet ignoreCase="true">
+    <Span color="Comment">
+      <Begin>'</Begin>
+    </Span>
+    <Span color="Comment">
+      <Begin>\bREM\b</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin='""' end="" />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>AddHandler</Word>
+      <Word>AddressOf</Word>
+      <Word>And</Word>
+      <Word>AndAlso</Word>
+      <Word>As</Word>
+      <Word>Call</Word>
+      <Word>Case</Word>
+      <Word>Catch</Word>
+      <Word>Class</Word>
+      <Word>Const</Word>
+      <Word>Continue</Word>
+      <Word>Declare</Word>
+      <Word>Default</Word>
+      <Word>Delegate</Word>
+      <Word>Dim</Word>
+      <Word>Do</Word>
+      <Word>Each</Word>
+      <Word>Else</Word>
+      <Word>ElseIf</Word>
+      <Word>End</Word>
+      <Word>Enum</Word>
+      <Word>Erase</Word>
+      <Word>Error</Word>
+      <Word>Event</Word>
+      <Word>Exit</Word>
+      <Word>Finally</Word>
+      <Word>For</Word>
+      <Word>Friend</Word>
+      <Word>Function</Word>
+      <Word>Get</Word>
+      <Word>GetType</Word>
+      <Word>GetXMLNamespace</Word>
+      <Word>Global</Word>
+      <Word>GoSub</Word>
+      <Word>GoTo</Word>
+      <Word>Handles</Word>
+      <Word>If</Word>
+      <Word>Implements</Word>
+      <Word>Imports</Word>
+      <Word>In</Word>
+      <Word>Inherits</Word>
+      <Word>Interface</Word>
+      <Word>Iterator</Word>
+      <Word>Let</Word>
+      <Word>Lib</Word>
+      <Word>Loop</Word>
+      <Word>Me</Word>
+      <Word>Module</Word>
+      <Word>MustInherit</Word>
+      <Word>MustOverride</Word>
+      <Word>MyBase</Word>
+      <Word>MyClass</Word>
+      <Word>Namespace</Word>
+      <Word>Narrowing</Word>
+      <Word>New</Word>
+      <Word>Next</Word>
+      <Word>Not</Word>
+      <Word>NotInheritable</Word>
+      <Word>NotOverridable</Word>
+      <Word>Of</Word>
+      <Word>On</Word>
+      <Word>Operator</Word>
+      <Word>Option</Word>
+      <Word>Optional</Word>
+      <Word>Or</Word>
+      <Word>OrElse</Word>
+      <Word>Overloads</Word>
+      <Word>Overridable</Word>
+      <Word>Overrides</Word>
+      <Word>ParamArray</Word>
+      <Word>Partial</Word>
+      <Word>Private</Word>
+      <Word>Property</Word>
+      <Word>Protected</Word>
+      <Word>Public</Word>
+      <Word>RaiseEvent</Word>
+      <Word>ReadOnly</Word>
+      <Word>ReDim</Word>
+      <Word>RemoveHandler</Word>
+      <Word>Resume</Word>
+      <Word>Return</Word>
+      <Word>Select</Word>
+      <Word>Set</Word>
+      <Word>Shadows</Word>
+      <Word>Shared</Word>
+      <Word>Static</Word>
+      <Word>Step</Word>
+      <Word>Stop</Word>
+      <Word>Structure</Word>
+      <Word>Sub</Word>
+      <Word>SyncLock</Word>
+      <Word>Then</Word>
+      <Word>Throw</Word>
+      <Word>To</Word>
+      <Word>Try</Word>
+      <Word>Using</Word>
+      <Word>Wend</Word>
+      <Word>When</Word>
+      <Word>While</Word>
+      <Word>Widening</Word>
+      <Word>With</Word>
+      <Word>WithEvents</Word>
+      <Word>WriteOnly</Word>
+      <Word>Xor</Word>
+      <Word>Yield</Word>
+    </Keywords>
+
+    <Keywords color="TypeKeyword">
+      <Word>Boolean</Word>
+      <Word>Byte</Word>
+      <Word>Char</Word>
+      <Word>Date</Word>
+      <Word>Decimal</Word>
+      <Word>Double</Word>
+      <Word>Integer</Word>
+      <Word>Long</Word>
+      <Word>Object</Word>
+      <Word>SByte</Word>
+      <Word>Short</Word>
+      <Word>Single</Word>
+      <Word>String</Word>
+      <Word>UInteger</Word>
+      <Word>ULong</Word>
+      <Word>UShort</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>False</Word>
+      <Word>Nothing</Word>
+      <Word>True</Word>
+    </Keywords>
+
+    <Rule color="Attribute">&lt;[A-Za-z_][\w.]*</Rule>
+    <Rule color="MethodCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+    <Rule color="Operator">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

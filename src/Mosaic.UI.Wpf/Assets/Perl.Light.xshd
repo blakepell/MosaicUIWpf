@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Perl" extensions=".pl;.pm;.t;.pod" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="# comment" />
+  <Color name="Pod" foreground="#008000" exampleText="=head1 NAME" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Variable" foreground="#0451A5" exampleText="$value" />
+  <Color name="Number" foreground="#098658" exampleText="42" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="sub run" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="undef" />
+  <Color name="FunctionCall" foreground="#795E26" fontWeight="bold" exampleText="print()" />
+  <Color name="Operator" foreground="#000000" exampleText="=>" />
+
+  <RuleSet>
+    <Span color="Pod" multiline="true">
+      <Begin>^=\w+</Begin>
+      <End>^=cut</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>\#</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>and</Word>
+      <Word>bless</Word>
+      <Word>caller</Word>
+      <Word>continue</Word>
+      <Word>do</Word>
+      <Word>else</Word>
+      <Word>elsif</Word>
+      <Word>eval</Word>
+      <Word>for</Word>
+      <Word>foreach</Word>
+      <Word>given</Word>
+      <Word>goto</Word>
+      <Word>if</Word>
+      <Word>last</Word>
+      <Word>local</Word>
+      <Word>my</Word>
+      <Word>next</Word>
+      <Word>no</Word>
+      <Word>or</Word>
+      <Word>our</Word>
+      <Word>package</Word>
+      <Word>redo</Word>
+      <Word>require</Word>
+      <Word>return</Word>
+      <Word>state</Word>
+      <Word>sub</Word>
+      <Word>unless</Word>
+      <Word>until</Word>
+      <Word>use</Word>
+      <Word>when</Word>
+      <Word>while</Word>
+      <Word>xor</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>undef</Word>
+      <Word>__DATA__</Word>
+      <Word>__END__</Word>
+      <Word>__FILE__</Word>
+      <Word>__LINE__</Word>
+      <Word>__PACKAGE__</Word>
+    </Keywords>
+
+    <Rule color="Variable">[\$@%][A-Za-z_]\w*(::\w+)*</Rule>
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+    <Rule color="Operator">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:$]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

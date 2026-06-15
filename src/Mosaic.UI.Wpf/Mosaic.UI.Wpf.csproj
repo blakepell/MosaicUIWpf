@@ -92,6 +92,14 @@
     <EmbeddedResource Include="Assets\Java.Dark.xshd" />
     <EmbeddedResource Include="Assets\Swift.Light.xshd" />
     <EmbeddedResource Include="Assets\Swift.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Basic.Light.xshd" />
+    <EmbeddedResource Include="Assets\Basic.Dark.xshd" />
+    <EmbeddedResource Include="Assets\VbNet.Light.xshd" />
+    <EmbeddedResource Include="Assets\VbNet.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Perl.Light.xshd" />
+    <EmbeddedResource Include="Assets\Perl.Dark.xshd" />
+    <EmbeddedResource Include="Assets\Php.Light.xshd" />
+    <EmbeddedResource Include="Assets\Php.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>

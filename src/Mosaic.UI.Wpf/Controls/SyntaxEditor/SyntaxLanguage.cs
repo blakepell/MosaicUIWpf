@@ -81,7 +81,27 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Swift source (.swift).
         /// </summary>
-        Swift
+        Swift,
+
+        /// <summary>
+        /// Classic BASIC source (.bas).
+        /// </summary>
+        Basic,
+
+        /// <summary>
+        /// Visual Basic .NET source (.vb).
+        /// </summary>
+        VbNet,
+
+        /// <summary>
+        /// Perl source and module files (.pl, .pm, .t, .pod).
+        /// </summary>
+        Perl,
+
+        /// <summary>
+        /// PHP source and template files (.php, .phtml, .php3, .php4, .php5, .phps).
+        /// </summary>
+        Php
     }
 
     /// <summary>
@@ -112,6 +132,10 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Ini => "Ini",
                 SyntaxLanguage.Java => "Java",
                 SyntaxLanguage.Swift => "Swift",
+                SyntaxLanguage.Basic => "Basic",
+                SyntaxLanguage.VbNet => "VbNet",
+                SyntaxLanguage.Perl => "Perl",
+                SyntaxLanguage.Php => "Php",
                 _ => null
             };
         }
@@ -148,6 +172,10 @@ namespace Mosaic.UI.Wpf.Controls
                 ".ini" or ".cfg" or ".conf" or ".properties" => SyntaxLanguage.Ini,
                 ".java" => SyntaxLanguage.Java,
                 ".swift" => SyntaxLanguage.Swift,
+                ".bas" => SyntaxLanguage.Basic,
+                ".vb" => SyntaxLanguage.VbNet,
+                ".pl" or ".pm" or ".t" or ".pod" => SyntaxLanguage.Perl,
+                ".php" or ".phtml" or ".php3" or ".php4" or ".php5" or ".phps" => SyntaxLanguage.Php,
                 ".xml" or ".xaml" or ".config" or ".csproj" or ".xsd" or ".xsl" or ".xslt"
                     or ".manifest" or ".targets" or ".props" or ".nuspec" or ".wsdl" => SyntaxLanguage.Xml,
                 _ => SyntaxLanguage.None

@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="Classic BASIC" extensions=".bas" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="REM comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Number" foreground="#098658" exampleText="10" />
+  <Color name="LineNumber" foreground="#808080" exampleText="10 PRINT" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="PRINT X" />
+  <Color name="Function" foreground="#795E26" fontWeight="bold" exampleText="CHR$(65)" />
+  <Color name="Operator" foreground="#000000" exampleText="+" />
+
+  <RuleSet ignoreCase="true">
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>'</Begin>
+    </Span>
+    <Span color="Comment">
+      <Begin>\bREM\b</Begin>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>AND</Word>
+      <Word>AS</Word>
+      <Word>BEEP</Word>
+      <Word>CALL</Word>
+      <Word>CASE</Word>
+      <Word>CHAIN</Word>
+      <Word>CHDIR</Word>
+      <Word>CIRCLE</Word>
+      <Word>CLEAR</Word>
+      <Word>CLOSE</Word>
+      <Word>CLS</Word>
+      <Word>COLOR</Word>
+      <Word>COMMON</Word>
+      <Word>CONST</Word>
+      <Word>DATA</Word>
+      <Word>DECLARE</Word>
+      <Word>DEF</Word>
+      <Word>DIM</Word>
+      <Word>DO</Word>
+      <Word>ELSE</Word>
+      <Word>ELSEIF</Word>
+      <Word>END</Word>
+      <Word>ERASE</Word>
+      <Word>ERROR</Word>
+      <Word>EXIT</Word>
+      <Word>FOR</Word>
+      <Word>FUNCTION</Word>
+      <Word>GET</Word>
+      <Word>GOSUB</Word>
+      <Word>GOTO</Word>
+      <Word>IF</Word>
+      <Word>INPUT</Word>
+      <Word>LET</Word>
+      <Word>LINE</Word>
+      <Word>LOCATE</Word>
+      <Word>LOOP</Word>
+      <Word>NEXT</Word>
+      <Word>NOT</Word>
+      <Word>ON</Word>
+      <Word>OPEN</Word>
+      <Word>OR</Word>
+      <Word>PAINT</Word>
+      <Word>POKE</Word>
+      <Word>PRINT</Word>
+      <Word>PUT</Word>
+      <Word>RANDOMIZE</Word>
+      <Word>READ</Word>
+      <Word>REDIM</Word>
+      <Word>RESTORE</Word>
+      <Word>RESUME</Word>
+      <Word>RETURN</Word>
+      <Word>SELECT</Word>
+      <Word>SHARED</Word>
+      <Word>SLEEP</Word>
+      <Word>STATIC</Word>
+      <Word>STEP</Word>
+      <Word>STOP</Word>
+      <Word>SUB</Word>
+      <Word>SWAP</Word>
+      <Word>THEN</Word>
+      <Word>TO</Word>
+      <Word>UNTIL</Word>
+      <Word>WEND</Word>
+      <Word>WHILE</Word>
+      <Word>WIDEN</Word>
+      <Word>WRITE</Word>
+      <Word>XOR</Word>
+    </Keywords>
+
+    <Keywords color="Function">
+      <Word>ABS</Word>
+      <Word>ASC</Word>
+      <Word>CHR$</Word>
+      <Word>COS</Word>
+      <Word>EOF</Word>
+      <Word>HEX$</Word>
+      <Word>INKEY$</Word>
+      <Word>INSTR</Word>
+      <Word>INT</Word>
+      <Word>LEFT$</Word>
+      <Word>LEN</Word>
+      <Word>MID$</Word>
+      <Word>RIGHT$</Word>
+      <Word>RND</Word>
+      <Word>SIN</Word>
+      <Word>SPACE$</Word>
+      <Word>SQR</Word>
+      <Word>STR$</Word>
+      <Word>TAB</Word>
+      <Word>TAN</Word>
+      <Word>VAL</Word>
+    </Keywords>
+
+    <Rule color="LineNumber">^\s*\d+\b</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|\b\d+(\.\d+)?([eE][+-]?\d+)?</Rule>
+    <Rule color="Operator">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>

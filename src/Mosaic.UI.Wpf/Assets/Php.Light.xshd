@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="PHP" extensions=".php;.phtml;.php3;.php4;.php5;.phps" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Light Theme Colors -->
+  <Color name="Comment" foreground="#008000" exampleText="// comment" />
+  <Color name="String" foreground="#A31515" exampleText="&quot;text&quot;" />
+  <Color name="Variable" foreground="#0451A5" exampleText="$value" />
+  <Color name="Number" foreground="#098658" exampleText="42" />
+  <Color name="Keyword" foreground="#0000FF" fontWeight="bold" exampleText="function run()" />
+  <Color name="LiteralKeyword" foreground="#0000FF" fontWeight="bold" exampleText="null" />
+  <Color name="Tag" foreground="#800000" fontWeight="bold" exampleText="&lt;?php" />
+  <Color name="FunctionCall" foreground="#795E26" fontWeight="bold" exampleText="echo()" />
+  <Color name="Operator" foreground="#000000" exampleText="=>" />
+
+  <RuleSet ignoreCase="true">
+    <Span color="Comment" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment">
+      <Begin>//</Begin>
+    </Span>
+    <Span color="Comment">
+      <Begin>\#</Begin>
+    </Span>
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    <Span color="String">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="Keyword">
+      <Word>abstract</Word>
+      <Word>and</Word>
+      <Word>array</Word>
+      <Word>as</Word>
+      <Word>break</Word>
+      <Word>callable</Word>
+      <Word>case</Word>
+      <Word>catch</Word>
+      <Word>class</Word>
+      <Word>clone</Word>
+      <Word>const</Word>
+      <Word>continue</Word>
+      <Word>declare</Word>
+      <Word>default</Word>
+      <Word>die</Word>
+      <Word>do</Word>
+      <Word>echo</Word>
+      <Word>else</Word>
+      <Word>elseif</Word>
+      <Word>empty</Word>
+      <Word>enddeclare</Word>
+      <Word>endfor</Word>
+      <Word>endforeach</Word>
+      <Word>endif</Word>
+      <Word>endswitch</Word>
+      <Word>endwhile</Word>
+      <Word>enum</Word>
+      <Word>eval</Word>
+      <Word>exit</Word>
+      <Word>extends</Word>
+      <Word>final</Word>
+      <Word>finally</Word>
+      <Word>fn</Word>
+      <Word>for</Word>
+      <Word>foreach</Word>
+      <Word>function</Word>
+      <Word>global</Word>
+      <Word>goto</Word>
+      <Word>if</Word>
+      <Word>implements</Word>
+      <Word>include</Word>
+      <Word>include_once</Word>
+      <Word>instanceof</Word>
+      <Word>insteadof</Word>
+      <Word>interface</Word>
+      <Word>isset</Word>
+      <Word>list</Word>
+      <Word>match</Word>
+      <Word>namespace</Word>
+      <Word>new</Word>
+      <Word>or</Word>
+      <Word>print</Word>
+      <Word>private</Word>
+      <Word>protected</Word>
+      <Word>public</Word>
+      <Word>readonly</Word>
+      <Word>require</Word>
+      <Word>require_once</Word>
+      <Word>return</Word>
+      <Word>static</Word>
+      <Word>switch</Word>
+      <Word>throw</Word>
+      <Word>trait</Word>
+      <Word>try</Word>
+      <Word>unset</Word>
+      <Word>use</Word>
+      <Word>var</Word>
+      <Word>while</Word>
+      <Word>xor</Word>
+      <Word>yield</Word>
+    </Keywords>
+
+    <Keywords color="LiteralKeyword">
+      <Word>false</Word>
+      <Word>null</Word>
+      <Word>true</Word>
+    </Keywords>
+
+    <Rule color="Tag">&lt;\?(php)?|\?&gt;</Rule>
+    <Rule color="Variable">\$[A-Za-z_]\w*</Rule>
+    <Rule color="FunctionCall">\b[\d\w_]+(?=\s*\()</Rule>
+    <Rule color="Number">\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?</Rule>
+    <Rule color="Operator">[?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=:$]+</Rule>
+  </RuleSet>
+</SyntaxDefinition>
