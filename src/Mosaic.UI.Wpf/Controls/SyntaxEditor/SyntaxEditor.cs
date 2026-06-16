@@ -239,6 +239,9 @@ namespace Mosaic.UI.Wpf.Controls
             this.ReloadHighlighting();
         }
 
+        /// <summary>
+        /// Ensures that the shared AvalonEdit search panel resources are available to this editor.
+        /// </summary>
         private void EnsureSearchPanelResources()
         {
             foreach (var dictionary in this.Resources.MergedDictionaries)
@@ -252,6 +255,9 @@ namespace Mosaic.UI.Wpf.Controls
             this.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = SearchPanelResourceUri });
         }
 
+        /// <summary>
+        /// Ensures that a search panel instance is attached to the editor.
+        /// </summary>
         private void EnsureSearchPanelInstalled()
         {
             this.EnsureSearchPanelResources();
@@ -265,6 +271,10 @@ namespace Mosaic.UI.Wpf.Controls
             this.ApplySearchPanelStyle();
         }
 
+        /// <summary>
+        /// Ensures that the shared AvalonEdit search panel resources are available in the specified dictionary.
+        /// </summary>
+        /// <param name="resources">The resource dictionary to update.</param>
         private void EnsureSearchPanelResources(ResourceDictionary resources)
         {
             foreach (var dictionary in resources.MergedDictionaries)
@@ -278,6 +288,9 @@ namespace Mosaic.UI.Wpf.Controls
             resources.MergedDictionaries.Add(new ResourceDictionary { Source = SearchPanelResourceUri });
         }
 
+        /// <summary>
+        /// Applies the current AvalonEdit search panel style if one is available.
+        /// </summary>
         private void ApplySearchPanelStyle()
         {
             if (_searchPanel == null)
@@ -291,6 +304,9 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Opens the search panel and restores its visual state.
+        /// </summary>
         private void OpenSearchPanel()
         {
             this.EnsureSearchPanelInstalled();
@@ -324,6 +340,9 @@ namespace Mosaic.UI.Wpf.Controls
             _searchPanel.Reactivate();
         }
 
+        /// <summary>
+        /// Recreates the search panel so it can pick up the current theme resources.
+        /// </summary>
         private void ReplaceSearchPanel()
         {
             string? searchPattern = _searchPanel?.SearchPattern;
@@ -350,6 +369,9 @@ namespace Mosaic.UI.Wpf.Controls
             _searchPanel.UseRegex = useRegex;
         }
 
+        /// <summary>
+        /// Rebuilds the search panel after a theme change and reopens it when necessary.
+        /// </summary>
         private void ResetSearchPanelForThemeChange()
         {
             bool reopen = _searchPanel is { IsClosed: false };
@@ -362,18 +384,33 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Opens the search panel in response to the find command.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command execution.</param>
         private void OnFindCommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             this.OpenSearchPanel();
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Reports whether the find command can execute.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command query.</param>
         private void OnFindCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = this.IsEnabled;
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Intercepts Ctrl+F so the search panel can open before the default handler runs.
+        /// </summary>
+        /// <param name="sender">The source of the keyboard event.</param>
+        /// <param name="e">The event data for the key press.</param>
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && (Keyboard.Modifiers & ModifierKeys.Alt) == 0)
@@ -383,6 +420,11 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Responds to a change in the <see cref="Theme"/> dependency property.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The event data for the property change.</param>
         private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is SyntaxEditor editor)
@@ -393,6 +435,11 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Reloads syntax highlighting after the <see cref="Language"/> dependency property changes.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The event data for the property change.</param>
         private static void OnLanguageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as SyntaxEditor)?.ReloadHighlighting();
@@ -400,6 +447,11 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Global theme tracking
 
+        /// <summary>
+        /// Subscribes to global theme updates when the editor is loaded.
+        /// </summary>
+        /// <param name="sender">The source of the loaded event.</param>
+        /// <param name="e">The event data for the load operation.</param>
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (this.FollowGlobalTheme && !_subscribedToGlobalTheme)
@@ -416,6 +468,11 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Unsubscribes from global theme updates when the editor is unloaded.
+        /// </summary>
+        /// <param name="sender">The source of the unloaded event.</param>
+        /// <param name="e">The event data for the unload operation.</param>
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (_subscribedToGlobalTheme)
@@ -425,6 +482,11 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Applies the notified global theme when theme tracking is enabled.
+        /// </summary>
+        /// <param name="sender">The source of the theme notification.</param>
+        /// <param name="theme">The theme that was selected globally.</param>
         private void OnGlobalThemeChanged(object? sender, MosaicThemeMode theme)
         {
             if (this.FollowGlobalTheme)
@@ -496,6 +558,11 @@ namespace Mosaic.UI.Wpf.Controls
             this.BorderThickness = new Thickness(1);
         }
 
+        /// <summary>
+        /// Loads and caches the resource dictionary for the specified theme.
+        /// </summary>
+        /// <param name="theme">One of the enumeration values that specifies the theme to resolve.</param>
+        /// <returns>A theme resource dictionary; otherwise, <see langword="null" /> when the dictionary cannot be loaded.</returns>
         private static ResourceDictionary? GetThemeDictionary(MosaicThemeMode theme)
         {
             if (ThemeDictionaryCache.TryGetValue(theme, out var cached))
@@ -515,6 +582,14 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Resolves a theme color from the specified dictionary with an optional fallback key.
+        /// </summary>
+        /// <param name="dictionary">The resource dictionary to inspect.</param>
+        /// <param name="primaryKey">The primary resource key to look up.</param>
+        /// <param name="fallbackKey">The fallback resource key to look up when the primary key is missing.</param>
+        /// <param name="defaultColor">The color to return when neither key is available.</param>
+        /// <returns>The resolved color value.</returns>
         private static Color ResolveColor(ResourceDictionary dictionary, ComponentResourceKey primaryKey, ComponentResourceKey? fallbackKey, Color defaultColor)
         {
             if (dictionary.Contains(primaryKey) && dictionary[primaryKey] is Color primary)
@@ -590,6 +665,11 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Context menu
 
+        /// <summary>
+        /// Rebuilds the context menu immediately before it is displayed.
+        /// </summary>
+        /// <param name="sender">The source of the context menu event.</param>
+        /// <param name="e">The event data for the menu opening.</param>
         private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             var menu = this.ContextMenu;
@@ -618,6 +698,10 @@ namespace Mosaic.UI.Wpf.Controls
             this.RaiseEvent(new SyntaxEditorContextMenuEventArgs(ContextMenuRequestedEvent, this, menu, this.Language));
         }
 
+        /// <summary>
+        /// Adds language-specific commands to the context menu.
+        /// </summary>
+        /// <param name="menu">The context menu to extend.</param>
         private void AddLanguageItems(ContextMenu menu)
         {
             if (SyntaxLanguageMap.GetLineCommentDefinition(this.Language) != null)
@@ -636,6 +720,13 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Creates a command-backed context menu item.
+        /// </summary>
+        /// <param name="header">The item header text.</param>
+        /// <param name="command">The command to invoke.</param>
+        /// <param name="inputGestureText">The shortcut text to display.</param>
+        /// <returns>A configured menu item.</returns>
         private MenuItem CreateItem(string header, ICommand command, string? inputGestureText = null)
         {
             return new MenuItem
@@ -647,6 +738,13 @@ namespace Mosaic.UI.Wpf.Controls
             };
         }
 
+        /// <summary>
+        /// Creates a click-handled context menu item.
+        /// </summary>
+        /// <param name="header">The item header text.</param>
+        /// <param name="onClick">The click handler to attach.</param>
+        /// <param name="inputGestureText">The shortcut text to display.</param>
+        /// <returns>A configured menu item.</returns>
         private static MenuItem CreateItem(string header, RoutedEventHandler onClick, string? inputGestureText = null)
         {
             var item = new MenuItem
@@ -662,12 +760,20 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Comment operations
 
+        /// <summary>
+        /// Reports whether line-comment commands can execute.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command query.</param>
         private void OnCommentCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = !this.IsReadOnly && this.Document != null && SyntaxLanguageMap.GetLineCommentDefinition(this.Language) != null;
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Comments the selected lines or the current line when no selection exists.
+        /// </summary>
         private void CommentSelectedLines()
         {
             var comment = SyntaxLanguageMap.GetLineCommentDefinition(this.Language);
@@ -679,6 +785,9 @@ namespace Mosaic.UI.Wpf.Controls
             this.TransformSelectedLines(lineText => CommentLine(lineText, comment));
         }
 
+        /// <summary>
+        /// Removes line comments from the selected lines or the current line when no selection exists.
+        /// </summary>
         private void UncommentSelectedLines()
         {
             var comment = SyntaxLanguageMap.GetLineCommentDefinition(this.Language);
@@ -690,6 +799,10 @@ namespace Mosaic.UI.Wpf.Controls
             this.TransformSelectedLines(lineText => UncommentLine(lineText, comment));
         }
 
+        /// <summary>
+        /// Applies a line transformation across the current line selection.
+        /// </summary>
+        /// <param name="transform">The transformation to apply to each selected line.</param>
         private void TransformSelectedLines(Func<string, string> transform)
         {
             var range = this.GetSelectedLineRange();
@@ -735,6 +848,10 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Resolves the first and last line numbers covered by the current selection.
+        /// </summary>
+        /// <returns>A line-number range; otherwise, <see langword="null" /> when the document is empty.</returns>
         private (int FirstLineNumber, int LastLineNumber)? GetSelectedLineRange()
         {
             if (this.Document == null || this.Document.TextLength == 0)
@@ -757,6 +874,12 @@ namespace Mosaic.UI.Wpf.Controls
             return (startLine.LineNumber, endLine.LineNumber);
         }
 
+        /// <summary>
+        /// Resolves the line that should be treated as the end of the current selection.
+        /// </summary>
+        /// <param name="startOffset">The starting offset of the selection.</param>
+        /// <param name="endOffset">The ending offset of the selection.</param>
+        /// <returns>The document line that closes the selection.</returns>
         private DocumentLine GetSelectionEndLine(int startOffset, int endOffset)
         {
             if (endOffset <= startOffset)
@@ -776,6 +899,12 @@ namespace Mosaic.UI.Wpf.Controls
             return this.Document.GetLineByOffset(Math.Max(startOffset, endOffset - 1));
         }
 
+        /// <summary>
+        /// Adds a line comment to a single line of text.
+        /// </summary>
+        /// <param name="lineText">The line text to transform.</param>
+        /// <param name="comment">The comment definition to apply.</param>
+        /// <returns>The commented line text.</returns>
         private static string CommentLine(string lineText, SyntaxCommentDefinition comment)
         {
             int indentLength = GetIndentLength(lineText);
@@ -792,6 +921,12 @@ namespace Mosaic.UI.Wpf.Controls
                 : $"{indentation}{comment.LinePrefix} {content} {comment.LineSuffix}";
         }
 
+        /// <summary>
+        /// Removes a line comment from a single line of text when one is present.
+        /// </summary>
+        /// <param name="lineText">The line text to transform.</param>
+        /// <param name="comment">The comment definition to apply.</param>
+        /// <returns>The uncommented line text.</returns>
         private static string UncommentLine(string lineText, SyntaxCommentDefinition comment)
         {
             int indentLength = GetIndentLength(lineText);
@@ -821,6 +956,12 @@ namespace Mosaic.UI.Wpf.Controls
             return indentation + uncommented;
         }
 
+        /// <summary>
+        /// Determines whether the specified content begins with a standalone comment prefix.
+        /// </summary>
+        /// <param name="content">The content to inspect.</param>
+        /// <param name="prefix">The comment prefix to match.</param>
+        /// <returns><see langword="true" /> if the content starts with the prefix; otherwise, <see langword="false" />.</returns>
         private static bool StartsWithCommentPrefix(string content, string prefix)
         {
             if (!content.StartsWith(prefix, StringComparison.Ordinal))
@@ -833,6 +974,11 @@ namespace Mosaic.UI.Wpf.Controls
                    || char.IsWhiteSpace(content[prefix.Length]);
         }
 
+        /// <summary>
+        /// Measures the length of the leading whitespace on a line.
+        /// </summary>
+        /// <param name="lineText">The line text to inspect.</param>
+        /// <returns>The number of leading whitespace characters.</returns>
         private static int GetIndentLength(string lineText)
         {
             int indentLength = 0;
@@ -848,12 +994,20 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Line movement operations
 
+        /// <summary>
+        /// Reports whether line-move commands can execute.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command query.</param>
         private void OnLineMoveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = !this.IsReadOnly && this.Document != null && this.Document.TextLength > 0;
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Moves the selected lines one position earlier in the document.
+        /// </summary>
         private void MoveSelectedLinesUp()
         {
             var range = this.GetSelectedLineRange();
@@ -901,6 +1055,9 @@ namespace Mosaic.UI.Wpf.Controls
             this.SelectionLength = selectionLength;
         }
 
+        /// <summary>
+        /// Moves the selected lines one position later in the document.
+        /// </summary>
         private void MoveSelectedLinesDown()
         {
             var range = this.GetSelectedLineRange();
@@ -949,6 +1106,11 @@ namespace Mosaic.UI.Wpf.Controls
             this.SelectionLength = selectionLength;
         }
 
+        /// <summary>
+        /// Reselects the specified inclusive line range using whole-line boundaries.
+        /// </summary>
+        /// <param name="firstLineNumber">The first line number in the range.</param>
+        /// <param name="lastLineNumber">The last line number in the range.</param>
         private void SelectWholeLines(int firstLineNumber, int lastLineNumber)
         {
             DocumentLine firstLine = this.Document.GetLineByNumber(firstLineNumber);
@@ -958,6 +1120,12 @@ namespace Mosaic.UI.Wpf.Controls
             this.SelectionLength = this.GetWholeLineSelectionLength(firstLine, lastLine);
         }
 
+        /// <summary>
+        /// Calculates the character length needed to select complete lines.
+        /// </summary>
+        /// <param name="firstLine">The first line in the selection.</param>
+        /// <param name="lastLine">The last line in the selection.</param>
+        /// <returns>The length of the whole-line selection.</returns>
         private int GetWholeLineSelectionLength(DocumentLine firstLine, DocumentLine lastLine)
         {
             if (lastLine.LineNumber >= this.Document.LineCount)
@@ -973,16 +1141,26 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region JSON operations
 
+        /// <summary>
+        /// Formats the document as indented JSON.
+        /// </summary>
         private void FormatJson()
         {
             this.TransformJson(static node => node.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
         }
 
+        /// <summary>
+        /// Formats the document as compact JSON.
+        /// </summary>
         private void MinifyJson()
         {
             this.TransformJson(static node => node.ToJsonString(new JsonSerializerOptions { WriteIndented = false }));
         }
 
+        /// <summary>
+        /// Parses the document as JSON and replaces it with transformed output.
+        /// </summary>
+        /// <param name="transform">The transformation to apply to the parsed JSON node.</param>
         private void TransformJson(Func<JsonNode, string> transform)
         {
             string text = this.Text;
@@ -1006,6 +1184,9 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Validates the current document as JSON and reports the result to the user.
+        /// </summary>
         private void ValidateJson()
         {
             string text = this.Text;
