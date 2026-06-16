@@ -15,9 +15,11 @@ namespace Mosaic.UI.Wpf.Input
     /// </summary>
     public class KeyChordGesture : KeyGesture
     {
-        private readonly Key _key;
         private bool _gotFirstGesture;
         private readonly InputGesture _firstGesture;
+        private readonly Key _secondKey;
+        private readonly ModifierKeys _secondModifier;
+        private readonly bool _matchSecondModifier;
 
         /// <summary>
         /// Constructor
@@ -28,7 +30,20 @@ namespace Mosaic.UI.Wpf.Input
         public KeyChordGesture(ModifierKeys modifier, Key firstKey, Key secondKey) : base(Key.None)
         {
             _firstGesture = new KeyGesture(firstKey, modifier);
-            _key = secondKey;
+            _secondKey = secondKey;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="firstModifier">The modifier for the first key.</param>
+        /// <param name="firstKey">The first key in the chord.</param>
+        /// <param name="secondModifier">The modifier for the second key.</param>
+        /// <param name="secondKey">The second key in the chord.</param>
+        public KeyChordGesture(ModifierKeys firstModifier, Key firstKey, ModifierKeys secondModifier, Key secondKey) : this(firstModifier, firstKey, secondKey)
+        {
+            _secondModifier = secondModifier;
+            _matchSecondModifier = true;
         }
 
         /// <summary>
@@ -48,13 +63,15 @@ namespace Mosaic.UI.Wpf.Input
             if (_gotFirstGesture)
             {
                 _gotFirstGesture = false;
+                bool matched = keyArgs.Key == _secondKey
+                               && (!_matchSecondModifier || Keyboard.Modifiers == _secondModifier);
 
-                if (keyArgs.Key == _key)
+                if (matched)
                 {
                     inputEventArgs.Handled = true;
                 }
 
-                return keyArgs.Key == _key;
+                return matched;
             }
 
             _gotFirstGesture = _firstGesture.Matches(null, inputEventArgs);

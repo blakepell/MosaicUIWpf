@@ -13,6 +13,13 @@
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
+    /// Defines the line comment markers used by <see cref="SyntaxEditor"/> comment commands.
+    /// </summary>
+    /// <param name="LinePrefix">The marker inserted after line indentation.</param>
+    /// <param name="LineSuffix">The optional marker appended to the line.</param>
+    public sealed record SyntaxCommentDefinition(string LinePrefix, string? LineSuffix = null);
+
+    /// <summary>
     /// The set of languages for which <see cref="SyntaxEditor"/> ships bundled, theme-aware
     /// syntax highlighting definitions.
     /// </summary>
@@ -136,6 +143,27 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.VbNet => "VbNet",
                 SyntaxLanguage.Perl => "Perl",
                 SyntaxLanguage.Php => "Php",
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// Gets the line comment markers for a language. Returns <c>null</c> when the language does
+        /// not have a built-in line-oriented comment command definition.
+        /// </summary>
+        /// <param name="language">The language to map.</param>
+        public static SyntaxCommentDefinition? GetLineCommentDefinition(SyntaxLanguage language)
+        {
+            return language switch
+            {
+                SyntaxLanguage.Json or SyntaxLanguage.CSharp or SyntaxLanguage.JavaScript or SyntaxLanguage.C
+                    or SyntaxLanguage.Java or SyntaxLanguage.Swift or SyntaxLanguage.Php => new SyntaxCommentDefinition("//"),
+                SyntaxLanguage.Python or SyntaxLanguage.Perl => new SyntaxCommentDefinition("#"),
+                SyntaxLanguage.Lua or SyntaxLanguage.Sql => new SyntaxCommentDefinition("--"),
+                SyntaxLanguage.Ini => new SyntaxCommentDefinition(";"),
+                SyntaxLanguage.Basic => new SyntaxCommentDefinition("REM"),
+                SyntaxLanguage.VbNet => new SyntaxCommentDefinition("'"),
+                SyntaxLanguage.Xml => new SyntaxCommentDefinition("<!--", "-->"),
                 _ => null
             };
         }

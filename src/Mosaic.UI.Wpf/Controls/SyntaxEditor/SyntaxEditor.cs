@@ -8,19 +8,15 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.ComponentModel;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Xml;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Mosaic.UI.Wpf.Input;
 using Mosaic.UI.Wpf.Themes;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Xml;
 
 // ReSharper disable CheckNamespace
 
@@ -32,6 +28,11 @@ namespace Mosaic.UI.Wpf.Controls
     /// <see cref="Language"/> property.
     /// </summary>
     /// <remarks>
+    /// Custom HotKeys/Chords:
+    ///
+    /// Comment Selection: Ctrl+K, Ctrl+C
+    /// Uncomment Selection: Ctrl+K, Ctrl+U
+    /// 
     /// The editor defaults to Consolas 12 with line numbers enabled. Colors for the editing surface
     /// (background, foreground, line numbers, selection, current line) are derived from the Mosaic
     /// theme indicated by <see cref="Theme"/>. When <see cref="FollowGlobalTheme"/> is <c>true</c>
@@ -68,6 +69,24 @@ namespace Mosaic.UI.Wpf.Controls
         /// Command that validates the JSON document and reports the result.
         /// </summary>
         public static readonly RoutedUICommand ValidateJsonCommand = new("Validate JSON", nameof(ValidateJsonCommand), typeof(SyntaxEditor));
+
+        /// <summary>
+        /// Command that comments the selected lines, or the current line when there is no selection.
+        /// </summary>
+        public static readonly RoutedUICommand CommentSelectionCommand = new(
+            "Comment Selection",
+            nameof(CommentSelectionCommand),
+            typeof(SyntaxEditor),
+            new InputGestureCollection { new KeyChordGesture(ModifierKeys.Control, Key.K, ModifierKeys.Control, Key.C) });
+
+        /// <summary>
+        /// Command that uncomments the selected lines, or the current line when there is no selection.
+        /// </summary>
+        public static readonly RoutedUICommand UncommentSelectionCommand = new(
+            "Uncomment Selection",
+            nameof(UncommentSelectionCommand),
+            typeof(SyntaxEditor),
+            new InputGestureCollection { new KeyChordGesture(ModifierKeys.Control, Key.K, ModifierKeys.Control, Key.U) });
 
         #endregion
 
@@ -174,6 +193,10 @@ namespace Mosaic.UI.Wpf.Controls
             this.CommandBindings.Add(new CommandBinding(FormatJsonCommand, (_, _) => this.FormatJson()));
             this.CommandBindings.Add(new CommandBinding(MinifyJsonCommand, (_, _) => this.MinifyJson()));
             this.CommandBindings.Add(new CommandBinding(ValidateJsonCommand, (_, _) => this.ValidateJson()));
+            this.CommandBindings.Add(new CommandBinding(CommentSelectionCommand, (_, _) => this.CommentSelectedLines(), this.OnCommentCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(UncommentSelectionCommand, (_, _) => this.UncommentSelectedLines(), this.OnCommentCommandCanExecute));
+            this.TextArea.InputBindings.Add(new KeyBinding(CommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.C)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(UncommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.U)) { CommandTarget = this });
 
             this.ContextMenu = new ContextMenu();
             this.ContextMenuOpening += this.OnContextMenuOpening;
@@ -420,6 +443,13 @@ namespace Mosaic.UI.Wpf.Controls
 
         private void AddLanguageItems(ContextMenu menu)
         {
+            if (SyntaxLanguageMap.GetLineCommentDefinition(this.Language) != null)
+            {
+                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateItem("Comment Selection", CommentSelectionCommand, "Ctrl+K Ctrl+C"));
+                menu.Items.Add(CreateItem("Uncomment Selection", UncommentSelectionCommand, "Ctrl+K Ctrl+U"));
+            }
+
             if (this.Language == SyntaxLanguage.Json)
             {
                 menu.Items.Add(new Separator());
@@ -449,6 +479,192 @@ namespace Mosaic.UI.Wpf.Controls
             };
             item.Click += onClick;
             return item;
+        }
+
+        #endregion
+
+        #region Comment operations
+
+        private void OnCommentCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !this.IsReadOnly && this.Document != null && SyntaxLanguageMap.GetLineCommentDefinition(this.Language) != null;
+            e.Handled = true;
+        }
+
+        private void CommentSelectedLines()
+        {
+            var comment = SyntaxLanguageMap.GetLineCommentDefinition(this.Language);
+            if (comment == null || this.Document == null || this.IsReadOnly)
+            {
+                return;
+            }
+
+            this.TransformSelectedLines(lineText => CommentLine(lineText, comment));
+        }
+
+        private void UncommentSelectedLines()
+        {
+            var comment = SyntaxLanguageMap.GetLineCommentDefinition(this.Language);
+            if (comment == null || this.Document == null || this.IsReadOnly)
+            {
+                return;
+            }
+
+            this.TransformSelectedLines(lineText => UncommentLine(lineText, comment));
+        }
+
+        private void TransformSelectedLines(Func<string, string> transform)
+        {
+            var range = this.GetSelectedLineRange();
+            if (range == null)
+            {
+                return;
+            }
+
+            int firstLineNumber = range.Value.FirstLineNumber;
+            int lastLineNumber = range.Value.LastLineNumber;
+
+            this.Document.BeginUpdate();
+            try
+            {
+                for (int lineNumber = lastLineNumber; lineNumber >= firstLineNumber; lineNumber--)
+                {
+                    DocumentLine line = this.Document.GetLineByNumber(lineNumber);
+                    string lineText = this.Document.GetText(line.Offset, line.Length);
+                    string transformed = transform(lineText);
+
+                    if (!string.Equals(lineText, transformed, StringComparison.Ordinal))
+                    {
+                        this.Document.Replace(line.Offset, line.Length, transformed);
+                    }
+                }
+            }
+            finally
+            {
+                this.Document.EndUpdate();
+            }
+
+            DocumentLine firstLine = this.Document.GetLineByNumber(firstLineNumber);
+            DocumentLine lastLine = this.Document.GetLineByNumber(Math.Min(lastLineNumber, this.Document.LineCount));
+
+            if (this.SelectionLength > 0)
+            {
+                this.SelectionStart = firstLine.Offset;
+                this.SelectionLength = lastLine.EndOffset - firstLine.Offset;
+            }
+            else
+            {
+                this.CaretOffset = Math.Min(this.CaretOffset, this.Document.TextLength);
+            }
+        }
+
+        private (int FirstLineNumber, int LastLineNumber)? GetSelectedLineRange()
+        {
+            if (this.Document == null || this.Document.TextLength == 0)
+            {
+                return null;
+            }
+
+            int startOffset = Math.Clamp(this.SelectionStart, 0, this.Document.TextLength);
+
+            if (this.SelectionLength <= 0)
+            {
+                var line = this.Document.GetLineByOffset(Math.Clamp(this.CaretOffset, 0, this.Document.TextLength));
+                return (line.LineNumber, line.LineNumber);
+            }
+
+            int endOffset = Math.Clamp(this.SelectionStart + this.SelectionLength, 0, this.Document.TextLength);
+            DocumentLine startLine = this.Document.GetLineByOffset(startOffset);
+            DocumentLine endLine = this.GetSelectionEndLine(startOffset, endOffset);
+
+            return (startLine.LineNumber, endLine.LineNumber);
+        }
+
+        private DocumentLine GetSelectionEndLine(int startOffset, int endOffset)
+        {
+            if (endOffset <= startOffset)
+            {
+                return this.Document.GetLineByOffset(startOffset);
+            }
+
+            if (endOffset < this.Document.TextLength)
+            {
+                DocumentLine lineAtEndOffset = this.Document.GetLineByOffset(endOffset);
+                if (lineAtEndOffset.LineNumber > 1 && endOffset == lineAtEndOffset.Offset)
+                {
+                    return this.Document.GetLineByNumber(lineAtEndOffset.LineNumber - 1);
+                }
+            }
+
+            return this.Document.GetLineByOffset(Math.Max(startOffset, endOffset - 1));
+        }
+
+        private static string CommentLine(string lineText, SyntaxCommentDefinition comment)
+        {
+            int indentLength = GetIndentLength(lineText);
+            string indentation = lineText[..indentLength];
+            string content = lineText[indentLength..];
+
+            if (comment.LineSuffix == null)
+            {
+                return $"{indentation}{comment.LinePrefix} {content}";
+            }
+
+            return content.Length == 0
+                ? $"{indentation}{comment.LinePrefix} {comment.LineSuffix}"
+                : $"{indentation}{comment.LinePrefix} {content} {comment.LineSuffix}";
+        }
+
+        private static string UncommentLine(string lineText, SyntaxCommentDefinition comment)
+        {
+            int indentLength = GetIndentLength(lineText);
+            string indentation = lineText[..indentLength];
+            string content = lineText[indentLength..];
+
+            if (!StartsWithCommentPrefix(content, comment.LinePrefix))
+            {
+                return lineText;
+            }
+
+            string uncommented = content[comment.LinePrefix.Length..];
+            if (uncommented.StartsWith(' '))
+            {
+                uncommented = uncommented[1..];
+            }
+
+            if (comment.LineSuffix != null && uncommented.EndsWith(comment.LineSuffix, StringComparison.Ordinal))
+            {
+                uncommented = uncommented[..^comment.LineSuffix.Length];
+                if (uncommented.EndsWith(' '))
+                {
+                    uncommented = uncommented[..^1];
+                }
+            }
+
+            return indentation + uncommented;
+        }
+
+        private static bool StartsWithCommentPrefix(string content, string prefix)
+        {
+            if (!content.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            return !char.IsLetter(prefix[^1])
+                   || content.Length == prefix.Length
+                   || char.IsWhiteSpace(content[prefix.Length]);
+        }
+
+        private static int GetIndentLength(string lineText)
+        {
+            int indentLength = 0;
+            while (indentLength < lineText.Length && char.IsWhiteSpace(lineText[indentLength]))
+            {
+                indentLength++;
+            }
+
+            return indentLength;
         }
 
         #endregion
