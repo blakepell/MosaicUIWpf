@@ -30,8 +30,10 @@ namespace Mosaic.UI.Wpf.Controls
     /// <remarks>
     /// Custom HotKeys/Chords:
     ///
-    /// Comment Selection: Ctrl+K, Ctrl+C
-    /// Uncomment Selection: Ctrl+K, Ctrl+U
+    /// - Comment Selection: Ctrl+K, Ctrl+C
+    /// - Uncomment Selection: Ctrl+K, Ctrl+U
+    /// - Move Line or Selection Up: Ctrl+Up
+    /// - Move Line or Selection Down: Ctrl+Down
     /// 
     /// The editor defaults to Consolas 12 with line numbers enabled. Colors for the editing surface
     /// (background, foreground, line numbers, selection, current line) are derived from the Mosaic
@@ -87,6 +89,24 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(UncommentSelectionCommand),
             typeof(SyntaxEditor),
             new InputGestureCollection { new KeyChordGesture(ModifierKeys.Control, Key.K, ModifierKeys.Control, Key.U) });
+
+        /// <summary>
+        /// Command that moves the selected lines, or the current line, up by one line.
+        /// </summary>
+        public static readonly RoutedUICommand MoveSelectionUpCommand = new(
+            "Move Selection Up",
+            nameof(MoveSelectionUpCommand),
+            typeof(SyntaxEditor),
+            new InputGestureCollection { new KeyGesture(Key.Up, ModifierKeys.Control) });
+
+        /// <summary>
+        /// Command that moves the selected lines, or the current line, down by one line.
+        /// </summary>
+        public static readonly RoutedUICommand MoveSelectionDownCommand = new(
+            "Move Selection Down",
+            nameof(MoveSelectionDownCommand),
+            typeof(SyntaxEditor),
+            new InputGestureCollection { new KeyGesture(Key.Down, ModifierKeys.Control) });
 
         #endregion
 
@@ -195,8 +215,12 @@ namespace Mosaic.UI.Wpf.Controls
             this.CommandBindings.Add(new CommandBinding(ValidateJsonCommand, (_, _) => this.ValidateJson()));
             this.CommandBindings.Add(new CommandBinding(CommentSelectionCommand, (_, _) => this.CommentSelectedLines(), this.OnCommentCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(UncommentSelectionCommand, (_, _) => this.UncommentSelectedLines(), this.OnCommentCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(MoveSelectionUpCommand, (_, _) => this.MoveSelectedLinesUp(), this.OnLineMoveCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(MoveSelectionDownCommand, (_, _) => this.MoveSelectedLinesDown(), this.OnLineMoveCommandCanExecute));
             this.TextArea.InputBindings.Add(new KeyBinding(CommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.C)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(UncommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.U)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionUpCommand, new KeyGesture(Key.Up, ModifierKeys.Control)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionDownCommand, new KeyGesture(Key.Down, ModifierKeys.Control)) { CommandTarget = this });
 
             this.ContextMenu = new ContextMenu();
             this.ContextMenuOpening += this.OnContextMenuOpening;
@@ -665,6 +689,131 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             return indentLength;
+        }
+
+        #endregion
+
+        #region Line movement operations
+
+        private void OnLineMoveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !this.IsReadOnly && this.Document != null && this.Document.TextLength > 0;
+            e.Handled = true;
+        }
+
+        private void MoveSelectedLinesUp()
+        {
+            var range = this.GetSelectedLineRange();
+            if (range == null || this.Document == null || this.IsReadOnly)
+            {
+                return;
+            }
+
+            int firstLineNumber = range.Value.FirstLineNumber;
+            int lastLineNumber = range.Value.LastLineNumber;
+
+            if (firstLineNumber <= 1)
+            {
+                this.SelectWholeLines(firstLineNumber, lastLineNumber);
+                return;
+            }
+
+            DocumentLine previousLine = this.Document.GetLineByNumber(firstLineNumber - 1);
+            DocumentLine firstLine = this.Document.GetLineByNumber(firstLineNumber);
+            DocumentLine lastLine = this.Document.GetLineByNumber(lastLineNumber);
+
+            int selectedOffset = firstLine.Offset;
+            int selectedLength = this.GetWholeLineSelectionLength(firstLine, lastLine);
+            string selectedBlock = this.Document.GetText(selectedOffset, selectedLength);
+            int selectionStart;
+            int selectionLength;
+
+            if (lastLine.LineNumber == this.Document.LineCount)
+            {
+                string previousContent = this.Document.GetText(previousLine.Offset, previousLine.Length);
+                string previousDelimiter = this.Document.GetText(previousLine.EndOffset, previousLine.DelimiterLength);
+                this.Document.Replace(previousLine.Offset, previousLine.TotalLength + selectedLength, selectedBlock + previousDelimiter + previousContent);
+                selectionStart = previousLine.Offset;
+                selectionLength = selectedBlock.Length + previousDelimiter.Length;
+            }
+            else
+            {
+                string previousBlock = this.Document.GetText(previousLine.Offset, previousLine.TotalLength);
+                this.Document.Replace(previousLine.Offset, previousBlock.Length + selectedBlock.Length, selectedBlock + previousBlock);
+                selectionStart = previousLine.Offset;
+                selectionLength = selectedBlock.Length;
+            }
+
+            this.SelectionStart = selectionStart;
+            this.SelectionLength = selectionLength;
+        }
+
+        private void MoveSelectedLinesDown()
+        {
+            var range = this.GetSelectedLineRange();
+            if (range == null || this.Document == null || this.IsReadOnly)
+            {
+                return;
+            }
+
+            int firstLineNumber = range.Value.FirstLineNumber;
+            int lastLineNumber = range.Value.LastLineNumber;
+
+            if (lastLineNumber >= this.Document.LineCount)
+            {
+                this.SelectWholeLines(firstLineNumber, lastLineNumber);
+                return;
+            }
+
+            DocumentLine firstLine = this.Document.GetLineByNumber(firstLineNumber);
+            DocumentLine lastLine = this.Document.GetLineByNumber(lastLineNumber);
+            DocumentLine nextLine = this.Document.GetLineByNumber(lastLineNumber + 1);
+
+            int selectedOffset = firstLine.Offset;
+            int selectedLength = nextLine.Offset - selectedOffset;
+            string selectedBlock = this.Document.GetText(selectedOffset, selectedLength);
+            int selectionStart;
+            int selectionLength;
+
+            if (nextLine.LineNumber == this.Document.LineCount)
+            {
+                string selectedContent = this.Document.GetText(selectedOffset, lastLine.EndOffset - selectedOffset);
+                string selectedDelimiter = this.Document.GetText(lastLine.EndOffset, lastLine.DelimiterLength);
+                string nextContent = this.Document.GetText(nextLine.Offset, nextLine.Length);
+                this.Document.Replace(selectedOffset, selectedLength + nextLine.Length, nextContent + selectedDelimiter + selectedContent);
+                selectionStart = selectedOffset + nextContent.Length + selectedDelimiter.Length;
+                selectionLength = selectedContent.Length;
+            }
+            else
+            {
+                string nextBlock = this.Document.GetText(nextLine.Offset, nextLine.TotalLength);
+                this.Document.Replace(selectedOffset, selectedBlock.Length + nextBlock.Length, nextBlock + selectedBlock);
+                selectionStart = selectedOffset + nextBlock.Length;
+                selectionLength = selectedBlock.Length;
+            }
+
+            this.SelectionStart = selectionStart;
+            this.SelectionLength = selectionLength;
+        }
+
+        private void SelectWholeLines(int firstLineNumber, int lastLineNumber)
+        {
+            DocumentLine firstLine = this.Document.GetLineByNumber(firstLineNumber);
+            DocumentLine lastLine = this.Document.GetLineByNumber(lastLineNumber);
+
+            this.SelectionStart = firstLine.Offset;
+            this.SelectionLength = this.GetWholeLineSelectionLength(firstLine, lastLine);
+        }
+
+        private int GetWholeLineSelectionLength(DocumentLine firstLine, DocumentLine lastLine)
+        {
+            if (lastLine.LineNumber >= this.Document.LineCount)
+            {
+                return this.Document.TextLength - firstLine.Offset;
+            }
+
+            DocumentLine nextLine = this.Document.GetLineByNumber(lastLine.LineNumber + 1);
+            return nextLine.Offset - firstLine.Offset;
         }
 
         #endregion
