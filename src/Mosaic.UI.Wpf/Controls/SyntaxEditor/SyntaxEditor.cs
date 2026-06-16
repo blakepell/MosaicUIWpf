@@ -400,14 +400,17 @@ namespace Mosaic.UI.Wpf.Controls
 
             menu.Items.Clear();
 
-            // Cut/Paste route through ApplicationCommands so they disable automatically when the editor
-            // is read-only. Copy/Select All are wired to direct handlers so they remain available
+            // Undo/Redo/Cut/Paste route through ApplicationCommands so they follow AvalonEdit's
+            // command state. Copy/Select All are wired to direct handlers so they remain available
             // regardless of read-only state.
-            menu.Items.Add(CreateItem("Cut", ApplicationCommands.Cut));
-            menu.Items.Add(CreateItem("Copy", (_, _) => this.Copy()));
-            menu.Items.Add(CreateItem("Paste", ApplicationCommands.Paste));
+            menu.Items.Add(CreateItem("Undo", ApplicationCommands.Undo, "Ctrl+Z"));
+            menu.Items.Add(CreateItem("Redo", ApplicationCommands.Redo, "Ctrl+Y"));
             menu.Items.Add(new Separator());
-            menu.Items.Add(CreateItem("Select All", (_, _) => this.SelectAll()));
+            menu.Items.Add(CreateItem("Cut", ApplicationCommands.Cut, "Ctrl+X"));
+            menu.Items.Add(CreateItem("Copy", (_, _) => this.Copy(), "Ctrl+C"));
+            menu.Items.Add(CreateItem("Paste", ApplicationCommands.Paste, "Ctrl+V"));
+            menu.Items.Add(new Separator());
+            menu.Items.Add(CreateItem("Select All", (_, _) => this.SelectAll(), "Ctrl+A"));
 
             AddLanguageItems(menu);
 
@@ -426,19 +429,24 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
-        private MenuItem CreateItem(string header, ICommand command)
+        private MenuItem CreateItem(string header, ICommand command, string? inputGestureText = null)
         {
             return new MenuItem
             {
                 Header = header,
                 Command = command,
-                CommandTarget = this
+                CommandTarget = this,
+                InputGestureText = inputGestureText
             };
         }
 
-        private static MenuItem CreateItem(string header, RoutedEventHandler onClick)
+        private static MenuItem CreateItem(string header, RoutedEventHandler onClick, string? inputGestureText = null)
         {
-            var item = new MenuItem { Header = header };
+            var item = new MenuItem
+            {
+                Header = header,
+                InputGestureText = inputGestureText
+            };
             item.Click += onClick;
             return item;
         }
