@@ -46,6 +46,7 @@ namespace Mosaic.UI.Wpf.Controls
     public class SyntaxEditor : TextEditor
     {
         private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.{0}.{1}.xshd";
+        private static readonly Uri SearchPanelResourceUri = new("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/AvalonEdit/SearchPanel.xaml", UriKind.Absolute);
 
         // Cache parsed highlighting definitions keyed by "Base|ThemeSuffix" so repeated theme/language
         // toggles do not re-parse the embedded xshd each time.
@@ -228,6 +229,7 @@ namespace Mosaic.UI.Wpf.Controls
             this.Loaded += this.OnLoaded;
             this.Unloaded += this.OnUnloaded;
 
+            this.EnsureSearchPanelResources();
             this.ApplyTheme();
             this.ReloadHighlighting();
 
@@ -243,6 +245,19 @@ namespace Mosaic.UI.Wpf.Controls
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+
+        private void EnsureSearchPanelResources()
+        {
+            foreach (var dictionary in this.Resources.MergedDictionaries)
+            {
+                if (dictionary.Source == SearchPanelResourceUri)
+                {
+                    return;
+                }
+            }
+
+            this.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = SearchPanelResourceUri });
         }
 
         private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
