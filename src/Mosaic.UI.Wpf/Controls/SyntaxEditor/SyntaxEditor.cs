@@ -12,6 +12,7 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Search;
 using Mosaic.UI.Wpf.Input;
 using Mosaic.UI.Wpf.Themes;
 using System.Text.Json;
@@ -229,6 +230,19 @@ namespace Mosaic.UI.Wpf.Controls
 
             this.ApplyTheme();
             this.ReloadHighlighting();
+
+            try
+            {
+                var sp = SearchPanel.Install(this);
+
+
+                //sp.MarkerBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x99, 0xFF));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
 
         private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

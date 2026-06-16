@@ -30,7 +30,10 @@
     <None Remove="Assets\folder-48.png" />
     <None Remove="Assets\folder-open-48.png" />
     <None Remove="Assets\vs-add-16.png" />
+    <None Remove="Assets\vs-close-16.png" />
     <None Remove="Assets\vs-delete-16.png" />
+    <None Remove="Assets\vs-find-next-16.png" />
+    <None Remove="Assets\vs-find-previous-16.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -107,7 +110,10 @@
     <Resource Include="Assets\folder-48.png" />
     <Resource Include="Assets\folder-open-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
+    <Resource Include="Assets\vs-close-16.png" />
     <Resource Include="Assets\vs-delete-16.png" />
+    <Resource Include="Assets\vs-find-next-16.png" />
+    <Resource Include="Assets\vs-find-previous-16.png" />
   </ItemGroup>
 
 </Project>
