@@ -55,6 +55,7 @@ namespace Mosaic.UI.Wpf.Controls
         // Cache the per-theme resource dictionaries so we resolve the theme color tokens only once.
         private static readonly Dictionary<MosaicThemeMode, ResourceDictionary> ThemeDictionaryCache = new();
 
+        private SearchPanel? _searchPanel;
         private bool _subscribedToGlobalTheme;
 
         #region Routed Commands
@@ -219,32 +220,23 @@ namespace Mosaic.UI.Wpf.Controls
             this.CommandBindings.Add(new CommandBinding(UncommentSelectionCommand, (_, _) => this.UncommentSelectedLines(), this.OnCommentCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(MoveSelectionUpCommand, (_, _) => this.MoveSelectedLinesUp(), this.OnLineMoveCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(MoveSelectionDownCommand, (_, _) => this.MoveSelectedLinesDown(), this.OnLineMoveCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted, this.OnFindCommandCanExecute));
             this.TextArea.InputBindings.Add(new KeyBinding(CommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.C)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(UncommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.U)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionUpCommand, new KeyGesture(Key.Up, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionDownCommand, new KeyGesture(Key.Down, ModifierKeys.Control)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(ApplicationCommands.Find, new KeyGesture(Key.F, ModifierKeys.Control)) { CommandTarget = this });
 
             this.ContextMenu = new ContextMenu();
             this.ContextMenuOpening += this.OnContextMenuOpening;
+            this.PreviewKeyDown += this.OnPreviewKeyDown;
             this.Loaded += this.OnLoaded;
             this.Unloaded += this.OnUnloaded;
 
             this.EnsureSearchPanelResources();
+            this.EnsureSearchPanelInstalled();
             this.ApplyTheme();
             this.ReloadHighlighting();
-
-            try
-            {
-                var sp = SearchPanel.Install(this);
-
-
-                //sp.MarkerBrush = new SolidColorBrush(Color.FromRgb(0x33, 0x99, 0xFF));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
         }
 
         private void EnsureSearchPanelResources()
@@ -260,11 +252,143 @@ namespace Mosaic.UI.Wpf.Controls
             this.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = SearchPanelResourceUri });
         }
 
+        private void EnsureSearchPanelInstalled()
+        {
+            this.EnsureSearchPanelResources();
+
+            if (_searchPanel == null)
+            {
+                _searchPanel = SearchPanel.Install(this);
+            }
+
+            this.EnsureSearchPanelResources(_searchPanel.Resources);
+            this.ApplySearchPanelStyle();
+        }
+
+        private void EnsureSearchPanelResources(ResourceDictionary resources)
+        {
+            foreach (var dictionary in resources.MergedDictionaries)
+            {
+                if (dictionary.Source == SearchPanelResourceUri)
+                {
+                    return;
+                }
+            }
+
+            resources.MergedDictionaries.Add(new ResourceDictionary { Source = SearchPanelResourceUri });
+        }
+
+        private void ApplySearchPanelStyle()
+        {
+            if (_searchPanel == null)
+            {
+                return;
+            }
+
+            if (_searchPanel.TryFindResource(typeof(SearchPanel)) is Style style)
+            {
+                _searchPanel.Style = style;
+            }
+        }
+
+        private void OpenSearchPanel()
+        {
+            this.EnsureSearchPanelInstalled();
+
+            if (_searchPanel == null)
+            {
+                return;
+            }
+
+            this.ApplySearchPanelStyle();
+
+            if (_searchPanel.IsClosed)
+            {
+                try
+                {
+                    _searchPanel.Open();
+                }
+                catch (ArgumentException)
+                {
+                    this.ReplaceSearchPanel();
+                    _searchPanel?.Open();
+                }
+            }
+
+            if (_searchPanel == null)
+            {
+                return;
+            }
+
+            _searchPanel.ApplyTemplate();
+            _searchPanel.Reactivate();
+        }
+
+        private void ReplaceSearchPanel()
+        {
+            string? searchPattern = _searchPanel?.SearchPattern;
+            bool matchCase = _searchPanel?.MatchCase ?? false;
+            bool wholeWords = _searchPanel?.WholeWords ?? false;
+            bool useRegex = _searchPanel?.UseRegex ?? false;
+
+            if (_searchPanel != null)
+            {
+                _searchPanel.Uninstall();
+                _searchPanel = null;
+            }
+
+            this.EnsureSearchPanelInstalled();
+
+            if (_searchPanel == null)
+            {
+                return;
+            }
+
+            _searchPanel.SearchPattern = searchPattern ?? string.Empty;
+            _searchPanel.MatchCase = matchCase;
+            _searchPanel.WholeWords = wholeWords;
+            _searchPanel.UseRegex = useRegex;
+        }
+
+        private void ResetSearchPanelForThemeChange()
+        {
+            bool reopen = _searchPanel is { IsClosed: false };
+
+            this.ReplaceSearchPanel();
+
+            if (reopen)
+            {
+                this.Dispatcher.BeginInvoke(new Action(this.OpenSearchPanel), DispatcherPriority.Loaded);
+            }
+        }
+
+        private void OnFindCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.OpenSearchPanel();
+            e.Handled = true;
+        }
+
+        private void OnFindCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.IsEnabled;
+            e.Handled = true;
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && (Keyboard.Modifiers & ModifierKeys.Alt) == 0)
+            {
+                this.OpenSearchPanel();
+                e.Handled = true;
+            }
+        }
+
         private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is SyntaxEditor editor)
             {
                 editor.ApplyTheme();
+                editor.ResetSearchPanelForThemeChange();
                 editor.ReloadHighlighting();
             }
         }
