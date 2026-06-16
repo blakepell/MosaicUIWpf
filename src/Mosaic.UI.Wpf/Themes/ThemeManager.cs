@@ -150,9 +150,9 @@ namespace Mosaic.UI.Wpf.Themes
         /// <summary>
         /// Invokes the <see cref="ThemeChanged"/> event.
         /// </summary>
-        internal static void OnThemeChanged(MosaicThemeMode MosaicThemeMode)
+        internal static void OnThemeChanged(MosaicThemeMode mosaicThemeMode)
         {
-            ThemeChanged?.Invoke(null, MosaicThemeMode);
+            ThemeChanged?.Invoke(null, mosaicThemeMode);
         }
 
         /// <summary>
