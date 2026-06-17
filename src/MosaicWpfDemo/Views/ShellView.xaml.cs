@@ -79,6 +79,8 @@ namespace MosaicWpfDemo.Views
 
             var t = this.Parameters["ExampleType"] as Type;
             this.UserControl = Activator.CreateInstance(t) as UserControl;
+
+            MainTabControl.SelectedIndex = 0;
         }
 
         public ShellView()
