@@ -36,6 +36,7 @@
 		<None Remove="Assets\dropdown-field-48.png" />
 		<None Remove="Assets\edit-property-48.png" />
 		<None Remove="Assets\favorite-48.png" />
+		<None Remove="Assets\files-48.png" />
 		<None Remove="Assets\flip-48.png" />
 		<None Remove="Assets\folder2-open-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
@@ -104,6 +105,7 @@
 		<Resource Include="Assets\dropdown-field-48.png" />
 		<Resource Include="Assets\edit-property-48.png" />
 		<Resource Include="Assets\favorite-48.png" />
+		<Resource Include="Assets\files-48.png" />
 		<Resource Include="Assets\flip-48.png" />
 		<Resource Include="Assets\folder2-open-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
@@ -373,6 +375,12 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\FileDropperExample.xaml.cs">
 			<Link>LinkedSources\FileDropperExample.xaml.cs</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FilesExample.xaml">
+			<Link>LinkedSources\FilesExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FilesExample.xaml.cs">
+			<Link>LinkedSources\FilesExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">

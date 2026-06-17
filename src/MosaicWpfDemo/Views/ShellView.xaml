@@ -44,7 +44,10 @@
                 Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
-                <controls1:TabControl x:Name="MainTabControl" Margin="0,10,0,0" VerticalAlignment="Stretch">
+                <controls1:TabControl
+                    x:Name="MainTabControl"
+                    Margin="0,10,0,0"
+                    VerticalAlignment="Stretch">
                     <controls1:TabItem
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
@@ -81,11 +84,11 @@
                             <controls1:SyntaxEditor
                                 x:Name="XamlEditor"
                                 Grid.Row="1"
-                                Language="Xml"
                                 FollowGlobalTheme="True"
                                 FontFamily="Consolas"
                                 FontSize="13"
                                 IsReadOnly="True"
+                                Language="Xml"
                                 ShowLineNumbers="True">
                                 <b:Interaction.Behaviors>
                                     <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=XamlResourcePath}" />
@@ -120,13 +123,13 @@
                             </ToolBar>
 
                             <controls1:SyntaxEditor
-                                x:Name="CSharpEditor"                                
+                                x:Name="CSharpEditor"
                                 Grid.Row="1"
-                                Language="CSharp"
                                 FollowGlobalTheme="True"
                                 FontFamily="Consolas"
                                 FontSize="13"
                                 IsReadOnly="True"
+                                Language="CSharp"
                                 ShowLineNumbers="True">
                                 <b:Interaction.Behaviors>
                                     <behaviors:TextEditorEmbeddedResourceBehavior ResourcePath="{Binding ElementName=Me, Path=CSharpResourcePath}" />

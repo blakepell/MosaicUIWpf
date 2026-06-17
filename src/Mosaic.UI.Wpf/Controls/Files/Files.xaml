@@ -1,0 +1,124 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style TargetType="{x:Type controls:Files}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinHeight" Value="120" />
+        <Setter Property="MinWidth" Value="240" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Files}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ListView
+                            x:Name="PART_ListView"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{TemplateBinding Foreground}"
+                            ItemsSource="{TemplateBinding Items}"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            SelectionMode="{TemplateBinding SelectionMode}">
+                            <ListView.Resources>
+                                <!--  Header shown on the column currently sorted ascending (up chevron).  -->
+                                <DataTemplate x:Key="FilesAscendingHeaderTemplate">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+                                        <Path
+                                            Margin="6,1,0,0"
+                                            VerticalAlignment="Center"
+                                            Data="M0,4 L4,0 L8,4 Z"
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+
+                                <!--  Header shown on the column currently sorted descending (down chevron).  -->
+                                <DataTemplate x:Key="FilesDescendingHeaderTemplate">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+                                        <Path
+                                            Margin="6,1,0,0"
+                                            VerticalAlignment="Center"
+                                            Data="M0,0 L4,4 L8,0 Z"
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.Resources>
+                            <ListView.View>
+                                <GridView>
+                                    <!--  Name (icon + file name)  -->
+                                    <GridViewColumn
+                                        Width="280"
+                                        controls:Files.SortMemberPath="Name"
+                                        Header="Name">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image
+                                                        Width="16"
+                                                        Height="16"
+                                                        Margin="0,0,6,0"
+                                                        VerticalAlignment="Center"
+                                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                                        Source="{Binding Icon}" />
+                                                    <TextBlock
+                                                        VerticalAlignment="Center"
+                                                        Text="{Binding Name}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        ToolTip="{Binding FullPath}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <!--  Date Modified (sorts by the DateModified DateTime, not the display string)  -->
+                                    <GridViewColumn
+                                        Width="150"
+                                        controls:Files.SortMemberPath="DateModified"
+                                        Header="Date Modified">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding DateModifiedDisplay}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+
+                                    <!--  Size (right-aligned; sorts by the numeric Size in bytes, not the display string)  -->
+                                    <GridViewColumn
+                                        Width="90"
+                                        controls:Files.SortMemberPath="Size"
+                                        Header="Size">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding SizeDisplay}" />
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
