@@ -51,6 +51,12 @@
                 Margin="0,0,8,8"
                 Click="OnYesNoCancelClick"
                 Content="Yes / No / Cancel" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnLongMessageClick"
+                Content="Long Message" />
+
         </WrapPanel>
 
         <controls:InfoCard

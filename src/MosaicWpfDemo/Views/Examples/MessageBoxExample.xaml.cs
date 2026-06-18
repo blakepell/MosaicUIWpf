@@ -58,9 +58,16 @@ namespace MosaicWpfDemo.Views.Examples
             ShowResult(result);
         }
 
+        private void OnLongMessageClick(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Your changes have been saved. They haven't really been saved but I need more text to show in this message box.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowResult(result);
+        }
+
         private void ShowResult(MessageBoxResult result)
         {
             ResultTextBlock.Text = $"You clicked: {result}";
         }
+
     }
 }
