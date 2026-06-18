@@ -10,9 +10,6 @@
 
 using System.Windows;
 
-// Alias the Mosaic MessageBox over the framework one so existing call sites work unchanged.
-using MessageBox = Mosaic.UI.Wpf.Controls.MessageBox;
-
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class MessageBoxExample

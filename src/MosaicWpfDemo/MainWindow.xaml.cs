@@ -8,10 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
 using Argus.Memory;
 using Mosaic.UI.Wpf.Themes;
 using MosaicWpfDemo.Common;
+using System.Windows;
 
 namespace WpfDemo
 {
@@ -48,7 +48,7 @@ namespace WpfDemo
 
         private void SideMenuItem_Click(object sender, Mosaic.UI.Wpf.Controls.SideMenuItemClickEventArgs e)
         {
-            MessageBox.Show($"You clicked: {e.Item.Text}");
+            MessageBox.Show($"You clicked: {e.Item.Text}", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

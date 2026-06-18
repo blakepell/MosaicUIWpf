@@ -235,12 +235,12 @@
                 <ControlTemplate TargetType="{x:Type controls:DocumentTabItem}">
                     <Border
                         x:Name="OuterBorder"
-                        SnapsToDevicePixels="True"
                         Padding="0,0,4,0"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="0,0,1,1"
-                        CornerRadius="4,4,0,0">
+                        CornerRadius="4,4,0,0"
+                        SnapsToDevicePixels="True">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -263,7 +263,6 @@
                                 x:Name="CloseButton"
                                 Grid.Column="1"
                                 Margin="0,0,0,0"
-
                                 automation:AutomationProperties.Name="{Binding Document.Title, RelativeSource={RelativeSource TemplatedParent}, StringFormat=Close {0}}"
                                 Command="{x:Static controls:DocumentContainer.CloseDocumentCommand}"
                                 CommandParameter="{Binding Document, RelativeSource={RelativeSource TemplatedParent}}"

@@ -60,8 +60,8 @@
         </WrapPanel>
 
         <controls:InfoCard
-            Margin="0,8,0,0"
             Title="Last Result"
+            Margin="0,8,0,0"
             AccentBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}">
             <TextBlock
                 x:Name="ResultTextBlock"
