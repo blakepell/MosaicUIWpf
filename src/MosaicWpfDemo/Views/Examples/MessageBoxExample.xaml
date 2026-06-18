@@ -1,0 +1,66 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.MessageBoxExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Margin="10">
+        <TextBlock
+            Margin="0,0,0,4"
+            FontWeight="SemiBold"
+            Text="Mosaic.UI.Wpf.Controls.MessageBox is a drop-in, themed replacement for System.Windows.MessageBox." />
+        <TextBlock
+            Margin="0,0,0,12"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="It mirrors the standard Show overloads and reuses the WPF dialog enums. Click a button to try each variant." />
+
+        <WrapPanel>
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnInformationClick"
+                Content="Information" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnWarningClick"
+                Content="Warning" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnErrorClick"
+                Content="Error" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnQuestionClick"
+                Content="Question (Yes / No)" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnOkCancelClick"
+                Content="OK / Cancel" />
+            <controls:AccentButton
+                Width="160"
+                Margin="0,0,8,8"
+                Click="OnYesNoCancelClick"
+                Content="Yes / No / Cancel" />
+        </WrapPanel>
+
+        <controls:InfoCard
+            Margin="0,8,0,0"
+            Title="Last Result"
+            AccentBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}">
+            <TextBlock
+                x:Name="ResultTextBlock"
+                Margin="12"
+                Text="No message box has been shown yet." />
+        </controls:InfoCard>
+    </StackPanel>
+</UserControl>

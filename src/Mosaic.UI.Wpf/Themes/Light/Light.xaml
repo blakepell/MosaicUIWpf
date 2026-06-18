@@ -67,6 +67,13 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlForegroundColor}">#FF333333</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundColor}}" />
 
+    <!--  MessageBox: header (top) is lighter, footer (buttons) slightly darker  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundColor}">#FFF8F8F8</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundColor}}" />
+
+    <Color x:Key="{x:Static themes:MosaicTheme.MessageBoxFooterBackgroundColor}">#EFF0F1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.MessageBoxFooterBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.MessageBoxFooterBackgroundColor}}" />
+
     <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColor}">#FFCCCCCC</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
 

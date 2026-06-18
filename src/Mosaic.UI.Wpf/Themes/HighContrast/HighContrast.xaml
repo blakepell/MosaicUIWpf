@@ -23,6 +23,8 @@
 
     <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundColor}">#FF000000</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlBackgroundLightColor}">#FF141414</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.MessageBoxFooterBackgroundColor}">#FF141414</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlForegroundColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlBorderColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlSelectedBorderColor}">#FFFFFF00</Color>

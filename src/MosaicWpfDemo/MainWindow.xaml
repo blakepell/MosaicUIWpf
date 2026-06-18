@@ -518,6 +518,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  MessageBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/chat-48.png"
+                    Text="MessageBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="MessageBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.MessageBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.MessageBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:MessageBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:MessageBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/chat-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Numeric Text Box  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -13,8 +13,6 @@ using System.Collections.Specialized;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Mosaic.UI.Wpf.Controls
 {

@@ -64,6 +64,28 @@
         public static ComponentResourceKey ControlForegroundBrush { get; } = new(typeof(MosaicTheme), "ControlForegroundBrush");
         public static ComponentResourceKey ControlForegroundColor { get; } = new(typeof(MosaicTheme), "ControlForegroundColor");
 
+        // MessageBox (two-tone surface: header holds the icon/message, footer holds the buttons)
+
+        /// <summary>
+        /// Gets the resource key for the brush used behind the message box header (title + icon/message) area.
+        /// </summary>
+        public static ComponentResourceKey MessageBoxHeaderBackgroundBrush { get; } = new(typeof(MosaicTheme), "MessageBoxHeaderBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the color used behind the message box header (title + icon/message) area.
+        /// </summary>
+        public static ComponentResourceKey MessageBoxHeaderBackgroundColor { get; } = new(typeof(MosaicTheme), "MessageBoxHeaderBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the brush used behind the message box footer (button) area.
+        /// </summary>
+        public static ComponentResourceKey MessageBoxFooterBackgroundBrush { get; } = new(typeof(MosaicTheme), "MessageBoxFooterBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the color used behind the message box footer (button) area.
+        /// </summary>
+        public static ComponentResourceKey MessageBoxFooterBackgroundColor { get; } = new(typeof(MosaicTheme), "MessageBoxFooterBackgroundColor");
+
         public static ComponentResourceKey ControlBorderBrush { get; } = new(typeof(MosaicTheme), "ControlBorderBrush");
         public static ComponentResourceKey ControlBorderColor { get; } = new(typeof(MosaicTheme), "ControlBorderColor");
 

@@ -425,6 +425,13 @@
 			<Link>LinkedSources\LabeledSeparatorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\MessageBoxExample.xaml">
+			<Link>LinkedSources\MessageBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\MessageBoxExample.xaml.cs">
+			<Link>LinkedSources\MessageBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\LoopbackWaveformVisualizerExample.xaml">
 			<Link>LinkedSources\LoopbackWaveformVisualizerExample.xaml</Link>
 		</EmbeddedResource>
