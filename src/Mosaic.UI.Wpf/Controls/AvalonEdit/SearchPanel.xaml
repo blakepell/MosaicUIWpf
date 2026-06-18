@@ -19,14 +19,14 @@
                         Cursor="Arrow">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.Resources>
-                                <Style TargetType="Button">
+                                <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
                                     <Style.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="0" />
                                         </Style>
                                     </Style.Resources>
                                 </Style>
-                                <Style TargetType="ToggleButton">
+                                <Style BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
                                     <Style.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="0" />
