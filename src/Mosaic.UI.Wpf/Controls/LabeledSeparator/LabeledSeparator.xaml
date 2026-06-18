@@ -23,7 +23,7 @@
                                 Text="{TemplateBinding Text}" />
                             <Border
                                 Grid.Column="1"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -39,7 +39,7 @@
                             </Grid.ColumnDefinitions>
                             <Border
                                 Grid.Column="0"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -64,7 +64,7 @@
                             </Grid.ColumnDefinitions>
                             <Border
                                 Grid.Column="0"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -81,7 +81,7 @@
                                 Text="{TemplateBinding Text}" />
                             <Border
                                 Grid.Column="2"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -112,7 +112,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -144,7 +144,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"
@@ -173,7 +173,7 @@
                             <Border
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                Height="1"
+                                Height="{TemplateBinding SeparatorHeight}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Background="{TemplateBinding Background}"

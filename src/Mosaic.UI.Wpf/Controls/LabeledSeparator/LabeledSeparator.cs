@@ -48,6 +48,21 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(LabelPositionProperty, value);
         }
         
+        /// <summary>
+        /// Identifies the <see cref="SeparatorHeight"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SeparatorHeightProperty = DependencyProperty.Register(
+            nameof(SeparatorHeight), typeof(double), typeof(LabeledSeparator), new PropertyMetadata(1.0));
+
+        /// <summary>
+        /// Gets or sets the height of the separator line.
+        /// </summary>
+        public double SeparatorHeight
+        {
+            get => (double)GetValue(SeparatorHeightProperty);
+            set => SetValue(SeparatorHeightProperty, value);
+        }
+
         static LabeledSeparator()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(LabeledSeparator), new FrameworkPropertyMetadata(typeof(LabeledSeparator)));
