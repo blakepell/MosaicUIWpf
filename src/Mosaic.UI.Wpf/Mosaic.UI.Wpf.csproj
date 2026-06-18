@@ -29,6 +29,10 @@
     <None Remove="Assets\document-32.png" />
     <None Remove="Assets\folder-48.png" />
     <None Remove="Assets\folder-open-48.png" />
+    <None Remove="Assets\Images\error-48.png" />
+    <None Remove="Assets\Images\info-48.png" />
+    <None Remove="Assets\Images\question-48.png" />
+    <None Remove="Assets\Images\warning-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\vs-close-16.png" />
     <None Remove="Assets\vs-delete-16.png" />
@@ -109,6 +113,10 @@
     <Resource Include="Assets\document-32.png" />
     <Resource Include="Assets\folder-48.png" />
     <Resource Include="Assets\folder-open-48.png" />
+    <Resource Include="Assets\Images\error-48.png" />
+    <Resource Include="Assets\Images\info-48.png" />
+    <Resource Include="Assets\Images\question-48.png" />
+    <Resource Include="Assets\Images\warning-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\vs-close-16.png" />
     <Resource Include="Assets\vs-delete-16.png" />
