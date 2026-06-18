@@ -49,9 +49,9 @@
             Text="Above Left (Font Changes)" />
         <mosaic:LabeledSeparator
             Margin="0,10,0,0"
-            SeparatorHeight=".9"
             FontWeight="SemiBold"
             LabelPosition="Left"
+            SeparatorHeight=".9"
             Text="Thinner Separator @ .9 Height" />
 
     </StackPanel>
