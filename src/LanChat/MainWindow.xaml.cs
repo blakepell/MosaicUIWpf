@@ -8,12 +8,11 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
 using Argus.Memory;
 using LanChat.Common;
-using LanChat.Network;
 using LanChat.Views;
 using Mosaic.UI.Wpf.Themes;
+using System.Windows;
 
 namespace LanChat
 {
