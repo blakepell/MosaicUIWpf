@@ -201,6 +201,27 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(FollowGlobalThemeProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ClearVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ClearVisibleProperty = DependencyProperty.Register(
+            nameof(ClearVisible),
+            typeof(bool),
+            typeof(SyntaxEditor),
+            new PropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a "Clear All" item is included in the context menu.
+        /// When <c>true</c>, the item sets the editor's text to an empty string.
+        /// </summary>
+        [Category("Mosaic")]
+        [Description("Whether a Clear All item appears in the context menu.")]
+        public bool ClearVisible
+        {
+            get => (bool)this.GetValue(ClearVisibleProperty);
+            set => this.SetValue(ClearVisibleProperty, value);
+        }
+
         #endregion
 
         /// <summary>
@@ -691,6 +712,12 @@ namespace Mosaic.UI.Wpf.Controls
             menu.Items.Add(CreateItem("Paste", ApplicationCommands.Paste, "Ctrl+V"));
             menu.Items.Add(new Separator());
             menu.Items.Add(CreateItem("Select All", (_, _) => this.SelectAll(), "Ctrl+A"));
+
+            if (this.ClearVisible)
+            {
+                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateItem("Clear All", (_, _) => { this.Document.Text = string.Empty; }));
+            }
 
             AddLanguageItems(menu);
 
