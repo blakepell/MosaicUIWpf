@@ -488,6 +488,60 @@ namespace LanChat.Views
                         ServerAddress.SelectedIndex = 0;
                     }
                 });
+
+                if (!ct.IsCancellationRequested && found.Count == 0)
+                {
+                    var result = MessageBox.Show(
+                        "No chat servers were found on the network.\n\nWould you like to start your own chat server and connect to it?",
+                        "No Servers Found",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        var server = AppServices.GetRequiredService<ChatServer>();
+                        if (!server.IsListening)
+                        {
+                            await server.StartAsync();
+                        }
+
+                        var vm3 = AppServices.GetRequiredService<AppViewModel>();
+                        var username = UsernameTextBox.Text?.Trim();
+                        if (string.IsNullOrWhiteSpace(username))
+                        {
+                            username = vm3.AppSettings.Username;
+                            UsernameTextBox.Text = username;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(username))
+                        {
+                            MessageBox.Show("Please enter a username in the login panel before connecting.", "Username Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        _username = username;
+
+                        var localInfo = new ServerInfo { IpAddress = "127.0.0.1", Port = vm3.AppSettings.Port, ServerName = "Local Server" };
+                        if (!ServerList.Any(s => s.IpAddress == "127.0.0.1"))
+                        {
+                            ServerList.Insert(0, localInfo);
+                        }
+                        ServerAddress.SelectedItem = ServerList.First(s => s.IpAddress == "127.0.0.1");
+
+                        try
+                        {
+                            await ConnectAndLoginAsync();
+                            LoginPanel.Visibility = Visibility.Collapsed;
+                            ChatThread.Visibility = Visibility.Visible;
+                            CommandTextBox.Visibility = Visibility.Visible;
+                            CommandTextBox.Focus();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Failed to connect to local server: {ex.Message}", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
             }
             catch (OperationCanceledException)
             {

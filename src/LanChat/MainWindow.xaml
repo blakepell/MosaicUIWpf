@@ -16,7 +16,7 @@
     theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
-    Icon="/Assets/collage-48.png"
+    Icon="/Assets/chat-48.png"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
 
@@ -36,7 +36,7 @@
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            IconSource="/Assets/collage-48.png">
+            IconSource="/Assets/chat-48.png">
             <mosaic:WindowTitleBar.RightContent>
                 <Button
                     Width="48"
