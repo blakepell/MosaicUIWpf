@@ -50,6 +50,7 @@
             Visibility="Collapsed">
             <b:Interaction.Behaviors>
                 <mosaic:TextBoxClearTextOnEscapeBehavior />
+                <mosaic:BlockCaretBehavior BlockBrush="White" CharacterBrush="#0D0D0D" />
             </b:Interaction.Behaviors>
         </TextBox>
 

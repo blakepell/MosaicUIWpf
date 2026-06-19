@@ -189,6 +189,13 @@
 			<Link>LinkedSources\BlinkingBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\BlockCaretBehaviorExample.xaml">
+			<Link>LinkedSources\BlockCaretBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\BlockCaretBehaviorExample.xaml.cs">
+			<Link>LinkedSources\BlockCaretBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\FocusBehaviorExample.xaml">
 			<Link>LinkedSources\FocusBehaviorExample.xaml</Link>
 		</EmbeddedResource>
