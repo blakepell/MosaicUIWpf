@@ -9,16 +9,11 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     d:DesignHeight="600"
     d:DesignWidth="800"
-    UseLayoutRounding="True"
     SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <RadialGradientBrush
-            x:Key="ProgressBarRadialGradientBrush"
-            Center="0.5,0.5"
-            GradientOrigin="0.5,0.5"
-            RadiusX="0.5"
-            RadiusY="0.5">
+        <RadialGradientBrush x:Key="ProgressBarRadialGradientBrush" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
             <GradientStop Offset="0" Color="CornflowerBlue" />
             <GradientStop Offset="0.25" Color="DodgerBlue" />
             <GradientStop Offset="0.75" Color="DeepSkyBlue" />
@@ -41,11 +36,11 @@
             <TextBlock
                 Margin="0,0,0,15"
                 FontSize="14"
-                TextWrapping="Wrap"
                 Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
-                Text="RadialProgressBar renders progress as a circular arc. It supports Fill, Shape, and Pie arc modes, configurable arc width, rotation, direction, custom backgrounds, hosted content, and an indeterminate animation." />
+                Text="RadialProgressBar renders progress as a circular arc. It supports Fill, Shape, and Pie arc modes, configurable arc width, rotation, direction, custom backgrounds, hosted content, and an indeterminate animation."
+                TextWrapping="Wrap" />
 
-            <WrapPanel ItemWidth="160" ItemHeight="170">
+            <WrapPanel ItemHeight="170" ItemWidth="160">
                 <!--  Solid Fill  -->
                 <Grid>
                     <Grid.RowDefinitions>
@@ -57,8 +52,8 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Value="{Binding Value1}"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        Value="{Binding Value1}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Solid Fill" />
                 </Grid>
 
@@ -73,12 +68,12 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ArcWidth="25"
                         ArcDirection="Counterclockwise"
                         ArcRotationDegree="90"
-                        Value="{Binding Value2}"
+                        ArcWidth="25"
                         Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
-                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}"
+                        Value="{Binding Value2}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Solid Fill With Background" />
                 </Grid>
 
@@ -94,12 +89,12 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         ArcWidth="25"
-                        BorderThickness="6"
                         BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentHoverBrush}}"
-                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                        Value="{Binding Value3}"
+                        BorderThickness="6"
                         Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
-                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}"
+                        Value="{Binding Value3}" />
                     <TextBlock
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -122,14 +117,14 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ArcWidth="25"
                         ArcMode="Shape"
+                        ArcWidth="25"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                         ShapeModeShape="Rectangle"
                         ShapeModeStep="8"
                         ShapeModeWidth="1"
-                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                        Value="{Binding Value4}"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        Value="{Binding Value4}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Thin Rectangles" />
                 </Grid>
 
@@ -144,16 +139,16 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ArcWidth="25"
                         ArcDirection="Counterclockwise"
-                        ArcRotationDegree="90"
                         ArcMode="Shape"
+                        ArcRotationDegree="90"
+                        ArcWidth="25"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                         ShapeModeShape="Rectangle"
                         ShapeModeStep="30"
                         ShapeModeWidth="10"
-                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                        Value="{Binding Value4}"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        Value="{Binding Value4}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Thick Rectangles" />
                 </Grid>
 
@@ -168,15 +163,15 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ArcWidth="25"
                         ArcMode="Shape"
+                        ArcWidth="25"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                         ShapeModeShape="Rectangle"
                         ShapeModeStep="15"
                         ShapeModeWidth="4"
                         ShapeRotationAdjustment="45"
-                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                        Value="{Binding Value4}"
-                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        Value="{Binding Value4}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Custom Degree" />
                 </Grid>
 
@@ -192,9 +187,9 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         ArcMode="Pie"
-                        Value="{Binding Value1}"
                         Foreground="{StaticResource ProgressBarRadialGradientBrush}"
-                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        Value="{Binding Value1}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Pie Mode With Radial Gradient" />
                 </Grid>
 
@@ -209,11 +204,11 @@
                         Height="100"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        ArcWidth="15"
                         ArcBackgroundWidth="5"
-                        Value="{Binding Value2}"
+                        ArcWidth="15"
                         Foreground="LightSeaGreen"
-                        OuterBackgroundBrush="DarkOliveGreen" />
+                        OuterBackgroundBrush="DarkOliveGreen"
+                        Value="{Binding Value2}" />
                     <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Custom Background" />
                 </Grid>
             </WrapPanel>

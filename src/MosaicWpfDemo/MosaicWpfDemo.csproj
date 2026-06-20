@@ -53,6 +53,7 @@
 		<None Remove="Assets\password-48.png" />
 		<None Remove="Assets\penny-heads.png" />
 		<None Remove="Assets\penny-tails.png" />
+		<None Remove="Assets\progress-48.png" />
 		<None Remove="Assets\search-48.png" />
 		<None Remove="Assets\settings-panel-48.png" />
 		<None Remove="Assets\settings-panel-96.png" />
@@ -126,6 +127,7 @@
 		<Resource Include="Assets\password-lock-48.png" />
 		<Resource Include="Assets\penny-heads.png" />
 		<Resource Include="Assets\penny-tails.png" />
+		<Resource Include="Assets\progress-48.png" />
 		<Resource Include="Assets\search-48.png" />
 		<Resource Include="Assets\settings-panel-48.png" />
 		<Resource Include="Assets\settings-panel-96.png" />
@@ -577,6 +579,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\PropertyGridExample.xaml.cs">
 			<Link>LinkedSources\PropertyGridExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ProgressRingExample.xaml">
+			<Link>LinkedSources\ProgressRingExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ProgressRingExample.xaml.cs">
+			<Link>LinkedSources\ProgressRingExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\RelativePanelExample.xaml">
