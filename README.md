@@ -119,8 +119,11 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 
 | Control | Description |
 |---|---|
+| AccentButton | Represents a themed button that changes its accent color based on AccentButtonType (ThemeAccent, Gray, FluentGreen, FluentRed, or Default). |
 | AdaptiveImage | Image that adapts its colors to match app/OS theme. Intended purpose is to be used for icons to be able to adapt. |
 | AsteriskTextBlock | A text block that displays asterisks for each character in its text property. |
+| AudioPlayer | An audio player control with a familiar transport layout: a centered Previous / Play-Stop / Next button row above a full-width seek slider flanked by current playback time and total track length. Backed by MediaPlayer and manages an internal playlist. |
+| AudioPlayerSpectrumAnalyzer | A real-time spectrum analyzer designed to pair with the AudioPlayer control. Renders frequency bands on the horizontal axis and signal strength on the vertical axis, with optional peak-hold indicators and amplitude-driven color intensity. |
 | AutoCompleteBox | Represents an editable selection control that filters suggestions while the user types and commits a selected item. |
 | Avatar | Represents a customizable avatar control that displays content with support for corner radius and template selection. |
 | Badge | A badge component. |
@@ -129,17 +132,25 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | CheckBoxList | A ListBox variant that defaults to multiple selection and displays a checkbox beside each item. |
 | ClipBorder | Border which allows clipping to its border. Useful especially when you need to clip to round corners. |
 | ColorPicker | A color picker UserControl that allows users to select colors from presets or enter hex values. |
+| DocumentContainer | Displays an observable collection of closable, reorderable documents as tabs. |
 | EditableTextBlock | Represents a control that displays text in a non-editable mode and allows users to switch to an editable mode to modify the text. The control supports double-click editing, text trimming, and customizable appearance. |
+| FavoriteCheckBox | A checkbox that displays a single favorite symbol (defaults to ★). The symbol and its checked/unchecked colors are customizable. |
+| FileDropper | A drop target that accepts files dragged from the operating system. Displays a prompt, an upload icon, and accepted file types. The border turns green for valid files and red for invalid files. Raises a FileDrop event when files are dropped. |
+| Files | A lookless control that lists the files in a directory using a three-column view (Name with shell icon, Date Modified, Size). Supports single or multiple selection, an optional file-system watcher, manual refresh, and a FileActivated event. |
 | FlipPanel | A flip panel component that can display two different content sides and animate between them. |
 | GravatarImage | Displays a Gravatar Image for a specified email address. |
 | HexColorTextBox | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |
 | Hyperlink | Represents a hyperlink control that displays text and provides navigation functionality. |
 | InertiaScrollViewer | Represents a scroll viewer that supports inertia-based scrolling animations. |
 | InfoCard | An info card with a highlight color on the left hand side. |
+| InputWaveformVisualizer | Displays a waveform captured from a selectable Windows audio input device using WASAPI shared-mode capture so other applications can use the device concurrently. |
 | LabeledSeparator | A labeled separator. |
+| LoopbackWaveformVisualizer | Displays a waveform captured from the default Windows audio render device using WASAPI loopback capture. Follows changes to the default console render device automatically. |
+| MessageBox | A themed, drop-in replacement for System.Windows.MessageBox. Mirrors the full set of Show overloads and reuses the standard WPF dialog enums. Switch with a single using alias. Honors the active Mosaic light/dark/high-contrast theme. |
 | NumericTextBox | TextBox that only allows digits, minus sign and a decimal point. |
 | PropertyGrid | A control that displays the properties of an object in a grid format. |
 | RelativePanel | Defines an area within which you can position and align child objects in relation to each other or the parent panel. |
+| ScalingTextBlock | A TextBlock that attempts to scale the font size so all text fits within the available space. MinFontSize and MaxFontSize serve as the lower and upper boundaries. |
 | SearchBox | A custom TextBox tailored for searching or filtering. |
 | SettingsItem | A settings item control. |
 | ShadowPanel | A panel control that applies a drop shadow effect to its child content. Provides properties to control shadow elevation and density/thickness. |
@@ -149,12 +160,14 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | SimpleStackPanel | Arranges child elements into a single line that can be oriented horizontally or vertically that is more efficient that the normal StackPanel. |
 | SmallPanel | Represents a custom panel that arranges its child elements in a single layer and ensures that each child is measured and arranged within the available space. |
 | SplitButton | Represents a split button with a primary action surface and a separate drop-down surface that opens a context menu. |
+| SplitPanel | A two-pane container whose panes are separated by a draggable GridSplitter. The proportion of space allocated to the first pane is controlled by the two-way SplitterPosition property (0.0–1.0). Supports both vertical (top/bottom) and horizontal (side-by-side) orientation. |
 | StopwatchDisplay | Represents a stopwatch control that provides functionality to display a stopwatch timer as UI element. |
 | StringListEditor | A StringListEditor component. |
 | SymbolRating | A symbol rating component. |
+| SyntaxEditor | A code editor built on AvalonEdit that integrates with the Mosaic theming system and provides bundled, theme-aware syntax highlighting selected via the Language property. Includes custom key chords for commenting, uncommenting, and moving lines. |
 | SystemDropShadowChrome | Creates a theme specific look for drop shadow effects. |
-| DocumentContainer | Displays an observable collection of closable, reorderable documents as tabs. |
 | TabControl | Represents a tab control that allows users to switch between multiple tabs. |
+| TagBox | A specialized input control that turns typed text into removable, vibrantly-colored tags. Enter commits the current text as a tag, each tag has an ✕ button, and Backspace removes the last tag. Tags are surfaced through a bindable Tags collection. |
 | ToggleButton | Represents a button control that can switch between two states: checked and unchecked. This implementation looks like a theme styled switch. |
 | ToggleSwitch | Represents a toggle switch control that allows users to switch between two states, such as "On" and "Off". |
 | TwoPaneView | Represents a container with two views that size and position content in the available space, either side-by-side or top-bottom. |
@@ -174,10 +187,21 @@ The following table lists the behaviors found in `src/Mosaic.UI.Wpf/Behaviors`.
 | AvalonEditCopyBehavior | A behavior that enables a Button to copy text from a specified AvalonEdit TextEditor to the clipboard. |
 | AvalonEditPropertiesBehavior | A behavior that allows various common properties of an AvalonEdit TextEditor to be dynamically set or bound. |
 | AvalonEditVtTerminalBehavior | A behavior that applies a retro VT/CRT terminal visual skin to an AvalonEdit TextEditor. |
+| BlinkingBehavior | A behavior that makes any FrameworkElement blink using an opacity animation. |
+| BlockCaretBehavior | A behavior that replaces the standard I-beam caret in a TextBox with a full-character-width block caret, similar to terminal emulators and classic text editors. |
 | BrushModifier | Provides attached properties and utility methods for modifying the appearance of brushes used in WPF controls, such as lightening the background color of elements. |
+| ButtonOpenContextMenu | Behavior that opens the ContextMenu of a Button when it is clicked. |
+| CloseWindowOnEscape | Closes the current Window when the Escape key is pressed. |
+| DataGridFilterBehavior | A behavior that allows a TextBox to filter a DataGrid. |
+| DataGridLastColumnFillBehavior | A behavior that ensures the last column of a DataGrid fills the remaining available space. |
+| FocusBehavior | Sets keyboard focus to the attached control when it is loaded. If used on multiple controls, the last one loaded receives focus. |
 | FrameworkElementZoomFontSizeOnMouseWheelBehavior | A behavior that enables zooming the font size of a FrameworkElement using the mouse wheel while the Ctrl key is held. |
+| GridViewLastColumnFillBehavior | A behavior that ensures the last column of a ListView GridView fills the remaining available space. |
+| GridViewSortBehavior | Provides attached properties and behaviors to enable sorting of a ListView's GridView columns when the column headers are clicked. |
 | ItemsControlAutoScrollBehavior | Scrolls an ItemsControl to the last item when the collection changes. |
 | ItemsControlFilterBehavior | A behavior that allows a TextBox to filter an ItemsControl. |
+| ListViewDeleteBehavior | Deletes selected ListView items when the Delete key is pressed. |
+| OpenWindowBehavior | Behavior to open a new Window when attached to a ButtonBase or MenuItem. |
 | TextBoxClearOnEscapeBehavior | Clears the contents of a TextBoxBase when the Escape key is pressed. |
 | TextBoxCopyBehavior | A behavior that enables a Button to copy text from a specified TextBox to the clipboard. |
 | WindowChromeBehavior | Attached behavior to apply and maintain WindowChrome settings on a Window. |
