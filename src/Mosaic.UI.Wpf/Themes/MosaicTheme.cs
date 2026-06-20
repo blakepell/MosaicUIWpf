@@ -208,6 +208,16 @@
         public static ComponentResourceKey SidebarSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundColor");
         public static ComponentResourceKey SidebarSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "SidebarSelectedBackgroundBrush");
 
+        // Tag (TagBox chips) - vibrant, Tailwind-inspired pill colors
+        public static ComponentResourceKey TagBackgroundColor { get; } = new(typeof(MosaicTheme), "TagBackgroundColor");
+        public static ComponentResourceKey TagBackgroundBrush { get; } = new(typeof(MosaicTheme), "TagBackgroundBrush");
+        public static ComponentResourceKey TagForegroundColor { get; } = new(typeof(MosaicTheme), "TagForegroundColor");
+        public static ComponentResourceKey TagForegroundBrush { get; } = new(typeof(MosaicTheme), "TagForegroundBrush");
+        public static ComponentResourceKey TagBorderColor { get; } = new(typeof(MosaicTheme), "TagBorderColor");
+        public static ComponentResourceKey TagBorderBrush { get; } = new(typeof(MosaicTheme), "TagBorderBrush");
+        public static ComponentResourceKey TagDeleteHoverBackgroundColor { get; } = new(typeof(MosaicTheme), "TagDeleteHoverBackgroundColor");
+        public static ComponentResourceKey TagDeleteHoverBackgroundBrush { get; } = new(typeof(MosaicTheme), "TagDeleteHoverBackgroundBrush");
+
         public static ComponentResourceKey ButtonBorderThickness { get; } = new(typeof(MosaicTheme), "ButtonBorderThickness");
 
         public static ComponentResourceKey WindowTitleBarButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarButtonStyle");

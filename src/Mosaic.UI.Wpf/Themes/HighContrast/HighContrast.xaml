@@ -62,6 +62,13 @@
     <Color x:Key="{x:Static themes:MosaicTheme.WarningColor}">#FFFFFF00</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ErrorColor}">#FFFF6B6B</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FF1A1A1A</Color>
+
+    <!--  Tag (TagBox) - high contrast: black pill, yellow text/border  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.TagBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TagForegroundColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TagBorderColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TagDeleteHoverBackgroundColor}">#FF3C3C3C</Color>
+
     <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
 
     <!--  Native control resource overrides  -->

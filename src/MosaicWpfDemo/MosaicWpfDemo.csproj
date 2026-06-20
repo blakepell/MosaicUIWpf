@@ -62,6 +62,7 @@
 		<None Remove="Assets\start-half-empty-48.png" />
 		<None Remove="Assets\stopwatch-48.png" />
 		<None Remove="Assets\tab-control-48.png" />
+		<None Remove="Assets\tag-48.png" />
 		<None Remove="Assets\terminal-48.png" />
 		<None Remove="Assets\text-48.png" />
 		<None Remove="Assets\toggle-48.png" />
@@ -134,6 +135,7 @@
 		<Resource Include="Assets\start-half-empty-48.png" />
 		<Resource Include="Assets\stopwatch-48.png" />
 		<Resource Include="Assets\tab-control-48.png" />
+		<Resource Include="Assets\tag-48.png" />
 		<Resource Include="Assets\terminal-48.png" />
 		<Resource Include="Assets\text-48.png" />
 		<Resource Include="Assets\toggle-48.png" />
@@ -478,6 +480,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\TabControlExample.xaml.cs">
 			<Link>LinkedSources\TabControlExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\TagBoxExample.xaml">
+			<Link>LinkedSources\TagBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\TagBoxExample.xaml.cs">
+			<Link>LinkedSources\TagBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\TextBoxBehaviorsExample.xaml">

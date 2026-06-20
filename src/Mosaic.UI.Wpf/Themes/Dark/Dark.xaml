@@ -154,6 +154,16 @@
     <Color x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}">#FF333337</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundColor}}" />
 
+    <!--  Tag (TagBox) - Tailwind indigo-500 pill, slightly brighter for dark surfaces  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.TagBackgroundColor}">#FF6366F1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TagBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TagBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.TagForegroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TagForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TagForegroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.TagBorderColor}">#FF818CF8</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TagBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TagBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.TagDeleteHoverBackgroundColor}">#73312E81</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TagDeleteHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TagDeleteHoverBackgroundColor}}" />
+
     <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
 
     <!--  Button  -->
