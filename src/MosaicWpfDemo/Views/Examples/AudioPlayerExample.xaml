@@ -25,6 +25,22 @@
             AutoAdvance="True"
             Volume="0.5" />
 
+        <!--  Spectrum analyzer: visualizes whatever the player above is sending to the default output device.  -->
+        <Border
+            Width="420"
+            Margin="0,16,0,0"
+            HorizontalAlignment="Center"
+            CornerRadius="6"
+            ClipToBounds="True">
+            <controls:AudioPlayerSpectrumAnalyzer
+                x:Name="Spectrum"
+                Height="140"
+                BandCount="32"
+                IsActive="True"
+                ShowPeaks="True"
+                UseColorIntensity="True" />
+        </Border>
+
         <Button
             x:Name="OpenFileButton"
             Margin="0,16,0,0"
