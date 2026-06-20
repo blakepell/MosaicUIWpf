@@ -67,7 +67,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="6"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -156,6 +156,7 @@
                                     Grid.Column="0"
                                     MinWidth="48"
                                     VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
                                     Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                                     Text="{Binding Position, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static controls:TimeSpanToClockConverter.Instance}}"
                                     TextAlignment="Right" />
@@ -174,6 +175,7 @@
                                     Grid.Column="2"
                                     MinWidth="48"
                                     VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
                                     Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                                     Text="{Binding Duration, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static controls:TimeSpanToClockConverter.Instance}}"
                                     TextAlignment="Left" />

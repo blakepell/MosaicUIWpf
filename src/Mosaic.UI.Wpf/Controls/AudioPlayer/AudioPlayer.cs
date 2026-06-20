@@ -234,6 +234,24 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(AutoAdvanceProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CornerRadius"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+            nameof(CornerRadius), typeof(CornerRadius), typeof(AudioPlayer), new FrameworkPropertyMetadata(new CornerRadius(6)));
+
+        /// <summary>
+        /// Gets or sets the radius applied to the corners of the player's outer border. Use the default for rounded
+        /// corners or set a value of <c>0</c> for square corners.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The radius applied to the corners of the player's outer border (0 for square corners).")]
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
         #endregion
 
         #region Routed Events
@@ -457,14 +475,15 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Stops playback and rewinds the active track to the beginning.
+        /// Stops playback while retaining the current <see cref="Position"/> so that a subsequent call to
+        /// <see cref="Play"/> resumes from the same point.
         /// </summary>
         public void Stop()
         {
-            _player.Stop();
+            _player.Pause();
             IsPlaying = false;
             _timer.Stop();
-            UpdatePosition(TimeSpan.Zero);
+            UpdatePosition(_player.Position);
             RaiseEvent(new RoutedEventArgs(PlaybackStoppedEvent, this));
         }
 
@@ -652,6 +671,7 @@ namespace Mosaic.UI.Wpf.Controls
             else
             {
                 Stop();
+                Seek(TimeSpan.Zero);
             }
         }
 

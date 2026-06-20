@@ -10,6 +10,8 @@
 
 using System;
 using System.IO;
+using System.Windows;
+using Microsoft.Win32;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -29,6 +31,37 @@ namespace MosaicWpfDemo.Views.Examples
                 Player.Playlist.Add(sample);
                 Player.CurrentIndex = 0;
             }
+        }
+
+        /// <summary>
+        /// Prompts the user to pick a media file the <see cref="Mosaic.UI.Wpf.Controls.AudioPlayer"/> supports
+        /// (handled by Windows Media Foundation) and loads it into the player.
+        /// </summary>
+        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select a Media File",
+                CheckFileExists = true,
+                Filter = "Audio Files|*.mp3;*.wav;*.wma;*.aac;*.m4a;*.flac;*.ogg|All Files|*.*"
+            };
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            var file = new Uri(dialog.FileName);
+
+            // Reset to -1 first so re-selecting index 0 still raises the change that swaps the active track.
+            Player.CurrentIndex = -1;
+            Player.Playlist.Clear();
+            Player.Playlist.Add(file);
+            Player.CurrentIndex = 0;
+
+            NowPlayingText.Text = $"Now Playing: {Path.GetFileName(dialog.FileName)}";
+
+            Player.Play();
         }
     }
 }

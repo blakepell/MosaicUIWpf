@@ -11,6 +11,7 @@
     mc:Ignorable="d">
     <StackPanel Margin="24" HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock
+            x:Name="NowPlayingText"
             Margin="0,0,0,16"
             HorizontalAlignment="Center"
             FontSize="16"
@@ -23,5 +24,13 @@
             HorizontalAlignment="Center"
             AutoAdvance="True"
             Volume="0.5" />
+
+        <Button
+            x:Name="OpenFileButton"
+            Margin="0,16,0,0"
+            Padding="14,6"
+            HorizontalAlignment="Center"
+            Click="OpenFileButton_Click"
+            Content="Open Media File..." />
     </StackPanel>
 </UserControl>
