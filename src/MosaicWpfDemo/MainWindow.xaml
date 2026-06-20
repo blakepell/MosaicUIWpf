@@ -180,7 +180,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/audio-48.png"
+                    ImageSource="/Assets/audio-purple-48.png"
                     Text="AudioPlayer">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -189,7 +189,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AudioPlayerExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AudioPlayer}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AudioPlayerExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-purple-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

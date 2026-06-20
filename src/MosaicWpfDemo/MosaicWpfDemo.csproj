@@ -17,6 +17,7 @@
 		<None Remove="Assets\app-two-pane-48.png" />
 		<None Remove="Assets\arrow-down-48.png" />
 		<None Remove="Assets\audio-48.png" />
+		<None Remove="Assets\audio-purple-48.png" />
 		<None Remove="Assets\Audio\Sample.mp3" />
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
@@ -88,6 +89,7 @@
 		<Resource Include="Assets\app-two-pane-48.png" />
 		<Resource Include="Assets\arrow-down-48.png" />
 		<Resource Include="Assets\audio-48.png" />
+		<Resource Include="Assets\audio-purple-48.png" />
 		<Resource Include="Assets\avatar-48.png" />
 		<Resource Include="Assets\avatar.jpg" />
 		<Resource Include="Assets\badge-48.png" />
