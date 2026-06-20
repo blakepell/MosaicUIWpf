@@ -25,15 +25,13 @@
             Width="560"
             Margin="0,14,0,0"
             HorizontalAlignment="Left"
-            TagCornerRadius="3"
-            Tags="{Binding Tags}"
             TagChanged="DemoTagBox_TagChanged"
             TagChanging="DemoTagBox_TagChanging"
+            TagCornerRadius="3"
+            Tags="{Binding Tags}"
             Watermark="Add a tag and press Enter..." />
 
-        <StackPanel
-            Margin="0,10,0,0"
-            Orientation="Horizontal">
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
             <CheckBox
                 VerticalAlignment="Center"
                 Content="Allow duplicates"
