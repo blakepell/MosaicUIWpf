@@ -1,0 +1,102 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.SplitPanelExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Toolbar: orientation toggle, position presets and a live readout of SplitterPosition.  -->
+        <controls:SimpleStackPanel
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Orientation="Horizontal"
+            Spacing="8"
+            VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center" Text="Orientation:" />
+            <controls:ToggleSwitch
+                x:Name="OrientationToggle"
+                VerticalAlignment="Center"
+                OffText="Vertical"
+                OnText="Horizontal"
+                Toggled="OrientationToggle_Toggled" />
+
+            <Border
+                Width="1"
+                Margin="6,2"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+
+            <Button Click="Top_Click" Content="0% / 100%" />
+            <Button Click="Even_Click" Content="50% / 50%" />
+            <Button Click="Bottom_Click" Content="100% / 0%" />
+
+            <Border
+                Width="1"
+                Margin="6,2"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+
+            <TextBlock VerticalAlignment="Center" Text="Grip:" />
+            <Slider
+                x:Name="ThicknessSlider"
+                Width="120"
+                VerticalAlignment="Center"
+                IsSnapToTickEnabled="True"
+                Maximum="24"
+                Minimum="1"
+                TickFrequency="1"
+                Value="{Binding ElementName=Splitter, Path=SplitterThickness, Mode=TwoWay}" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{Binding ElementName=Splitter, Path=SplitterThickness, StringFormat='{}{0:0}px'}" />
+
+            <Border
+                Width="1"
+                Margin="6,2"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{Binding ElementName=Splitter, Path=SplitterPosition, StringFormat='Position: {0:P0}'}" />
+        </controls:SimpleStackPanel>
+
+        <!--  The SplitPanel: a text editor in each pane, separated by a draggable splitter.  -->
+        <controls:SplitPanel
+            x:Name="Splitter"
+            Grid.Row="1"
+            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="1"
+            MinPaneSize="0"
+            Orientation="Vertical"
+            SplitterPosition="0.5">
+            <controls:SplitPanel.Pane1>
+                <TextBox
+                    AcceptsReturn="True"
+                    BorderThickness="0"
+                    HorizontalScrollBarVisibility="Auto"
+                    Text="Pane 1 — drag the splitter between the two editors, or use the preset buttons above."
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </controls:SplitPanel.Pane1>
+
+            <controls:SplitPanel.Pane2>
+                <TextBox
+                    AcceptsReturn="True"
+                    BorderThickness="0"
+                    HorizontalScrollBarVisibility="Auto"
+                    Text="Pane 2 — the SplitterPosition value updates live as you drag and is two-way bindable."
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </controls:SplitPanel.Pane2>
+        </controls:SplitPanel>
+    </Grid>
+</UserControl>

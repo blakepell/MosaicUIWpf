@@ -523,6 +523,12 @@
 		<EmbeddedResource Include="Views\Examples\SplitButtonExample.xaml.cs">
 			<Link>LinkedSources\SplitButtonExample.xaml.cs</Link>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SplitPanelExample.xaml">
+			<Link>LinkedSources\SplitPanelExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SplitPanelExample.xaml.cs">
+			<Link>LinkedSources\SplitPanelExample.xaml.cs</Link>
+		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\InertiaScrollViewerExample.xaml">
 			<Link>LinkedSources\InertiaScrollViewerExample.xaml</Link>

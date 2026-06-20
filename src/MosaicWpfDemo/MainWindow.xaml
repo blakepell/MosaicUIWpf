@@ -824,6 +824,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SplitPanel Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/app-two-pane-48.png"
+                    Text="Split Panel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Split Panel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SplitPanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SplitPanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SplitPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SplitPanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/app-two-pane-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Stopwatch Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

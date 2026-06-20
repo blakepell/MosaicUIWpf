@@ -1,0 +1,45 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui">
+
+    <Style x:Key="DefaultSplitPanelStyle" TargetType="{x:Type controls:SplitPanel}">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="SplitterThickness" Value="6" />
+        <Setter Property="SplitterPosition" Value="0.5" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SplitPanel}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <!-- Row/column definitions and child placement are configured in code based on Orientation. -->
+                        <Grid x:Name="PART_RootGrid">
+                            <ContentPresenter
+                                x:Name="PART_Pane1"
+                                Content="{TemplateBinding Pane1}" />
+
+                            <GridSplitter
+                                x:Name="PART_Splitter"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                ShowsPreview="False"
+                                Focusable="True"
+                                SnapsToDevicePixels="True" />
+
+                            <ContentPresenter
+                                x:Name="PART_Pane2"
+                                Content="{TemplateBinding Pane2}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultSplitPanelStyle}" TargetType="{x:Type controls:SplitPanel}" />
+</ResourceDictionary>
