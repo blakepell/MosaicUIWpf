@@ -176,6 +176,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  AudioPlayer  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/audio-48.png"
+                    Text="AudioPlayer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="AudioPlayer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AudioPlayerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AudioPlayerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:AudioPlayer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AudioPlayerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/audio-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  AutoCompleteBox  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

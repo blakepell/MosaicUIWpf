@@ -17,6 +17,7 @@
 		<None Remove="Assets\app-two-pane-48.png" />
 		<None Remove="Assets\arrow-down-48.png" />
 		<None Remove="Assets\audio-48.png" />
+		<None Remove="Assets\Audio\Sample.mp3" />
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
 		<None Remove="Assets\badge-48.png" />
@@ -74,6 +75,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Assets\app.ico" />
+		<Content Include="Assets\Audio\Sample.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -222,6 +226,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml.cs">
 			<Link>LinkedSources\AsteriskTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\AudioPlayerExample.xaml">
+			<Link>LinkedSources\AudioPlayerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\AudioPlayerExample.xaml.cs">
+			<Link>LinkedSources\AudioPlayerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\ShadowPanelExample.xaml">
@@ -645,6 +656,9 @@
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\AsteriskTextBlockExample.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\Examples\AudioPlayerExample.xaml.cs">
 			<SubType>Code</SubType>
 		</Compile>
 		<Compile Update="Views\Examples\GravatarImageExample.xaml.cs">

@@ -31,7 +31,12 @@
     <None Remove="Assets\folder-open-48.png" />
     <None Remove="Assets\Images\error-48.png" />
     <None Remove="Assets\Images\info-48.png" />
+    <None Remove="Assets\Images\music-48.png" />
+    <None Remove="Assets\Images\play-30.png" />
     <None Remove="Assets\Images\question-48.png" />
+    <None Remove="Assets\Images\skip-backwards-30.png" />
+    <None Remove="Assets\Images\skip-forward-30.png" />
+    <None Remove="Assets\Images\stop-30.png" />
     <None Remove="Assets\Images\warning-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\vs-close-16.png" />
@@ -115,7 +120,12 @@
     <Resource Include="Assets\folder-open-48.png" />
     <Resource Include="Assets\Images\error-48.png" />
     <Resource Include="Assets\Images\info-48.png" />
+    <Resource Include="Assets\Images\music-48.png" />
+    <Resource Include="Assets\Images\play-30.png" />
     <Resource Include="Assets\Images\question-48.png" />
+    <Resource Include="Assets\Images\skip-backwards-30.png" />
+    <Resource Include="Assets\Images\skip-forward-30.png" />
+    <Resource Include="Assets\Images\stop-30.png" />
     <Resource Include="Assets\Images\warning-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\vs-close-16.png" />

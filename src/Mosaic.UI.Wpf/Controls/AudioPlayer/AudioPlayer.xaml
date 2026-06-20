@@ -1,0 +1,193 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  Circular, thick-bordered transport button used for Previous / Play / Stop / Next.  -->
+    <Style x:Key="Mosaic.AudioPlayer.IconButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Ellipse
+                            x:Name="Circle"
+                            Fill="{TemplateBinding Background}"
+                            Stroke="{TemplateBinding BorderBrush}"
+                            StrokeThickness="2.5" />
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            Focusable="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Stroke" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Circle" Property="Stroke" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Circle" Property="Stroke" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter TargetName="Circle" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter Property="Opacity" Value="0.6" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{x:Type controls:AudioPlayer}" TargetType="{x:Type controls:AudioPlayer}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="Padding" Value="16,14" />
+        <Setter Property="MinWidth" Value="320" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:AudioPlayer}">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Transport: Previous / (Play or Stop) / Next, centered.  -->
+                            <StackPanel
+                                Grid.Row="0"
+                                Margin="0,0,0,12"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                                <Button
+                                    x:Name="PART_PreviousButton"
+                                    Width="44"
+                                    Height="44"
+                                    Margin="6,0"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource Mosaic.AudioPlayer.IconButton}"
+                                    ToolTip="Previous">
+                                    <controls:AdaptiveImage
+                                        Width="22"
+                                        Height="22"
+                                        HorizontalAlignment="Center"
+                                        Source="/Mosaic.UI.Wpf;component/Assets/Images/skip-backwards-30.png"
+                                        Stretch="Uniform" />
+                                </Button>
+
+                                <!--  Play and Stop share the same slot; visibility toggles with IsPlaying.  -->
+                                <Grid
+                                    Width="60"
+                                    Height="60"
+                                    Margin="6,0">
+                                    <Button
+                                        x:Name="PART_PlayButton"
+                                        Style="{StaticResource Mosaic.AudioPlayer.IconButton}"
+                                        ToolTip="Play">
+                                        <controls:AdaptiveImage
+                                            Width="26"
+                                            Height="26"
+                                            HorizontalAlignment="Center"
+                                            Source="/Mosaic.UI.Wpf;component/Assets/Images/play-30.png"
+                                            Stretch="Uniform" />
+                                    </Button>
+                                    <Button
+                                        x:Name="PART_StopButton"
+                                        Style="{StaticResource Mosaic.AudioPlayer.IconButton}"
+                                        ToolTip="Stop"
+                                        Visibility="Collapsed">
+                                        <controls:AdaptiveImage
+                                            Width="26"
+                                            Height="26"
+                                            HorizontalAlignment="Center"
+                                            Source="/Mosaic.UI.Wpf;component/Assets/Images/stop-30.png"
+                                            Stretch="Uniform" />
+                                    </Button>
+                                </Grid>
+
+                                <Button
+                                    x:Name="PART_NextButton"
+                                    Width="44"
+                                    Height="44"
+                                    Margin="6,0"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource Mosaic.AudioPlayer.IconButton}"
+                                    ToolTip="Next">
+                                    <controls:AdaptiveImage
+                                        Width="22"
+                                        Height="22"
+                                        HorizontalAlignment="Center"
+                                        Source="/Mosaic.UI.Wpf;component/Assets/Images/skip-forward-30.png"
+                                        Stretch="Uniform" />
+                                </Button>
+                            </StackPanel>
+
+                            <!--  Seek bar: current time | slider | total length.  -->
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Grid.Column="0"
+                                    MinWidth="48"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="{Binding Position, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static controls:TimeSpanToClockConverter.Instance}}"
+                                    TextAlignment="Right" />
+
+                                <Slider
+                                    x:Name="PART_PositionSlider"
+                                    Grid.Column="1"
+                                    Margin="10,0"
+                                    VerticalAlignment="Center"
+                                    IsMoveToPointEnabled="True"
+                                    LargeChange="10"
+                                    Minimum="0"
+                                    SmallChange="1" />
+
+                                <TextBlock
+                                    Grid.Column="2"
+                                    MinWidth="48"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="{Binding Duration, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static controls:TimeSpanToClockConverter.Instance}}"
+                                    TextAlignment="Left" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPlaying" Value="True">
+                            <Setter TargetName="PART_PlayButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_StopButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
