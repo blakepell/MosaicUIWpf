@@ -1,0 +1,222 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.RadialProgressBarExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="600"
+    d:DesignWidth="800"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <RadialGradientBrush
+            x:Key="ProgressBarRadialGradientBrush"
+            Center="0.5,0.5"
+            GradientOrigin="0.5,0.5"
+            RadiusX="0.5"
+            RadiusY="0.5">
+            <GradientStop Offset="0" Color="CornflowerBlue" />
+            <GradientStop Offset="0.25" Color="DodgerBlue" />
+            <GradientStop Offset="0.75" Color="DeepSkyBlue" />
+            <GradientStop Offset="1" Color="LightSkyBlue" />
+        </RadialGradientBrush>
+
+        <Style x:Key="ExampleCaptionStyle" TargetType="TextBlock">
+            <Setter Property="Grid.Row" Value="1" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20">
+            <TextBlock
+                Margin="0,0,0,15"
+                FontSize="14"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="RadialProgressBar renders progress as a circular arc. It supports Fill, Shape, and Pie arc modes, configurable arc width, rotation, direction, custom backgrounds, hosted content, and an indeterminate animation." />
+
+            <WrapPanel ItemWidth="160" ItemHeight="170">
+                <!--  Solid Fill  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Value="{Binding Value1}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Solid Fill" />
+                </Grid>
+
+                <!--  Solid Fill With Background  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="25"
+                        ArcDirection="Counterclockwise"
+                        ArcRotationDegree="90"
+                        Value="{Binding Value2}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Solid Fill With Background" />
+                </Grid>
+
+                <!--  Solid Fill With Text  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="25"
+                        BorderThickness="6"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentHoverBrush}}"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        Value="{Binding Value3}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}">
+                        <Run Text="{Binding Value3, Mode=OneWay, StringFormat=N0}" /><Run Text="%" />
+                    </TextBlock>
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Solid Fill With Text" />
+                </Grid>
+
+                <!--  Shape Mode Thin Rectangles  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="25"
+                        ArcMode="Shape"
+                        ShapeModeShape="Rectangle"
+                        ShapeModeStep="8"
+                        ShapeModeWidth="1"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        Value="{Binding Value4}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Thin Rectangles" />
+                </Grid>
+
+                <!--  Shape Mode Thick Rectangles  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="25"
+                        ArcDirection="Counterclockwise"
+                        ArcRotationDegree="90"
+                        ArcMode="Shape"
+                        ShapeModeShape="Rectangle"
+                        ShapeModeStep="30"
+                        ShapeModeWidth="10"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        Value="{Binding Value4}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Thick Rectangles" />
+                </Grid>
+
+                <!--  Shape Mode Custom Degree  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="25"
+                        ArcMode="Shape"
+                        ShapeModeShape="Rectangle"
+                        ShapeModeStep="15"
+                        ShapeModeWidth="4"
+                        ShapeRotationAdjustment="45"
+                        InnerBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                        Value="{Binding Value4}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Shape Mode Custom Degree" />
+                </Grid>
+
+                <!--  Pie Mode With Radial Gradient  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcMode="Pie"
+                        Value="{Binding Value1}"
+                        Foreground="{StaticResource ProgressBarRadialGradientBrush}"
+                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Pie Mode With Radial Gradient" />
+                </Grid>
+
+                <!--  Custom Background  -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <controls:RadialProgressBar
+                        Width="100"
+                        Height="100"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ArcWidth="15"
+                        ArcBackgroundWidth="5"
+                        Value="{Binding Value2}"
+                        Foreground="LightSeaGreen"
+                        OuterBackgroundBrush="DarkOliveGreen" />
+                    <TextBlock Style="{StaticResource ExampleCaptionStyle}" Text="Custom Background" />
+                </Grid>
+            </WrapPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -18,22 +18,18 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
-                        <!-- Row/column definitions and child placement are configured in code based on Orientation. -->
+                        <!--  Row/column definitions and child placement are configured in code based on Orientation.  -->
                         <Grid x:Name="PART_RootGrid">
-                            <ContentPresenter
-                                x:Name="PART_Pane1"
-                                Content="{TemplateBinding Pane1}" />
+                            <ContentPresenter x:Name="PART_Pane1" Content="{TemplateBinding Pane1}" />
 
                             <GridSplitter
                                 x:Name="PART_Splitter"
                                 Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                                ShowsPreview="False"
                                 Focusable="True"
+                                ShowsPreview="False"
                                 SnapsToDevicePixels="True" />
 
-                            <ContentPresenter
-                                x:Name="PART_Pane2"
-                                Content="{TemplateBinding Pane2}" />
+                            <ContentPresenter x:Name="PART_Pane2" Content="{TemplateBinding Pane2}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

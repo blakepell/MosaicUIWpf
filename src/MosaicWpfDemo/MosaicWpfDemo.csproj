@@ -586,6 +586,13 @@
 			<Link>LinkedSources\RelativePanelExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\RadialProgressBarExample.xaml">
+			<Link>LinkedSources\RadialProgressBarExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\RadialProgressBarExample.xaml.cs">
+			<Link>LinkedSources\RadialProgressBarExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml">
 			<Link>LinkedSources\VersionTextBlockExample.xaml</Link>
 		</EmbeddedResource>
