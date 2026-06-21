@@ -43,6 +43,25 @@
     <None Remove="Assets\vs-delete-16.png" />
     <None Remove="Assets\vs-find-next-16.png" />
     <None Remove="Assets\vs-find-previous-16.png" />
+    <None Remove="Assets\vs-save-16.png" />
+    <None Remove="Assets\vs-browser-32.png" />
+    <None Remove="Assets\vs-bold-32.png" />
+    <None Remove="Assets\vs-italics-32.png" />
+    <None Remove="Assets\vs-strike-through-32.png" />
+    <None Remove="Assets\vs-code-32.png" />
+    <None Remove="Assets\vs-code-1-32.png" />
+    <None Remove="Assets\vs-superscript-32.png" />
+    <None Remove="Assets\vs-subscript-32.png" />
+    <None Remove="Assets\vs-highlight-32.png" />
+    <None Remove="Assets\vs-bullet-list-32.png" />
+    <None Remove="Assets\vs-ordered-list-32.png" />
+    <None Remove="Assets\vs-heading-one-32.png" />
+    <None Remove="Assets\vs-heading-two-32.png" />
+    <None Remove="Assets\vs-heading-three-32.png" />
+    <None Remove="Assets\vs-heading-four-32.png" />
+    <None Remove="Assets\vs-heading-five-32.png" />
+    <None Remove="Assets\vs-heading-six-32.png" />
+    <None Remove="Assets\vs-image-32.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -132,6 +151,25 @@
     <Resource Include="Assets\vs-delete-16.png" />
     <Resource Include="Assets\vs-find-next-16.png" />
     <Resource Include="Assets\vs-find-previous-16.png" />
+    <Resource Include="Assets\vs-save-16.png" />
+    <Resource Include="Assets\vs-browser-32.png" />
+    <Resource Include="Assets\vs-bold-32.png" />
+    <Resource Include="Assets\vs-italics-32.png" />
+    <Resource Include="Assets\vs-strike-through-32.png" />
+    <Resource Include="Assets\vs-code-32.png" />
+    <Resource Include="Assets\vs-code-1-32.png" />
+    <Resource Include="Assets\vs-superscript-32.png" />
+    <Resource Include="Assets\vs-subscript-32.png" />
+    <Resource Include="Assets\vs-highlight-32.png" />
+    <Resource Include="Assets\vs-bullet-list-32.png" />
+    <Resource Include="Assets\vs-ordered-list-32.png" />
+    <Resource Include="Assets\vs-heading-one-32.png" />
+    <Resource Include="Assets\vs-heading-two-32.png" />
+    <Resource Include="Assets\vs-heading-three-32.png" />
+    <Resource Include="Assets\vs-heading-four-32.png" />
+    <Resource Include="Assets\vs-heading-five-32.png" />
+    <Resource Include="Assets\vs-heading-six-32.png" />
+    <Resource Include="Assets\vs-image-32.png" />
   </ItemGroup>
 
 </Project>

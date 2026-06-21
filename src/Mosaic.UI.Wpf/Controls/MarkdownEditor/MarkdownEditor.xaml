@@ -1,0 +1,279 @@
+<UserControl
+    x:Class="Mosaic.UI.Wpf.Controls.MarkdownEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <!--  Shared style for the small, square toolbar buttons.  -->
+        <Style x:Key="Mosaic.MarkdownEditor.ToolBarButton" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="Mosaic.MarkdownEditor.ToolBarImage" TargetType="{x:Type Image}">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Stretch" Value="Uniform" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ToolBarTray Grid.Row="0">
+            <ToolBar>
+                <Button
+                    Click="SaveButton_Click"
+                    IsEnabled="{Binding IsModified, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Save">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-save-16.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="PreviewInBrowserButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Previews the markdown in an external browser.">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-browser-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="**"
+                    ToolTip="Bold [Ctrl+B]">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-bold-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="__"
+                    ToolTip="Italic [Ctrl+I]">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-italics-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="~~"
+                    ToolTip="Strikethrough">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-strike-through-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="InsertSnippetButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="code"
+                    ToolTip="Code Block">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-code-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="`"
+                    ToolTip="Inline Code">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-code-1-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="~"
+                    ToolTip="Superscript">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-superscript-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="^"
+                    ToolTip="Subscript">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-subscript-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="SurroundWithButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="=="
+                    ToolTip="Highlight">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-highlight-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="BulletListButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Bullet List">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-bullet-list-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="OrderedListButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Ordered List">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-ordered-list-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="BlockQuoteButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Block Quote">
+                    <Viewbox Width="14" Height="14">
+                        <Path Data="M14,17H17L19,13V7H13V13H16M6,17H9L11,13V7H5V13H8L6,17Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+                    </Viewbox>
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="1"
+                    ToolTip="Heading 1">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-one-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="2"
+                    ToolTip="Heading 2">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-two-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="3"
+                    ToolTip="Heading 3">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-three-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="4"
+                    ToolTip="Heading 4">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-four-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="5"
+                    ToolTip="Heading 5">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-five-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Button
+                    Click="HeadingButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="6"
+                    ToolTip="Heading 6">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-six-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="InsertSnippetButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="link"
+                    ToolTip="Link">
+                    <Viewbox Width="14" Height="14">
+                        <Path Data="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+                    </Viewbox>
+                </Button>
+
+                <Button
+                    Click="InsertSnippetButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    Tag="image"
+                    ToolTip="Image">
+                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-image-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
+                </Button>
+
+                <Separator />
+
+                <Button
+                    Click="InsertTableButton_Click"
+                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    ToolTip="Table">
+                    <Viewbox Width="14" Height="14">
+                        <Path Data="M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+                    </Viewbox>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <controls:SyntaxEditor
+            x:Name="Editor"
+            Grid.Row="1"
+            FontFamily="Consolas"
+            FontSize="13"
+            Language="Markdown" />
+
+        <StatusBar
+            Grid.Row="2"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            Visibility="{Binding StatusBarVisibility, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" />
+            <StatusBarItem Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="LineTextBlock"
+                        MinWidth="40"
+                        Margin="7,0,7,0"
+                        VerticalAlignment="Center"
+                        Text="Ln 1" />
+                    <TextBlock
+                        x:Name="ColumnTextBlock"
+                        MinWidth="40"
+                        Margin="7,0,7,0"
+                        VerticalAlignment="Center"
+                        Text="Col 1" />
+                    <TextBlock
+                        x:Name="CharTextBlock"
+                        MinWidth="40"
+                        Margin="7,0,7,0"
+                        VerticalAlignment="Center"
+                        Text="Ch 1" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</UserControl>

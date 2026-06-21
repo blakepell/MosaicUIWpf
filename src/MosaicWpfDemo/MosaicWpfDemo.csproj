@@ -47,6 +47,7 @@
 		<None Remove="Assets\link-48.png" />
 		<None Remove="Assets\list-48.png" />
 		<None Remove="Assets\list-remove.96.png" />
+		<None Remove="Assets\markdown-48.png" />
 		<None Remove="Assets\numbers-input-48.png" />
 		<None Remove="Assets\panel-right-48.png" />
 		<None Remove="Assets\panel-right-96.png" />
@@ -122,6 +123,7 @@
 		<Resource Include="Assets\link-48.png" />
 		<Resource Include="Assets\list-48.png" />
 		<Resource Include="Assets\list-remove.96.png" />
+		<Resource Include="Assets\markdown-48.png" />
 		<Resource Include="Assets\numbers-input-48.png" />
 		<Resource Include="Assets\password-48.png" />
 		<Resource Include="Assets\password-lock-48.png" />
@@ -156,6 +158,13 @@
 		<Resource Include="Assets\panel-right-96.png" />
 		<Resource Include="Assets\zoom-in-48.png" />
 		<EmbeddedResource Include="Assets\Xml.Dark.xshd" />
+
+		<EmbeddedResource Include="Views\Examples\MarkdownEditorExample.xaml">
+			<Link>LinkedSources\MarkdownEditorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\MarkdownEditorExample.xaml.cs">
+			<Link>LinkedSources\MarkdownEditorExample.xaml.cs</Link>
+		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\SyntaxEditorExample.xaml">
 			<Link>LinkedSources\SyntaxEditorExample.xaml</Link>

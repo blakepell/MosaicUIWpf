@@ -25,7 +25,7 @@
       <End>`</End>
     </Span>
 
-    <Rule color="Heading">^\s{0,3}#{1,6}\s.*$</Rule>
+    <Rule color="Heading">^\s{0,3}\#{1,6}\s.*$</Rule>
     <Rule color="Quote">^\s{0,3}&gt;.*$</Rule>
     <Rule color="ListMarker">^\s*([-+*]|\d+\.)\s+</Rule>
     <Rule color="Rule">^\s{0,3}[-*_](\s*[-*_]){2,}\s*$</Rule>
