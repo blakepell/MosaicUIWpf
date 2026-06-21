@@ -132,6 +132,8 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | CheckBoxList | A ListBox variant that defaults to multiple selection and displays a checkbox beside each item. |
 | ClipBorder | Border which allows clipping to its border. Useful especially when you need to clip to round corners. |
 | ColorPicker | A color picker UserControl that allows users to select colors from presets or enter hex values. |
+| ContentPanel | A content panel with optional header and footer areas, configurable separators, corner radius, and header/footer brushes. |
+| DatePicker | Represents a date picker control that displays a popup calendar for date selection. |
 | DocumentContainer | Displays an observable collection of closable, reorderable documents as tabs. |
 | EditableTextBlock | Represents a control that displays text in a non-editable mode and allows users to switch to an editable mode to modify the text. The control supports double-click editing, text trimming, and customizable appearance. |
 | FavoriteCheckBox | A checkbox that displays a single favorite symbol (defaults to ★). The symbol and its checked/unchecked colors are customizable. |
@@ -146,9 +148,12 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | InputWaveformVisualizer | Displays a waveform captured from a selectable Windows audio input device using WASAPI shared-mode capture so other applications can use the device concurrently. |
 | LabeledSeparator | A labeled separator. |
 | LoopbackWaveformVisualizer | Displays a waveform captured from the default Windows audio render device using WASAPI loopback capture. Follows changes to the default console render device automatically. |
+| MarkdownEditor | A self-contained markdown editor built on the Mosaic SyntaxEditor (AvalonEdit). Provides a formatting toolbar, list/heading helpers, markdown-aware key handling, an extended context menu, and document modification tracking. |
 | MessageBox | A themed, drop-in replacement for System.Windows.MessageBox. Mirrors the full set of Show overloads and reuses the standard WPF dialog enums. Switch with a single using alias. Honors the active Mosaic light/dark/high-contrast theme. |
 | NumericTextBox | TextBox that only allows digits, minus sign and a decimal point. |
+| ProgressRing | A progress ring component to indicate that a long running process is occurring. |
 | PropertyGrid | A control that displays the properties of an object in a grid format. |
+| RadialProgressBar | Represents a ProgressBar that renders its value as a circular arc, pie, or a ring of discrete shapes. |
 | RelativePanel | Defines an area within which you can position and align child objects in relation to each other or the parent panel. |
 | ScalingTextBlock | A TextBlock that attempts to scale the font size so all text fits within the available space. MinFontSize and MaxFontSize serve as the lower and upper boundaries. |
 | SearchBox | A custom TextBox tailored for searching or filtering. |
