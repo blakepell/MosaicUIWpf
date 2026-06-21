@@ -1,0 +1,139 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.DatePickerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        CanContentScroll="True"
+        ClipToBounds="True"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Margin="20" Orientation="Vertical">
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Basic Date Picker">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Select a date from the Mosaic DatePicker popup. The selected value is shown below using a two-way binding." />
+
+                    <mosaic:DatePicker
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        SelectedDate="{Binding SelectedDate, Mode=TwoWay}" />
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding SelectedDate, StringFormat=Selected date: {0:dddd, MMMM d, yyyy}, TargetNullValue=Selected date: none}" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Preselected Dates">
+                <WrapPanel>
+                    <StackPanel Width="240" Margin="0,0,20,10">
+                        <TextBlock FontWeight="Bold" Text="Today" />
+                        <TextBlock
+                            Margin="0,2,0,6"
+                            TextWrapping="Wrap"
+                            Text="Starts with today's date selected and keeps the calendar popup open after selection." />
+                        <mosaic:DatePicker
+                            Width="180"
+                            HorizontalAlignment="Left"
+                            KeepPopupOpen="True"
+                            SelectedDate="{Binding TodayDate, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel Width="240" Margin="0,0,20,10">
+                        <TextBlock FontWeight="Bold" Text="Project due date" />
+                        <TextBlock
+                            Margin="0,2,0,6"
+                            TextWrapping="Wrap"
+                            Text="Uses KeepPopupOpen=False so the popup closes once a day is chosen." />
+                        <mosaic:DatePicker
+                            Width="180"
+                            HorizontalAlignment="Left"
+                            KeepPopupOpen="False"
+                            SelectedDate="{Binding DueDate, Mode=TwoWay}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <GroupBox
+                Padding="10"
+                Header="Bound Values">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="The DatePicker exposes SelectedDate as a nullable DateTime dependency property, making it suitable for two-way bindings." />
+
+                    <Grid MaxWidth="520" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,12,6"
+                            FontWeight="Bold"
+                            Text="Selected" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="0,0,0,6"
+                            FontFamily="Consolas"
+                            Text="{Binding SelectedDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="0,0,12,6"
+                            FontWeight="Bold"
+                            Text="Today" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,0,0,6"
+                            FontFamily="Consolas"
+                            Text="{Binding TodayDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="0,0,12,0"
+                            FontWeight="Bold"
+                            Text="Due date" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            FontFamily="Consolas"
+                            Text="{Binding DueDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -38,6 +38,6 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/RadialProgressBar/RadialProgressBar.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ProgressRing/ProgressRing.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ContentPanel/ContentPanel.xaml" />
-
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/DatePicker/DatePicker.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -67,6 +67,7 @@
 		<None Remove="Assets\tag-48.png" />
 		<None Remove="Assets\terminal-48.png" />
 		<None Remove="Assets\text-48.png" />
+		<None Remove="Assets\timeline-week-48.png" />
 		<None Remove="Assets\toggle-48.png" />
 		<None Remove="Assets\toggle2-48.png" />
 		<None Remove="Assets\toolbox-48.png" />
@@ -142,6 +143,7 @@
 		<Resource Include="Assets\tag-48.png" />
 		<Resource Include="Assets\terminal-48.png" />
 		<Resource Include="Assets\text-48.png" />
+		<Resource Include="Assets\timeline-week-48.png" />
 		<Resource Include="Assets\toggle-48.png" />
 		<Resource Include="Assets\toggle2-48.png" />
 		<Resource Include="Assets\toolbox-48.png" />
@@ -178,6 +180,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\DataGridBehaviorsExample.xaml.cs">
 			<Link>LinkedSources\DataGridBehaviorsExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\DatePickerExample.xaml">
+			<Link>LinkedSources\DatePickerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\DatePickerExample.xaml.cs">
+			<Link>LinkedSources\DatePickerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\DebugExample.xaml">

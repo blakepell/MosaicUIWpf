@@ -123,29 +123,42 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <mosaic:ContentPanel Title="Example" Margin="12" MinWidth="400" Grid.Row="0">
-                        <TextBlock Text="This is a test"></TextBlock>
+                    <mosaic:ContentPanel
+                        Title="Example"
+                        Grid.Row="0"
+                        MinWidth="400"
+                        Margin="12">
+                        <TextBlock Text="This is a test" />
                         <mosaic:ContentPanel.FooterContent>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Footer"></TextBlock>
+                                <TextBlock Text="Footer" />
                             </StackPanel>
                         </mosaic:ContentPanel.FooterContent>
                     </mosaic:ContentPanel>
 
-                    <mosaic:ContentPanel HeaderVisibility="Collapsed" Margin="12" MinWidth="400" Grid.Row="1">
-                        <TextBlock Text="This is a test"></TextBlock>
+                    <mosaic:ContentPanel
+                        Grid.Row="1"
+                        MinWidth="400"
+                        Margin="12"
+                        HeaderVisibility="Collapsed">
+                        <TextBlock Text="This is a test" />
                         <mosaic:ContentPanel.FooterContent>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Footer"></TextBlock>
+                                <TextBlock Text="Footer" />
                             </StackPanel>
                         </mosaic:ContentPanel.FooterContent>
                     </mosaic:ContentPanel>
 
-                    <mosaic:ContentPanel HeaderVisibility="Collapsed" Margin="12" CornerRadius="0" MinWidth="400" Grid.Row="2">
-                        <TextBlock Text="This is a test"></TextBlock>
+                    <mosaic:ContentPanel
+                        Grid.Row="2"
+                        MinWidth="400"
+                        Margin="12"
+                        CornerRadius="0"
+                        HeaderVisibility="Collapsed">
+                        <TextBlock Text="This is a test" />
                         <mosaic:ContentPanel.FooterContent>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Footer"></TextBlock>
+                                <TextBlock Text="Footer" />
                             </StackPanel>
                         </mosaic:ContentPanel.FooterContent>
                     </mosaic:ContentPanel>
