@@ -383,6 +383,13 @@
 			<Link>LinkedSources\ClipBorderExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ContentPanelExample.xaml">
+			<Link>LinkedSources\ContentPanelExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ContentPanelExample.xaml.cs">
+			<Link>LinkedSources\ContentPanelExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SideMenuExample.xaml">
 			<Link>LinkedSources\SideMenuExample.xaml</Link>
 		</EmbeddedResource>

@@ -37,5 +37,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SplitPanel/SplitPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/RadialProgressBar/RadialProgressBar.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ProgressRing/ProgressRing.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ContentPanel/ContentPanel.xaml" />
+
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

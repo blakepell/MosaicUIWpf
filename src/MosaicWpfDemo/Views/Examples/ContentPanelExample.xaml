@@ -1,0 +1,62 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ContentPanelExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel
+            Width="520"
+            Margin="12"
+            HorizontalAlignment="Left">
+            <mosaic:ContentPanel Title="Themed Content Panel">
+                <mosaic:ContentPanel.HeaderContent>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        Foreground="{Binding HeaderForeground, RelativeSource={RelativeSource AncestorType={x:Type mosaic:ContentPanel}}}"
+                        Text="Header content" />
+                </mosaic:ContentPanel.HeaderContent>
+                <TextBlock TextWrapping="Wrap">
+                    Uses Mosaic theme brushes by default. The header and content use the dialog header surface, and the footer uses the darker footer surface.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="Footer content uses the darker themed footer brush." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                HeaderVisibility="Collapsed"
+                Title="Header Hidden">
+                <TextBlock TextWrapping="Wrap">
+                    HeaderVisibility is collapsed here. The main content becomes the top surface and is clipped by the panel CornerRadius.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="Footer remains available when the header is hidden." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                CornerRadius="0"
+                FooterBackground="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                FooterForeground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                HeaderBackground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                HeaderForeground="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}"
+                Title="Overrides">
+                <TextBlock TextWrapping="Wrap">
+                    This panel overrides header and footer brushes with setters/local values and uses CornerRadius=0 for square corners.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="Custom footer background and foreground." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

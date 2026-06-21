@@ -116,6 +116,42 @@
                     </Border>
                 </StackPanel>
             </mosaic:TabItem>
+            <mosaic:TabItem Header="ContentPanel">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <mosaic:ContentPanel Title="Example" Margin="12" MinWidth="400" Grid.Row="0">
+                        <TextBlock Text="This is a test"></TextBlock>
+                        <mosaic:ContentPanel.FooterContent>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Footer"></TextBlock>
+                            </StackPanel>
+                        </mosaic:ContentPanel.FooterContent>
+                    </mosaic:ContentPanel>
+
+                    <mosaic:ContentPanel HeaderVisibility="Collapsed" Margin="12" MinWidth="400" Grid.Row="1">
+                        <TextBlock Text="This is a test"></TextBlock>
+                        <mosaic:ContentPanel.FooterContent>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Footer"></TextBlock>
+                            </StackPanel>
+                        </mosaic:ContentPanel.FooterContent>
+                    </mosaic:ContentPanel>
+
+                    <mosaic:ContentPanel HeaderVisibility="Collapsed" Margin="12" CornerRadius="0" MinWidth="400" Grid.Row="2">
+                        <TextBlock Text="This is a test"></TextBlock>
+                        <mosaic:ContentPanel.FooterContent>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Footer"></TextBlock>
+                            </StackPanel>
+                        </mosaic:ContentPanel.FooterContent>
+                    </mosaic:ContentPanel>
+
+                </Grid>
+            </mosaic:TabItem>
         </mosaic:TabControl>
     </Grid>
 </UserControl>

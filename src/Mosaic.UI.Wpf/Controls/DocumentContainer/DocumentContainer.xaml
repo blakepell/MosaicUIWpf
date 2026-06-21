@@ -112,6 +112,7 @@
                     <Grid KeyboardNavigation.TabNavigation="Local">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
@@ -179,8 +180,10 @@
                                 ContentTemplateSelector="{TemplateBinding HeaderContentTemplateSelector}" />
                         </Grid>
 
+                        <Border Grid.Row="1" Background="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+
                         <Border
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -287,9 +290,9 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="OuterBorder" Property="Background" Value="{Binding ActiveTabBackground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
+                            <Setter TargetName="OuterBorder" Property="BorderThickness" Value="0,0,1,0" />
                             <Setter Property="Foreground" Value="{Binding ActiveTabForeground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
                             <Setter TargetName="CloseButton" Property="Foreground" Value="{Binding ActiveTabForeground, RelativeSource={RelativeSource AncestorType={x:Type controls:DocumentContainer}}}" />
-                            <Setter TargetName="SelectionIndicator" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="CanClose" Value="False">
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />

@@ -320,6 +320,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ContentPanel  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/panel-right-48.png"
+                    Text="ContentPanel">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ContentPanel" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ContentPanelExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ContentPanelExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ContentPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ContentPanelExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  ColorPicker  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
