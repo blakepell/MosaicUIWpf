@@ -894,6 +894,9 @@ public class ToggleDockingManager : DockingManager
 
         parentGroup.Children.Remove(anchorable);
         previousContainer.Children.Add(anchorable);
+        previousContainer.SelectedContentIndex = previousContainer.Children.IndexOf(anchorable);
+        anchorable.IsSelected = true;
+        anchorable.IsActive = true;
 
         if (parentGroup.Children.Count == 0)
         {
@@ -925,6 +928,8 @@ public class ToggleDockingManager : DockingManager
 
         parentPane.Children.Remove(anchorable);
         newAnchorGroup.Children.Add(anchorable);
+        anchorable.IsSelected = true;
+        anchorable.IsActive = true;
 
         switch (side)
         {

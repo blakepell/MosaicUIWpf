@@ -2322,7 +2322,7 @@
         <Setter Property="Background" Value="{DynamicResource {x:Static reskeys:ResourceKeys.TabBackground}}" />
         <Setter Property="AnchorableStyle">
             <Setter.Value>
-                <Style TargetType="avalonDockControls:LayoutAnchorableControl">
+                <Style BasedOn="{StaticResource {x:Type avalonDockControls:LayoutAnchorableControl}}" TargetType="avalonDockControls:LayoutAnchorableControl">
                     <Setter Property="BorderBrush" Value="{DynamicResource {x:Static reskeys:ResourceKeys.PanelBorderBrush}}" />
                     <Setter Property="BorderThickness" Value="1" />
                 </Style>
