@@ -22,6 +22,7 @@
         <Setter Property="HeaderTemplate" Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplate}" />
         <Setter Property="HeaderTemplateSelector" Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplateSelector}" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" />
         <Setter Property="Template" Value="{StaticResource MLibMenuItem}" />
     </Style>
 

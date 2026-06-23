@@ -14,8 +14,6 @@ namespace AvalonDock.Controls
     /// </summary>
     public class OverlayWindow : Window, IOverlayWindow
     {
-        private ResourceDictionary currentThemeResourceDictionary; // = null
-
         private Canvas _mainCanvasPanel;
         private Grid _gridDockingManagerDropTargets;    // Showing and activating 4 outer drop taget buttons over DockingManager
         private Grid _gridAnchorablePaneDropTargets;    // Showing and activating 5 inner drop target buttons over layout anchorable pane
@@ -143,40 +141,7 @@ namespace AvalonDock.Controls
         /// <param name="oldTheme">The old Theme.</param>
         internal void UpdateThemeResources(Theme oldTheme = null)
         {
-            if (oldTheme != null) // Remove the old theme if present
-            {
-                if (oldTheme is DictionaryTheme)
-                {
-                    if (currentThemeResourceDictionary != null)
-                    {
-                        Resources.MergedDictionaries.Remove(currentThemeResourceDictionary);
-                        currentThemeResourceDictionary = null;
-                    }
-                }
-                else
-                {
-                    var resourceDictionaryToRemove =
-                        Resources.MergedDictionaries.FirstOrDefault(r => r.Source == oldTheme.GetResourceUri());
-                    if (resourceDictionaryToRemove != null)
-                    {
-                        Resources.MergedDictionaries.Remove(
-                            resourceDictionaryToRemove);
-                    }
-                }
-            }
-
-            if (_host.Manager.Theme != null) // Implicit parameter to this method is the new theme already set here
-            {
-                if (_host.Manager.Theme is DictionaryTheme theme)
-                {
-                    currentThemeResourceDictionary = theme.ThemeResourceDictionary;
-                    Resources.MergedDictionaries.Add(currentThemeResourceDictionary);
-                }
-                else
-                {
-                    Resources.MergedDictionaries.Add(new ResourceDictionary { Source = _host.Manager.Theme.GetResourceUri() });
-                }
-            }
+            InvalidateVisual();
         }
 
         /// <summary>

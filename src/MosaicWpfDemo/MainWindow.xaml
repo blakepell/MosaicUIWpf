@@ -2,6 +2,7 @@
     x:Class="WpfDemo.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
     xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
@@ -207,6 +208,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:Avatar}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AvatarExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/avatar-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  AvalonDock  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/panel-right-48.png"
+                    Text="AvalonDock">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="AvalonDock" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.AvalonDockExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.AvalonDockExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type avalonDock:DockingManager}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AvalonDockExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/panel-right-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

@@ -20,8 +20,6 @@ namespace AvalonDock.Controls
     [TemplatePart(Name = PART_DocumentListBox, Type = typeof(ListBox))]
     public class NavigatorWindow : Window
     {
-        private ResourceDictionary currentThemeResourceDictionary; // = null
-
         private const string PART_AnchorableListBox = "PART_AnchorableListBox";
         private const string PART_DocumentListBox = "PART_DocumentListBox";
 
@@ -446,41 +444,7 @@ namespace AvalonDock.Controls
         /// <param name="oldTheme">The old theme.</param>
         internal void UpdateThemeResources(Theme oldTheme = null)
         {
-            if (oldTheme != null) // Remove the old theme if present
-            {
-                if (oldTheme is DictionaryTheme)
-                {
-                    if (currentThemeResourceDictionary != null)
-                    {
-                        Resources.MergedDictionaries.Remove(currentThemeResourceDictionary);
-                        currentThemeResourceDictionary = null;
-                    }
-                }
-                else
-                {
-                    var resourceDictionaryToRemove = Resources.MergedDictionaries.FirstOrDefault(r => r.Source == oldTheme.GetResourceUri());
-                    if (resourceDictionaryToRemove != null)
-                    {
-                        Resources.MergedDictionaries.Remove(resourceDictionaryToRemove);
-                    }
-                }
-            }
-
-            // Implicit parameter to this method is the new theme already set here
-            if (_manager.Theme == null)
-            {
-                return;
-            }
-
-            if (_manager.Theme is DictionaryTheme dictionaryTheme)
-            {
-                currentThemeResourceDictionary = dictionaryTheme.ThemeResourceDictionary;
-                Resources.MergedDictionaries.Add(currentThemeResourceDictionary);
-            }
-            else
-            {
-                Resources.MergedDictionaries.Add(new ResourceDictionary { Source = _manager.Theme.GetResourceUri() });
-            }
+            InvalidateVisual();
         }
 
         /// <summary>

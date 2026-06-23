@@ -23,7 +23,6 @@ namespace AvalonDock.Controls
     /// </summary>
     public abstract class LayoutFloatingWindowControl : Window, ILayoutControl
     {
-        private ResourceDictionary currentThemeResourceDictionary; // = null
         private bool _isInternalChange; // false
         private readonly ILayoutElement _model;
         private bool _attachDrag;
@@ -357,58 +356,7 @@ namespace AvalonDock.Controls
         /// <param name="oldTheme">The old theme.</param>
         internal virtual void UpdateThemeResources(Theme oldTheme = null)
         {
-            // Keep the replacement theme available while removing the old one. Removing first
-            // can make WPF re-resolve this floating Window's implicit style with no matching
-            // resource in scope.
-            var manager = _model.Root?.Manager;
-            var newTheme = manager?.Theme;
-            ResourceDictionary newThemeResourceDictionary = null;
-            Uri newThemeResourceUri = null;
-
-            if (newTheme is DictionaryTheme dictionaryTheme)
-            {
-                newThemeResourceDictionary = dictionaryTheme.ThemeResourceDictionary;
-                if (newThemeResourceDictionary != null && !Resources.MergedDictionaries.Contains(newThemeResourceDictionary))
-                {
-                    Resources.MergedDictionaries.Add(newThemeResourceDictionary);
-                }
-            }
-            else if (newTheme != null)
-            {
-                newThemeResourceUri = newTheme.GetResourceUri();
-                if (newThemeResourceUri != null &&
-                    !Resources.MergedDictionaries.Any(r => Equals(r.Source, newThemeResourceUri)))
-                {
-                    Resources.MergedDictionaries.Add(new ResourceDictionary { Source = newThemeResourceUri });
-                }
-            }
-
-            if (oldTheme != null) // Remove the old theme if present
-            {
-                if (oldTheme is DictionaryTheme)
-                {
-                    if (currentThemeResourceDictionary != null &&
-                        !ReferenceEquals(currentThemeResourceDictionary, newThemeResourceDictionary))
-                    {
-                        Resources.MergedDictionaries.Remove(currentThemeResourceDictionary);
-                    }
-                }
-                else
-                {
-                    var oldThemeResourceUri = oldTheme.GetResourceUri();
-                    var resourceDictionaryToRemove =
-                        Equals(oldThemeResourceUri, newThemeResourceUri)
-                            ? null
-                            : Resources.MergedDictionaries.FirstOrDefault(r => Equals(r.Source, oldThemeResourceUri));
-                    if (resourceDictionaryToRemove != null)
-                    {
-                        Resources.MergedDictionaries.Remove(
-                            resourceDictionaryToRemove);
-                    }
-                }
-            }
-
-            currentThemeResourceDictionary = newThemeResourceDictionary;
+            InvalidateVisual();
         }
 
         /// <summary>
