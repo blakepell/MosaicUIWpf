@@ -20,7 +20,7 @@ using System.Xml.Linq;
 
 namespace Mosaic.UI.Wpf.Controls.Behaviors
 {
-    public class ReflectionDocumentationBehavior : Behavior<MarkdownViewer>
+    public class ReflectionDocumentationBehavior : Behavior<MosaicWpfDemo.Controls.MarkdownViewer>
     {
         public static readonly DependencyProperty TypeProperty = DependencyProperty.Register(
             nameof(Type),

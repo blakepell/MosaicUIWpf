@@ -1041,6 +1041,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  MarkdownViewer Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/markdown-48.png"
+                    Text="MarkdownViewer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="MarkdownViewer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.MarkdownViewerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.MarkdownViewerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:MarkdownViewer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:MarkdownViewerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/markdown-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  SyntaxEditor Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -170,6 +170,13 @@
 			<Link>LinkedSources\MarkdownEditorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\MarkdownViewerExample.xaml">
+			<Link>LinkedSources\MarkdownViewerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\MarkdownViewerExample.xaml.cs">
+			<Link>LinkedSources\MarkdownViewerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SyntaxEditorExample.xaml">
 			<Link>LinkedSources\SyntaxEditorExample.xaml</Link>
 		</EmbeddedResource>

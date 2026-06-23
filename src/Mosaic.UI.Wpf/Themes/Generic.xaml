@@ -17,6 +17,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/InfoCard/InfoCard.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/LabeledSeparator/LabeledSeparator.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/MarkdownViewer/MarkdownViewer.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SearchBox/SearchBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SettingsItem/SettingsItem.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ShadowPanel/ShadowPanel.xaml" />
