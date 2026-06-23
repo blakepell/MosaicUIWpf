@@ -120,6 +120,7 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  CONTROLS section  -->
                 <mosaic:SideMenuHeader Text="CONTROLS" />
 
                 <!--  AccentButton  -->
@@ -1131,6 +1132,7 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  BEHAVIORS section  -->
                 <mosaic:SideMenuHeader Text="BEHAVIORS" />
 
                 <!--  Button Open Context Menu  -->
@@ -1363,6 +1365,27 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type theme:AvalonEditVtTerminalBehavior}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:AvalonEditVtTerminalBehaviorExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/terminal-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Demos Section  -->
+                <mosaic:SideMenuHeader Text="DEMOS" />
+
+                <!--  File Renamer  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/folder2-open-48.png"
+                    Text="File Renamer">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="File Renamer" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.FileRenamerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FileRenamerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:FileDropper}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FileRenamerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/folder2-open-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

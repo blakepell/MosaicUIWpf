@@ -425,6 +425,12 @@
 		<EmbeddedResource Include="Views\Examples\FileDropperExample.xaml.cs">
 			<Link>LinkedSources\FileDropperExample.xaml.cs</Link>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileRenamerExample.xaml">
+			<Link>LinkedSources\FileRenamerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileRenamerExample.xaml.cs">
+			<Link>LinkedSources\FileRenamerExample.xaml.cs</Link>
+		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\FilesExample.xaml">
 			<Link>LinkedSources\FilesExample.xaml</Link>
 		</EmbeddedResource>
