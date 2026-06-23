@@ -342,20 +342,49 @@ namespace AvalonDock.Controls
         /// <param name="oldTheme">The old theme.</param>
         internal virtual void UpdateThemeResources(Theme oldTheme = null)
         {
+            // Keep the replacement theme available while removing the old one. Removing first
+            // can make WPF re-resolve this floating Window's implicit style with no matching
+            // resource in scope.
+            var manager = _model.Root?.Manager;
+            var newTheme = manager?.Theme;
+            ResourceDictionary newThemeResourceDictionary = null;
+            Uri newThemeResourceUri = null;
+
+            if (newTheme is DictionaryTheme dictionaryTheme)
+            {
+                newThemeResourceDictionary = dictionaryTheme.ThemeResourceDictionary;
+                if (newThemeResourceDictionary != null && !Resources.MergedDictionaries.Contains(newThemeResourceDictionary))
+                {
+                    Resources.MergedDictionaries.Add(newThemeResourceDictionary);
+                }
+            }
+            else if (newTheme != null)
+            {
+                newThemeResourceUri = newTheme.GetResourceUri();
+                if (newThemeResourceUri != null &&
+                    !Resources.MergedDictionaries.Any(r => Equals(r.Source, newThemeResourceUri)))
+                {
+                    Resources.MergedDictionaries.Add(new ResourceDictionary { Source = newThemeResourceUri });
+                }
+            }
+
             if (oldTheme != null) // Remove the old theme if present
             {
                 if (oldTheme is DictionaryTheme)
                 {
-                    if (currentThemeResourceDictionary != null)
+                    if (currentThemeResourceDictionary != null &&
+                        !ReferenceEquals(currentThemeResourceDictionary, newThemeResourceDictionary))
                     {
                         Resources.MergedDictionaries.Remove(currentThemeResourceDictionary);
-                        currentThemeResourceDictionary = null;
                     }
                 }
                 else
                 {
+                    var oldThemeResourceUri = oldTheme.GetResourceUri();
                     var resourceDictionaryToRemove =
-                        Resources.MergedDictionaries.FirstOrDefault(r => r.Source == oldTheme.GetResourceUri());
+                        Equals(oldThemeResourceUri, newThemeResourceUri)
+                            ? null
+                            : Resources.MergedDictionaries.FirstOrDefault(r => Equals(r.Source, oldThemeResourceUri));
                     if (resourceDictionaryToRemove != null)
                     {
                         Resources.MergedDictionaries.Remove(
@@ -364,22 +393,7 @@ namespace AvalonDock.Controls
                 }
             }
 
-            // Implicit parameter to this method is the new theme already set here
-            var manager = _model.Root?.Manager;
-            if (manager?.Theme == null)
-            {
-                return;
-            }
-
-            if (manager.Theme is DictionaryTheme dictionaryTheme)
-            {
-                currentThemeResourceDictionary = dictionaryTheme.ThemeResourceDictionary;
-                Resources.MergedDictionaries.Add(currentThemeResourceDictionary);
-            }
-            else
-            {
-                Resources.MergedDictionaries.Add(new ResourceDictionary { Source = manager.Theme.GetResourceUri() });
-            }
+            currentThemeResourceDictionary = newThemeResourceDictionary;
         }
 
         /// <summary>
