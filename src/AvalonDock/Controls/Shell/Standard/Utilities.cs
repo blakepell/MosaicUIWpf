@@ -135,7 +135,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <param name="component">The component value.</param>
         /// <param name="property">The property value.</param>
         /// <param name="listener">The listener value.</param>
-        public static void AddDependencyPropertyChangeListener(object component, DependencyProperty property, EventHandler listener)
+        public static void AddDependencyPropertyChangeListener(object? component, DependencyProperty property, EventHandler listener)
         {
             if (component == null)
             {
@@ -152,7 +152,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <param name="component">The component value.</param>
         /// <param name="property">The property value.</param>
         /// <param name="listener">The listener value.</param>
-        public static void RemoveDependencyPropertyChangeListener(object component, DependencyProperty property, EventHandler listener)
+        public static void RemoveDependencyPropertyChangeListener(object? component, DependencyProperty property, EventHandler listener)
         {
             if (component == null)
             {

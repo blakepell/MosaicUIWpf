@@ -216,7 +216,7 @@ namespace AvalonDock.Controls
             }
         }
 
-        private ContentPresenter CreateChildContentPresenter(object item)
+        private ContentPresenter CreateChildContentPresenter(object? item)
         {
             if (item == null)
             {

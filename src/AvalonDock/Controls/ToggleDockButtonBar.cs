@@ -31,7 +31,7 @@ namespace AvalonDock.Controls
         /// <param name="parameter">The parameter.</param>
         /// <param name="culture">The culture.</param>
         /// <returns>The convert.</returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
             => value != null;
 
         /// <summary>
@@ -491,7 +491,7 @@ namespace AvalonDock.Controls
         /// </summary>
         /// <param name="anchorable">The anchorable.</param>
         /// <param name="manager">The manager.</param>
-        internal static void StartDragFromPane(LayoutAnchorable anchorable, ToggleDockingManager manager)
+        internal static void StartDragFromPane(LayoutAnchorable? anchorable, ToggleDockingManager manager)
         {
             var owner = GetWindow(manager);
             if (owner == null || anchorable == null)
@@ -594,7 +594,7 @@ namespace AvalonDock.Controls
             AddBarDropZone(_manager._bottomRightBar, DockZone.BottomRight);
         }
 
-        private void AddSidebarPanelDropZones(DockPanel panel,
+        private void AddSidebarPanelDropZones(DockPanel? panel,
             ToggleDockButtonBar topBar, DockZone topZone,
             ToggleDockButtonBar bottomBar, DockZone bottomZone,
             bool isVertical)
@@ -664,7 +664,7 @@ namespace AvalonDock.Controls
             });
         }
 
-        private void AddBarDropZone(ToggleDockButtonBar bar, DockZone zone)
+        private void AddBarDropZone(ToggleDockButtonBar? bar, DockZone zone)
         {
             if (bar == null || !bar.IsVisible)
             {
@@ -716,7 +716,7 @@ namespace AvalonDock.Controls
             return fallback;
         }
 
-        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject? parent)
             where T : DependencyObject
         {
             if (parent == null)

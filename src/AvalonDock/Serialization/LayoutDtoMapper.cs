@@ -272,7 +272,7 @@ namespace AvalonDock.Serialization
             dto.IsMaximized = source.IsMaximized;
         }
 
-        private LayoutAnchorSideDto MapAnchorSideToDto(LayoutAnchorSide side)
+        private LayoutAnchorSideDto MapAnchorSideToDto(LayoutAnchorSide? side)
         {
             var dto = new LayoutAnchorSideDto();
             if (side == null)

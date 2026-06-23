@@ -357,7 +357,7 @@ namespace AvalonDock.Controls
             }
         }
 
-        private void CreateOverlayWindow(LayoutFloatingWindowControl draggingWindow)
+        private void CreateOverlayWindow(LayoutFloatingWindowControl? draggingWindow)
         {
             if (_overlayWindow == null)
             {

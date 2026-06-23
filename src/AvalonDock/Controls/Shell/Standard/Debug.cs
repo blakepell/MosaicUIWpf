@@ -85,7 +85,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <typeparam name="T">The t type.</typeparam>
         /// <param name="value">The value.</param>
         [Conditional("DEBUG")]
-        public static void IsNotNull<T>(T value)
+        public static void IsNotNull<T>(T? value)
             where T : class
         {
             if (value == null)
@@ -154,7 +154,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <typeparam name="T">The t type.</typeparam>
         /// <param name="item">The item.</param>
         [Conditional("DEBUG")]
-        public static void IsNull<T>(T item)
+        public static void IsNull<T>(T? item)
             where T : class
         {
             if (item != null)

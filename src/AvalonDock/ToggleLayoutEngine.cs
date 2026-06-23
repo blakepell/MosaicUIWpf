@@ -341,7 +341,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public void EnsureBottomFullWidth(LayoutRoot root)
+        public void EnsureBottomFullWidth(LayoutRoot? root)
         {
             if (root == null)
             {
@@ -420,7 +420,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public void EnsureSidesFullHeight(LayoutRoot root)
+        public void EnsureSidesFullHeight(LayoutRoot? root)
         {
             if (root == null)
             {
@@ -534,7 +534,7 @@ namespace AvalonDock
         /// <param name="anchorable">The anchorable that was just docked.</param>
         /// <param name="desiredOrientation">The desired orientation for the group.</param>
         /// <param name="insertAtStart">Whether new panes should be inserted at the start of existing groups.</param>
-        private static void FixSplitOrientationCore(LayoutAnchorable anchorable, Orientation desiredOrientation, bool insertAtStart)
+        private static void FixSplitOrientationCore(LayoutAnchorable? anchorable, Orientation desiredOrientation, bool insertAtStart)
         {
             if (anchorable == null)
             {

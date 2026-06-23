@@ -377,7 +377,7 @@ public class ToggleDockingManager : DockingManager
     /// </summary>
     /// <param name="anchorable">The anchorable.</param>
     /// <param name="targetZone">The target Zone.</param>
-    public void MoveAnchorableToZone(LayoutAnchorable anchorable, DockZone targetZone)
+    public void MoveAnchorableToZone(LayoutAnchorable? anchorable, DockZone targetZone)
     {
         if (anchorable == null)
         {
@@ -437,7 +437,7 @@ public class ToggleDockingManager : DockingManager
     }
 
     /// <inheritdoc/>
-    internal override void ExecuteAutoHideCommand(LayoutAnchorable anchorable)
+    internal override void ExecuteAutoHideCommand(LayoutAnchorable? anchorable)
     {
         if (anchorable == null)
         {
@@ -449,7 +449,7 @@ public class ToggleDockingManager : DockingManager
     }
 
     /// <inheritdoc/>
-    internal override void StartDraggingFloatingWindowForPane(LayoutAnchorablePane paneModel)
+    internal override void StartDraggingFloatingWindowForPane(LayoutAnchorablePane? paneModel)
     {
         if (paneModel == null)
         {
@@ -693,7 +693,7 @@ public class ToggleDockingManager : DockingManager
         };
     }
 
-    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent)
+    private static IEnumerable<T> FindVisualChildren<T>(DependencyObject? parent)
         where T : DependencyObject
     {
         if (parent == null)
@@ -1147,7 +1147,7 @@ public class ToggleDockingManager : DockingManager
         _bottomRightBar = null;
     }
 
-    private static void ClearBarIconContent(ToggleDockButtonBar bar)
+    private static void ClearBarIconContent(ToggleDockButtonBar? bar)
     {
         if (bar == null)
         {
@@ -1189,7 +1189,7 @@ public class ToggleDockingManager : DockingManager
         return null;
     }
 
-    private static List<LayoutAnchorable> CollectAnchorables(LayoutAnchorSide side)
+    private static List<LayoutAnchorable> CollectAnchorables(LayoutAnchorSide? side)
     {
         var result = new List<LayoutAnchorable>();
         if (side == null)
@@ -1224,7 +1224,7 @@ public class ToggleDockingManager : DockingManager
     /// Executes the hide Docked In Bar operation.
     /// </summary>
     /// <param name="bar">The bar.</param>
-    private void HideDockedInBar(ToggleDockButtonBar bar)
+    private void HideDockedInBar(ToggleDockButtonBar? bar)
     {
         if (bar == null)
         {
@@ -1251,7 +1251,7 @@ public class ToggleDockingManager : DockingManager
         RefreshBarStates(_bottomRightBar, activeContent);
     }
 
-    private static void RefreshBarStates(ToggleDockButtonBar bar, object activeContent)
+    private static void RefreshBarStates(ToggleDockButtonBar? bar, object activeContent)
     {
         if (bar == null)
         {
@@ -1487,7 +1487,7 @@ public class ToggleDockingManager : DockingManager
     /// Restores a hidden anchorable back to the toggle button bars.
     /// </summary>
     /// <param name="anchorable">The hidden anchorable to restore.</param>
-    internal void RestoreHiddenAnchorable(LayoutAnchorable anchorable)
+    internal void RestoreHiddenAnchorable(LayoutAnchorable? anchorable)
     {
         if (anchorable == null)
         {
@@ -1550,7 +1550,7 @@ public class ToggleDockingManager : DockingManager
         RemoveFromBar(_bottomRightBar, anchorable);
     }
 
-    private static void RemoveFromBar(ToggleDockButtonBar bar, LayoutAnchorable anchorable)
+    private static void RemoveFromBar(ToggleDockButtonBar? bar, LayoutAnchorable anchorable)
     {
         if (bar == null)
         {

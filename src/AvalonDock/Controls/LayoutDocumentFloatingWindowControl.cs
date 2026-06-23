@@ -242,7 +242,7 @@ namespace AvalonDock.Controls
 
         private OverlayWindow _overlayWindow;
 
-        private void CreateOverlayWindow(LayoutFloatingWindowControl draggingWindow)
+        private void CreateOverlayWindow(LayoutFloatingWindowControl? draggingWindow)
         {
             if (_overlayWindow == null)
             {
@@ -373,7 +373,7 @@ namespace AvalonDock.Controls
         /// </summary>
         /// <param name="layoutAnchPaneGroup">The layout anch pane group.</param>
         /// <returns>The layout anchorable.</returns>
-        internal IEnumerable<LayoutAnchorable> GetLayoutAnchorable(LayoutAnchorablePaneGroup layoutAnchPaneGroup)
+        internal IEnumerable<LayoutAnchorable> GetLayoutAnchorable(LayoutAnchorablePaneGroup? layoutAnchPaneGroup)
         {
             if (layoutAnchPaneGroup == null)
             {

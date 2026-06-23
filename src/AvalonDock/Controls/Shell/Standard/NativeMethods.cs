@@ -4403,7 +4403,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <returns>The result.</returns>
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static SafeDC CreateCompatibleDC(SafeDC hdc)
+        public static SafeDC CreateCompatibleDC(SafeDC? hdc)
         {
             SafeDC? dc = null;
             try
@@ -6379,7 +6379,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <param name="dwOffset">The dwOffset parameter.</param>
         /// <returns>The result.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static SafeHBITMAP CreateDIBSection(SafeDC hdc, ref BITMAPINFO bitmapInfo, out IntPtr ppvBits, IntPtr hSection, int dwOffset)
+        public static SafeHBITMAP CreateDIBSection(SafeDC? hdc, ref BITMAPINFO bitmapInfo, out IntPtr ppvBits, IntPtr hSection, int dwOffset)
         {
             const int DIB_RGB_COLORS = 0;
             SafeHBITMAP? hBitmap = null;

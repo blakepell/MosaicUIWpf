@@ -236,7 +236,7 @@ namespace AvalonDock.Controls
             _currentHost = null;
         }
 
-        private void BringWindowToTop2(Window window)
+        private void BringWindowToTop2(Window? window)
         {
             if (window == null)
             {

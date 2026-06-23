@@ -15,7 +15,7 @@ namespace AvalonDock.Commands
         /// Initializes a new instance of the <see cref="WeakAction"/> class.
         /// </summary>
         /// <param name="action">The action.</param>
-        public WeakAction(Action action)
+        public WeakAction(Action? action)
             : this(action?.Target, action)
         {
         }
@@ -30,7 +30,7 @@ namespace AvalonDock.Commands
             "CA1062:Validate arguments of public methods",
             MessageId = "1",
             Justification = "Method should fail with an exception if action is null.")]
-        public WeakAction(object target, Action action)
+        public WeakAction(object? target, Action action)
         {
             if (action.Method.IsStatic)
             {

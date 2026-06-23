@@ -133,7 +133,7 @@ namespace AvalonDock.Themes
             return new VsThemeColorPalette(colors);
         }
 
-        private static Color? ParseColorElement(XElement element)
+        private static Color? ParseColorElement(XElement? element)
         {
             if (element == null)
             {

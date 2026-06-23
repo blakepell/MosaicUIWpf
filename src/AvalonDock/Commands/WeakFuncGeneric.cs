@@ -16,7 +16,7 @@ namespace AvalonDock.Commands
         /// Initializes a new instance of the <see cref="WeakFunc{T, TResult}"/> class.
         /// </summary>
         /// <param name="func">The func.</param>
-        public WeakFunc(Func<T, TResult> func)
+        public WeakFunc(Func<T, TResult>? func)
             : this(func?.Target, func)
         {
         }
@@ -31,7 +31,7 @@ namespace AvalonDock.Commands
             "CA1062:Validate arguments of public methods",
             MessageId = "1",
             Justification = "Method should fail with an exception if func is null.")]
-        public WeakFunc(object target, Func<T, TResult> func)
+        public WeakFunc(object? target, Func<T, TResult> func)
         {
             if (func.Method.IsStatic)
             {

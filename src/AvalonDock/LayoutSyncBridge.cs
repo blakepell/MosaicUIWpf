@@ -455,7 +455,7 @@ namespace AvalonDock
             }
         }
 
-        private void FindAndSetActiveDockable(object content)
+        private void FindAndSetActiveDockable(object? content)
         {
             if (content == null)
             {
@@ -577,13 +577,13 @@ namespace AvalonDock
             CollectDockables(_rootDock);
         }
 
-        private static bool ContainsReference<T>(IEnumerable<T> items, object item)
+        private static bool ContainsReference<T>(IEnumerable<T>? items, object item)
             where T : class
         {
             return items != null && items.Any(candidate => ReferenceEquals(candidate, item));
         }
 
-        private static bool RemoveReference<T>(IList<T> items, object item)
+        private static bool RemoveReference<T>(IList<T>? items, object item)
             where T : class
         {
             if (items == null)
