@@ -126,8 +126,6 @@
         Opacity="0.35"
         Color="{DynamicResource {x:Static themes:MosaicTheme.AccentColor}}" />
 
-    <SolidColorBrush x:Key="{x:Static avalonDockControls:ToggleDockButton.ForegroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
-
     <SolidColorBrush x:Key="{x:Static menuKeys:MenuKeys.MenuSeparatorBorderBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorColor}}" />
     <SolidColorBrush x:Key="{x:Static menuKeys:MenuKeys.SubmenuItemBackgroundKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static menuKeys:MenuKeys.CheckMarkBackgroundBrushKey}" Color="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundColor}}" />

@@ -7,9 +7,8 @@ namespace AvalonDock
 	/// Defines the strategy for manipulating the layout tree when docking, undocking,
 	/// and rearranging anchorable panes within a <see cref="LayoutRoot"/>.
 	/// <para>
-	/// Both the conventional <see cref="DockingManager"/> and <see cref="ToggleDockingManager"/>
-	/// can use an <see cref="ILayoutEngine"/> to perform layout-tree operations without
-	/// depending on the WPF visual tree.
+	/// The <see cref="DockingManager"/> uses an <see cref="ILayoutEngine"/> to perform
+	/// layout-tree operations without depending on the WPF visual tree.
 	/// </para>
 	/// </summary>
 	public interface ILayoutEngine

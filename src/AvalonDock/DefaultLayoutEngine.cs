@@ -321,7 +321,7 @@ namespace AvalonDock
 
                     foreach (var bp in bottomPanes)
                     {
-                        bp.Parent.RemoveChild(bp);
+                        bp.Parent?.RemoveChild(bp);
                     }
 
                     vPanel.Children.Add(rootPanel);
@@ -407,12 +407,12 @@ namespace AvalonDock
 
                     foreach (var lp in leftPanes)
                     {
-                        lp.Parent.RemoveChild(lp);
+                        lp.Parent?.RemoveChild(lp);
                     }
 
                     foreach (var rp in rightPanes)
                     {
-                        rp.Parent.RemoveChild(rp);
+                        rp.Parent?.RemoveChild(rp);
                     }
 
                     foreach (var lp in leftPanes)

@@ -500,10 +500,12 @@ namespace AvalonDock.Serialization
 
         private LayoutAnchorablePane MapDtoToAnchorablePane(LayoutAnchorablePaneDto dto)
         {
-            var pane = new LayoutAnchorablePane
+            var pane = new LayoutAnchorablePane();
+            if (dto.Name != null)
             {
-                Name = dto.Name,
-            };
+                pane.Name = dto.Name;
+            }
+
             ((ILayoutPaneSerializable)pane).Id = dto.Id;
             ApplyPositionableFromDto(dto, pane);
 
@@ -522,9 +524,13 @@ namespace AvalonDock.Serialization
         {
             var doc = new LayoutDocument
             {
-                Description = dto.Description,
                 CanMove = dto.CanMove,
             };
+            if (dto.Description != null)
+            {
+                doc.Description = dto.Description;
+            }
+
             ApplyContentFromDto(dto, doc);
             return doc;
         }
@@ -586,12 +592,12 @@ namespace AvalonDock.Serialization
         {
             if (dto.DockWidth != null)
             {
-                target.DockWidth = (GridLength)GridLengthConverter.ConvertFromInvariantString(dto.DockWidth);
+                target.DockWidth = (GridLength)GridLengthConverter.ConvertFromInvariantString(dto.DockWidth)!;
             }
 
             if (dto.DockHeight != null)
             {
-                target.DockHeight = (GridLength)GridLengthConverter.ConvertFromInvariantString(dto.DockHeight);
+                target.DockHeight = (GridLength)GridLengthConverter.ConvertFromInvariantString(dto.DockHeight)!;
             }
 
             target.DockMinWidth = dto.DockMinWidth;
@@ -665,7 +671,7 @@ namespace AvalonDock.Serialization
             }
         }
 
-        private static Orientation ParseOrientation(string value)
+        private static Orientation ParseOrientation(string? value)
         {
             if (string.IsNullOrEmpty(value))
             {

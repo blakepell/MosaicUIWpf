@@ -376,73 +376,6 @@ namespace AvalonDock
         /// <summary>Handles changes to the <see cref="Layout"/> property.</summary>
         private static void OnLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((DockingManager)d).OnLayoutChanged(e.OldValue as LayoutRoot, e.NewValue as LayoutRoot);
 
-        /// <summary><see cref="DockLayout"/> dependency property.</summary>
-        public static readonly DependencyProperty DockLayoutProperty = DependencyProperty.Register(
-            nameof(DockLayout),
-            typeof(IRootDock),
-            typeof(DockingManager),
-            new FrameworkPropertyMetadata(null, OnDockLayoutChanged));
-
-        /// <summary>
-        /// Gets or sets the MVVM layout model. When set, the docking manager
-        /// syncs this ViewModel tree with the internal WPF layout automatically.
-        /// If null, the docking manager operates in classic (v4.x) mode.
-        /// </summary>
-        [Bindable(true)]
-        [Description("Gets or sets the MVVM layout model for ViewModel-driven docking.")]
-        [Category("Layout")]
-        [CLSCompliant(false)]
-        public IRootDock? DockLayout
-        {
-            get => (IRootDock)GetValue(DockLayoutProperty);
-            set => SetValue(DockLayoutProperty, value);
-        }
-
-        /// <summary>Synchronizes the MVVM dock layout with the AvalonDock layout.</summary>
-        private LayoutSyncBridge _syncBridge;
-
-        /// <summary>Tracks the alignment strategy installed by the base DockingManager so it can be cleaned up.</summary>
-        private ILayoutUpdateStrategy _installedAlignmentStrategy;
-
-        private static void OnDockLayoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((DockingManager)d).OnDockLayoutChanged(e.OldValue as IRootDock, e.NewValue as IRootDock);
-        }
-
-        /// <summary>
-        /// Called when the <see cref="DockLayout"/> property changes.
-        /// Creates/destroys the <see cref="LayoutSyncBridge"/> and installs a
-        /// <see cref="DockAlignmentStrategy"/> when no custom strategy is set.
-        /// </summary>
-        /// <param name="oldValue">The previous root dock, or null.</param>
-        /// <param name="newValue">The new root dock, or null.</param>
-        protected virtual void OnDockLayoutChanged(IRootDock oldValue, IRootDock? newValue)
-        {
-            _syncBridge?.Detach();
-            _syncBridge = null;
-
-            if (newValue != null)
-            {
-                _syncBridge = new LayoutSyncBridge(this, newValue);
-                _syncBridge.Attach();
-
-                if (LayoutUpdateStrategy == null)
-                {
-                    _installedAlignmentStrategy = new DockAlignmentStrategy(_syncBridge.ContentToSideMap);
-                    LayoutUpdateStrategy = _installedAlignmentStrategy;
-                }
-            }
-            else
-            {
-                if (_installedAlignmentStrategy != null && LayoutUpdateStrategy == _installedAlignmentStrategy)
-                {
-                    LayoutUpdateStrategy = null;
-                }
-
-                _installedAlignmentStrategy = null;
-            }
-        }
-
         /// <summary>Provides derived classes an opportunity to handle changes to the <see cref="Layout"/> property.</summary>
         /// <param name="oldLayout">The previous layout.</param>
         /// <param name="newLayout">The new layout.</param>
@@ -2835,7 +2768,7 @@ namespace AvalonDock
             //    throw new InvalidOperationException("Unable to set the DocumentsSource property if LayoutDocument objects are already present in the model");
             var documentsImported = new HashSet<object>(
                 layout.Descendents().OfType<LayoutDocument>().Select(d => d.Content),
-                ReferenceEqualityComparer.Default);
+                ReferenceEqualityComparer.Instance);
             var listOfDocumentsToImport = documentsSource
                 .OfType<object>()
                 .Where(document => !documentsImported.Contains(document))
@@ -3015,7 +2948,7 @@ namespace AvalonDock
             where TLayoutType : LayoutContent
         {
             // Find remaining items in source
-            var itemsThatRemain = new HashSet<object>(source.Cast<object>(), ReferenceEqualityComparer.Default);
+            var itemsThatRemain = new HashSet<object>(source.Cast<object>(), ReferenceEqualityComparer.Instance);
             // Find the removed items that are not in the remaining collection
             return Layout.Descendents()
                          .OfType<TLayoutType>()
@@ -3035,7 +2968,7 @@ namespace AvalonDock
                 return;
             }
 
-            var sourceItems = new HashSet<object>(documentsSource.OfType<object>(), ReferenceEqualityComparer.Default);
+            var sourceItems = new HashSet<object>(documentsSource.OfType<object>(), ReferenceEqualityComparer.Instance);
             var documentsToRemove = layout.Descendents().OfType<LayoutDocument>()
                 .Where(d => sourceItems.Contains(d.Content)).ToArray();
 
@@ -3096,7 +3029,7 @@ namespace AvalonDock
             //    throw new InvalidOperationException("Unable to set the AnchorablesSource property if LayoutAnchorable objects are already present in the model");
             var anchorablesImported = new HashSet<object>(
                 layout.Descendents().OfType<LayoutAnchorable>().Select(d => d.Content),
-                ReferenceEqualityComparer.Default);
+                ReferenceEqualityComparer.Instance);
             var listOfAnchorablesToImport = anchorablesSource
                 .OfType<object>()
                 .Where(anchorable => !anchorablesImported.Contains(anchorable))
@@ -3298,7 +3231,7 @@ namespace AvalonDock
                 return;
             }
 
-            var sourceItems = new HashSet<object>(anchorablesSource.OfType<object>(), ReferenceEqualityComparer.Default);
+            var sourceItems = new HashSet<object>(anchorablesSource.OfType<object>(), ReferenceEqualityComparer.Instance);
             var anchorablesToRemove = layout.Descendents().OfType<LayoutAnchorable>()
                 .Where(d => sourceItems.Contains(d.Content)).ToArray();
 

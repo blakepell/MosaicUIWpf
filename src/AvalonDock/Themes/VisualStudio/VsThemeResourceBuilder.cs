@@ -113,9 +113,6 @@ namespace AvalonDock.Themes
             SetBrush(dict, ResourceKeys.ToolWindowCaptionInactiveGrip, palette.GetBackgroundOrDefault("TitleBarDragHandle", background));
             SetBrush(dict, ResourceKeys.ToolWindowCaptionInactiveText, palette.GetBackgroundOrDefault("TitleBarInactiveText", dimText));
 
-            // ToggleDockButton foreground
-            SetBrush(dict, ToggleDockButton.ForegroundBrushKey, dimText);
-
             // Tool Window : Caption : Buttons
             SetBrush(dict, ResourceKeys.ToolWindowCaptionButtonActiveGlyph, palette.GetBackgroundOrDefault("ToolWindowButtonActiveGlyph", inactiveText));
             SetBrush(dict, ResourceKeys.ToolWindowCaptionButtonActiveHoveredBackground, palette.GetBackgroundOrDefault("ToolWindowButtonHoverActive", panelBorder));
