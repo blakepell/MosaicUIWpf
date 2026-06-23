@@ -4047,28 +4047,6 @@ namespace AvalonDock.Controls.Shell.Standard
         APPIDINFOLINK = 0x00000007, // indicates the data type is a pointer to a SHARDAPPIDINFOLINK structure
     }
 
-    /// <summary>
-    /// Native SLGP enumeration.
-    /// </summary>
-    [Flags]
-    internal enum SLGP
-    {
-        /// <summary>
-        /// The SHORTPATH value.
-        /// </summary>
-        SHORTPATH = 0x1,
-
-        /// <summary>
-        /// The UNCPRIORITY value.
-        /// </summary>
-        UNCPRIORITY = 0x2,
-
-        /// <summary>
-        /// The RAWPATH value.
-        /// </summary>
-        RAWPATH = 0x4
-    }
-
     /// <summary>Shell_NotifyIcon flags.  NIF_*</summary>
     [Flags]
     internal enum NIF : uint
@@ -7499,24 +7477,11 @@ namespace AvalonDock.Controls.Shell.Standard
         [DllImport("shell32.dll", EntryPoint = "SHAddToRecentDocs")]
         private static extern void _SHAddToRecentDocs_String(SHARD uFlags, [MarshalAs(UnmanagedType.LPWStr)] string pv);
 
-        // This overload is required.  There's a cast in the Shell code that causes the wrong vtbl to be used
-        // if we let the marshaller convert the parameter to an IUnknown.
-        [DllImport("shell32.dll", EntryPoint = "SHAddToRecentDocs")]
-        private static extern void _SHAddToRecentDocs_ShellLink(SHARD uFlags, IShellLinkW pv);
-
         /// <summary>
         /// Performs the SHAddToRecentDocs operation.
         /// </summary>
         /// <param name="path">The path parameter.</param>
         public static void SHAddToRecentDocs(string path) => _SHAddToRecentDocs_String(SHARD.PATHW, path);
-
-        // Win7 only.
-
-        /// <summary>
-        /// Performs the SHAddToRecentDocs operation.
-        /// </summary>
-        /// <param name="shellLink">The shellLink parameter.</param>
-        public static void SHAddToRecentDocs(IShellLinkW shellLink) => _SHAddToRecentDocs_ShellLink(SHARD.LINK, shellLink);
 
         // #define DWM_SIT_DISPLAYFRAME    0x00000001  // Display a window frame around the provided bitmap
         [DllImport("dwmapi.dll", EntryPoint = "DwmGetCompositionTimingInfo")]
