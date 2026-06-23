@@ -38,6 +38,7 @@
                     Text="1. Drop files to rename" />
                 <controls:FileDropper
                     Height="120"
+                    CornerRadius="0"
                     FileDrop="FileDropper_OnFileDrop"
                     Prompt="Drop one or more files here" />
             </StackPanel>
@@ -67,7 +68,7 @@
                     Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
                     BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                     BorderThickness="1"
-                    CornerRadius="6">
+                    CornerRadius="0">
                     <ListBox
                         Height="125"
                         Background="Transparent"
