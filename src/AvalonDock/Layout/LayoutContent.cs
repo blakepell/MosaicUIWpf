@@ -533,6 +533,33 @@ namespace AvalonDock.Layout
             }
         }
 
+        private Brush? _tabBackground;
+
+        /// <summary>
+        /// Gets or sets an optional brush used to color this content's tab header.
+        /// When <see langword="null"/> the themed default tab background is used.
+        /// </summary>
+        public Brush? TabBackground
+        {
+            get => _tabBackground;
+            set
+            {
+                if (ReferenceEquals(value, _tabBackground))
+                {
+                    return;
+                }
+
+                _tabBackground = value;
+                RaisePropertyChanged(nameof(TabBackground));
+                RaisePropertyChanged(nameof(HasTabBackground));
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a custom <see cref="TabBackground"/> has been assigned.
+        /// </summary>
+        public bool HasTabBackground => _tabBackground != null;
+
         // BD: 14.08.2020 added _canCloseDefault to properly implement inverting _canClose default value in inheritors (e.g. LayoutAnchorable)
         //     Thus CanClose property will be serialized only when not equal to its default for given class
         //     With previous code it was not possible to serialize CanClose if set to true for LayoutAnchorable instance

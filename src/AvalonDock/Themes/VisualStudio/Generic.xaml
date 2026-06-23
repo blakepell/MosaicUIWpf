@@ -231,6 +231,12 @@
                                         <Setter Property="Panel.ZIndex" Value="1" />
                                     </Trigger>
 
+                                    <!--  Document Well : Tab / Custom tab color (LayoutContent.TabBackground)  -->
+                                    <DataTrigger Binding="{Binding HasTabBackground}" Value="True">
+                                        <Setter TargetName="Bd" Property="Background" Value="{Binding TabBackground}" />
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{Binding TabBackground}" />
+                                    </DataTrigger>
+
                                     <!--  Document Well : Tab / Selected, active  -->
                                     <DataTrigger Binding="{Binding IsActive}" Value="True">
                                         <Setter TargetName="Bd" Property="Opacity" Value="1" />
