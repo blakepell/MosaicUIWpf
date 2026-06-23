@@ -450,9 +450,6 @@ namespace AvalonDock
                             fw.Hide();
                         }
                     }
-
-                    // fw.Owner = Window.GetWindow(this);
-                    // fw.SetParentToMainWindowOf(this);
                 }
 
                 // In order to prevent resource leaks, unsubscribe from SizeChanged event for case when user call loading of Layout Settigns.
