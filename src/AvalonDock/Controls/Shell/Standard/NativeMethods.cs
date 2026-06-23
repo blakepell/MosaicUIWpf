@@ -19,8 +19,6 @@ namespace AvalonDock.Controls.Shell.Standard
 {
     // Some COM interfaces and Win32 structures are already declared in the framework.
     // Interesting ones to remember in System.Runtime.InteropServices.ComTypes are:
-    using IStream = IStream;
-
     /// <summary>
     /// Native Win32Value class.
     /// </summary>
@@ -120,89 +118,6 @@ namespace AvalonDock.Controls.Shell.Standard
         /// The COMPLEXREGION value.
         /// </summary>
         COMPLEXREGION = 3,
-    }
-
-    /// <summary>
-    /// DATAOBJ_GET_ITEM_FLAGS.  DOGIF_*.
-    /// </summary>
-    internal enum DOGIF
-    {
-        /// <summary>
-        /// The DEFAULT value.
-        /// </summary>
-        DEFAULT = 0x0000,
-
-        /// <summary>
-        /// The TRAVERSE_LINK value.
-        /// </summary>
-        TRAVERSE_LINK = 0x0001,    // if the item is a link get the target
-
-        /// <summary>
-        /// The NO_HDROP value.
-        /// </summary>
-        NO_HDROP = 0x0002,    // don't fallback and use CF_HDROP clipboard format
-
-        /// <summary>
-        /// The NO_URL value.
-        /// </summary>
-        NO_URL = 0x0004,    // don't fallback and use URL clipboard format
-
-        /// <summary>
-        /// The ONLY_IF_ONE value.
-        /// </summary>
-        ONLY_IF_ONE = 0x0008,    // only return the item if there is one item in the array
-    }
-
-    /// <summary>
-    /// Native DWM_SIT enumeration.
-    /// </summary>
-    internal enum DWM_SIT
-    {
-        /// <summary>
-        /// The None value.
-        /// </summary>
-        None,
-
-        /// <summary>
-        /// The DISPLAYFRAME value.
-        /// </summary>
-        DISPLAYFRAME = 1,
-    }
-
-    /// <summary>
-    /// Native ErrorModes enumeration.
-    /// </summary>
-    [Flags]
-    internal enum ErrorModes
-    {
-        /// <summary>Use the system default, which is to display all error dialog boxes.</summary>
-        Default = 0x0,
-
-        /// <summary>
-        /// The system does not display the critical-error-handler message box.
-        /// Instead, the system sends the error to the calling process.
-        /// </summary>
-        FailCriticalErrors = 0x1,
-
-        /// <summary>
-        /// 64-bit Windows:  The system automatically fixes memory alignment faults and makes them
-        /// invisible to the application. It does this for the calling process and any descendant processes.
-        /// After this value is set for a process, subsequent attempts to clear the value are ignored.
-        /// </summary>
-        NoGpFaultErrorBox = 0x2,
-
-        /// <summary>
-        /// The system does not display the general-protection-fault message box.
-        /// This flag should only be set by debugging applications that handle general
-        /// protection (GP) faults themselves with an exception handler.
-        /// </summary>
-        NoAlignmentFaultExcept = 0x4,
-
-        /// <summary>
-        /// The system does not display a message box when it fails to find a file.
-        /// Instead, the error is returned to the calling process.
-        /// </summary>
-        NoOpenFileErrorBox = 0x8000
     }
 
     /// <summary>
@@ -354,17 +269,6 @@ namespace AvalonDock.Controls.Shell.Standard
         /// The HELP value.
         /// </summary>
         HELP = 21
-    }
-
-    /// <summary>
-    /// GetClassLongPtr values, GCLP_*
-    /// </summary>
-    internal enum GCLP
-    {
-        /// <summary>
-        /// The HBRBACKGROUND value.
-        /// </summary>
-        HBRBACKGROUND = -10,
     }
 
     /// <summary>
@@ -3365,57 +3269,6 @@ namespace AvalonDock.Controls.Shell.Standard
         DISABLED = 2,
     }
 
-    /// <summary>Specifies the type of visual style attribute to set on a window.</summary>
-    internal enum WINDOWTHEMEATTRIBUTETYPE : uint
-    {
-        /// <summary>Non-client area window attributes will be set.</summary>
-        WTA_NONCLIENT = 1,
-    }
-
-    /// <summary>
-    /// DWMFLIP3DWINDOWPOLICY.  DWMFLIP3D_*
-    /// </summary>
-    internal enum DWMFLIP3D
-    {
-        /// <summary>
-        /// The DEFAULT value.
-        /// </summary>
-        DEFAULT,
-
-        /// <summary>
-        /// The EXCLUDEBELOW value.
-        /// </summary>
-        EXCLUDEBELOW,
-
-        /// <summary>
-        /// The EXCLUDEABOVE value.
-        /// </summary>
-        EXCLUDEABOVE,
-        // LAST
-    }
-
-    /// <summary>
-    /// DWMNCRENDERINGPOLICY. DWMNCRP_*
-    /// </summary>
-    internal enum DWMNCRP
-    {
-        /// <summary>
-        /// The USEWINDOWSTYLE value.
-        /// </summary>
-        USEWINDOWSTYLE,
-
-        /// <summary>
-        /// The DISABLED value.
-        /// </summary>
-        DISABLED,
-
-        /// <summary>
-        /// The ENABLED value.
-        /// </summary>
-        ENABLED,
-        // LAST
-    }
-
     /// <summary>
     /// DWMWINDOWATTRIBUTE.  DWMWA_*
     /// </summary>
@@ -3898,51 +3751,6 @@ namespace AvalonDock.Controls.Shell.Standard
     }
 
     /// <summary>
-    /// Native MOUSEEVENTF enumeration.
-    /// </summary>
-    internal enum MOUSEEVENTF
-    {
-        // mouse event constants
-
-        /// <summary>
-        /// The LEFTDOWN value.
-        /// </summary>
-        LEFTDOWN = 2,
-
-        /// <summary>
-        /// The LEFTUP value.
-        /// </summary>
-        LEFTUP = 4
-    }
-
-    /// <summary>
-    /// MSGFLT_*.  New in Vista.  Realiased in Windows 7.
-    /// </summary>
-    internal enum MSGFLT
-    {
-        // Win7 versions of this enum:
-
-        /// <summary>
-        /// The RESET value.
-        /// </summary>
-        RESET = 0,
-
-        /// <summary>
-        /// The ALLOW value.
-        /// </summary>
-        ALLOW = 1,
-
-        /// <summary>
-        /// The DISALLOW value.
-        /// </summary>
-        DISALLOW = 2,
-
-        // Vista versions of this enum:
-        // ADD = 1,
-        // REMOVE = 2,
-    }
-
-    /// <summary>
     /// Native MSGFLTINFO enumeration.
     /// </summary>
     internal enum MSGFLTINFO
@@ -3966,85 +3774,6 @@ namespace AvalonDock.Controls.Shell.Standard
         /// The ALLOWED_HIGHER value.
         /// </summary>
         ALLOWED_HIGHER = 3,
-    }
-
-    /// <summary>
-    /// Native INPUT_TYPE enumeration.
-    /// </summary>
-    internal enum INPUT_TYPE : uint
-    {
-        /// <summary>
-        /// The MOUSE value.
-        /// </summary>
-        MOUSE = 0,
-    }
-
-    /// <summary>Shell_NotifyIcon messages.  NIM_*</summary>
-    internal enum NIM : uint
-    {
-        /// <summary>
-        /// The ADD value.
-        /// </summary>
-        ADD = 0,
-
-        /// <summary>
-        /// The MODIFY value.
-        /// </summary>
-        MODIFY = 1,
-
-        /// <summary>
-        /// The DELETE value.
-        /// </summary>
-        DELETE = 2,
-
-        /// <summary>
-        /// The SETFOCUS value.
-        /// </summary>
-        SETFOCUS = 3,
-
-        /// <summary>
-        /// The SETVERSION value.
-        /// </summary>
-        SETVERSION = 4,
-    }
-
-    /// <summary>SHAddToRecentDocuments flags.  SHARD_*</summary>
-    internal enum SHARD
-    {
-        /// <summary>
-        /// The PIDL value.
-        /// </summary>
-        PIDL = 0x00000001,
-
-        /// <summary>
-        /// The PATHA value.
-        /// </summary>
-        PATHA = 0x00000002,
-
-        /// <summary>
-        /// The PATHW value.
-        /// </summary>
-        PATHW = 0x00000003,
-
-        /// <summary>
-        /// The APPIDINFO value.
-        /// </summary>
-        APPIDINFO = 0x00000004, // indicates the data type is a pointer to a SHARDAPPIDINFO structure
-
-        /// <summary>
-        /// The APPIDINFOIDLIST value.
-        /// </summary>
-        APPIDINFOIDLIST = 0x00000005, // indicates the data type is a pointer to a SHARDAPPIDINFOIDLIST structure
-
-        /// <summary>
-        /// The LINK value.
-        /// </summary>
-        LINK = 0x00000006, // indicates the data type is a pointer to an IShellLink instance
-
-        /// <summary>
-        /// The APPIDINFOLINK value.
-        /// </summary>
-        APPIDINFOLINK = 0x00000007, // indicates the data type is a pointer to a SHARDAPPIDINFOLINK structure
     }
 
     /// <summary>Shell_NotifyIcon flags.  NIF_*</summary>
@@ -4103,47 +3832,6 @@ namespace AvalonDock.Controls.Shell.Standard
     }
 
     /// <summary>
-    /// Shell_NotifyIcon info flags.  NIIF_*
-    /// </summary>
-    internal enum NIIF
-    {
-        /// <summary>
-        /// The NONE value.
-        /// </summary>
-        NONE = 0x00000000,
-
-        /// <summary>
-        /// The INFO value.
-        /// </summary>
-        INFO = 0x00000001,
-
-        /// <summary>
-        /// The WARNING value.
-        /// </summary>
-        WARNING = 0x00000002,
-
-        /// <summary>
-        /// The ERROR value.
-        /// </summary>
-        ERROR = 0x00000003,
-
-        /// <summary>XP SP2 and later.</summary>
-        USER = 0x00000004,
-
-        /// <summary>XP and later.</summary>
-        NOSOUND = 0x00000010,
-
-        /// <summary>Vista and later.</summary>
-        LARGE_ICON = 0x00000020,
-
-        /// <summary>Windows 7 and later</summary>
-        NIIF_RESPECT_QUIET_TIME = 0x00000080,
-
-        /// <summary>XP and later.  Native version called NIIF_ICON_MASK.</summary>
-        XP_ICON_MASK = 0x0000000F,
-    }
-
-    /// <summary>
     /// AC_*
     /// </summary>
     internal enum AC : byte
@@ -4157,27 +3845,6 @@ namespace AvalonDock.Controls.Shell.Standard
         /// The SRC_ALPHA value.
         /// </summary>
         SRC_ALPHA = 1,
-    }
-
-    /// <summary>
-    /// Native ULW enumeration.
-    /// </summary>
-    internal enum ULW
-    {
-        /// <summary>
-        /// The ALPHA value.
-        /// </summary>
-        ALPHA = 2,
-
-        /// <summary>
-        /// The COLORKEY value.
-        /// </summary>
-        COLORKEY = 1,
-
-        /// <summary>
-        /// The OPAQUE value.
-        /// </summary>
-        OPAQUE = 4,
     }
 
     /// <summary>
@@ -6202,8 +5869,6 @@ namespace AvalonDock.Controls.Shell.Standard
     /// <returns>The result.</returns>
     internal delegate IntPtr MessageHandler(WM uMsg, IntPtr wParam, IntPtr lParam, out bool handled);
 
-    // Some native methods are shimmed through public versions that handle converting failures into thrown exceptions.
-
     /// <summary>
     /// Native NativeMethods class.
     /// </summary>
@@ -6233,62 +5898,6 @@ namespace AvalonDock.Controls.Shell.Standard
             return lpRect;
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", EntryPoint = "ChangeWindowMessageFilter", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _ChangeWindowMessageFilter(WM message, MSGFLT dwFlag);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", EntryPoint = "ChangeWindowMessageFilterEx", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, [In, Out, Optional] ref CHANGEFILTERSTRUCT pChangeFilterStruct);
-
-        // Note that processes at or below SECURITY_MANDATORY_LOW_RID are not allowed to change the message filter.
-        // If those processes call this function, it will fail and generate the extended error code, ERROR_ACCESS_DENIED.
-
-        /// <summary>
-        /// Performs the ChangeWindowMessageFilterEx operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="message">The message parameter.</param>
-        /// <param name="action">The action parameter.</param>
-        /// <param name="filterInfo">The filterInfo parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static HRESULT ChangeWindowMessageFilterEx(IntPtr hwnd, WM message, MSGFLT action, out MSGFLTINFO filterInfo)
-        {
-            filterInfo = MSGFLTINFO.NONE;
-
-            bool ret;
-
-            // This origins of this API were added for Vista.  The Ex version was added for Windows 7.
-            // If we're not on either, then this message filter isolation doesn't exist.
-            if (!Utility.IsOSVistaOrNewer)
-            {
-                return HRESULT.S_FALSE;
-            }
-
-            // If we're on Vista rather than Win7 then we can't use the Ex version of this function.
-            // The Ex version is preferred if possible because this results in process-wide modifications of the filter
-            // and is deprecated as of Win7.
-            if (!Utility.IsOSWindows7OrNewer)
-            {
-                // Note that the Win7 MSGFLT_ALLOW/DISALLOW enum values map to the Vista MSGFLT_ADD/REMOVE
-                ret = _ChangeWindowMessageFilter(message, action);
-                return !ret ? (HRESULT)Win32Error.GetLastError() : HRESULT.S_OK;
-            }
-
-            var filterstruct = new CHANGEFILTERSTRUCT { cbSize = (uint)Marshal.SizeOf(typeof(CHANGEFILTERSTRUCT)) };
-            ret = _ChangeWindowMessageFilterEx(hwnd, message, action, ref filterstruct);
-            if (!ret)
-            {
-                return (HRESULT)Win32Error.GetLastError();
-            }
-
-            filterInfo = filterstruct.ExtStatus;
-            return HRESULT.S_OK;
-        }
-
         /// <summary>
         /// Native method wrapper for CombineRgn.
         /// </summary>
@@ -6300,83 +5909,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("gdi32.dll")]
         public static extern CombineRgnResult CombineRgn(IntPtr hrgnDest, IntPtr hrgnSrc1, IntPtr hrgnSrc2, RGN fnCombineMode);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll", EntryPoint = "CommandLineToArgvW", CharSet = CharSet.Unicode)]
-        private static extern IntPtr _CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string cmdLine, out int numArgs);
-
-        /// <summary>
-        /// Performs the CommandLineToArgvW operation.
-        /// </summary>
-        /// <param name="cmdLine">The cmdLine parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static string[] CommandLineToArgvW(string cmdLine)
-        {
-            var argv = IntPtr.Zero;
-            try
-            {
-                argv = _CommandLineToArgvW(cmdLine, out var numArgs);
-                if (argv == IntPtr.Zero)
-                {
-                    throw new Win32Exception();
-                }
-
-                var result = new string[numArgs];
-                for (var i = 0; i < numArgs; i++)
-                {
-                    var currArg = Marshal.ReadIntPtr(argv, i * Marshal.SizeOf(typeof(IntPtr)));
-                    result[i] = Marshal.PtrToStringUni(currArg);
-                }
-
-                return result;
-            }
-            finally
-            {
-                var p = _LocalFree(argv);
-                // Otherwise LocalFree failed.
-                Assert.AreEqual(IntPtr.Zero, p);
-            }
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdi32.dll", EntryPoint = "CreateDIBSection", SetLastError = true)]
-        private static extern SafeHBITMAP _CreateDIBSection(SafeDC hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdi32.dll", EntryPoint = "CreateDIBSection", SetLastError = true)]
-        private static extern SafeHBITMAP _CreateDIBSectionIntPtr(IntPtr hdc, [In] ref BITMAPINFO bitmapInfo, int iUsage, [Out] out IntPtr ppvBits, IntPtr hSection, int dwOffset);
-
-        /// <summary>
-        /// Performs the CreateDIBSection operation.
-        /// </summary>
-        /// <param name="hdc">The hdc parameter.</param>
-        /// <param name="bitmapInfo">The bitmapInfo parameter.</param>
-        /// <param name="ppvBits">The ppvBits parameter.</param>
-        /// <param name="hSection">The hSection parameter.</param>
-        /// <param name="dwOffset">The dwOffset parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static SafeHBITMAP CreateDIBSection(SafeDC? hdc, ref BITMAPINFO bitmapInfo, out IntPtr ppvBits, IntPtr hSection, int dwOffset)
-        {
-            const int DIB_RGB_COLORS = 0;
-            SafeHBITMAP? hBitmap = null;
-            if (hdc == null)
-            {
-                hBitmap = _CreateDIBSectionIntPtr(IntPtr.Zero, ref bitmapInfo, DIB_RGB_COLORS, out ppvBits, hSection, dwOffset);
-            }
-            else
-            {
-                hBitmap = _CreateDIBSection(hdc, ref bitmapInfo, DIB_RGB_COLORS, out ppvBits, hSection, dwOffset);
-            }
-
-            if (hBitmap.IsInvalid)
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return hBitmap;
-        }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn", SetLastError = true)]
@@ -6448,15 +5980,6 @@ namespace AvalonDock.Controls.Shell.Standard
 
             return ret;
         }
-
-        /// <summary>
-        /// Native method wrapper for CreateSolidBrush.
-        /// </summary>
-        /// <param name="crColor">The crColor parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdi32.dll")]
-        public static extern IntPtr CreateSolidBrush(int crColor);
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode, EntryPoint = "CreateWindowExW")]
@@ -6535,16 +6058,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [DllImport("gdi32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteObject(IntPtr hObject);
-
-        /// <summary>
-        /// Native method wrapper for DestroyIcon.
-        /// </summary>
-        /// <param name="handle">The handle parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DestroyIcon(IntPtr handle);
 
         /// <summary>
         /// Native method wrapper for DestroyWindow.
@@ -6645,32 +6158,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [DllImport("dwmapi.dll", EntryPoint = "DwmSetWindowAttribute")]
         private static extern void _DwmSetWindowAttribute(IntPtr hwnd, DWMWA dwAttribute, ref int pvAttribute, int cbAttribute);
 
-        /// <summary>
-        /// Performs the DwmSetWindowAttributeFlip3DPolicy operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="flip3dPolicy">The flip3dPolicy parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void DwmSetWindowAttributeFlip3DPolicy(IntPtr hwnd, DWMFLIP3D flip3dPolicy)
-        {
-            Assert.IsTrue(Utility.IsOSVistaOrNewer);
-            var dwPolicy = (int)flip3dPolicy;
-            _DwmSetWindowAttribute(hwnd, DWMWA.FLIP3D_POLICY, ref dwPolicy, sizeof(int));
-        }
-
-        /// <summary>
-        /// Performs the DwmSetWindowAttributeDisallowPeek operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="disallowPeek">The disallowPeek parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void DwmSetWindowAttributeDisallowPeek(IntPtr hwnd, bool disallowPeek)
-        {
-            Assert.IsTrue(Utility.IsOSWindows7OrNewer);
-            var dwDisallow = (int)(disallowPeek ? Win32Value.TRUE : Win32Value.FALSE);
-            _DwmSetWindowAttribute(hwnd, DWMWA.DISALLOW_PEEK, ref dwDisallow, sizeof(int));
-        }
-
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("user32.dll", EntryPoint = "EnableMenuItem")]
         private static extern int _EnableMenuItem(IntPtr hMenu, SC uIDEnableItem, MF uEnable);
@@ -6695,38 +6182,10 @@ namespace AvalonDock.Controls.Shell.Standard
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
 
-        /// <summary>
-        /// Performs the RemoveMenu operation.
-        /// </summary>
-        /// <param name="hMenu">The hMenu parameter.</param>
-        /// <param name="uPosition">The uPosition parameter.</param>
-        /// <param name="uFlags">The uFlags parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void RemoveMenu(IntPtr hMenu, SC uPosition, MF uFlags)
-        {
-            if (!_RemoveMenu(hMenu, (uint)uPosition, (uint)uFlags))
-            {
-                throw new Win32Exception();
-            }
-        }
-
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("user32.dll", EntryPoint = "DrawMenuBar", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _DrawMenuBar(IntPtr hWnd);
-
-        /// <summary>
-        /// Performs the DrawMenuBar operation.
-        /// </summary>
-        /// <param name="hWnd">The hWnd parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void DrawMenuBar(IntPtr hWnd)
-        {
-            if (!_DrawMenuBar(hWnd))
-            {
-                throw new Win32Exception();
-            }
-        }
 
         /// <summary>
         /// Native method wrapper for FindClose.
@@ -6738,52 +6197,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool FindClose(IntPtr handle);
-
-        // Not shimming this SetLastError=true function because callers want to evaluate the reason for failure.
-
-        /// <summary>
-        /// Native method wrapper for FindFirstFileW.
-        /// </summary>
-        /// <param name="lpFileName">The lpFileName parameter.</param>
-        /// <param name="lpFindFileData">The lpFindFileData parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern SafeFindHandle FindFirstFileW(string lpFileName, [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_DATAW lpFindFileData);
-
-        // Not shimming this SetLastError=true function because callers want to evaluate the reason for failure.
-
-        /// <summary>
-        /// Native method wrapper for FindNextFileW.
-        /// </summary>
-        /// <param name="hndFindFile">The hndFindFile parameter.</param>
-        /// <param name="lpFindFileData">The lpFindFileData parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool FindNextFileW(SafeFindHandle hndFindFile, [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_DATAW lpFindFileData);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", EntryPoint = "GetClientRect", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _GetClientRect(IntPtr hwnd, [Out] out RECT lpRect);
-
-        /// <summary>
-        /// Performs the GetClientRect operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static RECT GetClientRect(IntPtr hwnd)
-        {
-            if (!_GetClientRect(hwnd, out var rc))
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return rc;
-        }
 
         [DllImport("uxtheme.dll", EntryPoint = "GetCurrentThemeName", CharSet = CharSet.Unicode)]
         private static extern HRESULT _GetCurrentThemeName(
@@ -6827,15 +6240,6 @@ namespace AvalonDock.Controls.Shell.Standard
         public static extern bool IsThemeActive();
 
         /// <summary>
-        /// Performs the GetDC operation.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [Obsolete("Use SafeDC.GetDC instead.", true)]
-        public static void GetDC()
-        {
-        }
-
-        /// <summary>
         /// Native method wrapper for GetDeviceCaps.
         /// </summary>
         /// <param name="hdc">The hdc parameter.</param>
@@ -6848,36 +6252,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("kernel32.dll", EntryPoint = "GetModuleFileName", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int _GetModuleFileName(IntPtr hModule, StringBuilder lpFilename, int nSize);
-
-        /// <summary>
-        /// Performs the GetModuleFileName operation.
-        /// </summary>
-        /// <param name="hModule">The hModule parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static string GetModuleFileName(IntPtr hModule)
-        {
-            var buffer = new StringBuilder((int)Win32Value.MAX_PATH);
-            while (true)
-            {
-                var size = _GetModuleFileName(hModule, buffer, buffer.Capacity);
-                if (size == 0)
-                {
-                    HRESULT.ThrowLastError();
-                }
-
-                // GetModuleFileName returns nSize when it's truncated but does NOT set the last error.
-                // MSDN documentation says this has changed in Windows 2000+.
-                if (size == buffer.Capacity)
-                {
-                    // Enlarge the buffer and try again.
-                    buffer.EnsureCapacity(buffer.Capacity * 2);
-                    continue;
-                }
-
-                return buffer.ToString();
-            }
-        }
 
         [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern IntPtr _GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
@@ -6953,8 +6327,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [DllImport("user32.dll")]
         public static extern int GetSystemMetrics(SM nIndex);
 
-        // This is aliased as a macro in 32bit Windows.
-
         /// <summary>
         /// Performs the GetWindowLongPtr operation.
         /// </summary>
@@ -6973,29 +6345,6 @@ namespace AvalonDock.Controls.Shell.Standard
 
             return ret;
         }
-
-        /// <summary>
-        /// Sets attributes to control how visual styles are applied to a specified window.
-        /// </summary>
-        /// <param name="hwnd">
-        /// Handle to a window to apply changes to.
-        /// </param>
-        /// <param name="eAttribute">
-        /// Value of type WINDOWTHEMEATTRIBUTETYPE that specifies the type of attribute to set.
-        /// The value of this parameter determines the type of data that should be passed in the pvAttribute parameter.
-        /// Can be the following value:
-        /// <list>WTA_NONCLIENT (Specifies non-client related attributes).</list>
-        /// pvAttribute must be a pointer of type WTA_OPTIONS.
-        /// </param>
-        /// <param name="pvAttribute">
-        /// A pointer that specifies attributes to set. Type is determined by the value of the eAttribute value.
-        /// </param>
-        /// <param name="cbAttribute">
-        /// Specifies the size, in bytes, of the data pointed to by pvAttribute.
-        /// </param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("uxtheme.dll", PreserveSig = false)]
-        public static extern void SetWindowThemeAttribute([In] IntPtr hwnd, [In] WINDOWTHEMEATTRIBUTETYPE eAttribute, [In] ref WTA_OPTIONS pvAttribute, [In] uint cbAttribute);
 
         [SuppressMessage("Microsoft.Interoperability", "CA1400:PInvokeEntryPointsShouldExist")]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
@@ -7048,55 +6397,6 @@ namespace AvalonDock.Controls.Shell.Standard
 
             return rc;
         }
-
-        /// <summary>
-        /// Native method wrapper for GdipCreateBitmapFromStream.
-        /// </summary>
-        /// <param name="stream">The stream parameter.</param>
-        /// <param name="bitmap">The bitmap parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdiplus.dll")]
-        public static extern Status GdipCreateBitmapFromStream(IStream stream, out IntPtr bitmap);
-
-        /// <summary>
-        /// Native method wrapper for GdipCreateHBITMAPFromBitmap.
-        /// </summary>
-        /// <param name="bitmap">The bitmap parameter.</param>
-        /// <param name="hbmReturn">The hbmReturn parameter.</param>
-        /// <param name="background">The background parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdiplus.dll")]
-        public static extern Status GdipCreateHBITMAPFromBitmap(IntPtr bitmap, out IntPtr hbmReturn, int background);
-
-        /// <summary>
-        /// Native method wrapper for GdipCreateHICONFromBitmap.
-        /// </summary>
-        /// <param name="bitmap">The bitmap parameter.</param>
-        /// <param name="hbmReturn">The hbmReturn parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdiplus.dll")]
-        public static extern Status GdipCreateHICONFromBitmap(IntPtr bitmap, out IntPtr hbmReturn);
-
-        /// <summary>
-        /// Native method wrapper for GdipDisposeImage.
-        /// </summary>
-        /// <param name="image">The image parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdiplus.dll")]
-        public static extern Status GdipDisposeImage(IntPtr image);
-
-        /// <summary>
-        /// Native method wrapper for GdipImageForceValidation.
-        /// </summary>
-        /// <param name="image">The image parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdiplus.dll")]
-        public static extern Status GdipImageForceValidation(IntPtr image);
 
         /// <summary>
         /// Native method wrapper for GdiplusStartup.
@@ -7187,6 +6487,7 @@ namespace AvalonDock.Controls.Shell.Standard
 
             return ret;
         }
+
         /// <summary>
         /// Performs the SetWindowLongPtr operation.
         /// </summary>
@@ -7279,9 +6580,6 @@ namespace AvalonDock.Controls.Shell.Standard
             return hc;
         }
 
-        // This function is strange in that it returns a BOOL if TPM_RETURNCMD isn't specified, but otherwise the command Id.
-        // Currently it's only used with TPM_RETURNCMD, so making the signature match that.
-
         /// <summary>
         /// Native method wrapper for TrackPopupMenuEx.
         /// </summary>
@@ -7295,63 +6593,6 @@ namespace AvalonDock.Controls.Shell.Standard
         [DllImport("user32.dll")]
         public static extern uint TrackPopupMenuEx(IntPtr hmenu, uint fuFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdi32.dll", EntryPoint = "SelectObject", SetLastError = true)]
-        private static extern IntPtr _SelectObject(SafeDC hdc, IntPtr hgdiobj);
-
-        /// <summary>
-        /// Performs the SelectObject operation.
-        /// </summary>
-        /// <param name="hdc">The hdc parameter.</param>
-        /// <param name="hgdiobj">The hgdiobj parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static IntPtr SelectObject(SafeDC hdc, IntPtr hgdiobj)
-        {
-            var ret = _SelectObject(hdc, hgdiobj);
-            if (ret == IntPtr.Zero)
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return ret;
-        }
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("gdi32.dll", EntryPoint = "SelectObject", SetLastError = true)]
-        private static extern IntPtr _SelectObjectSafeHBITMAP(SafeDC hdc, SafeHBITMAP hgdiobj);
-
-        /// <summary>
-        /// Performs the SelectObject operation.
-        /// </summary>
-        /// <param name="hdc">The hdc parameter.</param>
-        /// <param name="hgdiobj">The hgdiobj parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static IntPtr SelectObject(SafeDC hdc, SafeHBITMAP hgdiobj)
-        {
-            var ret = _SelectObjectSafeHBITMAP(hdc, hgdiobj);
-            if (ret == IntPtr.Zero)
-            {
-                HRESULT.ThrowLastError();
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Native method wrapper for SendInput.
-        /// </summary>
-        /// <param name="nInputs">The nInputs parameter.</param>
-        /// <param name="pInputs">The pInputs parameter.</param>
-        /// <param name="cbSize">The cbSize parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int SendInput(int nInputs, ref INPUT pInputs, int cbSize);
-
-        // Depending on the message, callers may want to call GetLastError based on the return value.
-
         /// <summary>
         /// Native method wrapper for SendMessage.
         /// </summary>
@@ -7364,28 +6605,9 @@ namespace AvalonDock.Controls.Shell.Standard
         public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", EntryPoint = "UnregisterClass", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UnregisterClassAtom(IntPtr lpClassName, IntPtr hInstance);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         [DllImport("user32.dll", EntryPoint = "UnregisterClass", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _UnregisterClassName(string lpClassName, IntPtr hInstance);
-
-        /// <summary>
-        /// Performs the UnregisterClass operation.
-        /// </summary>
-        /// <param name="atom">The atom parameter.</param>
-        /// <param name="hinstance">The hinstance parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void UnregisterClass(short atom, IntPtr hinstance)
-        {
-            if (!_UnregisterClassAtom(new IntPtr(atom), hinstance))
-            {
-                HRESULT.ThrowLastError();
-            }
-        }
 
         /// <summary>
         /// Performs the UnregisterClass operation.
@@ -7400,90 +6622,6 @@ namespace AvalonDock.Controls.Shell.Standard
             }
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", SetLastError = true, EntryPoint = "UpdateLayeredWindow")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UpdateLayeredWindow(
-            IntPtr hwnd,
-            SafeDC hdcDst,
-            [In] ref POINT pptDst,
-            [In] ref SIZE psize,
-            SafeDC hdcSrc,
-            [In] ref POINT pptSrc,
-            int crKey,
-            ref BLENDFUNCTION pblend,
-            ULW dwFlags);
-
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("user32.dll", SetLastError = true, EntryPoint = "UpdateLayeredWindow")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _UpdateLayeredWindowIntPtr(
-            IntPtr hwnd,
-            IntPtr hdcDst,
-            IntPtr pptDst,
-            IntPtr psize,
-            IntPtr hdcSrc,
-            IntPtr pptSrc,
-            int crKey,
-            ref BLENDFUNCTION pblend,
-            ULW dwFlags);
-
-        /// <summary>
-        /// Performs the UpdateLayeredWindow operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="hdcDst">The hdcDst parameter.</param>
-        /// <param name="pptDst">The pptDst parameter.</param>
-        /// <param name="psize">The psize parameter.</param>
-        /// <param name="hdcSrc">The hdcSrc parameter.</param>
-        /// <param name="pptSrc">The pptSrc parameter.</param>
-        /// <param name="crKey">The crKey parameter.</param>
-        /// <param name="pblend">The pblend parameter.</param>
-        /// <param name="dwFlags">The dwFlags parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void UpdateLayeredWindow(
-            IntPtr hwnd,
-            SafeDC hdcDst,
-            ref POINT pptDst,
-            ref SIZE psize,
-            SafeDC hdcSrc,
-            ref POINT pptSrc,
-            int crKey,
-            ref BLENDFUNCTION pblend,
-            ULW dwFlags)
-        {
-            if (!_UpdateLayeredWindow(hwnd, hdcDst, ref pptDst, ref psize, hdcSrc, ref pptSrc, crKey, ref pblend, dwFlags))
-            {
-                HRESULT.ThrowLastError();
-            }
-        }
-
-        /// <summary>
-        /// Performs the UpdateLayeredWindow operation.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="crKey">The crKey parameter.</param>
-        /// <param name="pblend">The pblend parameter.</param>
-        /// <param name="dwFlags">The dwFlags parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public static void UpdateLayeredWindow(IntPtr hwnd, int crKey, ref BLENDFUNCTION pblend, ULW dwFlags)
-        {
-            if (!_UpdateLayeredWindowIntPtr(hwnd, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, crKey, ref pblend, dwFlags))
-            {
-                HRESULT.ThrowLastError();
-            }
-        }
-
-        [DllImport("shell32.dll", EntryPoint = "SHAddToRecentDocs")]
-        private static extern void _SHAddToRecentDocs_String(SHARD uFlags, [MarshalAs(UnmanagedType.LPWStr)] string pv);
-
-        /// <summary>
-        /// Performs the SHAddToRecentDocs operation.
-        /// </summary>
-        /// <param name="path">The path parameter.</param>
-        public static void SHAddToRecentDocs(string path) => _SHAddToRecentDocs_String(SHARD.PATHW, path);
-
-        // #define DWM_SIT_DISPLAYFRAME    0x00000001  // Display a window frame around the provided bitmap
         [DllImport("dwmapi.dll", EntryPoint = "DwmGetCompositionTimingInfo")]
         private static extern HRESULT _DwmGetCompositionTimingInfo(IntPtr hwnd, ref DWM_TIMING_INFO pTimingInfo);
 
@@ -7509,85 +6647,5 @@ namespace AvalonDock.Controls.Shell.Standard
             hr.ThrowIfFailed();
             return dti;
         }
-
-        /// <summary>
-        /// Native method wrapper for DwmInvalidateIconicBitmaps.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        public static extern void DwmInvalidateIconicBitmaps(IntPtr hwnd);
-
-        /// <summary>
-        /// Native method wrapper for DwmSetIconicThumbnail.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="hbmp">The hbmp parameter.</param>
-        /// <param name="dwSITFlags">The dwSITFlags parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        public static extern void DwmSetIconicThumbnail(IntPtr hwnd, IntPtr hbmp, DWM_SIT dwSITFlags);
-
-        /// <summary>
-        /// Native method wrapper for DwmSetIconicLivePreviewBitmap.
-        /// </summary>
-        /// <param name="hwnd">The hwnd parameter.</param>
-        /// <param name="hbmp">The hbmp parameter.</param>
-        /// <param name="pptClient">The pptClient parameter.</param>
-        /// <param name="dwSITFlags">The dwSITFlags parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("dwmapi.dll", PreserveSig = false)]
-        public static extern void DwmSetIconicLivePreviewBitmap(IntPtr hwnd, IntPtr hbmp, RefPOINT pptClient, DWM_SIT dwSITFlags);
-
-        /// <summary>
-        /// Native method wrapper for SHGetItemFromDataObject.
-        /// </summary>
-        /// <param name="pdtobj">The pdtobj parameter.</param>
-        /// <param name="dwFlags">The dwFlags parameter.</param>
-        /// <param name="riid">The riid parameter.</param>
-        /// <param name="ppv">The ppv parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll", PreserveSig = false)]
-        public static extern void SHGetItemFromDataObject(IDataObject pdtobj, DOGIF dwFlags, [In] ref Guid riid, [Out, MarshalAs(UnmanagedType.Interface)] out object ppv);
-
-        /// <summary>
-        /// Native method wrapper for SHCreateItemFromParsingName.
-        /// </summary>
-        /// <param name="pszPath">The pszPath parameter.</param>
-        /// <param name="pbc">The pbc parameter.</param>
-        /// <param name="riid">The riid parameter.</param>
-        /// <param name="ppv">The ppv parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll", PreserveSig = false)]
-        public static extern HRESULT SHCreateItemFromParsingName([MarshalAs(UnmanagedType.LPWStr)] string pszPath, IBindCtx pbc, [In] ref Guid riid, [Out, MarshalAs(UnmanagedType.Interface)] out object ppv);
-
-        /// <summary>
-        /// Native method wrapper for Shell_NotifyIcon.
-        /// </summary>
-        /// <param name="dwMessage">The dwMessage parameter.</param>
-        /// <param name="lpdata">The lpdata parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool Shell_NotifyIcon(NIM dwMessage, [In] NOTIFYICONDATA lpdata);
-
-        /// <summary>
-        /// Sets the User Model AppID for the current process, enabling Windows to retrieve this ID
-        /// </summary>
-        /// <param name="AppID">The AppID parameter.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll", PreserveSig = false)]
-        public static extern void SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
-
-        /// <summary>
-        /// Retrieves the User Model AppID that has been explicitly set for the current process via SetCurrentProcessExplicitAppUserModelID.
-        /// </summary>
-        /// <param name="AppID">The AppID parameter.</param>
-        /// <returns>The result.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DllImport("shell32.dll")]
-        public static extern HRESULT GetCurrentProcessExplicitAppUserModelID([Out, MarshalAs(UnmanagedType.LPWStr)] out string AppID);
     }
 }
