@@ -4,7 +4,6 @@ using Microsoft.Windows.Shell;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
@@ -228,6 +227,22 @@ namespace AvalonDock.Controls
             if (chrome != null)
             {
                 chrome.ResizeBorderThickness = thickness;
+            }
+        }
+
+        private void ApplyResizeRenderingStyles()
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var style = Win32Helper.GetWindowLongPtr(hwnd, -16).ToInt64(); // GWL_STYLE
+            var clippedStyle = style | Win32Helper.WS_CLIPSIBLINGS | Win32Helper.WS_CLIPCHILDREN;
+            if (clippedStyle != style)
+            {
+                Win32Helper.SetWindowLongPtr(hwnd, -16, new IntPtr(clippedStyle));
             }
         }
 
@@ -679,6 +694,7 @@ namespace AvalonDock.Controls
             ApplyResizeBorderThickness();
 
             _hwndSrc = PresentationSource.FromDependencyObject(this) as HwndSource;
+            ApplyResizeRenderingStyles();
             _hwndSrcHook = FilterMessage;
             _hwndSrc.AddHook(_hwndSrcHook);
             // Restore maximize state
@@ -933,12 +949,11 @@ namespace AvalonDock.Controls
         /// <summary>
         /// Represents the floating window content host.
         /// </summary>
-        protected internal class FloatingWindowContentHost : HwndHost
+        protected internal class FloatingWindowContentHost : Decorator, IDisposable
         {
             private readonly LayoutFloatingWindowControl _owner;
-            private HwndSource _wpfContentHost;
             private Border _rootPresenter;
-            private DockingManager _manager;
+            private AdornerDecorator _contentPresenter;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FloatingWindowContentHost"/> class.
@@ -949,6 +964,12 @@ namespace AvalonDock.Controls
                 _owner = owner;
                 var binding = new Binding(nameof(SizeToContent)) { Source = _owner };
                 BindingOperations.SetBinding(this, SizeToContentProperty, binding);
+
+                _contentPresenter = new AdornerDecorator();
+                _rootPresenter = new Border { Child = _contentPresenter, Focusable = true };
+                AutomationProperties.SetName(_rootPresenter, "FloatingWindowHost");
+                _rootPresenter.SetBinding(Border.BackgroundProperty, new Binding(nameof(Background)) { Source = _owner });
+                Child = _rootPresenter;
             }
 
             /// <summary>
@@ -981,9 +1002,9 @@ namespace AvalonDock.Controls
             /// <param name="newValue">The new value.</param>
             protected virtual void OnContentChanged(UIElement oldValue, UIElement newValue)
             {
-                if (_rootPresenter != null)
+                if (_contentPresenter != null)
                 {
-                    _rootPresenter.Child = Content;
+                    _contentPresenter.Child = Content;
                 }
 
                 if (oldValue is FrameworkElement oldContent)
@@ -1022,44 +1043,6 @@ namespace AvalonDock.Controls
             /// <param name="newValue">The new value.</param>
             protected virtual void OnSizeToContentChanged(SizeToContent oldValue, SizeToContent newValue)
             {
-                if (_wpfContentHost != null)
-                {
-                    _wpfContentHost.SizeToContent = newValue;
-                }
-            }
-
-            /// <inheritdoc/>
-            protected override HandleRef BuildWindowCore(HandleRef hwndParent)
-            {
-                _wpfContentHost = new HwndSource(new HwndSourceParameters
-                {
-                    ParentWindow = hwndParent.Handle,
-                    WindowStyle = Win32Helper.WS_CHILD | Win32Helper.WS_VISIBLE | Win32Helper.WS_CLIPSIBLINGS | Win32Helper.WS_CLIPCHILDREN,
-                    Width = 1,
-                    Height = 1,
-                    UsesPerPixelOpacity = true,
-                });
-
-                _rootPresenter = new Border { Child = new AdornerDecorator { Child = Content }, Focusable = true };
-                AutomationProperties.SetName(_rootPresenter, "FloatingWindowHost");
-                _rootPresenter.SetBinding(Border.BackgroundProperty, new Binding(nameof(Background)) { Source = _owner });
-                _wpfContentHost.RootVisual = _rootPresenter;
-                _manager = _owner.Model.Root.Manager;
-                _manager.InternalAddLogicalChild(_rootPresenter);
-                return new HandleRef(this, _wpfContentHost.Handle);
-            }
-
-            /// <inheritdoc/>
-            protected override void DestroyWindowCore(HandleRef hwnd)
-            {
-                _manager.InternalRemoveLogicalChild(_rootPresenter);
-                if (_wpfContentHost == null)
-                {
-                    return;
-                }
-
-                _wpfContentHost.Dispose();
-                _wpfContentHost = null;
             }
 
             /// <inheritdoc/>
@@ -1072,6 +1055,24 @@ namespace AvalonDock.Controls
 
                 Content.Measure(constraint);
                 return Content.DesiredSize;
+            }
+
+            /// <summary>
+            /// Releases content references held by the host.
+            /// </summary>
+            public void Dispose()
+            {
+                if (Content is FrameworkElement content)
+                {
+                    content.SizeChanged -= Content_SizeChanged;
+                }
+
+                if (_contentPresenter != null)
+                {
+                    _contentPresenter.Child = null;
+                }
+
+                Child = null;
             }
 
             /// <summary>
