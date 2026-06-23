@@ -111,8 +111,6 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <returns>The result of the operation.</returns>
         public static explicit operator HRESULT(Win32Error error)
         {
-            // #define __HRESULT_FROM_WIN32(x)
-            //     ((HRESULT)(x) <= 0 ? ((HRESULT)(x)) : ((HRESULT) (((x) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000)))
             return error._value <= 0 ? new HRESULT((uint)error._value) : HRESULT.Make(true, Facility.Win32, error._value & 0x0000FFFF);
         }
 
