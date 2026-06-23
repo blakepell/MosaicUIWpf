@@ -142,16 +142,18 @@
                         VerticalContentAlignment="Stretch"
                         Header="Documentation">
                         <Grid>
-                            <controls:MarkdownViewer x:Name="DocumentationEditor">
+                            <controls1:MarkdownViewer
+                                x:Name="DocumentationEditor"
+                                Margin="16"
+                                FontSize="14">
                                 <b:Interaction.Behaviors>
                                     <behaviors:ReflectionDocumentationBehavior Type="{Binding ElementName=Me, Path=DocumentationType}" />
                                 </b:Interaction.Behaviors>
-                            </controls:MarkdownViewer>
+                            </controls1:MarkdownViewer>
                         </Grid>
                     </controls1:TabItem>
 
                 </controls1:TabControl>
-
             </Grid>
         </Grid>
     </Border>

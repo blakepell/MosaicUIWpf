@@ -9,10 +9,7 @@
  */
 
 using Microsoft.Xaml.Behaviors;
-using MosaicWpfDemo.Controls;
-using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -20,7 +17,7 @@ using System.Xml.Linq;
 
 namespace Mosaic.UI.Wpf.Controls.Behaviors
 {
-    public class ReflectionDocumentationBehavior : Behavior<MosaicWpfDemo.Controls.MarkdownViewer>
+    public class ReflectionDocumentationBehavior : Behavior<Mosaic.UI.Wpf.Controls.MarkdownViewer>
     {
         public static readonly DependencyProperty TypeProperty = DependencyProperty.Register(
             nameof(Type),
@@ -36,7 +33,7 @@ namespace Mosaic.UI.Wpf.Controls.Behaviors
 
         private static void OnResourcePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is ReflectionDocumentationBehavior behavior && behavior.AssociatedObject != null)
+            if (d is ReflectionDocumentationBehavior { AssociatedObject: not null } behavior)
             {
                 behavior.SetMarkdownFromResource();
             }
