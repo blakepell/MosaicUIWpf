@@ -148,7 +148,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public void FixSplitOrientation(LayoutAnchorable anchorable, AnchorSide side)
+        public void FixSplitOrientation(LayoutAnchorable? anchorable, AnchorSide side)
         {
             if (anchorable == null)
             {
@@ -284,7 +284,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public void EnsureBottomFullWidth(LayoutRoot root)
+        public void EnsureBottomFullWidth(LayoutRoot? root)
         {
             if (root == null)
             {
@@ -363,7 +363,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public void EnsureSidesFullHeight(LayoutRoot root)
+        public void EnsureSidesFullHeight(LayoutRoot? root)
         {
             if (root == null)
             {

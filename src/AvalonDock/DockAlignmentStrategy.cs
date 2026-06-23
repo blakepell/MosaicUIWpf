@@ -24,7 +24,7 @@ namespace AvalonDock
         }
 
         /// <inheritdoc/>
-        public bool BeforeInsertAnchorable(LayoutRoot layout, LayoutAnchorable anchorableToShow, ILayoutContainer destinationContainer)
+        public bool BeforeInsertAnchorable(LayoutRoot layout, LayoutAnchorable? anchorableToShow, ILayoutContainer destinationContainer)
         {
             if (anchorableToShow?.Content == null)
             {

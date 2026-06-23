@@ -362,7 +362,7 @@ namespace AvalonDock
         }
 
         /// <summary>Coerces the <see cref="Layout"/> value.</summary>
-        private static object CoerceLayoutValue(DependencyObject d, object value)
+        private static object CoerceLayoutValue(DependencyObject d, object? value)
         {
             if (value == null)
             {
@@ -416,7 +416,7 @@ namespace AvalonDock
         /// </summary>
         /// <param name="oldValue">The previous root dock, or null.</param>
         /// <param name="newValue">The new root dock, or null.</param>
-        protected virtual void OnDockLayoutChanged(IRootDock oldValue, IRootDock newValue)
+        protected virtual void OnDockLayoutChanged(IRootDock oldValue, IRootDock? newValue)
         {
             _syncBridge?.Detach();
             _syncBridge = null;
@@ -446,7 +446,7 @@ namespace AvalonDock
         /// <summary>Provides derived classes an opportunity to handle changes to the <see cref="Layout"/> property.</summary>
         /// <param name="oldLayout">The previous layout.</param>
         /// <param name="newLayout">The new layout.</param>
-        protected void OnLayoutChanged(LayoutRoot oldLayout, LayoutRoot newLayout)
+        protected void OnLayoutChanged(LayoutRoot? oldLayout, LayoutRoot newLayout)
         {
             if (oldLayout != null)
             {
@@ -719,7 +719,7 @@ namespace AvalonDock
         }
 
         /// <summary>Coerces the <see cref="DocumentHeaderTemplate"/> value.</summary>
-        private static object CoerceDocumentHeaderTemplateValue(DependencyObject d, object value)
+        private static object CoerceDocumentHeaderTemplateValue(DependencyObject d, object? value)
         {
             if (value != null && d.GetValue(DocumentHeaderTemplateSelectorProperty) != null)
             {
@@ -788,7 +788,7 @@ namespace AvalonDock
         }
 
         /// <summary>Coerces the <see cref="DocumentTitleTemplate"/> value.</summary>
-        private static object CoerceDocumentTitleTemplateValue(DependencyObject d, object value)
+        private static object CoerceDocumentTitleTemplateValue(DependencyObject d, object? value)
         {
             if (value != null && d.GetValue(DocumentTitleTemplateSelectorProperty) != null)
             {
@@ -913,7 +913,7 @@ namespace AvalonDock
         }
 
         /// <summary>Coerces the <see cref="AnchorableHeaderTemplate"/> value.</summary>
-        private static object CoerceAnchorableHeaderTemplateValue(DependencyObject d, object value)
+        private static object CoerceAnchorableHeaderTemplateValue(DependencyObject d, object? value)
         {
             if (value != null && d.GetValue(AnchorableHeaderTemplateSelectorProperty) != null)
             {
@@ -1516,7 +1516,7 @@ namespace AvalonDock
         }
 
         /// <summary>Coerces the <see cref="DocumentPaneMenuItemHeaderTemplate"/> value.</summary>
-        private static object CoerceDocumentPaneMenuItemHeaderTemplateValue(DependencyObject d, object value)
+        private static object CoerceDocumentPaneMenuItemHeaderTemplateValue(DependencyObject d, object? value)
         {
             if (value != null && d.GetValue(DocumentPaneMenuItemHeaderTemplateSelectorProperty) != null)
             {
@@ -1906,7 +1906,7 @@ namespace AvalonDock
         /// <returns>All the anchorable items found.</returns>
         /// <seealso cref="LayoutAnchorable"/>
         /// <seealso cref="LayoutAnchorablePaneGroup"/>
-        internal IEnumerable<LayoutAnchorable> GetLayoutAnchorable(LayoutAnchorablePaneGroup layoutAnchPaneGroup)
+        internal IEnumerable<LayoutAnchorable> GetLayoutAnchorable(LayoutAnchorablePaneGroup? layoutAnchPaneGroup)
         {
             if (layoutAnchPaneGroup == null)
             {
@@ -2130,7 +2130,7 @@ namespace AvalonDock
         /// </summary>
         /// <param name="contentModel">The layout content to float.</param>
         /// <param name="startDrag">if set to <c>true</c>, dragging starts immediately after the window is created.</param>
-        internal virtual void StartDraggingFloatingWindowForContent(LayoutContent contentModel, bool startDrag = true)
+        internal virtual void StartDraggingFloatingWindowForContent(LayoutContent? contentModel, bool startDrag = true)
         {
             // Ensure window can float only if corresponding property is set accordingly
             if (contentModel == null)
@@ -2782,7 +2782,7 @@ namespace AvalonDock
             SetAutoHideWindow(new LayoutAutoHideWindowControl());
         }
 
-        private void CreateOverlayWindow(LayoutFloatingWindowControl draggingWindow = null)
+        private void CreateOverlayWindow(LayoutFloatingWindowControl? draggingWindow = null)
         {
             if (_overlayWindow == null)
             {
@@ -2819,7 +2819,7 @@ namespace AvalonDock
             _overlayWindow = null;
         }
 
-        private void AttachDocumentsSource(LayoutRoot layout, IEnumerable documentsSource)
+        private void AttachDocumentsSource(LayoutRoot? layout, IEnumerable? documentsSource)
         {
             if (documentsSource == null)
             {
@@ -3023,7 +3023,7 @@ namespace AvalonDock
                          .ToArray();
         }
 
-        private void DetachDocumentsSource(LayoutRoot layout, IEnumerable documentsSource)
+        private void DetachDocumentsSource(LayoutRoot? layout, IEnumerable? documentsSource)
         {
             if (documentsSource == null)
             {
@@ -3080,7 +3080,7 @@ namespace AvalonDock
             }
         }
 
-        private void AttachAnchorablesSource(LayoutRoot layout, IEnumerable anchorablesSource)
+        private void AttachAnchorablesSource(LayoutRoot? layout, IEnumerable? anchorablesSource)
         {
             if (anchorablesSource == null)
             {
@@ -3286,7 +3286,7 @@ namespace AvalonDock
             Layout?.CollectGarbage();
         }
 
-        private void DetachAnchorablesSource(LayoutRoot layout, IEnumerable anchorablesSource)
+        private void DetachAnchorablesSource(LayoutRoot? layout, IEnumerable? anchorablesSource)
         {
             if (anchorablesSource == null)
             {
@@ -3314,7 +3314,7 @@ namespace AvalonDock
             }
         }
 
-        private void RemoveViewFromLogicalChild(LayoutContent layoutContent)
+        private void RemoveViewFromLogicalChild(LayoutContent? layoutContent)
         {
             if (layoutContent == null)
             {
@@ -3426,7 +3426,7 @@ namespace AvalonDock
         /// <summary>
         /// Detaches all LayoutItems from their content and clears the private collection of LayoutItems.
         /// </summary>
-        private void DetachLayoutItems(LayoutRoot layout)
+        private void DetachLayoutItems(LayoutRoot? layout)
         {
             if (layout == null)
             {
