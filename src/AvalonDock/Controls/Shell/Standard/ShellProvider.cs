@@ -187,7 +187,7 @@ namespace AvalonDock.Controls.Shell.Standard
         /// <param name="pid">The property identifier.</param>
         public PKEY(Guid fmtid, uint pid)
         {
-            _fmtid = fmtid;
+            var fmtid1 = fmtid;
             _pid = pid;
         }
 

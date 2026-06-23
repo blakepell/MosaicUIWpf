@@ -12,7 +12,7 @@ namespace AvalonDock.Layout
     /// </summary>
     [ContentProperty(nameof(Children))]
     [Serializable]
-    public class LayoutAnchorablePane : LayoutPositionableGroup<LayoutAnchorable>, ILayoutAnchorablePane, ILayoutPositionableElement, ILayoutContentSelector, ILayoutPaneSerializable, ISerializableLayoutPane
+    public class LayoutAnchorablePane : LayoutPositionableGroup<LayoutAnchorable>, ILayoutAnchorablePane, ILayoutContentSelector, ILayoutPaneSerializable, ISerializableLayoutPane
     {
         private int _selectedIndex = -1;
 

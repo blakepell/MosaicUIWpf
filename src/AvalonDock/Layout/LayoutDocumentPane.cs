@@ -13,7 +13,7 @@ namespace AvalonDock.Layout
     /// </summary>
     [ContentProperty(nameof(Children))]
     [Serializable]
-    public class LayoutDocumentPane : LayoutPositionableGroup<LayoutContent>, ILayoutDocumentPane, ILayoutPositionableElement, ILayoutContentSelector, ILayoutPaneSerializable, ISerializableLayoutPane
+    public class LayoutDocumentPane : LayoutPositionableGroup<LayoutContent>, ILayoutDocumentPane, ILayoutContentSelector, ILayoutPaneSerializable, ISerializableLayoutPane
     {
         private bool _showHeader = true;
         private int _selectedIndex = -1;

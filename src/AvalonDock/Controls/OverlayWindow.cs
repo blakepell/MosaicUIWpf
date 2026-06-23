@@ -137,12 +137,6 @@ namespace AvalonDock.Controls
             _previewBox = GetTemplateChild("PART_PreviewBox") as Path;
         }
 
-        /// <inheritdoc/>
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            base.OnClosing(e);
-        }
-
         /// <summary>
         /// Executes the update Theme Resources operation.
         /// </summary>

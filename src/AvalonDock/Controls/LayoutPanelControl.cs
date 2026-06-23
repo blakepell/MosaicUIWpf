@@ -8,7 +8,7 @@ namespace AvalonDock.Controls
     /// <summary>
     /// Represents the layout Panel Control.
     /// </summary>
-    public class LayoutPanelControl : LayoutGridControl<ILayoutPanelElement>, ILayoutControl
+    public class LayoutPanelControl : LayoutGridControl<ILayoutPanelElement>
     {
         private readonly LayoutPanel _model;
 

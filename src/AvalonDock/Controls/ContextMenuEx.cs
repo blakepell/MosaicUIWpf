@@ -9,20 +9,6 @@ namespace AvalonDock.Controls
     /// </summary>
     public class ContextMenuEx : ContextMenu
     {
-        /// <summary>
-        /// Initializes static members of the <see cref="ContextMenuEx"/> class.
-        /// </summary>
-        static ContextMenuEx()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContextMenuEx"/> class.
-        /// </summary>
-        public ContextMenuEx()
-        {
-        }
-
         /// <inheritdoc/>
         protected override DependencyObject GetContainerForItemOverride()
         {
@@ -32,8 +18,7 @@ namespace AvalonDock.Controls
         /// <inheritdoc/>
         protected override void OnOpened(RoutedEventArgs e)
         {
-            BindingOperations.GetBindingExpression(this, ItemsSourceProperty).UpdateTarget();
-
+            BindingOperations.GetBindingExpression(this, ItemsSourceProperty)?.UpdateTarget();
             base.OnOpened(e);
         }
     }

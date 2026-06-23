@@ -247,7 +247,7 @@ namespace AvalonDock
         /// <param name="wParam">The wParam value.</param>
         /// <param name="lParam">The lParam value.</param>
         /// <returns>The result of the operation.</returns>
-        [DllImportAttribute("user32.dll")]
+        [DllImport("user32.dll")]
         internal static extern int SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         /// <summary>Performs the PostMessage operation.</summary>
@@ -256,7 +256,7 @@ namespace AvalonDock
         /// <param name="wParam">The wParam value.</param>
         /// <param name="lParam">The lParam value.</param>
         /// <returns>The result of the operation.</returns>
-        [DllImportAttribute("user32.dll")]
+        [DllImport("user32.dll")]
         internal static extern int PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         /// <summary>Performs the GetClientRect operation.</summary>

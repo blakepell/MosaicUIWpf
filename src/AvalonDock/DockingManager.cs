@@ -30,7 +30,7 @@ namespace AvalonDock
     [ContentProperty(nameof(Layout))]
     [TemplatePart(Name = "PART_AutoHideArea")]
     [SuppressMessage("Maintainability", "CA1506:Avoid excessive class coupling")]
-    public class DockingManager : Control, IOverlayWindowHost, ISerializableDockingManager, IDockingManager// , ILogicalChildrenContainer
+    public class DockingManager : Control, IOverlayWindowHost, IDockingManager// , ILogicalChildrenContainer
     {
         /// <summary>
         /// References the current theme resource dictionary when a <see cref="DictionaryTheme"/> is active.
