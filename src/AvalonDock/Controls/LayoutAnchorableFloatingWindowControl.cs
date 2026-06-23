@@ -321,7 +321,7 @@ namespace AvalonDock.Controls
         }
 
         /// <inheritdoc/>
-        internal override void UpdateThemeResources(Theme oldTheme = null)
+        internal override void UpdateThemeResources(Theme? oldTheme = null)
         {
             base.UpdateThemeResources(oldTheme);
             _overlayWindow?.UpdateThemeResources(oldTheme);

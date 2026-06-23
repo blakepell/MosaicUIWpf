@@ -51,7 +51,7 @@
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedActivePressedBorder}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentRedColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedActivePressedGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundColor}}" />
 
-    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedInactiveGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedInactiveGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedInactiveHoveredBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentRedHoverColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedInactiveHoveredBorder}" Color="{DynamicResource {x:Static themes:MosaicTheme.FluentRedHoverColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabButtonSelectedInactiveHoveredGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundColor}}" />
@@ -84,7 +84,7 @@
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActivePressedBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActivePressedBorder}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBorderColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActivePressedGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
-    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredBorder}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredGlyph}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />

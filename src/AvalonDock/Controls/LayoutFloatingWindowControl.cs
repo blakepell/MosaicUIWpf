@@ -29,6 +29,7 @@ namespace AvalonDock.Controls
         private HwndSource _hwndSrc;
         private HwndSourceHook _hwndSrcHook;
         private DragService _dragService;
+        private ResourceDictionary? _currentThemeResourceDictionary;
         private bool _internalCloseFlag;
         private bool _isClosing;
 
@@ -354,9 +355,70 @@ namespace AvalonDock.Controls
         /// Updates the theme resources.
         /// </summary>
         /// <param name="oldTheme">The old theme.</param>
-        internal virtual void UpdateThemeResources(Theme oldTheme = null)
+        internal virtual void UpdateThemeResources(Theme? oldTheme = null)
         {
+            RemoveThemeResources(oldTheme);
+            AddThemeResources(Model?.Root?.Manager?.Theme);
             InvalidateVisual();
+        }
+
+        private void RemoveThemeResources(Theme? oldTheme)
+        {
+            if (oldTheme is DictionaryTheme)
+            {
+                if (_currentThemeResourceDictionary != null)
+                {
+                    Resources.MergedDictionaries.Remove(_currentThemeResourceDictionary);
+                    _currentThemeResourceDictionary = null;
+                }
+
+                return;
+            }
+
+            if (oldTheme != null)
+            {
+                var oldResourceUri = oldTheme.GetResourceUri();
+                var resourceDictionaryToRemove = Resources.MergedDictionaries.FirstOrDefault(r => r.Source == oldResourceUri);
+
+                if (resourceDictionaryToRemove != null)
+                {
+                    Resources.MergedDictionaries.Remove(resourceDictionaryToRemove);
+                }
+            }
+
+            if (_currentThemeResourceDictionary != null)
+            {
+                Resources.MergedDictionaries.Remove(_currentThemeResourceDictionary);
+                _currentThemeResourceDictionary = null;
+            }
+        }
+
+        private void AddThemeResources(Theme? theme)
+        {
+            if (theme == null)
+            {
+                return;
+            }
+
+            if (theme is DictionaryTheme dictionaryTheme)
+            {
+                _currentThemeResourceDictionary = dictionaryTheme.ThemeResourceDictionary;
+
+                if (_currentThemeResourceDictionary != null && !Resources.MergedDictionaries.Contains(_currentThemeResourceDictionary))
+                {
+                    Resources.MergedDictionaries.Add(_currentThemeResourceDictionary);
+                }
+
+                return;
+            }
+
+            var resourceUri = theme.GetResourceUri();
+
+            if (Resources.MergedDictionaries.All(r => r.Source != resourceUri))
+            {
+                _currentThemeResourceDictionary = new ResourceDictionary { Source = resourceUri };
+                Resources.MergedDictionaries.Add(_currentThemeResourceDictionary);
+            }
         }
 
         /// <summary>
