@@ -1,4 +1,3 @@
-#nullable disable
 using AvalonDock.Serialization;
 using System;
 using System.IO;
@@ -14,7 +13,7 @@ namespace AvalonDock.Interfaces
         /// <summary>
         /// Raised during deserialization to let the client attach content to layout items.
         /// </summary>
-        event EventHandler<LayoutSerializationCallbackEventArgs> LayoutSerializationCallback;
+        event EventHandler<LayoutSerializationCallbackEventArgs>? LayoutSerializationCallback;
 
         /// <summary>Serializes the current docking layout to a stream.</summary>
         /// <param name="stream">The stream to write to.</param>

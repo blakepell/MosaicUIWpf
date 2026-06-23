@@ -14,9 +14,13 @@ namespace AvalonDock.Converters
 	public class AnchorSideToOrientationConverter : MarkupExtension, IValueConverter
 	{
 		/// <inheritdoc/>
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 		{
-			AnchorSide side = (AnchorSide)value;
+			if (value is not AnchorSide side)
+            {
+                return Binding.DoNothing;
+            }
+
 			if (side == AnchorSide.Left || side == AnchorSide.Right)
             {
                 return Orientation.Vertical;
@@ -26,10 +30,7 @@ namespace AvalonDock.Converters
 		}
 
 		/// <inheritdoc/>
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => Binding.DoNothing;
 
 		/// <inheritdoc/>
 		public override object ProvideValue(IServiceProvider serviceProvider)

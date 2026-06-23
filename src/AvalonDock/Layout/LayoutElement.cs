@@ -14,10 +14,10 @@ namespace AvalonDock.Layout
     public abstract class LayoutElement : DependencyObject, ILayoutElement, ISerializableLayoutElement
     {
         [NonSerialized]
-        private ILayoutContainer _parent;
+        private ILayoutContainer? _parent;
 
         [NonSerialized]
-        private ILayoutRoot _root;
+        private ILayoutRoot? _root;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutElement"/> class.
@@ -31,20 +31,20 @@ namespace AvalonDock.Layout
         /// </summary>
         [field: NonSerialized]
         [field: XmlIgnore]
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Occurs when the property changing event is raised.
         /// </summary>
         [field: NonSerialized]
         [field: XmlIgnore]
-        public event PropertyChangingEventHandler PropertyChanging;
+        public event PropertyChangingEventHandler? PropertyChanging;
 
         /// <summary>
         /// Gets or sets the parent.
         /// </summary>
         [XmlIgnore]
-        public ILayoutContainer Parent
+        public ILayoutContainer? Parent
         {
             get => _parent;
             set
@@ -78,7 +78,7 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Gets the root.
         /// </summary>
-        public ILayoutRoot Root
+        public ILayoutRoot? Root
         {
             get
             {
@@ -119,7 +119,7 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="oldValue">The previous value.</param>
         /// <param name="newValue">The new value.</param>
-        protected virtual void OnParentChanging(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected virtual void OnParentChanging(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
         }
 
@@ -128,7 +128,7 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="oldValue">The previous value.</param>
         /// <param name="newValue">The new value.</param>
-        protected virtual void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected virtual void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
         }
 
@@ -137,7 +137,7 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="oldRoot">The old root.</param>
         /// <param name="newRoot">The new root.</param>
-        protected void OnRootChanged(ILayoutRoot oldRoot, ILayoutRoot newRoot)
+        protected void OnRootChanged(ILayoutRoot? oldRoot, ILayoutRoot? newRoot)
         {
             ((LayoutRoot)oldRoot)?.OnLayoutElementRemoved(this);
             ((LayoutRoot)newRoot)?.OnLayoutElementAdded(this);

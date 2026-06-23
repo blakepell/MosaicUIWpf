@@ -16,13 +16,10 @@ namespace AvalonDock.Controls
     /// </summary>
     internal static class FocusElementManager
     {
-        private static List<DockingManager> _managers = [];
-        private static FullWeakDictionary<ILayoutElement, IInputElement> _modelFocusedElement = new();
-        private static WeakDictionary<ILayoutElement, IntPtr> _modelFocusedWindowHandle = new();
-        private static WeakReference _lastFocusedElement;
-        private static WindowHookHandler _windowHandler;
-        private static DispatcherOperation _setFocusAsyncOperation;
-        private static WeakReference _lastFocusedElementBeforeEnterMenuMode = null;
+        private static readonly List<DockingManager> _managers = [];
+        private static readonly FullWeakDictionary<ILayoutElement, IInputElement> _modelFocusedElement = new();
+        private static readonly WeakDictionary<ILayoutElement, IntPtr> _modelFocusedWindowHandle = new();
+        private static WindowHookHandler? _windowHandler;
 
         /// <summary>
         /// Sets the setup Focus Management.
@@ -102,13 +99,9 @@ namespace AvalonDock.Controls
                 focused = IntPtr.Zero != Win32Helper.SetFocus(handleToFocus);
             }
 
-            if (focused)
-            {
-                _lastFocusedElement = new WeakReference(model);
-            }
         }
 
-        private static void Current_Exit(object sender, ExitEventArgs e)
+        private static void Current_Exit(object? sender, ExitEventArgs e)
         {
             if (Application.Current != null)
             {
@@ -145,7 +138,7 @@ namespace AvalonDock.Controls
             }
         }
 
-        private static void WindowFocusChanging(object sender, FocusChangeEventArgs e)
+        private static void WindowFocusChanging(object? sender, FocusChangeEventArgs e)
         {
             foreach (var manager in _managers)
             {

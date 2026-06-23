@@ -52,7 +52,16 @@ namespace AvalonDock.Controls
         protected override void Drop(LayoutAnchorableFloatingWindow floatingWindow)
         {
             ILayoutDocumentPane? targetModel = _targetPane.Model as ILayoutDocumentPane;
-            FindParentLayoutDocumentPane(targetModel, out var parentGroup, out var parentGroupPanel);
+            if (!FindParentLayoutDocumentPane(targetModel, out var parentGroup, out var parentGroupPanel))
+            {
+                return;
+            }
+
+            var targetChild = parentGroup ?? (ILayoutPanelElement?)targetModel;
+            if (targetChild == null)
+            {
+                return;
+            }
 
             switch (Type)
             {
@@ -66,19 +75,15 @@ namespace AvalonDock.Controls
                         if (parentGroupPanel is { Orientation: Orientation.Vertical })
                         {
                             parentGroupPanel.Children.Insert(
-                                parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel) + 1,
+                                parentGroupPanel.IndexOfChild(targetChild) + 1,
                                 floatingWindow.RootPanel);
                         }
                         else if (parentGroupPanel != null)
                         {
                             var newParentPanel = new LayoutPanel { Orientation = Orientation.Vertical };
-                            parentGroupPanel.ReplaceChild(parentGroup != null ? parentGroup : targetModel, newParentPanel);
-                            newParentPanel.Children.Add(parentGroup != null ? parentGroup : targetModel);
+                            parentGroupPanel.ReplaceChild(targetChild, newParentPanel);
+                            newParentPanel.Children.Add(targetChild);
                             newParentPanel.Children.Add(floatingWindow.RootPanel);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
                         }
                     }
 
@@ -94,19 +99,15 @@ namespace AvalonDock.Controls
                         if (parentGroupPanel is { Orientation: Orientation.Vertical })
                         {
                             parentGroupPanel.Children.Insert(
-                                parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel),
+                                parentGroupPanel.IndexOfChild(targetChild),
                                 floatingWindow.RootPanel);
                         }
                         else if (parentGroupPanel != null)
                         {
                             var newParentPanel = new LayoutPanel { Orientation = Orientation.Vertical };
-                            parentGroupPanel.ReplaceChild(parentGroup != null ? parentGroup : targetModel, newParentPanel);
-                            newParentPanel.Children.Add(parentGroup != null ? parentGroup : targetModel);
+                            parentGroupPanel.ReplaceChild(targetChild, newParentPanel);
+                            newParentPanel.Children.Add(targetChild);
                             newParentPanel.Children.Insert(0, floatingWindow.RootPanel);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
                         }
                     }
 
@@ -122,19 +123,15 @@ namespace AvalonDock.Controls
                         if (parentGroupPanel is { Orientation: Orientation.Horizontal })
                         {
                             parentGroupPanel.Children.Insert(
-                                parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel),
+                                parentGroupPanel.IndexOfChild(targetChild),
                                 floatingWindow.RootPanel);
                         }
                         else if (parentGroupPanel != null)
                         {
                             var newParentPanel = new LayoutPanel { Orientation = Orientation.Horizontal };
-                            parentGroupPanel.ReplaceChild(parentGroup != null ? parentGroup : targetModel, newParentPanel);
-                            newParentPanel.Children.Add(parentGroup != null ? parentGroup : targetModel);
+                            parentGroupPanel.ReplaceChild(targetChild, newParentPanel);
+                            newParentPanel.Children.Add(targetChild);
                             newParentPanel.Children.Insert(0, floatingWindow.RootPanel);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
                         }
                     }
 
@@ -150,19 +147,15 @@ namespace AvalonDock.Controls
                         if (parentGroupPanel is { Orientation: Orientation.Horizontal })
                         {
                             parentGroupPanel.Children.Insert(
-                                parentGroupPanel.IndexOfChild(parentGroup != null ? parentGroup : targetModel) + 1,
+                                parentGroupPanel.IndexOfChild(targetChild) + 1,
                                 floatingWindow.RootPanel);
                         }
                         else if (parentGroupPanel != null)
                         {
                             var newParentPanel = new LayoutPanel { Orientation = Orientation.Horizontal };
-                            parentGroupPanel.ReplaceChild(parentGroup != null ? parentGroup : targetModel, newParentPanel);
-                            newParentPanel.Children.Add(parentGroup != null ? parentGroup : targetModel);
+                            parentGroupPanel.ReplaceChild(targetChild, newParentPanel);
+                            newParentPanel.Children.Add(targetChild);
                             newParentPanel.Children.Add(floatingWindow.RootPanel);
-                        }
-                        else
-                        {
-                            throw new NotImplementedException();
                         }
                     }
 
@@ -177,12 +170,16 @@ namespace AvalonDock.Controls
         {
             Rect targetScreenRect;
             ILayoutDocumentPane? targetModel = _targetPane.Model as ILayoutDocumentPane;
-            var manager = targetModel.Root.Manager;
+            var manager = targetModel?.Root?.Manager;
+            if (manager == null)
+            {
+                return Geometry.Empty;
+            }
 
             // ILayoutDocumentPane targetModel = _targetPane.Model as ILayoutDocumentPane;
             if (!FindParentLayoutDocumentPane(targetModel, out var parentGroup, out var parentGroupPanel))
             {
-                return null;
+                return Geometry.Empty;
             }
 
             // if (targetModel.Parent is LayoutDocumentPaneGroup)
@@ -198,7 +195,15 @@ namespace AvalonDock.Controls
             // }
 
             // var parentPanel = targetModel.FindParent<LayoutPanel>();
-            var documentPaneControl = manager.FindLogicalChildren<FrameworkElement>().OfType<ILayoutControl>().First(d => parentGroup != null ? d.Model == parentGroup : d.Model == parentGroupPanel) as FrameworkElement;
+            var modelToFind = parentGroup ?? (object?)parentGroupPanel;
+            var documentPaneControl = manager.FindLogicalChildren<FrameworkElement>()
+                .OfType<ILayoutControl>()
+                .FirstOrDefault(d => d.Model == modelToFind) as FrameworkElement;
+            if (documentPaneControl == null)
+            {
+                return Geometry.Empty;
+            }
+
             targetScreenRect = documentPaneControl.GetScreenArea();
 
             switch (Type)
@@ -234,13 +239,18 @@ namespace AvalonDock.Controls
                     }
             }
 
-            return null;
+            return Geometry.Empty;
         }
 
-        private bool FindParentLayoutDocumentPane(ILayoutDocumentPane documentPane, out LayoutDocumentPaneGroup containerPaneGroup, out LayoutPanel containerPanel)
+        private bool FindParentLayoutDocumentPane(ILayoutDocumentPane? documentPane, out LayoutDocumentPaneGroup? containerPaneGroup, out LayoutPanel? containerPanel)
         {
             containerPaneGroup = null;
             containerPanel = null;
+
+            if (documentPane == null)
+            {
+                return false;
+            }
 
             if (documentPane.Parent is LayoutPanel panel)
             {
@@ -268,7 +278,7 @@ namespace AvalonDock.Controls
 
                 containerPaneGroup = currentDocumentPaneGroup;
                 containerPanel = currentDocumentPaneGroup.Parent as LayoutPanel;
-                return true;
+                return containerPanel != null;
             }
 
             return false;

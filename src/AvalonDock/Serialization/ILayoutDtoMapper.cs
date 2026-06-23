@@ -1,4 +1,3 @@
-#nullable disable
 using AvalonDock.Serialization.Dto;
 
 namespace AvalonDock.Serialization

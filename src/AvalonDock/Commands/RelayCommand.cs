@@ -10,7 +10,7 @@ namespace AvalonDock.Commands
     /// <typeparam name="T">The t type.</typeparam>
     internal class RelayCommand<T> : ICommand
     {
-        private readonly WeakFunc<T, bool> _canExecute;
+        private readonly WeakFunc<T, bool>? _canExecute;
 
         /// <summary>
         /// The execute field.
@@ -31,12 +31,9 @@ namespace AvalonDock.Commands
         /// </summary>
         /// <param name="execute">The execute.</param>
         /// <param name="canExecute">The can Execute.</param>
-        public RelayCommand(Action<T> execute, Func<T, bool> canExecute)
+        public RelayCommand(Action<T> execute, Func<T, bool>? canExecute)
         {
-            if (execute == null)
-            {
-                throw new ArgumentNullException(nameof(execute));
-            }
+            ArgumentNullException.ThrowIfNull(execute);
 
             _execute = new WeakAction<T>(execute);
 
@@ -73,7 +70,7 @@ namespace AvalonDock.Commands
         /// </summary>
         /// <param name="parameter">The converter parameter.</param>
         /// <returns>true if the operation succeeds; otherwise, false.</returns>
-        public bool CanExecute(object parameter)
+        public bool CanExecute(object? parameter)
         {
             if (_canExecute == null)
             {
@@ -84,7 +81,7 @@ namespace AvalonDock.Commands
             {
                 if (parameter == null && typeof(T).IsValueType)
                 {
-                    return _canExecute.Execute(default);
+                    return _canExecute.Execute(default!);
                 }
 
                 if (parameter == null || parameter is T)
@@ -125,7 +122,7 @@ namespace AvalonDock.Commands
                 {
                     if (typeof(T).IsValueType)
                     {
-                        _execute.Execute(default);
+                        _execute.Execute(default!);
                     }
                     else
                     {

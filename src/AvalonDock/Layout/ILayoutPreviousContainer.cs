@@ -8,11 +8,11 @@
 		/// <summary>
 		/// Gets or sets the previous container.
 		/// </summary>
-		ILayoutContainer PreviousContainer { get; set; }
+		ILayoutContainer? PreviousContainer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the previous container id.
 		/// </summary>
-		string PreviousContainerId { get; set; }
+		string? PreviousContainerId { get; set; }
 	}
 }

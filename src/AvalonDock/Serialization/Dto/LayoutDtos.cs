@@ -1,4 +1,3 @@
-#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -28,10 +27,10 @@ namespace AvalonDock.Serialization.Dto
     public abstract class LayoutContentDto : LayoutElementDto
     {
         /// <summary>Gets or sets the title.</summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>Gets or sets the content identifier.</summary>
-        public string ContentId { get; set; }
+        public string? ContentId { get; set; }
 
         /// <summary>Gets or sets a value indicating whether this item is selected.</summary>
         public bool IsSelected { get; set; }
@@ -40,7 +39,7 @@ namespace AvalonDock.Serialization.Dto
         public bool IsLastFocusedDocument { get; set; }
 
         /// <summary>Gets or sets the tooltip text.</summary>
-        public string ToolTip { get; set; }
+        public string? ToolTip { get; set; }
 
         /// <summary>Gets or sets the floating left position.</summary>
         public double FloatingLeft { get; set; }
@@ -70,7 +69,7 @@ namespace AvalonDock.Serialization.Dto
         public bool CanShowOnHover { get; set; }
 
         /// <summary>Gets or sets the previous container identifier.</summary>
-        public string PreviousContainerId { get; set; }
+        public string? PreviousContainerId { get; set; }
 
         /// <summary>Gets or sets the previous container index.</summary>
         public int PreviousContainerIndex { get; set; }
@@ -82,7 +81,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutDocumentDto : LayoutContentDto
     {
         /// <summary>Gets or sets the description.</summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>Gets or sets a value indicating whether this document can be moved.</summary>
         public bool CanMove { get; set; }
@@ -130,10 +129,10 @@ namespace AvalonDock.Serialization.Dto
     public abstract class LayoutPositionableGroupDto : LayoutElementDto
     {
         /// <summary>Gets or sets the dock width as a string (e.g. "1*", "200").</summary>
-        public string DockWidth { get; set; }
+        public string? DockWidth { get; set; }
 
         /// <summary>Gets or sets the dock height as a string (e.g. "1*", "200").</summary>
-        public string DockHeight { get; set; }
+        public string? DockHeight { get; set; }
 
         /// <summary>Gets or sets the dock minimum width.</summary>
         public double DockMinWidth { get; set; }
@@ -163,7 +162,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutPanelDto : LayoutPositionableGroupDto
     {
         /// <summary>Gets or sets the orientation as a string ("Horizontal" or "Vertical").</summary>
-        public string Orientation { get; set; }
+        public string? Orientation { get; set; }
 
         /// <summary>Gets or sets a value indicating whether docking is allowed.</summary>
         public bool CanDock { get; set; }
@@ -178,7 +177,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutDocumentPaneGroupDto : LayoutPositionableGroupDto
     {
         /// <summary>Gets or sets the orientation as a string ("Horizontal" or "Vertical").</summary>
-        public string Orientation { get; set; }
+        public string? Orientation { get; set; }
 
         /// <summary>Gets or sets the child document panes and pane groups.</summary>
         public List<LayoutPositionableGroupDto> Children { get; set; } = [];
@@ -190,7 +189,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutDocumentPaneDto : LayoutPositionableGroupDto
     {
         /// <summary>Gets or sets the pane identifier.</summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>Gets or sets a value indicating whether to show the header.</summary>
         public bool ShowHeader { get; set; }
@@ -205,7 +204,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutAnchorablePaneGroupDto : LayoutPositionableGroupDto
     {
         /// <summary>Gets or sets the orientation as a string ("Horizontal" or "Vertical").</summary>
-        public string Orientation { get; set; }
+        public string? Orientation { get; set; }
 
         /// <summary>Gets or sets the child anchorable panes and pane groups.</summary>
         public List<LayoutPositionableGroupDto> Children { get; set; } = [];
@@ -217,10 +216,10 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutAnchorablePaneDto : LayoutPositionableGroupDto
     {
         /// <summary>Gets or sets the pane identifier.</summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>Gets or sets the pane name.</summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>Gets or sets the child anchorables.</summary>
         public List<LayoutAnchorableDto> Children { get; set; } = [];
@@ -241,10 +240,10 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutAnchorGroupDto : LayoutElementDto
     {
         /// <summary>Gets or sets the group identifier.</summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>Gets or sets the previous container identifier.</summary>
-        public string PreviousContainerId { get; set; }
+        public string? PreviousContainerId { get; set; }
 
         /// <summary>Gets or sets the child anchorables.</summary>
         public List<LayoutAnchorableDto> Children { get; set; } = [];
@@ -266,7 +265,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutDocumentFloatingWindowDto : LayoutFloatingWindowDto
     {
         /// <summary>Gets or sets the root panel.</summary>
-        public LayoutDocumentPaneGroupDto RootPanel { get; set; }
+        public LayoutDocumentPaneGroupDto? RootPanel { get; set; }
     }
 
     /// <summary>
@@ -275,7 +274,7 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutAnchorableFloatingWindowDto : LayoutFloatingWindowDto
     {
         /// <summary>Gets or sets the root panel.</summary>
-        public LayoutAnchorablePaneGroupDto RootPanel { get; set; }
+        public LayoutAnchorablePaneGroupDto? RootPanel { get; set; }
     }
 
     /// <summary>
@@ -284,19 +283,19 @@ namespace AvalonDock.Serialization.Dto
     public class LayoutRootDto : LayoutElementDto
     {
         /// <summary>Gets or sets the root panel.</summary>
-        public LayoutPanelDto RootPanel { get; set; }
+        public LayoutPanelDto? RootPanel { get; set; }
 
         /// <summary>Gets or sets the top side.</summary>
-        public LayoutAnchorSideDto TopSide { get; set; }
+        public LayoutAnchorSideDto? TopSide { get; set; }
 
         /// <summary>Gets or sets the right side.</summary>
-        public LayoutAnchorSideDto RightSide { get; set; }
+        public LayoutAnchorSideDto? RightSide { get; set; }
 
         /// <summary>Gets or sets the left side.</summary>
-        public LayoutAnchorSideDto LeftSide { get; set; }
+        public LayoutAnchorSideDto? LeftSide { get; set; }
 
         /// <summary>Gets or sets the bottom side.</summary>
-        public LayoutAnchorSideDto BottomSide { get; set; }
+        public LayoutAnchorSideDto? BottomSide { get; set; }
 
         /// <summary>Gets or sets the floating windows.</summary>
         public List<LayoutFloatingWindowDto> FloatingWindows { get; set; } = [];

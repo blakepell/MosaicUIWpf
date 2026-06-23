@@ -1,4 +1,3 @@
-#nullable disable
 using AvalonDock.Serialization;
 using System;
 using System.ComponentModel;

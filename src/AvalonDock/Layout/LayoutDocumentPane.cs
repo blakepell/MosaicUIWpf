@@ -98,14 +98,14 @@ namespace AvalonDock.Layout
         public LayoutContent SelectedContent => _selectedIndex == -1 ? null : Children[_selectedIndex];
 
         /// <inheritdoc/>
-        string ILayoutPaneSerializable.Id
+        string? ILayoutPaneSerializable.Id
         {
             get => _id;
             set => _id = value;
         }
 
         /// <inheritdoc/>
-        string ISerializableLayoutPane.Id
+        string? ISerializableLayoutPane.Id
         {
             get => _id;
             set => _id = value;
@@ -267,7 +267,7 @@ namespace AvalonDock.Layout
         internal void UpdateIsDirectlyHostedInFloatingWindow() => RaisePropertyChanged(nameof(IsDirectlyHostedInFloatingWindow));
 
         /// <inheritdoc/>
-        protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected override void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
             if (oldValue is ILayoutGroup oldGroup)
             {

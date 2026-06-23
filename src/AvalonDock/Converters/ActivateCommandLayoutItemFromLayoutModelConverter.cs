@@ -12,7 +12,7 @@ namespace AvalonDock.Converters
 	public class ActivateCommandLayoutItemFromLayoutModelConverter : MarkupExtension, IValueConverter
 	{
 		/// <inheritdoc/>
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 		{
 			// when this converter is called layout could be constructing so many properties here are potentially not valid
 			if (!(value is LayoutContent layoutModel))
@@ -40,10 +40,7 @@ namespace AvalonDock.Converters
 		}
 
 		/// <inheritdoc/>
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => Binding.DoNothing;
 
 		/// <inheritdoc/>
 		public override object ProvideValue(IServiceProvider serviceProvider)

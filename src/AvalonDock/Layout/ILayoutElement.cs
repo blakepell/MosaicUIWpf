@@ -8,9 +8,9 @@ namespace AvalonDock.Layout
 	public interface ILayoutElement : INotifyPropertyChanged, INotifyPropertyChanging
 	{
 		/// <summary>Gets the parent <see cref="ILayoutContainer"/> for this layout element.</summary>
-		ILayoutContainer Parent { get; }
+		ILayoutContainer? Parent { get; }
 
 		/// <summary>Gets the <see cref="LayoutRoot"/> for this layout element.</summary>
-		ILayoutRoot Root { get; }
+		ILayoutRoot? Root { get; }
 	}
 }

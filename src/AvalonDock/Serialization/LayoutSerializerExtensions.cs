@@ -1,4 +1,3 @@
-#nullable disable
 using AvalonDock.Interfaces;
 using System.IO;
 using System.Text;

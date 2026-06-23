@@ -142,118 +142,118 @@ namespace AvalonDock
         /// <summary>
         /// Backs the <see cref="IDockingManager.DocumentClosing"/> event.
         /// </summary>
-        private event EventHandler<DocumentCancelEventArgs> _coreDocumentClosing;
+        private event EventHandler<DocumentCancelEventArgs>? _coreDocumentClosing;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.DocumentClosed"/> event.
         /// </summary>
-        private event EventHandler<DocumentEventArgs> _coreDocumentClosed;
+        private event EventHandler<DocumentEventArgs>? _coreDocumentClosed;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.AnchorableClosing"/> event.
         /// </summary>
-        private event EventHandler<AnchorableCancelEventArgs> _coreAnchorableClosing;
+        private event EventHandler<AnchorableCancelEventArgs>? _coreAnchorableClosing;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.AnchorableClosed"/> event.
         /// </summary>
-        private event EventHandler<AnchorableEventArgs> _coreAnchorableClosed;
+        private event EventHandler<AnchorableEventArgs>? _coreAnchorableClosed;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.AnchorableHiding"/> event.
         /// </summary>
-        private event EventHandler<AnchorableCancelEventArgs> _coreAnchorableHiding;
+        private event EventHandler<AnchorableCancelEventArgs>? _coreAnchorableHiding;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.AnchorableHidden"/> event.
         /// </summary>
-        private event EventHandler<AnchorableEventArgs> _coreAnchorableHidden;
+        private event EventHandler<AnchorableEventArgs>? _coreAnchorableHidden;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.ContentFloating"/> event.
         /// </summary>
-        private event EventHandler<ContentCancelEventArgs> _coreContentFloating;
+        private event EventHandler<ContentCancelEventArgs>? _coreContentFloating;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.ContentFloated"/> event.
         /// </summary>
-        private event EventHandler<ContentEventArgs> _coreContentFloated;
+        private event EventHandler<ContentEventArgs>? _coreContentFloated;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.ContentDocking"/> event.
         /// </summary>
-        private event EventHandler<ContentCancelEventArgs> _coreContentDocking;
+        private event EventHandler<ContentCancelEventArgs>? _coreContentDocking;
 
         /// <summary>
         /// Backs the <see cref="IDockingManager.ContentDocked"/> event.
         /// </summary>
-        private event EventHandler<ContentEventArgs> _coreContentDocked;
+        private event EventHandler<ContentEventArgs>? _coreContentDocked;
 
         /// <summary>Occurs when a document is closing.</summary>
-        event EventHandler<DocumentCancelEventArgs> IDockingManager.DocumentClosing
+        event EventHandler<DocumentCancelEventArgs>? IDockingManager.DocumentClosing
         {
             add => _coreDocumentClosing += value;
             remove => _coreDocumentClosing -= value;
         }
 
         /// <summary>Occurs when a document has closed.</summary>
-        event EventHandler<DocumentEventArgs> IDockingManager.DocumentClosed
+        event EventHandler<DocumentEventArgs>? IDockingManager.DocumentClosed
         {
             add => _coreDocumentClosed += value;
             remove => _coreDocumentClosed -= value;
         }
 
         /// <summary>Occurs when an anchorable is closing.</summary>
-        event EventHandler<AnchorableCancelEventArgs> IDockingManager.AnchorableClosing
+        event EventHandler<AnchorableCancelEventArgs>? IDockingManager.AnchorableClosing
         {
             add => _coreAnchorableClosing += value;
             remove => _coreAnchorableClosing -= value;
         }
 
         /// <summary>Occurs when an anchorable has closed.</summary>
-        event EventHandler<AnchorableEventArgs> IDockingManager.AnchorableClosed
+        event EventHandler<AnchorableEventArgs>? IDockingManager.AnchorableClosed
         {
             add => _coreAnchorableClosed += value;
             remove => _coreAnchorableClosed -= value;
         }
 
         /// <summary>Occurs when an anchorable is hiding.</summary>
-        event EventHandler<AnchorableCancelEventArgs> IDockingManager.AnchorableHiding
+        event EventHandler<AnchorableCancelEventArgs>? IDockingManager.AnchorableHiding
         {
             add => _coreAnchorableHiding += value;
             remove => _coreAnchorableHiding -= value;
         }
 
         /// <summary>Occurs when an anchorable has been hidden.</summary>
-        event EventHandler<AnchorableEventArgs> IDockingManager.AnchorableHidden
+        event EventHandler<AnchorableEventArgs>? IDockingManager.AnchorableHidden
         {
             add => _coreAnchorableHidden += value;
             remove => _coreAnchorableHidden -= value;
         }
 
         /// <summary>Occurs when content is floating.</summary>
-        event EventHandler<ContentCancelEventArgs> IDockingManager.ContentFloating
+        event EventHandler<ContentCancelEventArgs>? IDockingManager.ContentFloating
         {
             add => _coreContentFloating += value;
             remove => _coreContentFloating -= value;
         }
 
         /// <summary>Occurs when content has floated.</summary>
-        event EventHandler<ContentEventArgs> IDockingManager.ContentFloated
+        event EventHandler<ContentEventArgs>? IDockingManager.ContentFloated
         {
             add => _coreContentFloated += value;
             remove => _coreContentFloated -= value;
         }
 
         /// <summary>Occurs when content is docking.</summary>
-        event EventHandler<ContentCancelEventArgs> IDockingManager.ContentDocking
+        event EventHandler<ContentCancelEventArgs>? IDockingManager.ContentDocking
         {
             add => _coreContentDocking += value;
             remove => _coreContentDocking -= value;
         }
 
         /// <summary>Occurs when content has docked.</summary>
-        event EventHandler<ContentEventArgs> IDockingManager.ContentDocked
+        event EventHandler<ContentEventArgs>? IDockingManager.ContentDocked
         {
             add => _coreContentDocked += value;
             remove => _coreContentDocked -= value;
@@ -292,60 +292,60 @@ namespace AvalonDock
 
         /// <summary>Event fired when <see cref="DockingManager.Layout"/> property changes.</summary>
         /// <seealso cref="Layout"/>
-        public event EventHandler LayoutChanged;
+        public event EventHandler? LayoutChanged;
 
         /// <summary>Event fired when <see cref="DockingManager.Layout"/> property is about to be changed.</summary>
         /// <seealso cref="Layout"/>
-        public event EventHandler LayoutChanging;
+        public event EventHandler? LayoutChanging;
 
         /// <summary>Event fired when a document is about to be closed.</summary>
         /// <remarks>Subscribers have the opportunity to cancel the operation.</remarks>
-        public event EventHandler<DocumentClosingEventArgs> DocumentClosing;
+        public event EventHandler<DocumentClosingEventArgs>? DocumentClosing;
 
         /// <summary>Event fired after a document is closed.</summary>
-        public event EventHandler<DocumentClosedEventArgs> DocumentClosed;
+        public event EventHandler<DocumentClosedEventArgs>? DocumentClosed;
 
         /// <summary>Event fired when an anchorable is about to be closed.</summary>
         /// <remarks>Subscribers have the opportuniy to cancel the operation.</remarks>
-        public event EventHandler<AnchorableClosingEventArgs> AnchorableClosing;
+        public event EventHandler<AnchorableClosingEventArgs>? AnchorableClosing;
 
         /// <summary>Event fired after an anchorable is closed</summary>
-        public event EventHandler<AnchorableClosedEventArgs> AnchorableClosed;
+        public event EventHandler<AnchorableClosedEventArgs>? AnchorableClosed;
 
         /// <summary>Event fired when an anchorable is about to be hidden.</summary>
         /// <remarks>Subscribers have the opportuniy to cancel the operation.</remarks>
-        public event EventHandler<AnchorableHidingEventArgs> AnchorableHiding;
+        public event EventHandler<AnchorableHidingEventArgs>? AnchorableHiding;
 
         /// <summary>Event fired after an anchorable is hidden</summary>
-        public event EventHandler<AnchorableHiddenEventArgs> AnchorableHidden;
+        public event EventHandler<AnchorableHiddenEventArgs>? AnchorableHidden;
 
         /// <summary>Event is raised when <see cref="ActiveContent"/> changes.</summary>
         /// <seealso cref="ActiveContent"/>
-        public event EventHandler ActiveContentChanged;
+        public event EventHandler? ActiveContentChanged;
 
         /// <summary>
         /// Event is raised when LayoutFloatingWindowControl created
         /// </summary>
-        public event EventHandler<LayoutFloatingWindowControlCreatedEventArgs> LayoutFloatingWindowControlCreated;
+        public event EventHandler<LayoutFloatingWindowControlCreatedEventArgs>? LayoutFloatingWindowControlCreated;
 
         /// <summary>
         /// Event is raised when LayoutFloatingWindowControl closed
         /// </summary>
-        public event EventHandler<LayoutFloatingWindowControlClosedEventArgs> LayoutFloatingWindowControlClosed;
+        public event EventHandler<LayoutFloatingWindowControlClosedEventArgs>? LayoutFloatingWindowControlClosed;
 
         /// <summary>Event fired before content is floated (undocked to floating window).</summary>
         /// <remarks>Subscribers can cancel the operation by setting <see cref="System.ComponentModel.CancelEventArgs.Cancel"/> to true.</remarks>
-        public event EventHandler<ContentFloatingEventArgs> ContentFloating;
+        public event EventHandler<ContentFloatingEventArgs>? ContentFloating;
 
         /// <summary>Event fired after content has been floated.</summary>
-        public event EventHandler<ContentFloatedEventArgs> ContentFloated;
+        public event EventHandler<ContentFloatedEventArgs>? ContentFloated;
 
         /// <summary>Event fired before content is docked (re-docked from floating).</summary>
         /// <remarks>Subscribers can cancel the operation by setting <see cref="System.ComponentModel.CancelEventArgs.Cancel"/> to true.</remarks>
-        public event EventHandler<ContentDockingEventArgs> ContentDocking;
+        public event EventHandler<ContentDockingEventArgs>? ContentDocking;
 
         /// <summary>Event fired after content has been docked.</summary>
-        public event EventHandler<ContentDockedEventArgs> ContentDocked;
+        public event EventHandler<ContentDockedEventArgs>? ContentDocked;
 
         /// <summary><see cref="Layout"/> dependency property.</summary>
         public static readonly DependencyProperty LayoutProperty = DependencyProperty.Register(nameof(Layout), typeof(LayoutRoot), typeof(DockingManager),
@@ -392,7 +392,7 @@ namespace AvalonDock
         [Description("Gets or sets the MVVM layout model for ViewModel-driven docking.")]
         [Category("Layout")]
         [CLSCompliant(false)]
-        public IRootDock DockLayout
+        public IRootDock? DockLayout
         {
             get => (IRootDock)GetValue(DockLayoutProperty);
             set => SetValue(DockLayoutProperty, value);
@@ -1236,7 +1236,7 @@ namespace AvalonDock
         [Bindable(true)]
         [Description("Gets or sets the source collection of LayoutDocument objects.")]
         [Category("Document")]
-        public IEnumerable DocumentsSource
+        public IEnumerable? DocumentsSource
         {
             get => (IEnumerable)GetValue(DocumentsSourceProperty);
             set => SetValue(DocumentsSourceProperty, value);
@@ -1275,7 +1275,7 @@ namespace AvalonDock
         [Bindable(true)]
         [Description("Gets or sets the source collection for all LayoutAnchorable objects managed in this framework.")]
         [Category("Anchorable")]
-        public IEnumerable AnchorablesSource
+        public IEnumerable? AnchorablesSource
         {
             get => (IEnumerable)GetValue(AnchorablesSourceProperty);
             set => SetValue(AnchorablesSourceProperty, value);
@@ -1300,7 +1300,7 @@ namespace AvalonDock
         [Bindable(true)]
         [Description("Gets or sets the content that is currently active (document,anchoreable, or null).")]
         [Category("Other")]
-        public object ActiveContent
+        public object? ActiveContent
         {
             get => GetValue(ActiveContentProperty);
             set => SetValue(ActiveContentProperty, value);

@@ -171,7 +171,7 @@ namespace AvalonDock.Layout
         }
 
         /// <inheritdoc/>
-        protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected override void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
             base.OnParentChanged(oldValue, newValue);
             ComputeVisibility();
@@ -182,7 +182,7 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The e.</param>
-        private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Children_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Replace)
             {

@@ -16,11 +16,11 @@ namespace AvalonDock.Layout
         protected override bool GetVisibility() => Children.Count > 0;
 
         [field: NonSerialized]
-        private ILayoutContainer _previousContainer;
+        private ILayoutContainer? _previousContainer;
 
         /// <inheritdoc/>
         [XmlIgnore]
-        ILayoutContainer ILayoutPreviousContainer.PreviousContainer
+        ILayoutContainer? ILayoutPreviousContainer.PreviousContainer
         {
             get => _previousContainer;
             set
@@ -40,14 +40,14 @@ namespace AvalonDock.Layout
         }
 
         /// <inheritdoc/>
-        string ILayoutPreviousContainer.PreviousContainerId { get; set; }
+        string? ILayoutPreviousContainer.PreviousContainerId { get; set; }
 
-        private string _id;
-
-        /// <inheritdoc/>
-        string ILayoutPaneSerializable.Id { get => _id; set => _id = value; }
+        private string? _id;
 
         /// <inheritdoc/>
-        string ISerializableLayoutPane.Id { get => _id; set => _id = value; }
+        string? ILayoutPaneSerializable.Id { get => _id; set => _id = value; }
+
+        /// <inheritdoc/>
+        string? ISerializableLayoutPane.Id { get => _id; set => _id = value; }
     }
 }

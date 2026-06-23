@@ -8,6 +8,6 @@
 		/// <summary>
 		/// Gets or sets the id.
 		/// </summary>
-		string Id { get; set; }
+		string? Id { get; set; }
 	}
 }

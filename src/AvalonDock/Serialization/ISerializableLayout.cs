@@ -1,4 +1,3 @@
-#nullable disable
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -51,16 +50,16 @@ namespace AvalonDock.Serialization
     public interface ISerializableLayoutContent : ISerializableLayoutElement
     {
         /// <summary>Gets or sets the unique content identifier used to match items during deserialization.</summary>
-        string ContentId { get; set; }
+        string? ContentId { get; set; }
 
         /// <summary>Gets or sets the title.</summary>
         string Title { get; set; }
 
         /// <summary>Gets or sets the content object (typically a ViewModel).</summary>
-        object Content { get; set; }
+        object? Content { get; set; }
 
         /// <summary>Gets or sets the icon source.</summary>
-        object IconSource { get; set; }
+        object? IconSource { get; set; }
 
         /// <summary>Closes this content item, removing it from the layout.</summary>
         void Close();
@@ -99,10 +98,10 @@ namespace AvalonDock.Serialization
     public interface ISerializablePreviousContainer : ISerializableLayoutElement
     {
         /// <summary>Gets or sets the previous container.</summary>
-        ISerializableLayoutContainer PreviousContainer { get; set; }
+        ISerializableLayoutContainer? PreviousContainer { get; set; }
 
         /// <summary>Gets or sets the previous container's serializable ID.</summary>
-        string PreviousContainerId { get; set; }
+        string? PreviousContainerId { get; set; }
     }
 
     /// <summary>
@@ -111,6 +110,6 @@ namespace AvalonDock.Serialization
     public interface ISerializableLayoutPane
     {
         /// <summary>Gets or sets the serializable ID for this pane.</summary>
-        string Id { get; set; }
+        string? Id { get; set; }
     }
 }

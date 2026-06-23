@@ -239,7 +239,7 @@ namespace AvalonDock.Layout
         }
 
         /// <inheritdoc/>
-        protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected override void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
             UpdateParentVisibility();
             RaisePropertyChanged(nameof(IsVisible));

@@ -15,14 +15,14 @@ namespace AvalonDock.Layout
         /// </summary>
         [field: NonSerialized]
         [field: XmlIgnore]
-        public event EventHandler ChildrenCollectionChanged;
+        public event EventHandler? ChildrenCollectionChanged;
 
         /// <summary>
         /// Occurs when the children tree changed event is raised.
         /// </summary>
         [field: NonSerialized]
         [field: XmlIgnore]
-        public event EventHandler<ChildrenTreeChangedEventArgs> ChildrenTreeChanged;
+        public event EventHandler<ChildrenTreeChangedEventArgs>? ChildrenTreeChanged;
 
         /// <summary>
         /// Raises the children tree changed.

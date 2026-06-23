@@ -13,25 +13,25 @@ namespace AvalonDock.Converters
 	public class AutoHideCommandLayoutItemFromLayoutModelConverter : MarkupExtension, IValueConverter
 	{
 		/// <inheritdoc/>
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
 		{
 			// when this converter is called layout could be constructing so many properties here are potentially not valid
-			if (value as LayoutContent == null)
+			if (value is not LayoutContent layoutModel)
             {
                 return null;
             }
 
-            if ((value as LayoutContent).Root == null)
+            if (layoutModel.Root == null)
             {
                 return null;
             }
 
-            if ((value as LayoutContent).Root.Manager == null)
+            if (layoutModel.Root.Manager == null)
             {
                 return null;
             }
 
-            if (!((value as LayoutContent).Root.Manager.GetLayoutItemFromModel(value as LayoutContent) is LayoutAnchorableItem layoutItemModel))
+            if (layoutModel.Root.Manager.GetLayoutItemFromModel(layoutModel) is not LayoutAnchorableItem layoutItemModel)
             {
                 return Binding.DoNothing;
             }
@@ -40,10 +40,7 @@ namespace AvalonDock.Converters
 		}
 
 		/// <inheritdoc/>
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
+		public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => Binding.DoNothing;
 
 		/// <inheritdoc/>
 		public override object ProvideValue(IServiceProvider serviceProvider)

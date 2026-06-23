@@ -1,4 +1,3 @@
-#nullable disable
 using AvalonDock.Interfaces;
 using AvalonDock.Serialization.Dto;
 using System;
@@ -19,7 +18,7 @@ namespace AvalonDock.Serialization
         /// </summary>
         /// <param name="model">The model of the view being deserialized.</param>
         /// <param name="previousContent">The content from the previous layout, if available.</param>
-        public LayoutSerializationCallbackEventArgs(ISerializableLayoutContent model, object previousContent)
+        public LayoutSerializationCallbackEventArgs(ISerializableLayoutContent model, object? previousContent)
         {
             Cancel = false;
             Model = model;
@@ -30,7 +29,7 @@ namespace AvalonDock.Serialization
         public ISerializableLayoutContent Model { get; }
 
         /// <summary>Gets or sets the content to assign to the deserialized item.</summary>
-        public object Content { get; set; }
+        public object? Content { get; set; }
     }
 
     /// <summary>
@@ -41,8 +40,8 @@ namespace AvalonDock.Serialization
     /// </summary>
     public abstract class LayoutSerializerBase : ILayoutSerializer
     {
-        private ISerializableLayoutAnchorable[] _previousAnchorables;
-        private ISerializableLayoutDocument[] _previousDocuments;
+        private ISerializableLayoutAnchorable[] _previousAnchorables = [];
+        private ISerializableLayoutDocument[] _previousDocuments = [];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSerializerBase"/> class.
@@ -56,7 +55,7 @@ namespace AvalonDock.Serialization
         /// <summary>
         /// Raised during deserialization to let the client attach content to layout items.
         /// </summary>
-        public event EventHandler<LayoutSerializationCallbackEventArgs> LayoutSerializationCallback;
+        public event EventHandler<LayoutSerializationCallbackEventArgs>? LayoutSerializationCallback;
 
         /// <summary>Gets the docking manager whose layout is being serialized.</summary>
         public IDockingManager Manager { get; }
@@ -142,7 +141,7 @@ namespace AvalonDock.Serialization
             foreach (var lcToFix in layout.Descendents().OfType<ISerializableLayoutAnchorable>()
                 .Where(lc => lc.Content == null).ToArray())
             {
-                ISerializableLayoutAnchorable previous = null;
+                ISerializableLayoutAnchorable? previous = null;
                 if (lcToFix.ContentId != null)
                 {
                     previous = _previousAnchorables.FirstOrDefault(a => a.ContentId == lcToFix.ContentId);
@@ -185,7 +184,7 @@ namespace AvalonDock.Serialization
             foreach (var lcToFix in layout.Descendents().OfType<ISerializableLayoutDocument>()
                 .Where(lc => lc.Content == null).ToArray())
             {
-                ISerializableLayoutDocument previous = null;
+                ISerializableLayoutDocument? previous = null;
                 if (lcToFix.ContentId != null)
                 {
                     previous = _previousDocuments.FirstOrDefault(a => a.ContentId == lcToFix.ContentId);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -42,9 +43,9 @@ namespace AvalonDock.Converters
 		/// <param name="parameter">The converter parameter.</param>
 		/// <param name="culture">The culture information.</param>
 		/// <returns>The result of the operation.</returns>
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+		public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+            return targetTypes.Select(_ => Binding.DoNothing).ToArray();
 		}
 
 		/// <inheritdoc/>

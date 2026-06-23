@@ -34,7 +34,7 @@ namespace AvalonDock.Layout
 		protected override bool GetVisibility() => Children.Count > 0;
 
 		/// <inheritdoc />
-		protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+		protected override void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
 		{
 			base.OnParentChanged(oldValue, newValue);
 			UpdateSide();

@@ -27,17 +27,17 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Occurs when the closed event is raised.
         /// </summary>
-        public event EventHandler Closed;
+        public event EventHandler? Closed;
 
         /// <summary>
         /// Occurs when the closing event is raised.
         /// </summary>
-        public event EventHandler<CancelEventArgs> Closing;
+        public event EventHandler<CancelEventArgs>? Closing;
 
         /// <summary>
         /// Occurs when the floating properties updated event is raised.
         /// </summary>
-        public event EventHandler FloatingPropertiesUpdated;
+        public event EventHandler? FloatingPropertiesUpdated;
 
         /// <summary>
         /// Identifies the <see cref="Title"/> dependency property.
@@ -78,13 +78,13 @@ namespace AvalonDock.Layout
         private static void OnTitlePropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args) => ((LayoutContent)obj).RaisePropertyChanged(TitleProperty.Name);
 
         [NonSerialized]
-        private object _content;
+        private object? _content;
 
         /// <summary>
         /// Gets or sets the content.
         /// </summary>
         [XmlIgnore]
-        public object Content
+        public object? Content
         {
             get => _content;
             set
@@ -112,18 +112,18 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Gets or sets the content id.
         /// </summary>
-        public string ContentId
+        public string? ContentId
         {
             get
             {
-                var value = (string)GetValue(ContentIdProperty);
+                var value = (string?)GetValue(ContentIdProperty);
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     return value;
                 }
                 // #83 - if Content.Name is empty at setting content and will be set later, ContentId will stay null.
                 SetContentIdFromContent();
-                return (string)GetValue(ContentIdProperty);
+                return (string?)GetValue(ContentIdProperty);
             }
             set => SetValue(ContentIdProperty, value);
         }
@@ -137,7 +137,7 @@ namespace AvalonDock.Layout
         {
             if (obj is LayoutContent layoutContent)
             {
-                layoutContent.OnContentIdPropertyChanged((string)args.OldValue, (string)args.NewValue);
+                layoutContent.OnContentIdPropertyChanged((string?)args.OldValue, (string?)args.NewValue);
             }
         }
 
@@ -146,7 +146,7 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="oldValue">The previous value.</param>
         /// <param name="newValue">The new value.</param>
-        private void OnContentIdPropertyChanged(string oldValue, string newValue)
+        private void OnContentIdPropertyChanged(string? oldValue, string? newValue)
         {
             if (oldValue != newValue)
             {
@@ -205,7 +205,7 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Occurs when the is selected changed event is raised.
         /// </summary>
-        public event EventHandler IsSelectedChanged;
+        public event EventHandler? IsSelectedChanged;
 
         [field: NonSerialized]
         private bool _isActive;
@@ -232,7 +232,7 @@ namespace AvalonDock.Layout
                 {
                     if (root.ActiveContent != this && value)
                     {
-                        Root.ActiveContent = this;
+                        root.ActiveContent = this;
                     }
 
                     if (_isActive && root.ActiveContent != this)
@@ -269,7 +269,7 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Occurs when the is active changed event is raised.
         /// </summary>
-        public event EventHandler IsActiveChanged;
+        public event EventHandler? IsActiveChanged;
 
         private bool _isLastFocusedDocument;
 
@@ -293,11 +293,11 @@ namespace AvalonDock.Layout
         }
 
         [field: NonSerialized]
-        private ILayoutContainer _previousContainer;
+        private ILayoutContainer? _previousContainer;
 
         /// <inheritdoc/>
         [XmlIgnore]
-        ILayoutContainer ILayoutPreviousContainer.PreviousContainer
+        ILayoutContainer? ILayoutPreviousContainer.PreviousContainer
         {
             get => _previousContainer;
             set
@@ -319,7 +319,7 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Gets or sets the previous container.
         /// </summary>
-        protected ILayoutContainer PreviousContainer
+        protected ILayoutContainer? PreviousContainer
         {
             get => ((ILayoutPreviousContainer)this).PreviousContainer;
             set => ((ILayoutPreviousContainer)this).PreviousContainer = value;
@@ -327,12 +327,12 @@ namespace AvalonDock.Layout
 
         /// <inheritdoc/>
         [XmlIgnore]
-        string ILayoutPreviousContainer.PreviousContainerId { get; set; }
+        string? ILayoutPreviousContainer.PreviousContainerId { get; set; }
 
         /// <summary>
         /// Gets or sets the previous container id.
         /// </summary>
-        protected string PreviousContainerId
+        protected string? PreviousContainerId
         {
             get => ((ILayoutPreviousContainer)this).PreviousContainerId;
             set => ((ILayoutPreviousContainer)this).PreviousContainerId = value;
@@ -485,12 +485,12 @@ namespace AvalonDock.Layout
             }
         }
 
-        private object _toolTip;
+        private object? _toolTip;
 
         /// <summary>
         /// Gets or sets the tool tip.
         /// </summary>
-        public object ToolTip
+        public object? ToolTip
         {
             get => _toolTip;
             set
@@ -513,12 +513,12 @@ namespace AvalonDock.Layout
         [Category("Other")]
         public bool IsFloating => this.FindParent<LayoutFloatingWindow>() != null;
 
-        private ImageSource _iconSource;
+        private ImageSource? _iconSource;
 
         /// <summary>
         /// Gets or sets the icon source.
         /// </summary>
-        public ImageSource IconSource
+        public ImageSource? IconSource
         {
             get => _iconSource;
             set
@@ -632,7 +632,7 @@ namespace AvalonDock.Layout
         /// <summary>
         /// Gets the tab item.
         /// </summary>
-        public LayoutDocumentTabItem TabItem { get; internal set; }
+        public LayoutDocumentTabItem? TabItem { get; internal set; }
 
         /// <summary>
         /// Executes the close operation.
@@ -644,8 +644,13 @@ namespace AvalonDock.Layout
         /// </summary>
         /// <param name="other">The other.</param>
         /// <returns>The resulting value.</returns>
-        public int CompareTo(LayoutContent other)
+        public int CompareTo(LayoutContent? other)
         {
+            if (other == null)
+            {
+                return 1;
+            }
+
             if (Content is IComparable contentAsComparable)
             {
                 return contentAsComparable.CompareTo(other.Content);
@@ -662,8 +667,13 @@ namespace AvalonDock.Layout
             if (PreviousContainer != null && PreviousContainer.FindParent<LayoutFloatingWindow>() != null)
             {
                 var currentContainer = Parent as ILayoutPane;
-                var currentContainerIndex = (currentContainer as ILayoutGroup).IndexOfChild(this);
+                var currentContainerIndex = currentContainer is ILayoutGroup currentGroup ? currentGroup.IndexOfChild(this) : -1;
                 var previousContainerAsLayoutGroup = PreviousContainer as ILayoutGroup;
+
+                if (previousContainerAsLayoutGroup == null)
+                {
+                    return;
+                }
 
                 if (PreviousContainerIndex < previousContainerAsLayoutGroup.ChildrenCount)
                 {
@@ -678,11 +688,11 @@ namespace AvalonDock.Layout
                 PreviousContainerIndex = currentContainerIndex;
                 IsSelected = true;
                 IsActive = true;
-                Root.CollectGarbage();
+                Root?.CollectGarbage();
             }
             else
             {
-                Root.Manager.StartDraggingFloatingWindowForContent(this, false);
+                Root?.Manager?.StartDraggingFloatingWindowForContent(this, false);
                 IsSelected = true;
                 IsActive = true;
             }
@@ -752,6 +762,14 @@ namespace AvalonDock.Layout
                 var currentContainerIndex = currentContainer is ILayoutGroup group ? group.IndexOfChild(this) : -1;
                 var previousContainerAsLayoutGroup = PreviousContainer as ILayoutGroup;
 
+                if (previousContainerAsLayoutGroup == null)
+                {
+                    InternalDock();
+                    Root?.CollectGarbage();
+                    RaisePropertyChanged(nameof(IsFloating));
+                    return;
+                }
+
                 if (PreviousContainerIndex < previousContainerAsLayoutGroup.ChildrenCount)
                 {
                     previousContainerAsLayoutGroup.InsertChildAt(PreviousContainerIndex, this);
@@ -780,14 +798,14 @@ namespace AvalonDock.Layout
                 InternalDock();
             }
 
-            Root.CollectGarbage();
+            Root?.CollectGarbage();
 
             // BD: 14.08.2020 raise IsFloating property changed
             RaisePropertyChanged(nameof(IsFloating));
         }
 
         /// <inheritdoc/>
-        protected override void OnParentChanging(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected override void OnParentChanging(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
             if (oldValue != null)
             {
@@ -798,7 +816,7 @@ namespace AvalonDock.Layout
         }
 
         /// <inheritdoc/>
-        protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
+        protected override void OnParentChanged(ILayoutContainer? oldValue, ILayoutContainer? newValue)
         {
             if (IsSelected && Parent is ILayoutContentSelector)
             {
@@ -845,7 +863,7 @@ namespace AvalonDock.Layout
                 {
                     PreviousContainerId = layoutPaneSerializable.Id;
                     // This parentAsGroup will be removed in the GarbageCollection below
-                    if (parentAsGroup.Children.Count() == 1 && parentAsGroup.Parent != null && Root.Manager != null)
+                    if (parentAsGroup.Children.Count() == 1 && parentAsGroup.Parent != null && Root?.Manager != null)
                     {
                         Parent = Root.Manager.Layout;
                         PreviousContainer = parentAsGroup.Parent;
@@ -890,21 +908,21 @@ namespace AvalonDock.Layout
         void ILayoutElementForFloatingWindow.RaiseFloatingPropertiesUpdated() => FloatingPropertiesUpdated?.Invoke(this, EventArgs.Empty);
 
         /// <inheritdoc/>
-        object ISerializableLayoutContent.IconSource
+        object? ISerializableLayoutContent.IconSource
         {
             get => IconSource;
             set => IconSource = value as ImageSource;
         }
 
         /// <inheritdoc/>
-        ISerializableLayoutContainer ISerializablePreviousContainer.PreviousContainer
+        ISerializableLayoutContainer? ISerializablePreviousContainer.PreviousContainer
         {
             get => _previousContainer as ISerializableLayoutContainer;
             set => ((ILayoutPreviousContainer)this).PreviousContainer = value as ILayoutContainer;
         }
 
         /// <inheritdoc/>
-        string ISerializablePreviousContainer.PreviousContainerId
+        string? ISerializablePreviousContainer.PreviousContainerId
         {
             get => ((ILayoutPreviousContainer)this).PreviousContainerId;
             set => ((ILayoutPreviousContainer)this).PreviousContainerId = value;
