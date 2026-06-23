@@ -1376,7 +1376,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/folder2-open-48.png"
+                    ImageSource="/Assets/folder-rename-48.png"
                     Text="File Renamer">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -1385,7 +1385,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.FileRenamerExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:FileDropper}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:FileRenamerExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/folder2-open-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/folder-rename-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
