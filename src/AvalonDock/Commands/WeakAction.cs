@@ -88,18 +88,7 @@ namespace AvalonDock.Commands
         /// <summary>
         /// Gets a value indicating whether is Static.
         /// </summary>
-        public bool IsStatic
-        {
-            get
-            {
-#if SILVERLIGHT
-                return (_action != null && _action.Target == null)
-                    || _staticAction != null;
-#else
-                return _staticAction != null;
-#endif
-            }
-        }
+        public bool IsStatic => _staticAction != null;
 
         /// <summary>
         /// Gets the method Name.
@@ -216,13 +205,6 @@ namespace AvalonDock.Commands
                     return;
                     // ReSharper restore RedundantJumpStatement
                 }
-
-#if SILVERLIGHT
-                if (_action != null)
-                {
-                    _action();
-                }
-#endif
             }
         }
 
@@ -235,10 +217,6 @@ namespace AvalonDock.Commands
             ActionReference = null;
             Method = null;
             _staticAction = null;
-
-#if SILVERLIGHT
-            _action = null;
-#endif
         }
     }
 }

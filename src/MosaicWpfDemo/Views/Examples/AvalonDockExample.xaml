@@ -33,9 +33,9 @@
                     <ad:LayoutPanel Orientation="Horizontal">
                         <ad:LayoutAnchorablePane DockWidth="230">
                             <ad:LayoutAnchorable
+                                Title="Solution Explorer"
                                 CanClose="False"
-                                ContentId="solutionExplorer"
-                                Title="Solution Explorer">
+                                ContentId="solutionExplorer">
                                 <TreeView BorderThickness="0">
                                     <TreeViewItem Header="MosaicWpfDemo" IsExpanded="True">
                                         <TreeViewItem Header="Views" IsExpanded="True">
@@ -52,12 +52,10 @@
                         <ad:LayoutDocumentPaneGroup>
                             <ad:LayoutDocumentPane>
                                 <ad:LayoutDocument
+                                    Title="Overview"
                                     ContentId="overview"
-                                    IsSelected="True"
-                                    Title="Overview">
-                                    <Grid
-                                        Margin="12"
-                                        Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}">
+                                    IsSelected="True">
+                                    <Grid Margin="12" Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}">
                                         <StackPanel>
                                             <TextBlock
                                                 FontSize="18"
@@ -74,9 +72,7 @@
                                         </StackPanel>
                                     </Grid>
                                 </ad:LayoutDocument>
-                                <ad:LayoutDocument
-                                    ContentId="xaml"
-                                    Title="Theme usage">
+                                <ad:LayoutDocument Title="Theme usage" ContentId="xaml">
                                     <TextBox
                                         Margin="8"
                                         AcceptsReturn="True"
@@ -90,9 +86,7 @@
 
                         <ad:LayoutAnchorablePaneGroup DockWidth="260">
                             <ad:LayoutAnchorablePane>
-                                <ad:LayoutAnchorable
-                                    ContentId="properties"
-                                    Title="Properties">
+                                <ad:LayoutAnchorable Title="Properties" ContentId="properties">
                                     <Grid Margin="8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -137,12 +131,8 @@
                     <ad:LayoutRoot.BottomSide>
                         <ad:LayoutAnchorSide>
                             <ad:LayoutAnchorGroup>
-                                <ad:LayoutAnchorable
-                                    ContentId="output"
-                                    Title="Output">
-                                    <TextBlock
-                                        Margin="8"
-                                        Text="Auto-hide tabs also use Mosaic colors." />
+                                <ad:LayoutAnchorable Title="Output" ContentId="output">
+                                    <TextBlock Margin="8" Text="Auto-hide tabs also use Mosaic colors." />
                                 </ad:LayoutAnchorable>
                             </ad:LayoutAnchorGroup>
                         </ad:LayoutAnchorSide>
