@@ -12,7 +12,6 @@ namespace AvalonDock.Controls
     internal class DocumentPaneDropAsAnchorableTarget : DropTarget<LayoutDocumentPaneControl>
     {
         private LayoutDocumentPaneControl _targetPane;
-        private int _tabIndex = -1;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentPaneDropAsAnchorableTarget"/> class.
@@ -27,24 +26,6 @@ namespace AvalonDock.Controls
             : base(paneControl, detectionRect, type)
         {
             _targetPane = paneControl;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DocumentPaneDropAsAnchorableTarget"/> class.
-        /// </summary>
-        /// <param name="paneControl">The pane control.</param>
-        /// <param name="detectionRect">The detection rectangle.</param>
-        /// <param name="type">The drop target type.</param>
-        /// <param name="tabIndex">The tab index.</param>
-        internal DocumentPaneDropAsAnchorableTarget(
-            LayoutDocumentPaneControl paneControl,
-            Rect detectionRect,
-            DropTargetType type,
-            int tabIndex)
-            : base(paneControl, detectionRect, type)
-        {
-            _targetPane = paneControl;
-            _tabIndex = tabIndex;
         }
 
         /// <inheritdoc/>

@@ -13,7 +13,6 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
@@ -129,91 +128,6 @@ namespace AvalonDock.Controls.Shell.Standard
             if (p != IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(p);
-            }
-        }
-
-        /// <summary>Performs the SafeRelease operation.</summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="comObject">The comObject value.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
-        public static void SafeRelease<T>(ref T comObject)
-            where T : class
-        {
-            var t = comObject;
-            comObject = default(T);
-            if (t == null)
-            {
-                return;
-            }
-
-            Assert.IsTrue(Marshal.IsComObject(t));
-            Marshal.ReleaseComObject(t);
-        }
-
-        /// <summary>Represents the _UrlDecoder class.</summary>
-        private class _UrlDecoder
-        {
-            /// <summary>The _encoding value.</summary>
-            private readonly Encoding _encoding;
-
-            /// <summary>The _charBuffer value.</summary>
-            private readonly char[] _charBuffer;
-
-            /// <summary>The _byteBuffer value.</summary>
-            private readonly byte[] _byteBuffer;
-
-            /// <summary>The _byteCount value.</summary>
-            private int _byteCount;
-
-            /// <summary>The _charCount value.</summary>
-            private int _charCount;
-
-            /// <summary>Initializes a new instance of the <see cref="_UrlDecoder"/> class.</summary>
-            /// <param name="size">The size value.</param>
-            /// <param name="encoding">The encoding value.</param>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public _UrlDecoder(int size, Encoding encoding)
-            {
-                _encoding = encoding;
-                _charBuffer = new char[size];
-                _byteBuffer = new byte[size];
-            }
-
-            /// <summary>Performs the AddByte operation.</summary>
-            /// <param name="b">The b value.</param>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public void AddByte(byte b) => _byteBuffer[_byteCount++] = b;
-
-            /// <summary>Performs the AddChar operation.</summary>
-            /// <param name="ch">The ch value.</param>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public void AddChar(char ch)
-            {
-                _FlushBytes();
-                _charBuffer[_charCount++] = ch;
-            }
-
-            /// <summary>Performs the _FlushBytes operation.</summary>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            private void _FlushBytes()
-            {
-                if (_byteCount <= 0)
-                {
-                    return;
-                }
-
-                _charCount += _encoding.GetChars(_byteBuffer, 0, _byteCount, _charBuffer, _charCount);
-                _byteCount = 0;
-            }
-
-            /// <summary>Performs the GetString operation.</summary>
-            /// <returns>The result of the operation.</returns>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public string GetString()
-            {
-                _FlushBytes();
-                return _charCount > 0 ? new string(_charBuffer, 0, _charCount) : string.Empty;
             }
         }
 

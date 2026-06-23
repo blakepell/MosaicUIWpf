@@ -623,7 +623,7 @@ namespace AvalonDock.Controls
                             SetDropTargetIntoVisibility(layoutDocumentPane);
 
                             if (parentDocumentPaneGroup != null &&
-                                parentDocumentPaneGroup.Children.Where(c => c.IsVisible).Count() > 1)
+                                parentDocumentPaneGroup.Children.Count(c => c.IsVisible) > 1)
                             {
                                 var manager = parentDocumentPaneGroup.Root.Manager;
                                 if (!manager.AllowMixedOrientation)
@@ -667,7 +667,7 @@ namespace AvalonDock.Controls
                                 _documentPaneDropTargetTopAsAnchorablePane.Visibility = Visibility.Collapsed;
                             }
                             else if (parentDocumentPaneGroup != null &&
-                                parentDocumentPaneGroup.Children.Where(c => c.IsVisible).Count() > 1)
+                                parentDocumentPaneGroup.Children.Count(c => c.IsVisible) > 1)
                             {
                                 int indexOfDocumentPane = parentDocumentPaneGroup.Children.Where(ch => ch.IsVisible).ToList().IndexOf(layoutDocumentPane);
                                 bool isFirstChild = indexOfDocumentPane == 0;
@@ -727,7 +727,7 @@ namespace AvalonDock.Controls
                             SetDropTargetIntoVisibility(layoutDocumentPane);
 
                             if (parentDocumentPaneGroup != null &&
-                                parentDocumentPaneGroup.Children.Where(c => c.IsVisible).Count() > 1)
+                                parentDocumentPaneGroup.Children.Count(c => c.IsVisible) > 1)
                             {
                                 var manager = parentDocumentPaneGroup.Root.Manager;
                                 if (!manager.AllowMixedOrientation)

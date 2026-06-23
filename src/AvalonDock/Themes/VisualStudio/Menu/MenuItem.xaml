@@ -133,27 +133,6 @@
                 <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible" />
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
             </Trigger>
-
-            <!--<Trigger Property="Role" Value="TopLevelHeader">
-                                    <Setter Property="Padding" Value="6,0,6,2"/>
-                                    <Setter TargetName="SubMenuPopup" Property="Placement" Value="Bottom"/>
-                                    <Setter TargetName="Col0" Property="MinWidth" Value="0"/>
-                                    <Setter TargetName="Col3" Property="Width" Value="Auto"/>
-                                    <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="IGTHost" Property="Visibility" Value="Collapsed" />
-                                    <Setter TargetName="ArrowPanel" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="SubMenuBorder" Property="BorderThickness" Value="1,1,1,1"/>
-                                    <Setter TargetName="SubMenu" Property="Margin" Value="2,3,2,2"/>
-                                    <Setter TargetName="TransitionBorder" Property="Width" Value="{Binding ActualWidth, ElementName=Grid}"/>
-                                </Trigger>
-                                <Trigger Property="Role" Value="TopLevelItem">
-                                    <Setter Property="Padding" Value="6,0,6,2"/>
-                                    <Setter TargetName="Col0" Property="MinWidth" Value="0"/>
-                                    <Setter TargetName="Col3" Property="Width" Value="Auto"/>
-                                    <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="IGTHost" Property="Visibility" Value="Collapsed"/>
-                                    <Setter TargetName="ArrowPanel" Property="Visibility" Value="Collapsed"/>
-                                </Trigger>-->
             <Trigger Property="Role" Value="SubmenuHeader">
                 <Setter Property="DockPanel.Dock" Value="Top" />
                 <Setter Property="Padding" Value="10,3,0,3" />
@@ -171,35 +150,6 @@
                 <!--  Border Applies to item with sub-menu attached to it  -->
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.ItemBackgroundHoverKey}}" />
             </Trigger>
-            <!-- MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsHighlighted" Value="true"/>
-                    <Condition Property="Role" Value="TopLevelHeader"/>
-                </MultiTrigger.Conditions>
-                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.MenuItemHighlightedBackgroundKey}}"/>
-            </>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsHighlighted" Value="true"/>
-                    <Condition Property="Role" Value="TopLevelItem"/>
-                </MultiTrigger.Conditions>
-                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.MenuItemHighlightedBackgroundKey}}"/>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsHighlighted" Value="true"/>
-                    <Condition Property="Role" Value="SubmenuHeader"/>
-                </MultiTrigger.Conditions>
-                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.SubmenuItemBackgroundHighlightedKey}}"/>
-                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.SubmenuItemBackgroundHighlightedKey}}"/>
-            </MultiTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsHighlighted" Value="true"/>
-                    <Condition Property="Role" Value="SubmenuItem"/>
-                </MultiTrigger.Conditions>
-                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static reskeys:MenuKeys.SubmenuItemBackgroundHighlightedKey}}"/>
-            </MultiTrigger-->
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsSubmenuOpen" Value="true" />

@@ -20,23 +20,6 @@ namespace AvalonDock.Controls.Shell.Standard
 	internal static class Verify
     {
         /// <summary>
-        /// Executes the is Not Default operation.
-        /// </summary>
-        /// <typeparam name="T">The t type.</typeparam>
-        /// <param name="obj">The obj.</param>
-        /// <param name="name">The name.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        [DebuggerStepThrough]
-        public static void IsNotDefault<T>(T obj, string name)
-            where T : struct
-        {
-            if (default(T).Equals(obj))
-            {
-                throw new ArgumentException("The parameter must not be the default value.", name);
-            }
-        }
-
-        /// <summary>
         /// Executes the is Not Null operation.
         /// </summary>
         /// <typeparam name="T">The t type.</typeparam>

@@ -19,16 +19,6 @@ namespace AvalonDock.Themes.VisualStudio.Menu
         public static readonly ComponentResourceKey SubmenuItemBackgroundKey = new(typeof(ResourceKeys), "SubmenuItemBackgroundKey");
 
         /// <summary>
-        /// Gets the resource key for the menu item highlighted background.
-        /// </summary>
-        public static readonly ComponentResourceKey MenuItemHighlightedBackgroundKey = new(typeof(ResourceKeys), "MenuItemHighlightedBackgroundKey");
-
-        /// <summary>
-        /// Gets the resource key for the submenu item background highlighted.
-        /// </summary>
-        public static readonly ComponentResourceKey SubmenuItemBackgroundHighlightedKey = new(typeof(ResourceKeys), "SubmenuItemBackgroundHighlightedKey");
-
-        /// <summary>
         /// Gets the resource key for the check mark background brush.
         /// </summary>
         public static readonly ComponentResourceKey CheckMarkBackgroundBrushKey = new(typeof(ResourceKeys), "CheckMarkBackgroundBrushKey");
@@ -52,11 +42,6 @@ namespace AvalonDock.Themes.VisualStudio.Menu
         /// Gets the resource key for the disabled sub menu item border brush.
         /// </summary>
         public static readonly ComponentResourceKey DisabledSubMenuItemBorderBrushKey = new(typeof(ResourceKeys), "DisabledSubMenuItemBorderBrushKey");
-
-        /// <summary>
-        /// Gets the resource key for the text brush.
-        /// </summary>
-        public static readonly ComponentResourceKey TextBrushKey = new(typeof(ResourceKeys), "TextBrushKey");
 
         /// <summary>
         /// Gets the resource key for the item background selected.
