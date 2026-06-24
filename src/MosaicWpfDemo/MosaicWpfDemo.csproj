@@ -87,6 +87,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Mosaic.UI.Wpf.AvalonDock\Mosaic.UI.Wpf.AvalonDock.csproj" />
 		<ProjectReference Include="..\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj" />
 	</ItemGroup>
 
@@ -310,7 +311,14 @@
 			<Link>LinkedSources\AccentButtonExample.xaml.cs</Link>
 		</EmbeddedResource>
 
-		<EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml">
+    <EmbeddedResource Include="Views\Examples\AvalonDockExample.xaml">
+      <Link>LinkedSources\AvalonDockExample.xaml</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Examples\AvalonDockExample.xaml.cs">
+      <Link>LinkedSources\AvalonDockExample.xaml.cs</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml">
 			<Link>LinkedSources\AvalonEditVtTerminalBehaviorExample.xaml</Link>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\AvalonEditVtTerminalBehaviorExample.xaml.cs">

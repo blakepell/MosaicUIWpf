@@ -1,0 +1,36 @@
+using Mosaic.UI.Wpf.AvalonDock.Controls;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Markup;
+
+namespace Mosaic.UI.Wpf.AvalonDock.Converters
+{
+    /// <summary>
+    /// Represents the overlay Window To Visibility Converter.
+    /// </summary>
+    public class OverlayWindowToVisibilityConverter : MarkupExtension, IValueConverter
+    {
+        /// <inheritdoc/>
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            bool isHostedInFloatingWindow = value is OverlayWindow { IsHostedInFloatingWindow: true };
+            if (parameter == null || !bool.TryParse(parameter.ToString(), out bool isLarge))
+            {
+                isLarge = false;
+            }
+
+            return isHostedInFloatingWindow && isLarge ? Visibility.Hidden : Visibility.Visible;
+        }
+
+        /// <inheritdoc/>
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
+
+        /// <inheritdoc/>
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return ConverterCreater.Get<OverlayWindowToVisibilityConverter>();
+        }
+    }
+}

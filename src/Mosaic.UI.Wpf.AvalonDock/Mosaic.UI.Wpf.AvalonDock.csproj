@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+    <AssemblyVersion>2026.6.24.1</AssemblyVersion>
+    <FileVersion>2026.6.24.1</FileVersion>
+    <PackageVersion>2026.6.24.1</PackageVersion>
+    <PackageId>MosaicUIWpf.AvalonDock</PackageId>
+		<TargetFrameworks>net10.0-windows</TargetFrameworks>
+		<UseWPF>true</UseWPF>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Nullable>enable</Nullable>
+    <PackageIcon>collage-48.png</PackageIcon>
+    <License>MS-PL</License>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Authors>Blake Pell</Authors>
+    <Copyright>2026</Copyright>
+    <Description>AvalonDock for MosaicUIWpf</Description>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Resource Include="**\*.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\docs\images\collage-48.png" Link="collage-48.png">
+	    <PackagePath>\</PackagePath>
+	    <Pack>True</Pack>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

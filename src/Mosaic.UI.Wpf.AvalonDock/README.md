@@ -1,0 +1,2 @@
+# AvalonDock for MosaicUIWpf
+
