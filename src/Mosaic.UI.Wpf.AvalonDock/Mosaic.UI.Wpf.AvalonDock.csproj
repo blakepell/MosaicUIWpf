@@ -11,6 +11,8 @@
     <PackageIcon>collage-48.png</PackageIcon>
     <License>MS-PL</License>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>collage-48.png</PackageIcon>
     <Authors>Blake Pell</Authors>
     <Copyright>2026</Copyright>
     <Description>AvalonDock for MosaicUIWpf</Description>
