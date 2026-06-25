@@ -1,18 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 	<PropertyGroup>
+    <TargetFrameworks>net10.0-windows</TargetFrameworks>
     <AssemblyVersion>2026.6.25.1</AssemblyVersion>
     <FileVersion>2026.6.25.1</FileVersion>
     <PackageVersion>2026.6.25.1</PackageVersion>
-    <PackageId>MosaicUIWpf.AvalonDock</PackageId>
-		<TargetFrameworks>net10.0-windows</TargetFrameworks>
 		<UseWPF>true</UseWPF>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Nullable>enable</Nullable>
     <PackageIcon>collage-48.png</PackageIcon>
+    <PackageId>MosaicUIWpf.AvalonDock</PackageId>
+    <PackageTags>mosaic;wpf;controls;avalondock</PackageTags>
     <License>MS-PL</License>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/blakepell/MosaicUIWpf</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/blakepell/MosaicUIWpf</PackageProjectUrl>
     <PackageIcon>collage-48.png</PackageIcon>
+    <Title>AvalonDock for MosaicUIWpf</Title>
     <Authors>Blake Pell</Authors>
     <Copyright>2026</Copyright>
     <Description>AvalonDock for MosaicUIWpf</Description>
@@ -27,7 +33,15 @@
 	    <PackagePath>\</PackagePath>
 	    <Pack>True</Pack>
 	  </None>
-	</ItemGroup>
+	  <None Include="LICENSE">
+	    <PackagePath>\</PackagePath>
+	    <Pack>True</Pack>
+	  </None>
+    <None Include="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj" />
