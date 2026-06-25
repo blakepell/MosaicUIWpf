@@ -7,17 +7,17 @@
 
 ## Description
 
-A `TextBlock` that automatically scales its font size so all text fits within the available space. `MinFontSize` and `MaxFontSize` serve as the lower and upper boundaries; `FontScaleIncrement` controls the step granularity used while fitting.
+A `TextBlock` that automatically adjusts `FontSize` downward until the text fits the available width or reaches `MinFontSize`. It is useful for compact labels, counters, and headings with variable-length text.
 
 ## Key Properties
 
-| Property | Type | Description |
-|---|---|---|
-| `MinFontSize` | `double` | Smallest font size the control will scale down to. |
-| `MaxFontSize` | `double` | Largest font size the control will scale up to. |
-| `FontScaleIncrement` | `double` | Step size used when searching for the best-fit font size. |
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `MinFontSize` | `double` | `12.0` | Smallest font size the control will use. |
+| `MaxFontSize` | `double` | `24.0` | Starting and largest font size the control will use. |
+| `FontScaleIncrement` | `double` | `1.0` | Amount subtracted while searching for a fitting font size. Lower values are more precise but require more checks. |
 
-Standard `TextBlock` members apply (`Text`, `TextWrapping`, `Foreground`, etc.).
+All standard `TextBlock` properties (`Text`, `Foreground`, `FontWeight`, `TextTrimming`, etc.) apply normally.
 
 ## XAML Example
 
@@ -25,13 +25,14 @@ Standard `TextBlock` members apply (`Text`, `TextWrapping`, `Foreground`, etc.).
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
 
 <mosaic:ScalingTextBlock
-    Text="{Binding Headline}"
+    Width="180"
+    Text="{Binding DisplayName}"
     MinFontSize="10"
-    MaxFontSize="48"
-    TextWrapping="Wrap" />
+    MaxFontSize="24"
+    FontScaleIncrement="0.5" />
 ```
 
 ## Notes
 
-- Useful for headlines/labels in resizable containers where text must always fit.
-- The control recomputes the best-fit size as its bounds or text change.
+- The control recalculates on load, render-size changes, and `Text` changes.
+- It scales only by width; use normal `TextBlock` wrapping if multi-line text is desired.

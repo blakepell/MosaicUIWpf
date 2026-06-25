@@ -1,44 +1,39 @@
 # DocumentContainer
 
-**Base class:** `TabControl`  
+**Base class:** `Mosaic.UI.Wpf.Controls.TabControl`  
 **Namespace:** `Mosaic.UI.Wpf.Controls`  
 **Source:** `src/Mosaic.UI.Wpf/Controls/DocumentContainer/DocumentContainer.cs`  
 **Example:** `src/MosaicWpfDemo/Views/Examples/DocumentContainerExample.xaml`
 
-## Description
+## Overview
 
-Displays an observable collection of closable, reorderable documents as tabs — an IDE-style document well. Each tab has a close affordance, and tabs can be reordered by drag.
+`DocumentContainer` displays an `ObservableCollection<Document>` as Fluent-styled document tabs. It tracks the active document, supports drag-and-drop reordering, provides close buttons and `Ctrl+F4`, and exposes a shared content area at the right side of the tab strip.
 
 ## Key Properties
 
-| Property | Type | Description |
-|---|---|---|
-| `Documents` | `IEnumerable` | The collection of documents bound as tabs. |
-| `ActiveDocument` | `object` | The currently selected/active document (two-way). |
-| `HeaderContent` | `object` | Optional content shown in the tab strip header area. |
-| `HeaderContentTemplate` | `DataTemplate` | Template for `HeaderContent`. |
-| `HeaderContentTemplateSelector` | `DataTemplateSelector` | Selector for `HeaderContent`. |
-| `DocumentClosingCommand` | `ICommand` | Invoked when a document is about to close (cancellable). |
-| `ActiveTabBackground` | `Brush` | Background of the active tab. |
-| `ActiveTabForeground` | `Brush` | Foreground of the active tab. |
-| `TabOverflowMode` | enum | How tabs behave when the strip overflows. |
+- `Documents`: The observable document collection.
+- `ActiveDocument`: The selected document; binds two-way by default.
+- `HeaderContent`: Shared controls displayed at the right side of the tab strip.
+- `DocumentClosingCommand`: An optional command invoked before removal.
+- `ActiveTabBackground`: Active tab background brush; defaults to `#007ACC`.
+- `ActiveTabForeground`: Active tab foreground brush; defaults to white.
+- `TabOverflowMode`: Uses multiple rows with `Wrap` by default or a single button-scrollable row with `Scroll`.
 
-## Events
+Each `Document` provides `Title`, `Content`, and `CanClose` properties.
 
-`DocumentClosing` (`DocumentClosingEventArgs`, cancellable) and `DocumentClosed` (`DocumentClosedEventArgs`).
+## Closing
 
-## XAML Example
+`DocumentClosing` is a cancelable routed event. `DocumentClosed` is raised after removal. `TryCloseDocument` runs the same close pipeline used by the close button and keyboard command.
 
 ```xml
-xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
-
 <mosaic:DocumentContainer
-    Documents="{Binding OpenDocuments}"
-    ActiveDocument="{Binding CurrentDocument, Mode=TwoWay}"
-    DocumentClosingCommand="{Binding ConfirmCloseCommand}" />
+    ActiveDocument="{Binding ActiveDocument}"
+    ActiveTabBackground="DarkGreen"
+    ActiveTabForeground="White"
+    Documents="{Binding Documents}"
+    TabOverflowMode="Scroll">
+    <mosaic:DocumentContainer.HeaderContent>
+        <Button Command="{Binding AddDocumentCommand}" Content="Add" />
+    </mosaic:DocumentContainer.HeaderContent>
+</mosaic:DocumentContainer>
 ```
-
-## Notes
-
-- Derives from `TabControl`, so item templating and selection work as expected.
-- Handle `DocumentClosing` (or the command) to prompt for unsaved changes and cancel the close.

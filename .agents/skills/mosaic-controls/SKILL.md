@@ -28,6 +28,11 @@ The waveform visualizer controls are also mapped to the canonical URI, or can be
 xmlns:waveform="clr-namespace:Mosaic.UI.Wpf.Controls.WaveformVisualizer;assembly=Mosaic.UI.Wpf"
 ```
 
+AvalonDock is shipped as a separate package/project and uses its own XAML URI:
+```xml
+xmlns:ad="https://github.com/blakepell/MosaicUIWpf"
+```
+
 For theme tokens (brushes, font sizes, etc.), declare:
 ```xml
 xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
@@ -45,18 +50,23 @@ For detailed property/event/example documentation, read the individual file list
 | `AccentButton` | `Button` | Input | Button with built-in accent color variants | [AccentButton.md](controls/AccentButton.md) |
 | `AdaptiveImage` | `Image` | Media | Pixel-level HSL theme adaptation for images (light/dark mode) | [AdaptiveImage.md](controls/AdaptiveImage.md) |
 | `AsteriskTextBlock` | `Control` | Display | Displays masked text with a configurable mask character (default: `●`) | [AsteriskTextBlock.md](controls/AsteriskTextBlock.md) |
+| `AudioPlayer` | `Control` | Media | Audio transport control with playlist, seek slider, playback events, and MediaPlayer backing | [AudioPlayer.md](controls/AudioPlayer.md) |
+| `AudioPlayerSpectrumAnalyzer` | `FrameworkElement` | Media | WASAPI loopback spectrum analyzer intended to pair with AudioPlayer | [AudioPlayer.md](controls/AudioPlayer.md) |
 | `AutoCompleteBox` | `Control` | Input | Searchable autocomplete combo box with async provider support | [AutoCompleteBox.md](controls/AutoCompleteBox.md) |
 | `Avatar` | `Button` | Display | User avatar with image source or fallback initials | [Avatar.md](controls/Avatar.md) |
 | `Badge` | `ContentControl` | Display | Small inline status/count badge | [Badge.md](controls/Badge.md) |
 | `BindablePasswordBox` | `ContentControl` | Input | Password field with a bindable `Password` string property | [BindablePasswordBox.md](controls/BindablePasswordBox.md) |
+| `ContentPanel` | `ContentControl` | Layout | Themed content container with header, footer, separator, and corner styling | [ContentPanel.md](controls/ContentPanel.md) |
 | `ChatThread` | `UserControl` | Data | Chat conversation view with sent/received message templates | [ChatThread.md](controls/ChatThread.md) |
 | `CheckBoxList` | `ListBox` | Input | Multi-select list that shows checkboxes beside each item | [CheckBoxList.md](controls/CheckBoxList.md) |
 | `ClipBorder` | `Border` | Layout | Border that clips child content to its `CornerRadius` | [ClipBorder.md](controls/ClipBorder.md) |
 | `ColorPicker` | `UserControl` | Input | Visual color picker with hex input and preset colors | [ColorPicker.md](controls/ColorPicker.md) |
+| `DatePicker` | `Control` | Input | Mosaic date picker with popup month calendar and nullable selected date | [DatePicker.md](controls/DatePicker.md) |
 | `DocumentContainer` | `TabControl` | Navigation | Closable, reorderable document tabs with active-document tracking | [DocumentContainer.md](controls/DocumentContainer.md) |
 | `EditableTextBlock` | `Control` | Input | Inline editable text that toggles between view/edit mode | [EditableTextBlock.md](controls/EditableTextBlock.md) |
 | `FavoriteCheckBox` | `CheckBox` | Input | Symbol-based favorite/star toggle with configurable brushes | [FavoriteCheckBox.md](controls/FavoriteCheckBox.md) |
 | `FileDropper` | `Control` | Input | File drag-and-drop target with file type validation and command/event hooks | [FileDropper.md](controls/FileDropper.md) |
+| `Files` | `Control` | Data | Directory file list with shell icons, sorting, selection, watcher refresh, and activation event | [Files.md](controls/Files.md) |
 | `FlipPanel` | `ContentControl` | Display | Animated flip panel with front and back content faces | [FlipPanel.md](controls/FlipPanel.md) |
 | `GravatarImage` | `Image` | Media | Loads and displays a Gravatar avatar from an email address | [GravatarImage.md](controls/GravatarImage.md) |
 | `HexColorTextBox` | `ComboBox` | Input | Editable hex color field (`#RGB`, `#RRGGBB`, `#AARRGGBB`) with shade drop-down | [HexColorTextBox.md](controls/HexColorTextBox.md) |
@@ -66,8 +76,13 @@ For detailed property/event/example documentation, read the individual file list
 | `InputWaveformVisualizer` | `WaveformVisualizerBase` | Media | Live waveform from a selectable Windows audio input device | [WaveformVisualizer.md](controls/WaveformVisualizer.md) |
 | `LabeledSeparator` | `ContentControl` | Display | Horizontal separator with an embedded text label | [LabeledSeparator.md](controls/LabeledSeparator.md) |
 | `LoopbackWaveformVisualizer` | `WaveformVisualizerBase` | Media | Live waveform from the default Windows audio render device via WASAPI loopback | [WaveformVisualizer.md](controls/WaveformVisualizer.md) |
+| `MarkdownEditor` | `UserControl` | Input | Markdown editor built on SyntaxEditor with toolbar, snippets, save helpers, and preview/copy actions | [MarkdownEditor.md](controls/MarkdownEditor.md) |
+| `MarkdownViewer` | `Control` | Display | WPF-native Markdown renderer backed by a copyable FlowDocument/RichTextBox | [MarkdownViewer.md](controls/MarkdownViewer.md) |
+| `MessageBox` | static class | Dialog | Themed drop-in replacement for System.Windows.MessageBox Show overloads | [MessageBox.md](controls/MessageBox.md) |
 | `NumericTextBox` | `TextBox` | Input | Text box that accepts only numeric input with configurable decimal places | [NumericTextBox.md](controls/NumericTextBox.md) |
+| `ProgressRing` | `Control` | Display | Indeterminate animated ring/spinner controlled by IsActive | [ProgressRing.md](controls/ProgressRing.md) |
 | `PropertyGrid` | `Control` | Data | Object property inspector using `TypeDescriptor` with category grouping | [PropertyGrid.md](controls/PropertyGrid.md) |
+| `RadialProgressBar` | `ProgressBar` | Display | Circular progress bar with fill, pie, shape, and indeterminate modes | [RadialProgressBar.md](controls/RadialProgressBar.md) |
 | `RelativePanel` | `Panel` | Layout | Arranges children relative to each other via attached properties | [RelativePanel.md](controls/RelativePanel.md) |
 | `ScalingTextBlock` | `TextBlock` | Display | TextBlock that automatically lowers font size to fit available width | [ScalingTextBlock.md](controls/ScalingTextBlock.md) |
 | `SearchBox` | `TextBox` | Input | Text box with watermark, clear button, and `SearchExecuted` event | [SearchBox.md](controls/SearchBox.md) |
@@ -79,11 +94,13 @@ For detailed property/event/example documentation, read the individual file list
 | `SimpleStackPanel` | `Panel` | Layout | Efficient stack panel with uniform `Spacing` between children | [SimpleStackPanel.md](controls/SimpleStackPanel.md) |
 | `SmallPanel` | `Panel` | Layout | Overlay panel that stacks children in the same bounds | [SmallPanel.md](controls/SmallPanel.md) |
 | `SplitButton` | `ContentControl` | Input | Button with a separate drop-down chevron that opens a `ContextMenu` | [SplitButton.md](controls/SplitButton.md) |
+| `SplitPanel` | `Control` | Layout | Two-pane resizable container with a draggable GridSplitter and bindable split ratio | [SplitPanel.md](controls/SplitPanel.md) |
 | `StopwatchDisplay` | `ContentControl` | Display | Real-time stopwatch with Start/Stop/Reset methods | [StopwatchDisplay.md](controls/StopwatchDisplay.md) |
 | `StringListEditor` | `ContentControl` | Input | Editable list of strings with add/remove and duplicate/validation support | [StringListEditor.md](controls/StringListEditor.md) |
 | `SymbolRating` | `Control` | Input | Star/symbol rating control with hover preview and deselect | [SymbolRating.md](controls/SymbolRating.md) |
 | `SyntaxEditor` | `TextEditor` | Input | AvalonEdit-based code editor with Mosaic themes, bundled syntax highlighting, search, JSON commands, and line editing commands | [SyntaxEditor.md](controls/SyntaxEditor.md) |
 | `TabControl` | `TabControl` | Navigation | Mosaic-themed tab control with top/bottom active indicator | [TabControl.md](controls/TabControl.md) |
+| `TagBox` | `Control` | Input | Token/tag entry box with removable chips, duplicate control, and cancellable change events | [TagBox.md](controls/TagBox.md) |
 | `ToggleButton` | `ToggleButton` | Input | Mosaic-themed toggle button with checked/unchecked background | [ToggleButton.md](controls/ToggleButton.md) |
 | `ToggleSwitch` | `Control` | Input | Mobile-style on/off toggle switch with custom colors and MVVM | [ToggleSwitch.md](controls/ToggleSwitch.md) |
 | `TwoPaneView` | `Control` | Layout | Adaptive two-pane layout (side-by-side or stacked) | [TwoPaneView.md](controls/TwoPaneView.md) |
@@ -93,6 +110,17 @@ For detailed property/event/example documentation, read the individual file list
 | `WindowTitleBar` | `UserControl` | Windowing | Custom Mosaic window title bar with min/max/close and custom content slots | [WindowTitleBar.md](controls/WindowTitleBar.md) |
 
 ---
+
+## Integration Packages And Behaviors
+
+These are not all main-assembly controls, but they are part of the Mosaic usage surface and have demo examples.
+
+| Item | Kind | Namespace / URI | Description | Details |
+|---|---|---|---|---|
+| `DockingManager` / `MosaicTheme` | Separate package/project | `https://github.com/blakepell/MosaicUIWpf` | Mosaic-themed AvalonDock fork/integration for IDE-style document and tool-window docking | [AvalonDock.md](controls/AvalonDock.md) |
+| `AvalonEditVtTerminalBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Applies a retro VT/CRT visual skin to AvalonEdit `TextEditor` controls | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+| `AvalonTextEditorBindingBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Adds bindable text, selection, selected text, and caret offset to AvalonEdit `TextEditor` | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+| `AvalonEditPropertiesBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Binds caret brush and hyperlink enablement for AvalonEdit `TextEditor` | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
 
 ## Support Controls
 
@@ -149,9 +177,10 @@ See the `mosaic-setup-project` skill for the full wiring procedure.
 ## Quick Tips
 
 - **Always use `DynamicResource`** for theme tokens — switching themes requires live updates.
-- **CustomControls** (most controls) support re-templating; `UserControl`-based controls (`ColorPicker`, `ChatThread`, `SideMenu`, `WindowTitleBar`) do not.
+- **CustomControls** (most controls) support re-templating; `UserControl`-based controls (`ColorPicker`, `ChatThread`, `MarkdownEditor`, `SideMenu`, `WindowTitleBar`) do not.
 - **`VT52Terminal`** requires the separate sub-namespace `Mosaic.UI.Wpf.Controls.VT52Terminal`.
 - **`InputWaveformVisualizer`** and **`LoopbackWaveformVisualizer`** live in `Mosaic.UI.Wpf.Controls.WaveformVisualizer`, but are mapped to the canonical Mosaic XAML URI.
+- **AvalonDock** lives in `Mosaic.UI.Wpf.AvalonDock` / package `MosaicUIWpf.AvalonDock` and uses `xmlns:ad="https://github.com/blakepell/MosaicUIWpf"`.
 - **`AdaptiveImage`** requires `ThemeManager` in the DI container (`AppServices`).
 - **`PropertyGrid`** reads `[Category]`, `[Description]`, and `[PropertyGridAttribute]` attributes on the target object.
 - **`SideMenu`** uses `ContentTypeIsSingleton` + `AppServices` DI for singleton view navigation in the demo.

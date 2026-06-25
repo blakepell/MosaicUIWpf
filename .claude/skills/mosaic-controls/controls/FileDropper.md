@@ -1,41 +1,67 @@
 # FileDropper
 
-**Base class:** `Control` (CustomControl)  
+**Base class:** `Control`  
 **Namespace:** `Mosaic.UI.Wpf.Controls`  
 **Source:** `src/Mosaic.UI.Wpf/Controls/FileDropper/FileDropper.cs`  
 **Example:** `src/MosaicWpfDemo/Views/Examples/FileDropperExample.xaml`
 
 ## Description
 
-A drop target that accepts files dragged from the operating system. Displays a prompt, an upload icon, and the accepted file types. The border turns green for valid files and red for invalid files. Raises a `FileDrop` event (and optional command) when files are dropped.
+A drag-and-drop target for files from the operating system. It displays a prompt, accepted file-type text, and validation state; valid drops raise a routed event and can execute a command with the dropped file paths.
+
+## Template Parts
+
+| Part | Type | Description |
+|---|---|---|
+| `PART_Border` | `Border` | Main drop target border used by the default template. |
 
 ## Key Properties
 
-| Property | Type | Description |
-|---|---|---|
-| `Prompt` | `string` | Instructional text shown in the drop zone. |
-| `AcceptedFileTypes` | `string` | Comma/semicolon list of accepted extensions used for validation. |
-| `AcceptedFileTypesDisplay` | `string` | Read-only friendly display of accepted types. |
-| `DragState` | enum | Read-only current drag state (none/valid/invalid). |
-| `CornerRadius` | `CornerRadius` | Corner radius of the drop surface. |
-| `FileDropCommand` | `ICommand` | Command invoked when files are dropped. |
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Prompt` | `string` | `"Drop files here"` | Top-line prompt text. |
+| `AcceptedFileTypes` | `ObservableCollection<string>` | empty collection | Wildcard or extension patterns such as `*.png`, `.txt`, or `*.*`; empty accepts all files. |
+| `AcceptedFileTypesDisplay` | `string` | `*.*` | Read-only comma-separated display string for accepted patterns. |
+| `DragState` | `FileDropState` | `None` | Read-only state used by the template: `None`, `Valid`, or `Invalid`. |
+| `CornerRadius` | `CornerRadius` | `6` | Corner radius for the drop target border. |
+| `FileDropCommand` | `ICommand` | `null` | Command executed on valid drop; parameter is the dropped `string[]` file paths. |
 
 ## Events
 
-`FileDrop` (`FileDropEventHandler`) — raised with the dropped files.
+| Event | Type | Description |
+|---|---|---|
+| `FileDrop` | Routed (`FileDropEventArgs`) | Raised after one or more accepted files are dropped. `FileDropEventArgs.Files` exposes an `IReadOnlyList<string>`. |
 
 ## XAML Example
 
 ```xml
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+xmlns:sys="clr-namespace:System;assembly=System.Runtime"
 
 <mosaic:FileDropper
     Prompt="Drop images here"
-    AcceptedFileTypes=".png,.jpg,.jpeg"
-    FileDropCommand="{Binding ImportFilesCommand}" />
+    FileDropCommand="{Binding ImportFilesCommand}">
+    <mosaic:FileDropper.AcceptedFileTypes>
+        <sys:String>*.png</sys:String>
+        <sys:String>*.jpg</sys:String>
+        <sys:String>*.jpeg</sys:String>
+    </mosaic:FileDropper.AcceptedFileTypes>
+</mosaic:FileDropper>
+```
+
+## Code-Behind
+
+```csharp
+private void OnFileDrop(object sender, FileDropEventArgs e)
+{
+    foreach (string file in e.Files)
+    {
+        // import file
+    }
+}
 ```
 
 ## Notes
 
-- Validation against `AcceptedFileTypes` drives the green (valid) / red (invalid) border feedback.
-- Handle `FileDrop` or bind `FileDropCommand` to process the dropped paths.
+- `AcceptedFileTypes` supports `*`, `*.*`, wildcard patterns, bare extensions (`png`), and dotted extensions (`.png`).
+- All dropped files must match an accepted pattern; mixed valid/invalid drops are rejected.

@@ -1,30 +1,48 @@
 # SyntaxEditor
 
-**Base class:** `TextEditor` (AvalonEdit)  
+**Base class:** `ICSharpCode.AvalonEdit.TextEditor`  
 **Namespace:** `Mosaic.UI.Wpf.Controls`  
 **Source:** `src/Mosaic.UI.Wpf/Controls/SyntaxEditor/SyntaxEditor.cs`  
 **Example:** `src/MosaicWpfDemo/Views/Examples/SyntaxEditorExample.xaml`
 
 ## Description
 
-A code editor built on AvalonEdit (`ICSharpCode.AvalonEdit.TextEditor`) that integrates with the Mosaic theming system and provides bundled, theme-aware syntax highlighting selected via the `Language` property. Includes custom key chords for commenting, uncommenting, and moving lines.
+An AvalonEdit-based code editor integrated with Mosaic themes. It ships bundled syntax highlighting definitions, a themed search panel, JSON format/minify/validate commands, line comment commands, and line move commands.
 
 ## Key Properties
 
-| Property | Type | Description |
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Theme` | `MosaicThemeMode` | `Light` | Mosaic theme used for editor surface colors and themed highlighting resources. |
+| `Language` | `SyntaxLanguage` | `None` | Bundled syntax highlighting language to apply. |
+| `FollowGlobalTheme` | `bool` | `true` | Tracks `ThemeManager.ThemeChanged` while loaded and updates `Theme` automatically. |
+
+Common AvalonEdit properties such as `Text`, `Document`, `IsReadOnly`, `ShowLineNumbers`, `FontFamily`, and `FontSize` are available. The constructor defaults to Consolas 12 with line numbers and current-line highlighting enabled.
+
+## SyntaxLanguage Values
+
+`None`, `Json`, `CSharp`, `Xml`, `JavaScript`, `Sql`, `Markdown`, `C`, `Lua`, `Python`, `Ini`, `Java`, `Swift`, `Basic`, `VbNet`, `Perl`, and `Php`.
+
+Use `SyntaxLanguageMap.FromExtension(pathOrExtension)` to resolve from a file path or extension.
+
+## Commands
+
+| Command | Shortcut | Description |
 |---|---|---|
-| `Language` | `SyntaxLanguage` | Selects the bundled, theme-aware highlighting definition. |
-| `Theme` | (theme) | The highlighting/editor theme to apply. |
-| `FollowGlobalTheme` | `bool` | Track the global Mosaic light/dark theme automatically. |
-| `ClearVisible` | `bool` | Whether a clear affordance is shown. |
-
-`SyntaxLanguage` values: `None`, `Json`, `CSharp`, `Xml`, `JavaScript`, `Sql`, `Markdown`, `C`, `Lua`, `Python`, `Ini`, `Java`, `Swift`, `Basic`, `VbNet`, `Perl`, `Php`.
-
-All standard AvalonEdit `TextEditor` members apply (`Text`, `Document`, `Options`, `ShowLineNumbers`, etc.).
+| `ApplicationCommands.Find` | `Ctrl+F` | Opens the AvalonEdit search panel. |
+| `FormatJsonCommand` | none | Pretty-prints the current JSON document. |
+| `MinifyJsonCommand` | none | Compacts the current JSON document. |
+| `ValidateJsonCommand` | none | Validates the current JSON document and shows a result dialog. |
+| `CommentSelectionCommand` | `Ctrl+K, Ctrl+C` | Comments selected lines or the current line when supported by the language. |
+| `UncommentSelectionCommand` | `Ctrl+K, Ctrl+U` | Removes line comments when supported by the language. |
+| `MoveSelectionUpCommand` | `Ctrl+Up` | Moves selected lines, or current line, up one line. |
+| `MoveSelectionDownCommand` | `Ctrl+Down` | Moves selected lines, or current line, down one line. |
 
 ## Events
 
-`ContextMenuRequested` (`SyntaxEditorContextMenuEventArgs`).
+| Event | Type | Description |
+|---|---|---|
+| `ContextMenuRequested` | Routed (`SyntaxEditorContextMenuEventArgs`) | Raised after the default context menu is populated and before it opens so consumers can customize it. |
 
 ## XAML Example
 
@@ -32,13 +50,20 @@ All standard AvalonEdit `TextEditor` members apply (`Text`, `Document`, `Options
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
 
 <mosaic:SyntaxEditor
+    Text="{Binding SourceText, Mode=TwoWay}"
     Language="CSharp"
-    FollowGlobalTheme="True"
-    ShowLineNumbers="True" />
+    FollowGlobalTheme="True" />
+```
+
+## Code Example
+
+```csharp
+editor.Language = SyntaxLanguageMap.FromExtension(filePath);
+editor.Text = File.ReadAllText(filePath);
 ```
 
 ## Notes
 
-- Bundled highlighting definitions are theme-aware and switch with the Mosaic theme when `FollowGlobalTheme` is on.
-- Key chords support comment/uncomment and move-line operations.
-- For binding `Text`, see the `AvalonEditBindingBehavior` behavior.
+- Highlighting definitions are embedded as resources under `src/Mosaic.UI.Wpf/Assets`.
+- JSON commands show WPF message boxes on invalid or empty input.
+- `ContextMenuRequested` exposes the `ContextMenu` and active `SyntaxLanguage`.

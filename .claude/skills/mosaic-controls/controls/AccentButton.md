@@ -7,37 +7,39 @@
 
 ## Description
 
-A themed `Button` that changes its accent color based on the `AccentButtonType` enum. Useful for primary/affirmative or destructive actions where the button color should communicate intent.
+A themed `Button` with built-in accent color variants. Use it when a command should look like a primary, success, danger, gray, or default action without creating a one-off button style.
 
 ## Key Properties
 
 | Property | Type | Default | Description |
 |---|---|---|---|
-| `AccentButtonType` | `AccentButtonType` | `Default` | Determines the button's accent color scheme. |
+| `AccentButtonType` | `AccentButtonType` | `ThemeAccent` | Selects the visual treatment for background, border, and hover states. |
 
-`AccentButtonType` values:
+## AccentButtonType Values
 
 | Value | Description |
 |---|---|
-| `Default` | Standard themed button appearance. |
-| `ThemeAccent` | Uses the current theme's accent color. |
-| `Gray` | Neutral gray accent. |
-| `FluentGreen` | Fluent-style green (affirmative actions). |
-| `FluentRed` | Fluent-style red (destructive actions). |
-
-Standard `Button` members apply (`Content`, `Command`, `CommandParameter`, `Click`, etc.).
+| `Default` | Uses the normal button treatment. |
+| `ThemeAccent` | Uses the current Mosaic theme accent. |
+| `Gray` | Neutral gray action button. |
+| `FluentGreen` | Green success-style action. |
+| `FluentRed` | Red destructive/error-style action. |
 
 ## XAML Example
 
 ```xml
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
 
-<mosaic:AccentButton Content="Save" AccentButtonType="FluentGreen" />
-<mosaic:AccentButton Content="Delete" AccentButtonType="FluentRed" />
-<mosaic:AccentButton Content="Primary" AccentButtonType="ThemeAccent" Command="{Binding SaveCommand}" />
+<mosaic:AccentButton
+    Content="Save"
+    AccentButtonType="ThemeAccent" />
+
+<mosaic:AccentButton
+    Content="Delete"
+    AccentButtonType="FluentRed" />
 ```
 
 ## Notes
 
-- Inherits all `Button` behavior; only the visual accent differs by `AccentButtonType`.
-- Accent colors track the active Mosaic theme when `ThemeAccent` is used.
+- Inherits standard `Button` command, content, focus, and keyboard behavior.
+- The default style is loaded from `Controls/AccentButton/AccentButton.xaml` via `Themes/Generic.xaml`.

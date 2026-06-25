@@ -7,36 +7,42 @@
 
 ## Description
 
-A `CheckBox` that displays a single favorite symbol (defaults to ★) instead of the standard box. The symbol and its checked/unchecked/hover colors are customizable. Use it for favoriting, starring, or pinning items.
+A symbol-only `CheckBox` for favorite/star toggles. It uses a configurable symbol and brushes for checked, unchecked, and hover states while preserving normal checkbox binding and keyboard behavior.
+
+## Template Parts
+
+| Part | Type | Description |
+|---|---|---|
+| `PART_SymbolTextBlock` | `TextBlock` | Displays the configured symbol and state brush. |
 
 ## Key Properties
 
-| Property | Type | Description |
-|---|---|---|
-| `Symbol` | `string` | The glyph to display (default `★`). |
-| `SymbolFont` | `FontFamily` | Font used to render the symbol. |
-| `SymbolSize` | `double` | Font size of the symbol. |
-| `CheckedBrush` | `Brush` | Symbol color when checked. |
-| `UncheckedBrush` | `Brush` | Symbol color when unchecked. |
-| `HoverBrush` | `Brush` | Symbol color on mouse hover. |
-
-Standard `CheckBox` members apply (`IsChecked`, `Command`, `Checked`/`Unchecked` events, etc.).
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Symbol` | `string` | star glyph | Character or glyph displayed by the control. |
+| `SymbolFont` | `FontFamily` | `Segoe UI Symbol` | Font family used for `Symbol`. |
+| `SymbolSize` | `double` | `20.0` | Font size used for the symbol. |
+| `CheckedBrush` | `Brush` | `Gold` | Foreground brush when `IsChecked` is `true`. |
+| `UncheckedBrush` | `Brush` | `LightGray` | Foreground brush when `IsChecked` is `false`. |
+| `HoverBrush` | `Brush` | `Orange` | Foreground brush while hovered. |
 
 ## XAML Example
 
 ```xml
 xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
 
-<mosaic:FavoriteCheckBox IsChecked="{Binding IsFavorite}" />
+<mosaic:FavoriteCheckBox
+    IsChecked="{Binding IsFavorite, Mode=TwoWay}" />
 
 <mosaic:FavoriteCheckBox
-    Symbol="♥"
-    SymbolSize="20"
+    Symbol="&#x2665;"
+    SymbolSize="24"
     CheckedBrush="Crimson"
-    UncheckedBrush="Gray" />
+    UncheckedBrush="LightGray"
+    IsChecked="{Binding IsLiked, Mode=TwoWay}" />
 ```
 
 ## Notes
 
-- Binds two-way on `IsChecked` like a normal `CheckBox`.
-- Swap `Symbol` to any glyph available in `SymbolFont` (heart, pin, bookmark, etc.).
+- Use `IsChecked` for MVVM state, just like a normal `CheckBox`.
+- The disabled state uses `SystemColors.GrayTextBrush`.
