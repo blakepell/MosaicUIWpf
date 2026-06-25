@@ -111,6 +111,7 @@ See `docs/ARCHITECTURE_BLUEPRINT.md` for the control-library architecture, themi
 | Feature                | Description                                                                                                                            |
 |------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
 | Mosaic.UI.Wpf          | The control library.                                                                                                                    |
+| Mosaic.UI.Wpf.AvalonDock | Mosaic-themed AvalonDock integration for IDE-style document and tool-window docking. See the [AvalonDock README](./src/Mosaic.UI.Wpf.AvalonDock/README.md). |
 | MosaicWpfDemo          | The main demo project that houses examples and snippets of each control in the library as well as usage of other types and behaviors.   |
 
 ## Included Controls
