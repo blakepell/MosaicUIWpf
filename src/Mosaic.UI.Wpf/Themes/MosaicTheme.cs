@@ -223,6 +223,15 @@
         public static ComponentResourceKey WindowTitleBarButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarButtonStyle");
         public static ComponentResourceKey WindowTitleBarCloseButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarCloseButtonStyle");
 
+        /// <summary>
+        /// A <see cref="System.Windows.Controls.ControlTemplate"/> for a <see cref="System.Windows.Window"/> that renders the
+        /// window's own <c>BorderBrush</c>/<c>BorderThickness</c> as a rounded border whose corner radius follows the
+        /// <see cref="Behaviors.WindowChromeBehavior.CornerRadiusProperty"/>, so a border set on the window follows the
+        /// rounded chrome corners instead of being clipped. Applied automatically when
+        /// <see cref="Behaviors.WindowChromeBehavior.RoundBorderProperty"/> is enabled.
+        /// </summary>
+        public static ComponentResourceKey RoundedWindowTemplate { get; } = new(typeof(MosaicTheme), "RoundedWindowTemplate");
+
         // Typography
         public static ComponentResourceKey FontFamily { get; } = new(typeof(MosaicTheme), "FontFamily");
         public static ComponentResourceKey MonospaceFontFamily { get; } = new(typeof(MosaicTheme), "MonospaceFontFamily");

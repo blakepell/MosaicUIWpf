@@ -1,4 +1,5 @@
 using Mosaic.UI.Wpf.Themes;
+using System.Windows.Controls;
 using System.Windows.Shell;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -67,6 +68,18 @@ namespace Mosaic.UI.Wpf.Behaviors
         /// </summary>
         public static readonly DependencyProperty ApplyThemeWindowBrushesProperty = DependencyProperty.RegisterAttached(
             "ApplyThemeWindowBrushes",
+            typeof(bool),
+            typeof(WindowChromeBehavior),
+            new PropertyMetadata(false, OnChromeSettingsChanged));
+
+        /// <summary>
+        /// When enabled, the target <see cref="Window"/> is given a template whose border follows the rounded
+        /// <see cref="CornerRadiusProperty"/> chrome corners. The window's own <see cref="Control.BorderBrush"/> and
+        /// <see cref="Control.BorderThickness"/> are drawn as a rounded border that rounds with the window instead of a
+        /// square border being clipped at the corners.
+        /// </summary>
+        public static readonly DependencyProperty RoundBorderProperty = DependencyProperty.RegisterAttached(
+            "RoundBorder",
             typeof(bool),
             typeof(WindowChromeBehavior),
             new PropertyMetadata(false, OnChromeSettingsChanged));
@@ -183,6 +196,22 @@ namespace Mosaic.UI.Wpf.Behaviors
             obj.SetValue(ApplyThemeWindowBrushesProperty, value);
         }
 
+        /// <summary>
+        /// Gets whether the window's border follows the rounded chrome corners.
+        /// </summary>
+        public static bool GetRoundBorder(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(RoundBorderProperty);
+        }
+
+        /// <summary>
+        /// Sets whether the window's border follows the rounded chrome corners.
+        /// </summary>
+        public static void SetRoundBorder(DependencyObject obj, bool value)
+        {
+            obj.SetValue(RoundBorderProperty, value);
+        }
+
         private static void OnChromeSettingsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is not Window window)
@@ -233,6 +262,28 @@ namespace Mosaic.UI.Wpf.Behaviors
             {
                 window.SetResourceReference(Control.BackgroundProperty, MosaicTheme.WindowBackgroundBrush);
                 window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.WindowForegroundBrush);
+            }
+
+            ApplyRoundBorder(window);
+        }
+
+        /// <summary>
+        /// Applies (or clears) the rounded-border window template so a border set on the window follows the rounded
+        /// chrome corners instead of being clipped.
+        /// </summary>
+        private static void ApplyRoundBorder(Window window)
+        {
+            if (GetRoundBorder(window))
+            {
+                if (window.TryFindResource(MosaicTheme.RoundedWindowTemplate) is ControlTemplate template)
+                {
+                    window.Template = template;
+                }
+            }
+            else if (window.Template != null && ReferenceEquals(window.TryFindResource(MosaicTheme.RoundedWindowTemplate), window.Template))
+            {
+                // Only clear the template if we are the ones who set it.
+                window.ClearValue(Control.TemplateProperty);
             }
         }
     }
