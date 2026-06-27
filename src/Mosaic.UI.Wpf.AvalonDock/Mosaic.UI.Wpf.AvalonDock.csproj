@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 	<PropertyGroup>
     <TargetFrameworks>net10.0-windows</TargetFrameworks>
-    <AssemblyVersion>2026.6.25.1</AssemblyVersion>
-    <FileVersion>2026.6.25.1</FileVersion>
-    <PackageVersion>2026.6.25.1</PackageVersion>
+    <AssemblyVersion>2026.6.27.1</AssemblyVersion>
+    <FileVersion>2026.6.27.1</FileVersion>
+    <PackageVersion>2026.6.27.1</PackageVersion>
 		<UseWPF>true</UseWPF>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
