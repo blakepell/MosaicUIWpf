@@ -270,6 +270,52 @@ namespace Mosaic.UI.Wpf.Controls
         public ObservableCollection<FileItem> Items => (ObservableCollection<FileItem>)GetValue(ItemsProperty);
 
         /// <summary>
+        /// Identifies the <see cref="FileContextMenu"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FileContextMenuProperty = DependencyProperty.Register(
+            nameof(FileContextMenu), typeof(ContextMenu), typeof(Files),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the <see cref="ContextMenu"/> shown when a file row is right-clicked. When the menu
+        /// opens, its <see cref="FrameworkElement.DataContext"/> is the right-clicked <see cref="FileItem"/>
+        /// (and <see cref="ContextMenu.PlacementTarget"/> is the row's container), so menu items can bind
+        /// their <c>CommandParameter</c> to <c>{Binding}</c> to receive it. Leave unset to show no menu for
+        /// files. Folder rows use <see cref="FolderContextMenu"/> instead; the <c>..</c> parent entry never
+        /// shows a menu.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The context menu shown when a file row is right-clicked. The menu's DataContext is the right-clicked FileItem.")]
+        public ContextMenu? FileContextMenu
+        {
+            get => (ContextMenu?)GetValue(FileContextMenuProperty);
+            set => SetValue(FileContextMenuProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="FolderContextMenu"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FolderContextMenuProperty = DependencyProperty.Register(
+            nameof(FolderContextMenu), typeof(ContextMenu), typeof(Files),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the <see cref="ContextMenu"/> shown when a folder row is right-clicked. When the menu
+        /// opens, its <see cref="FrameworkElement.DataContext"/> is the right-clicked <see cref="FileItem"/>
+        /// (and <see cref="ContextMenu.PlacementTarget"/> is the row's container), so menu items can bind
+        /// their <c>CommandParameter</c> to <c>{Binding}</c> to receive it. Leave unset to show no menu for
+        /// folders. The <c>..</c> parent-navigation entry never shows a menu. File rows use
+        /// <see cref="FileContextMenu"/> instead.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The context menu shown when a folder row (other than the '..' parent entry) is right-clicked. The menu's DataContext is the right-clicked FileItem.")]
+        public ContextMenu? FolderContextMenu
+        {
+            get => (ContextMenu?)GetValue(FolderContextMenuProperty);
+            set => SetValue(FolderContextMenuProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="FileActivatedCommand"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty FileActivatedCommandProperty = DependencyProperty.Register(
@@ -399,10 +445,56 @@ namespace Mosaic.UI.Wpf.Controls
                 _listView.SelectionChanged += this.OnListViewSelectionChanged;
                 _listView.KeyDown += this.OnListViewKeyDown;
                 _listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.OnColumnHeaderClick));
+                this.ApplyItemContainerStyle();
             }
 
             this.Refresh();
             this.RestoreSortIndicator();
+        }
+
+        /// <summary>
+        /// Builds the <see cref="ListView"/> item-container style used to attach the per-row context menu.
+        /// The style derives (via <see cref="Style.BasedOn"/>) from the themed <see cref="ListViewItem"/>
+        /// style currently in scope so Mosaic's theming is preserved, then layers on the context-menu
+        /// selection: files use <see cref="FileContextMenu"/>, folders use <see cref="FolderContextMenu"/>,
+        /// and the <c>..</c> parent-navigation entry shows none. The themed style is resolved here at
+        /// runtime — rather than with a XAML <c>StaticResource</c> in the template — because the native
+        /// control styles are merged into the resource scope dynamically and are not present when this
+        /// control's template is parsed.
+        /// </summary>
+        private void ApplyItemContainerStyle()
+        {
+            if (_listView == null)
+            {
+                return;
+            }
+
+            // Implicit styles are keyed by their target type; when the native styles are not enabled this
+            // returns null and the WPF default theme style continues to apply as the lower-precedence base.
+            var baseStyle = _listView.TryFindResource(typeof(ListViewItem)) as Style;
+            var style = new Style(typeof(ListViewItem), baseStyle);
+
+            style.Triggers.Add(this.BuildContextMenuTrigger(nameof(FileItem.IsDirectory), false, FileContextMenuProperty));
+            style.Triggers.Add(this.BuildContextMenuTrigger(nameof(FileItem.IsDirectory), true, FolderContextMenuProperty));
+
+            // Must follow the folder trigger: the ".." parent entry is also a directory and gets no menu.
+            var parentTrigger = new DataTrigger { Binding = new Binding(nameof(FileItem.IsParentNavigation)), Value = true };
+            parentTrigger.Setters.Add(new Setter(ContextMenuProperty, null));
+            style.Triggers.Add(parentTrigger);
+
+            _listView.ItemContainerStyle = style;
+        }
+
+        /// <summary>
+        /// Creates a <see cref="DataTrigger"/> that, when the bound <see cref="FileItem"/> property equals
+        /// <paramref name="value"/>, sets each row's <see cref="FrameworkElement.ContextMenu"/> to the menu
+        /// held by <paramref name="menuProperty"/> on this control (bound so later changes propagate).
+        /// </summary>
+        private DataTrigger BuildContextMenuTrigger(string itemProperty, object value, DependencyProperty menuProperty)
+        {
+            var trigger = new DataTrigger { Binding = new Binding(itemProperty), Value = value };
+            trigger.Setters.Add(new Setter(ContextMenuProperty, new Binding(menuProperty.Name) { Source = this }));
+            return trigger;
         }
 
         private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)

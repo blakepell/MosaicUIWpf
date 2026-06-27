@@ -9,10 +9,12 @@
  */
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Microsoft.Win32;
 using Mosaic.UI.Wpf.Controls;
 
@@ -28,9 +30,20 @@ namespace MosaicWpfDemo.Views.Examples
             // Start in a folder that reliably has files to show.
             _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
+            // Opens the right-clicked folder in Windows Explorer. The parameter is the FileItem the folder
+            // context menu was invoked on (supplied via CommandParameter="{Binding}").
+            this.OpenFolderCommand = new DelegateCommand(
+                parameter => OpenInExplorer(parameter as FileItem),
+                parameter => parameter is FileItem { IsDirectory: true });
+
             InitializeComponent();
             this.DataContext = this;
         }
+
+        /// <summary>
+        /// Opens the folder represented by the right-clicked <see cref="FileItem"/> in Windows Explorer.
+        /// </summary>
+        public ICommand OpenFolderCommand { get; }
 
         /// <summary>
         /// The folder whose files are displayed by the <see cref="Files"/> control.
@@ -91,11 +104,51 @@ namespace MosaicWpfDemo.Views.Examples
             StatusTextBlock.Text = $"Double-clicked: {e.File.FullName}  ({FileItem.FormatSize(e.File.Length)}, modified {e.File.LastWriteTime:g})";
         }
 
+        private void OpenInExplorer(FileItem? item)
+        {
+            if (item is not { IsDirectory: true } || !Directory.Exists(item.FullPath))
+            {
+                return;
+            }
+
+            try
+            {
+                Process.Start(new ProcessStartInfo(item.FullPath) { UseShellExecute = true });
+                StatusTextBlock.Text = $"Opened in Explorer: {item.FullPath}";
+            }
+            catch (Exception ex)
+            {
+                StatusTextBlock.Text = $"Could not open '{item.FullPath}': {ex.Message}";
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private sealed class DelegateCommand : ICommand
+        {
+            private readonly Action<object?> _execute;
+            private readonly Predicate<object?>? _canExecute;
+
+            public DelegateCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
+            {
+                _execute = execute;
+                _canExecute = canExecute;
+            }
+
+            public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
+
+            public void Execute(object? parameter) => _execute(parameter);
+
+            public event EventHandler? CanExecuteChanged
+            {
+                add => CommandManager.RequerySuggested += value;
+                remove => CommandManager.RequerySuggested -= value;
+            }
         }
     }
 }
