@@ -193,6 +193,29 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="RootDirectory"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty RootDirectoryProperty = DependencyProperty.Register(
+            nameof(RootDirectory), typeof(string), typeof(Files),
+            new FrameworkPropertyMetadata(string.Empty, OnRootDirectoryChanged));
+
+        /// <summary>
+        /// Gets or sets the full path of a folder that bounds upward navigation. When set, the user can
+        /// browse this folder and its sub-folders (and back up toward it) but cannot navigate above it:
+        /// the <c>..</c> parent entry is hidden once the listing reaches this folder, and any attempt to
+        /// navigate to a folder outside this subtree is ignored. Leave empty (the default) to allow
+        /// navigation anywhere the file system permits. Has no effect when <see cref="ShowFolders"/> is
+        /// <c>false</c>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("A folder that bounds upward navigation. When set, the user cannot navigate above this folder (the '..' entry is hidden at this level). Leave empty to allow navigation anywhere.")]
+        public string RootDirectory
+        {
+            get => (string)GetValue(RootDirectoryProperty);
+            set => SetValue(RootDirectoryProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="ShowNavigateErrorMessageBox"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShowNavigateErrorMessageBoxProperty = DependencyProperty.Register(
@@ -450,6 +473,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="path">The full path of the folder to navigate into.</param>
         private void NavigateToFolder(string path)
         {
+            if (!this.IsWithinRoot(path))
+            {
+                // The target is above the configured RootDirectory boundary; navigation is not permitted.
+                return;
+            }
+
             try
             {
                 if (!Directory.Exists(path))
@@ -486,6 +515,44 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 MessageBox.Show(exception.Message, "Navigation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
+        }
+
+        /// <summary>
+        /// Determines whether the supplied folder lies at or below the configured <see cref="RootDirectory"/>
+        /// boundary. Returns <c>true</c> for every path when no root is configured.
+        /// </summary>
+        /// <param name="path">The full path of the folder to test.</param>
+        private bool IsWithinRoot(string path)
+        {
+            string root = this.RootDirectory;
+
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                return true;
+            }
+
+            try
+            {
+                string normalizedRoot = NormalizePath(root);
+                string normalizedPath = NormalizePath(path);
+
+                return normalizedPath.Equals(normalizedRoot, StringComparison.OrdinalIgnoreCase)
+                       || normalizedPath.StartsWith(normalizedRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex) when (ex is ArgumentException or PathTooLongException or NotSupportedException)
+            {
+                // A malformed root or path can't bound anything meaningfully; fail open rather than trap the user.
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Produces a canonical, comparable form of a path: fully qualified with any trailing directory
+        /// separators removed.
+        /// </summary>
+        private static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
         /// <summary>
@@ -723,7 +790,7 @@ namespace Mosaic.UI.Wpf.Controls
                 // parent exists) so the user can drill in and out one folder at a time.
                 if (this.ShowFolders)
                 {
-                    if (directory.Parent is { } parent)
+                    if (directory.Parent is { } parent && this.IsWithinRoot(parent.FullName))
                     {
                         current.Add(new FileEntry(parent, IsDirectory: true, IsParent: true));
                     }
@@ -870,6 +937,12 @@ namespace Mosaic.UI.Wpf.Controls
 
         private static void OnShowFoldersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            ((Files)d).Refresh();
+        }
+
+        private static void OnRootDirectoryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // The visibility of the ".." parent entry depends on the boundary, so re-read the listing.
             ((Files)d).Refresh();
         }
 
