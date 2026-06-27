@@ -30,6 +30,7 @@
     <None Remove="Assets\folder-48.png" />
     <None Remove="Assets\folder-open-48.png" />
     <None Remove="Assets\Images\error-48.png" />
+    <None Remove="Assets\Images\folder2-open-48.png" />
     <None Remove="Assets\Images\info-48.png" />
     <None Remove="Assets\Images\music-48.png" />
     <None Remove="Assets\Images\play-30.png" />
@@ -138,6 +139,7 @@
     <Resource Include="Assets\folder-48.png" />
     <Resource Include="Assets\folder-open-48.png" />
     <Resource Include="Assets\Images\error-48.png" />
+    <Resource Include="Assets\Images\folder2-open-48.png" />
     <Resource Include="Assets\Images\info-48.png" />
     <Resource Include="Assets\Images\music-48.png" />
     <Resource Include="Assets\Images\play-30.png" />

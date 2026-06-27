@@ -40,6 +40,11 @@
                 VerticalAlignment="Center"
                 Content="Watch folder"
                 IsChecked="{Binding ElementName=FilesControl, Path=EnableFileWatcher}" />
+            <CheckBox
+                Margin="16,0,0,0"
+                VerticalAlignment="Center"
+                Content="Show folders"
+                IsChecked="{Binding ElementName=FilesControl, Path=ShowFolders}" />
         </StackPanel>
 
         <!--  The Files control.  -->

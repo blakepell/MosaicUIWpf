@@ -18,12 +18,15 @@ using System.Windows.Data;
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
-    /// A lookless control that lists the files (not sub-folders) contained in a directory using a
-    /// three-column view: <c>Name</c> (with the operating-system shell icon for the file type),
-    /// <c>Date Modified</c>, and <c>Size</c> (formatted in friendly units such as <c>525 KB</c> or
-    /// <c>2.1 MB</c>). It supports single or multiple selection, an optional file-system watcher that
-    /// keeps the listing in sync with the folder, a manual <see cref="Refresh"/> method, and raises
-    /// <see cref="FileDoubleClick"/> (with the <see cref="FileInfo"/>) when a file is double-clicked.
+    /// A lookless control that lists the contents of a directory using a three-column view: <c>Name</c>
+    /// (with the operating-system shell icon for the file type), <c>Date Modified</c>, and <c>Size</c>
+    /// (formatted in friendly units such as <c>525 KB</c> or <c>2.1 MB</c>). When folder navigation is
+    /// enabled (see <see cref="ShowFolders"/>, on by default) sub-folders are listed with a folder icon
+    /// and a <c>..</c> parent entry, and double-clicking a folder navigates into it one level at a time;
+    /// this behavior can be toggled off to list files only. It supports single or multiple selection, an
+    /// optional file-system watcher that keeps the listing in sync with the folder, a manual
+    /// <see cref="Refresh"/> method, and raises <see cref="FileDoubleClick"/> (with the
+    /// <see cref="FileInfo"/>) when a file is double-clicked.
     /// </summary>
     [DefaultEvent(nameof(FileDoubleClick))]
     [DefaultProperty(nameof(DirectoryPath))]
@@ -166,6 +169,51 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="ShowFolders"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowFoldersProperty = DependencyProperty.Register(
+            nameof(ShowFolders), typeof(bool), typeof(Files),
+            new FrameworkPropertyMetadata(true, OnShowFoldersChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether folder navigation is enabled. When <c>true</c> (the
+        /// default), sub-folders are listed alongside files — each shown with a folder icon — and a
+        /// <c>..</c> entry is added when a parent folder exists. Double-clicking (or pressing
+        /// <see cref="Key.Enter"/> on) a folder navigates into it, replacing the listing with that
+        /// folder's contents and moving keyboard focus to the list; the <c>..</c> entry navigates up to
+        /// the parent. Only one folder's contents are shown at a time (this is a flat listing, not a tree
+        /// view). Set this to <c>false</c> to list files only and disable folder navigation entirely.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether folder navigation is enabled. When on (the default), sub-folders and a '..' parent entry are listed and double-clicking or pressing Enter on a folder navigates into it; this behavior can be toggled off to list files only.")]
+        public bool ShowFolders
+        {
+            get => (bool)GetValue(ShowFoldersProperty);
+            set => SetValue(ShowFoldersProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowNavigateErrorMessageBox"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowNavigateErrorMessageBoxProperty = DependencyProperty.Register(
+            nameof(ShowNavigateErrorMessageBox), typeof(bool), typeof(Files),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a warning <see cref="MessageBox"/> showing the error
+        /// message is displayed to the user when folder navigation fails. This is independent of the
+        /// <see cref="NavigateError"/> event, which is always raised regardless of this setting. The
+        /// default is <c>true</c>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether a warning message box with the error message is shown to the user when folder navigation fails. The NavigateError event is raised regardless. Enabled by default.")]
+        public bool ShowNavigateErrorMessageBox
+        {
+            get => (bool)GetValue(ShowNavigateErrorMessageBoxProperty);
+            set => SetValue(ShowNavigateErrorMessageBoxProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="SelectedItem"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(
@@ -222,13 +270,14 @@ namespace Mosaic.UI.Wpf.Controls
         #region Read-only Computed Properties
 
         /// <summary>
-        /// Gets the <see cref="FileInfo"/> for the currently selected item, or <c>null</c> if nothing is selected.
+        /// Gets the <see cref="FileInfo"/> for the currently selected item, or <c>null</c> if nothing is
+        /// selected or the selected item is a folder.
         /// </summary>
-        public FileInfo? SelectedFile => this.SelectedItem?.FileInfo;
+        public FileInfo? SelectedFile => this.SelectedItem is { IsDirectory: false } item ? item.FileInfo : null;
 
         /// <summary>
-        /// Gets the <see cref="FileInfo"/> for every selected item. In single-selection mode this contains
-        /// at most one element.
+        /// Gets the <see cref="FileInfo"/> for every selected item, excluding folders. In single-selection
+        /// mode this contains at most one element.
         /// </summary>
         public IReadOnlyList<FileInfo> SelectedFiles
         {
@@ -237,11 +286,12 @@ namespace Mosaic.UI.Wpf.Controls
                 if (_listView == null)
                 {
                     var single = this.SelectedItem;
-                    return single == null ? Array.Empty<FileInfo>() : new[] { single.FileInfo };
+                    return single is { IsDirectory: false } ? new[] { single.FileInfo } : Array.Empty<FileInfo>();
                 }
 
                 return _listView.SelectedItems
                     .OfType<FileItem>()
+                    .Where(i => !i.IsDirectory)
                     .Select(i => i.FileInfo)
                     .ToList();
             }
@@ -281,6 +331,23 @@ namespace Mosaic.UI.Wpf.Controls
             remove => RemoveHandler(SelectionChangedEvent, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="NavigateError"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent NavigateErrorEvent = EventManager.RegisterRoutedEvent(
+            nameof(NavigateError), RoutingStrategy.Bubble, typeof(FilesNavigateErrorEventHandler), typeof(Files));
+
+        /// <summary>
+        /// Occurs when folder navigation fails (for example the target folder no longer exists or access
+        /// is denied). The event arguments carry the attempted path and the <see cref="Exception"/>. The
+        /// failure is handled gracefully so it never propagates to the host application.
+        /// </summary>
+        public event FilesNavigateErrorEventHandler NavigateError
+        {
+            add => AddHandler(NavigateErrorEvent, value);
+            remove => RemoveHandler(NavigateErrorEvent, value);
+        }
+
         #endregion
 
         #region Template / Selection Wiring
@@ -294,6 +361,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 _listView.MouseDoubleClick -= this.OnListViewMouseDoubleClick;
                 _listView.SelectionChanged -= this.OnListViewSelectionChanged;
+                _listView.KeyDown -= this.OnListViewKeyDown;
                 _listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.OnColumnHeaderClick));
             }
 
@@ -306,6 +374,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 _listView.MouseDoubleClick += this.OnListViewMouseDoubleClick;
                 _listView.SelectionChanged += this.OnListViewSelectionChanged;
+                _listView.KeyDown += this.OnListViewKeyDown;
                 _listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.OnColumnHeaderClick));
             }
 
@@ -328,8 +397,38 @@ namespace Mosaic.UI.Wpf.Controls
             // Resolve the row that was actually double-clicked (ignore clicks on empty space or headers).
             var item = this.GetFileItemFromEventSource(e.OriginalSource as DependencyObject);
 
-            if (item == null)
+            if (item != null)
             {
+                this.ActivateItem(item);
+            }
+        }
+
+        private void OnListViewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Keyboard parity with double-click: Enter activates the focused row (navigate a folder or
+            // raise the file-activated event/command).
+            if (e.Key != Key.Enter)
+            {
+                return;
+            }
+
+            if (this.SelectedItem is { } item)
+            {
+                this.ActivateItem(item);
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Activates a row: when folder navigation is enabled and the row is a folder, navigates into it
+        /// (the <c>..</c> entry navigates up) and moves focus to the list; otherwise raises
+        /// <see cref="FileDoubleClick"/> and executes <see cref="FileActivatedCommand"/> for the file.
+        /// </summary>
+        private void ActivateItem(FileItem item)
+        {
+            if (this.ShowFolders && item.IsDirectory)
+            {
+                this.NavigateToFolder(item.FullPath);
                 return;
             }
 
@@ -339,6 +438,53 @@ namespace Mosaic.UI.Wpf.Controls
             if (this.FileActivatedCommand?.CanExecute(info) == true)
             {
                 this.FileActivatedCommand.Execute(info);
+            }
+        }
+
+        /// <summary>
+        /// Navigates into the supplied folder, replacing the listing with that folder's contents and
+        /// moving keyboard focus into the list. The folder is probed for access up front so that any
+        /// failure is surfaced here — raising <see cref="NavigateError"/> (and optionally a warning
+        /// message box) without changing the current directory — instead of crashing the host application.
+        /// </summary>
+        /// <param name="path">The full path of the folder to navigate into.</param>
+        private void NavigateToFolder(string path)
+        {
+            try
+            {
+                if (!Directory.Exists(path))
+                {
+                    throw new DirectoryNotFoundException($"The folder '{path}' could not be found.");
+                }
+
+                // Probe access before committing the change so a permission/IO error is attributed to this
+                // navigation here, rather than being silently swallowed by Refresh after DirectoryPath has
+                // already changed (which would leave the user stranded on an empty listing).
+                _ = new DirectoryInfo(path).EnumerateFileSystemInfos().Any();
+
+                this.DirectoryPath = path;
+                this.Dispatcher.BeginInvoke(() => _listView?.Focus(), DispatcherPriority.Input);
+            }
+            catch (Exception ex)
+            {
+                this.OnNavigateError(path, ex);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="NavigateError"/> event for a failed navigation and, when
+        /// <see cref="ShowNavigateErrorMessageBox"/> is enabled, shows a warning message box with the
+        /// exception message.
+        /// </summary>
+        /// <param name="path">The full path of the folder that navigation was attempted to.</param>
+        /// <param name="exception">The exception that occurred while navigating.</param>
+        protected virtual void OnNavigateError(string path, Exception exception)
+        {
+            this.RaiseEvent(new FilesNavigateErrorEventArgs(NavigateErrorEvent, this, path, exception));
+
+            if (this.ShowNavigateErrorMessageBox)
+            {
+                MessageBox.Show(exception.Message, "Navigation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -480,6 +626,14 @@ namespace Mosaic.UI.Wpf.Controls
             using (view.DeferRefresh())
             {
                 view.SortDescriptions.Clear();
+
+                // Keep folders (and the ".." entry) grouped above files regardless of the chosen column,
+                // so navigation targets always stay together at the top of the listing.
+                if (this.ShowFolders)
+                {
+                    view.SortDescriptions.Add(new SortDescription(nameof(FileItem.SortGroup), ListSortDirection.Ascending));
+                }
+
                 view.SortDescriptions.Add(new SortDescription(memberPath, direction));
             }
         }
@@ -497,7 +651,9 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            var sort = view.SortDescriptions[0];
+            // The last description carries the user-selected column (a leading SortGroup description may
+            // be present to keep folders grouped above files).
+            var sort = view.SortDescriptions[view.SortDescriptions.Count - 1];
             var column = this.FindColumnByMemberPath(sort.PropertyName);
 
             if (column == null)
@@ -557,17 +713,39 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            List<FileInfo> current;
+            var current = new List<FileEntry>();
 
             try
             {
+                var directory = new DirectoryInfo(path);
+
+                // When folder navigation is on, list sub-folders first (with a leading ".." entry when a
+                // parent exists) so the user can drill in and out one folder at a time.
+                if (this.ShowFolders)
+                {
+                    if (directory.Parent is { } parent)
+                    {
+                        current.Add(new FileEntry(parent, IsDirectory: true, IsParent: true));
+                    }
+
+                    foreach (var subDirectory in directory
+                        .EnumerateDirectories("*", SearchOption.TopDirectoryOnly)
+                        .Where(this.IsVisible)
+                        .OrderBy(d => d.Name, StringComparer.CurrentCultureIgnoreCase))
+                    {
+                        current.Add(new FileEntry(subDirectory, IsDirectory: true, IsParent: false));
+                    }
+                }
+
                 string pattern = string.IsNullOrWhiteSpace(this.Filter) ? "*" : this.Filter;
 
-                current = new DirectoryInfo(path)
+                foreach (var file in directory
                     .EnumerateFiles(pattern, SearchOption.TopDirectoryOnly)
-                    .Where(this.IsFileVisible)
-                    .OrderBy(f => f.Name, StringComparer.CurrentCultureIgnoreCase)
-                    .ToList();
+                    .Where(this.IsVisible)
+                    .OrderBy(f => f.Name, StringComparer.CurrentCultureIgnoreCase))
+                {
+                    current.Add(new FileEntry(file, IsDirectory: false, IsParent: false));
+                }
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -580,37 +758,46 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Determines whether a file should appear in the listing based on the <see cref="ShowHiddenFiles"/> setting.
+        /// Determines whether a file-system entry should appear in the listing based on the
+        /// <see cref="ShowHiddenFiles"/> setting.
         /// </summary>
-        private bool IsFileVisible(FileInfo file)
+        private bool IsVisible(FileSystemInfo entry)
         {
             if (this.ShowHiddenFiles)
             {
                 return true;
             }
 
-            return (file.Attributes & (FileAttributes.Hidden | FileAttributes.System)) == 0;
+            return (entry.Attributes & (FileAttributes.Hidden | FileAttributes.System)) == 0;
         }
+
+        /// <summary>
+        /// A single enumerated listing entry (a file, a sub-folder, or the <c>..</c> parent navigation entry),
+        /// paired with the flags needed to build or update the matching <see cref="FileItem"/> row.
+        /// </summary>
+        private readonly record struct FileEntry(FileSystemInfo Info, bool IsDirectory, bool IsParent);
 
         /// <summary>
         /// Reconciles the displayed collection with the freshly enumerated set: updates rows that still
         /// exist, removes rows whose files are gone, and inserts rows for new files — all keyed by full path.
         /// </summary>
-        private void SyncItems(ObservableCollection<FileItem> items, List<FileInfo> current)
+        private void SyncItems(ObservableCollection<FileItem> items, List<FileEntry> current)
         {
-            var byPath = new Dictionary<string, FileItem>(StringComparer.OrdinalIgnoreCase);
+            // Key rows by full path plus kind: a folder and a file could in theory share a path across a
+            // refresh (a delete + create of the same name), and we must not reuse a row of the wrong kind.
+            var byKey = new Dictionary<string, FileItem>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var item in items)
             {
-                byPath[item.FullPath] = item;
+                byKey[KeyFor(item.FullPath, item.IsDirectory)] = item;
             }
 
-            var currentPaths = new HashSet<string>(current.Select(f => f.FullName), StringComparer.OrdinalIgnoreCase);
+            var currentKeys = new HashSet<string>(current.Select(e => KeyFor(e.Info.FullName, e.IsDirectory)), StringComparer.OrdinalIgnoreCase);
 
-            // Remove rows whose files no longer exist (iterate backward for safe in-place removal).
+            // Remove rows whose entries no longer exist (iterate backward for safe in-place removal).
             for (int i = items.Count - 1; i >= 0; i--)
             {
-                if (!currentPaths.Contains(items[i].FullPath))
+                if (!currentKeys.Contains(KeyFor(items[i].FullPath, items[i].IsDirectory)))
                 {
                     items.RemoveAt(i);
                 }
@@ -619,11 +806,12 @@ namespace Mosaic.UI.Wpf.Controls
             // Update existing rows and insert new ones at their sorted positions.
             for (int i = 0; i < current.Count; i++)
             {
-                var info = current[i];
+                var entry = current[i];
+                string key = KeyFor(entry.Info.FullName, entry.IsDirectory);
 
-                if (byPath.TryGetValue(info.FullName, out var existing))
+                if (byKey.TryGetValue(key, out var existing))
                 {
-                    existing.Update(info);
+                    UpdateItem(existing, entry);
 
                     int currentIndex = items.IndexOf(existing);
                     if (currentIndex != i && i < items.Count)
@@ -633,7 +821,7 @@ namespace Mosaic.UI.Wpf.Controls
                 }
                 else
                 {
-                    var item = new FileItem(info);
+                    var item = CreateItem(entry);
 
                     if (i < items.Count)
                     {
@@ -647,6 +835,27 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        private static string KeyFor(string fullPath, bool isDirectory) => (isDirectory ? "D:" : "F:") + fullPath;
+
+        private static FileItem CreateItem(FileEntry entry)
+        {
+            return entry.Info is DirectoryInfo directory
+                ? new FileItem(directory, entry.IsParent)
+                : new FileItem((FileInfo)entry.Info);
+        }
+
+        private static void UpdateItem(FileItem item, FileEntry entry)
+        {
+            if (entry.Info is DirectoryInfo directory)
+            {
+                item.Update(directory, entry.IsParent);
+            }
+            else
+            {
+                item.Update((FileInfo)entry.Info);
+            }
+        }
+
         private static void OnDirectoryPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (Files)d;
@@ -655,6 +864,11 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         private static void OnFilterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((Files)d).Refresh();
+        }
+
+        private static void OnShowFoldersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((Files)d).Refresh();
         }
@@ -701,7 +915,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 _watcher = new FileSystemWatcher(path)
                 {
-                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes,
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size | NotifyFilters.LastWrite | NotifyFilters.Attributes,
                     IncludeSubdirectories = false
                 };
 
