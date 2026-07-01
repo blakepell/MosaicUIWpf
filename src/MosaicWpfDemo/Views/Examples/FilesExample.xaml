@@ -57,6 +57,7 @@
         <controls:Files
             x:Name="FilesControl"
             Grid.Row="1"
+            Background="{DynamicResource themes:MosaicTheme.ControlTextBackgroundColor}"
             DirectoryPath="{Binding FolderPath, RelativeSource={RelativeSource AncestorType=UserControl}}"
             FileDoubleClick="FilesControl_OnFileDoubleClick"
             SelectionMode="{Binding SelectionMode, RelativeSource={RelativeSource AncestorType=UserControl}}">

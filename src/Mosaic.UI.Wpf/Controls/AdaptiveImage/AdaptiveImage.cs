@@ -205,7 +205,7 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            var useDarkTransform = theme.Theme != MosaicThemeMode.Light;
+            var useDarkTransform = theme.Theme is MosaicThemeMode.Dark or MosaicThemeMode.Blue or MosaicThemeMode.HighContrast;
 
             if (!useDarkTransform)
             {

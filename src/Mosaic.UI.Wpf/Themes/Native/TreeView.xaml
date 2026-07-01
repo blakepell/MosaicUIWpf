@@ -13,7 +13,7 @@
     <conv:TreeViewItemSelectionMarginConverter x:Key="TreeViewItemSelectionMarginConverter" />
     <Style x:Key="DefaultTreeView" TargetType="{x:Type TreeView}">
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="Padding" Value="2" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />

@@ -14,6 +14,10 @@
         /// </summary>
         Dark,
         /// <summary>
+        /// Blue Mode
+        /// </summary>
+        Blue,
+        /// <summary>
         /// High Contrast Mode
         /// </summary>
         HighContrast

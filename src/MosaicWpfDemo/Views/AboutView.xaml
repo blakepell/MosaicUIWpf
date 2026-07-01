@@ -67,6 +67,7 @@
                             SelectionChanged="MosaicThemeModeSelector_OnSelectionChanged">
                             <ComboBoxItem Content="Light" Tag="Light" />
                             <ComboBoxItem Content="Dark" Tag="Dark" />
+                            <ComboBoxItem Content="Blue" Tag="Blue" />
                             <ComboBoxItem Content="High Contrast" Tag="HighContrast" />
                         </ComboBox>
 

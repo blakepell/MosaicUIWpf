@@ -643,7 +643,7 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            // HighContrast falls back to the Dark highlighting variant.
+            // Blue and HighContrast fall back to the Dark highlighting variant.
             string themeSuffix = this.Theme == MosaicThemeMode.Light ? "Light" : "Dark";
             string cacheKey = $"{baseName}|{themeSuffix}";
 
