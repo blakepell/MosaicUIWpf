@@ -28,5 +28,12 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/StatusBar.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TabControl.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ToolTip.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ContentControl.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ItemsControl.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Hyperlink.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Page.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DocumentViewer.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Frame.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/NavigationWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

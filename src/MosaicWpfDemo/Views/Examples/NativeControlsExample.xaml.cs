@@ -8,6 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Diagnostics;
+using System.Windows.Navigation;
+
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class NativeControlsExample
@@ -15,6 +18,12 @@ namespace MosaicWpfDemo.Views.Examples
         public NativeControlsExample()
         {
             InitializeComponent();
+        }
+
+        private void Hyperlink_OnRequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }

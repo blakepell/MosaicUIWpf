@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -351,6 +352,89 @@
                     Padding="12,4"
                     Content="Hover me"
                     ToolTip="This is a native themed ToolTip." />
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="ContentControl"
+                Description="Native content control template."
+                IconSource="../../Assets/toolbox-48.png">
+                <ContentControl Width="220">
+                    <TextBlock Text="Hosted inside a ContentControl." TextWrapping="Wrap" />
+                </ContentControl>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="ItemsControl"
+                Description="Native items control template."
+                IconSource="../../Assets/toolbox-48.png">
+                <ItemsControl
+                    Width="220"
+                    Padding="6"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1">
+                    <TextBlock Text="First item" />
+                    <TextBlock Text="Second item" />
+                    <TextBlock Text="Third item" />
+                </ItemsControl>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="Hyperlink"
+                Description="Native hyperlink template."
+                IconSource="../../Assets/toolbox-48.png">
+                <TextBlock>
+                    Visit the
+                    <Hyperlink NavigateUri="https://www.apexgate.net" RequestNavigate="Hyperlink_OnRequestNavigate">Mosaic UI website</Hyperlink>
+                    for more.
+                </TextBlock>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="Frame &amp; Page"
+                Description="Native frame with navigation chrome hosting a Page."
+                IconSource="../../Assets/toolbox-48.png">
+                <Frame
+                    Width="300"
+                    Height="140"
+                    NavigationUIVisibility="Visible">
+                    <Frame.Content>
+                        <Page Title="Sample Page">
+                            <StackPanel Margin="10">
+                                <TextBlock FontWeight="Bold" Text="Hosted Page" />
+                                <TextBlock
+                                    Margin="0,4,0,0"
+                                    Text="This Page is hosted inside a native Frame with Mosaic themed navigation chrome."
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Page>
+                    </Frame.Content>
+                </Frame>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="DocumentViewer"
+                Description="Native document viewer with a Mosaic themed toolbar. The Find and Zoom-In buttons override the default icon keys with custom images (AdaptiveImage adapts them to the theme)."
+                IconSource="../../Assets/toolbox-48.png">
+                <DocumentViewer Width="360" Height="240">
+                    <DocumentViewer.Resources>
+                        <!--  Provide your own toolbar artwork by re-defining the icon keys.  -->
+                        <BitmapImage x:Key="Mosaic.DocumentViewer.FindIcon" UriSource="../../Assets/search-48.png" />
+                        <BitmapImage x:Key="Mosaic.DocumentViewer.ZoomInIcon" UriSource="../../Assets/zoom-in-48.png" />
+                    </DocumentViewer.Resources>
+                    <FixedDocument>
+                        <PageContent>
+                            <FixedPage Width="300" Height="220" Background="White">
+                                <TextBlock
+                                    Margin="20"
+                                    FontSize="14"
+                                    Foreground="Black"
+                                    TextWrapping="Wrap">
+                                    This is a fixed document rendered by a native DocumentViewer. The surrounding viewer chrome uses Mosaic themed colors.
+                                </TextBlock>
+                            </FixedPage>
+                        </PageContent>
+                    </FixedDocument>
+                </DocumentViewer>
             </mosaic:SettingsItem>
 
         </StackPanel>
