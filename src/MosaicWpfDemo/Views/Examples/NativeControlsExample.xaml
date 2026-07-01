@@ -240,7 +240,10 @@
                 Title="Expander"
                 Description="Native expander template."
                 IconSource="../../Assets/toolbox-48.png">
-                <Expander Width="240" Header="Advanced options" IsExpanded="True">
+                <Expander
+                    Width="240"
+                    Header="Advanced options"
+                    IsExpanded="True">
                     <StackPanel Margin="10,6">
                         <CheckBox Content="Enable logging" IsChecked="True" />
                         <CheckBox Content="Verbose output" />
@@ -258,9 +261,7 @@
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border
-                        Grid.Column="0"
-                        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                    <Border Grid.Column="0" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -270,9 +271,7 @@
                         Grid.Column="1"
                         Width="5"
                         HorizontalAlignment="Stretch" />
-                    <Border
-                        Grid.Column="2"
-                        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                    <Border Grid.Column="2" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
                         <TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -305,11 +304,9 @@
                 <RichTextBox Width="260" Height="90">
                     <FlowDocument>
                         <Paragraph>
-                            This is a
-                            <Bold>native</Bold>
+                            This is a<Bold>native</Bold>
                             <Italic>RichTextBox</Italic>
-                            with Mosaic themed colors.
-                        </Paragraph>
+                            with Mosaic themed colors.</Paragraph>
                     </FlowDocument>
                 </RichTextBox>
             </mosaic:SettingsItem>
@@ -383,10 +380,8 @@
                 Description="Native hyperlink template."
                 IconSource="../../Assets/toolbox-48.png">
                 <TextBlock>
-                    Visit the
-                    <Hyperlink NavigateUri="https://www.apexgate.net" RequestNavigate="Hyperlink_OnRequestNavigate">Mosaic UI website</Hyperlink>
-                    for more.
-                </TextBlock>
+                    Visit the<Hyperlink NavigateUri="https://www.apexgate.net" RequestNavigate="Hyperlink_OnRequestNavigate">Mosaic UI website</Hyperlink>
+                    for more.</TextBlock>
             </mosaic:SettingsItem>
 
             <mosaic:SettingsItem
@@ -415,7 +410,7 @@
                 Title="DocumentViewer"
                 Description="Native document viewer with a Mosaic themed toolbar. The Find and Zoom-In buttons override the default icon keys with custom images (AdaptiveImage adapts them to the theme)."
                 IconSource="../../Assets/toolbox-48.png">
-                <DocumentViewer Width="360" Height="240">
+                <DocumentViewer Width="400" Height="350">
                     <DocumentViewer.Resources>
                         <!--  Provide your own toolbar artwork by re-defining the icon keys.  -->
                         <BitmapImage x:Key="Mosaic.DocumentViewer.FindIcon" UriSource="../../Assets/search-48.png" />
@@ -423,7 +418,10 @@
                     </DocumentViewer.Resources>
                     <FixedDocument>
                         <PageContent>
-                            <FixedPage Width="300" Height="220" Background="White">
+                            <FixedPage
+                                Width="300"
+                                Height="220"
+                                Background="White">
                                 <TextBlock
                                     Margin="20"
                                     FontSize="14"

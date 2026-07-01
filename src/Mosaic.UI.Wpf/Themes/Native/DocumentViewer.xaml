@@ -111,6 +111,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
         <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="themes:DocumentViewerNativeHelper.ThemeFindToolBar" Value="True" />
         <Setter Property="ContextMenu" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type ui:PresentationUIStyleResources}, ResourceId=PUIDocumentViewerContextMenu}}" />
         <Setter Property="Template">
             <Setter.Value>
