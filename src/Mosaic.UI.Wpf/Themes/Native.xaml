@@ -19,5 +19,14 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/RadioButton.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Slider.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DataGrid.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Expander.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/GridSplitter.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Label.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/PasswordBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ProgressBar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/RichTextBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/StatusBar.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TabControl.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ToolTip.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

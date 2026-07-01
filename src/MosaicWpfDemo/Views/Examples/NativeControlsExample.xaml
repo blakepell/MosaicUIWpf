@@ -235,6 +235,124 @@
                     Value="50" />
             </mosaic:SettingsItem>
 
+            <mosaic:SettingsItem
+                Title="Expander"
+                Description="Native expander template."
+                IconSource="../../Assets/toolbox-48.png">
+                <Expander Width="240" Header="Advanced options" IsExpanded="True">
+                    <StackPanel Margin="10,6">
+                        <CheckBox Content="Enable logging" IsChecked="True" />
+                        <CheckBox Content="Verbose output" />
+                    </StackPanel>
+                </Expander>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="GridSplitter"
+                Description="Native grid splitter template."
+                IconSource="../../Assets/toolbox-48.png">
+                <Grid Width="260" Height="80">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        Grid.Column="0"
+                        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="Left" />
+                    </Border>
+                    <GridSplitter
+                        Grid.Column="1"
+                        Width="5"
+                        HorizontalAlignment="Stretch" />
+                    <Border
+                        Grid.Column="2"
+                        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="Right" />
+                    </Border>
+                </Grid>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="Label"
+                Description="Native label template."
+                IconSource="../../Assets/toolbox-48.png">
+                <Label Content="_User name:" Target="{Binding ElementName=LabelDemoBox}" />
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="PasswordBox"
+                Description="Native password box template."
+                IconSource="../../Assets/toolbox-48.png">
+                <PasswordBox
+                    x:Name="LabelDemoBox"
+                    Width="220"
+                    Password="secret" />
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="RichTextBox"
+                Description="Native rich text box template."
+                IconSource="../../Assets/toolbox-48.png">
+                <RichTextBox Width="260" Height="90">
+                    <FlowDocument>
+                        <Paragraph>
+                            This is a
+                            <Bold>native</Bold>
+                            <Italic>RichTextBox</Italic>
+                            with Mosaic themed colors.
+                        </Paragraph>
+                    </FlowDocument>
+                </RichTextBox>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="TabControl"
+                Description="Native tab control template."
+                IconSource="../../Assets/toolbox-48.png">
+                <TabControl Width="260" Height="120">
+                    <TabItem Header="General">
+                        <TextBlock Margin="8" Text="General settings" />
+                    </TabItem>
+                    <TabItem Header="Display">
+                        <TextBlock Margin="8" Text="Display settings" />
+                    </TabItem>
+                    <TabItem Header="About">
+                        <TextBlock Margin="8" Text="About this app" />
+                    </TabItem>
+                </TabControl>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="StatusBar"
+                Description="Native status bar template."
+                IconSource="../../Assets/toolbox-48.png">
+                <StatusBar Width="280">
+                    <StatusBarItem Content="Ready" />
+                    <Separator />
+                    <StatusBarItem Content="Ln 12, Col 4" />
+                    <Separator />
+                    <StatusBarItem Content="UTF-8" />
+                </StatusBar>
+            </mosaic:SettingsItem>
+
+            <mosaic:SettingsItem
+                Title="ToolTip"
+                Description="Native tooltip template. Hover the button below."
+                IconSource="../../Assets/toolbox-48.png">
+                <Button
+                    Padding="12,4"
+                    Content="Hover me"
+                    ToolTip="This is a native themed ToolTip." />
+            </mosaic:SettingsItem>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

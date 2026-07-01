@@ -72,6 +72,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>True once media has been opened and a duration is known.</summary>
         private bool _hasMedia;
 
+        /// <summary>A seek requested before the media finished opening, applied once <see cref="MediaOpened"/> fires.</summary>
+        private TimeSpan? _pendingSeek;
+
         #endregion
 
         #region Dependency Properties
@@ -549,9 +552,19 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Seeks the active track to the specified <paramref name="position"/>.
+        /// Seeks the active track to the specified <paramref name="position"/>, updating the reported
+        /// <see cref="Position"/>, the seek slider and the underlying audio position so that they all reflect the
+        /// requested point. The seek is honored whether or not the player is currently playing. If playback is in
+        /// progress it is briefly paused, repositioned and then resumed so the new position takes effect cleanly;
+        /// otherwise the underlying audio is repositioned in place so a subsequent <see cref="Play"/> resumes from
+        /// the requested point.
         /// </summary>
         /// <param name="position">The position to seek to. Values are clamped to the track's duration.</param>
+        /// <remarks>
+        /// If a <see cref="Source"/> has been assigned but the media has not finished opening yet (so its
+        /// <see cref="Duration"/> is not known), the seek is remembered and applied automatically once the media
+        /// opens. This makes it safe to set <see cref="Source"/> and immediately seek to a timestamp.
+        /// </remarks>
         public void Seek(TimeSpan position)
         {
             if (position < TimeSpan.Zero)
@@ -559,12 +572,41 @@ namespace Mosaic.UI.Wpf.Controls
                 position = TimeSpan.Zero;
             }
 
-            if (_hasMedia && position > Duration)
+            // Media has a source but is not open yet: remember the seek and reflect it in the UI now. It is applied
+            // to the underlying player (and clamped to the real duration) once OnPlayerMediaOpened fires.
+            if (!_hasMedia)
+            {
+                if (Source != null)
+                {
+                    _pendingSeek = position;
+                    UpdatePosition(position);
+                }
+
+                return;
+            }
+
+            if (position > Duration)
             {
                 position = Duration;
             }
 
+            // When playing, pause-seek-resume so the new position is applied reliably. IsPlaying and the timer are
+            // intentionally left untouched (and no playback events are raised) because this is a single logical seek,
+            // not a stop/start of playback.
+            bool wasPlaying = IsPlaying;
+
+            if (wasPlaying)
+            {
+                _player.Pause();
+            }
+
             _player.Position = position;
+
+            if (wasPlaying)
+            {
+                _player.Play();
+            }
+
             UpdatePosition(position);
         }
 
@@ -582,6 +624,7 @@ namespace Mosaic.UI.Wpf.Controls
             _timer.Stop();
             IsPlaying = false;
             _hasMedia = false;
+            _pendingSeek = null;
             Duration = TimeSpan.Zero;
             UpdatePosition(TimeSpan.Zero);
 
@@ -651,6 +694,13 @@ namespace Mosaic.UI.Wpf.Controls
             if (_positionSlider != null)
             {
                 _positionSlider.Maximum = Duration.TotalSeconds;
+            }
+
+            // Apply any seek requested before the media finished opening (e.g. set Source then Seek to a timestamp).
+            if (_pendingSeek is { } pending)
+            {
+                _pendingSeek = null;
+                Seek(pending);
             }
 
             RaiseEvent(new RoutedEventArgs(MediaOpenedEvent, this));
