@@ -169,6 +169,16 @@ namespace MosaicTextEditor
             }
         }
 
+        private void EditorControl_OnPreviewKeyDown(LayoutDocument layoutDocument, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.F4 &&
+                System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control)
+            {
+                layoutDocument.Close();
+                e.Handled = true;
+            }
+        }
+
         private void DockingManager_OnDocumentClosed(object? sender, DocumentClosedEventArgs e)
         {
             if (e.Document.Content is not Control control || !_documentsByControl.TryGetValue(control, out var document))
@@ -190,6 +200,7 @@ namespace MosaicTextEditor
 
             _documentsByControl[document.EditorControl] = document;
             _layoutDocumentsByDocument[document] = layoutDocument;
+            document.EditorControl.AddHandler(System.Windows.Input.Keyboard.PreviewKeyDownEvent, new System.Windows.Input.KeyEventHandler((_, e) => this.EditorControl_OnPreviewKeyDown(layoutDocument, e)), true);
             document.PropertyChanged += this.EditorDocument_OnPropertyChanged;
 
             this.FocusDocument(document);
