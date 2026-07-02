@@ -1,0 +1,103 @@
+﻿/*
+ * MosaicTextEditor
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using Mosaic.UI.Wpf;
+using Mosaic.UI.Wpf.Common;
+using Mosaic.UI.Wpf.Interfaces;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
+
+namespace MosaicTextEditor.Common
+{
+    /// <summary>
+    /// AppSettings that are persisted to storage and reloaded on application launch.
+    /// </summary>
+    public partial class AppSettings : ObservableObject, IAppSettings
+    {
+        /// <summary>
+        /// The application data folder which will be populated by this program when it loads.
+        /// </summary>
+        [property: Category("File System")]
+        [property: DisplayName("Application Data Folder")]
+        [property: Description("The application data folder.")]
+        [property: ReadOnly(true)]
+        [property: Browsable(true)]
+        [ObservableProperty]
+        private string? _applicationDataFolder;
+
+        [property: Category("File System")]
+        [property: DisplayName("Client Settings")]
+        [property: Description("Settings specific to this workstation.")]
+        [property: ReadOnly(false)]
+        [property: Browsable(true)]
+        [JsonIgnore]
+        [ObservableProperty]
+        private LocalSettings? _clientSettings = new();
+
+        /// <summary>
+        /// Default font size for UI elements.
+        /// </summary>
+        [property: Category("UI")]
+        [property: DisplayName("Font Size")]
+        [property: Description("The default font size for UI elements.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private double _fontSize = 12.0;
+
+        /// <summary>
+        /// The applications current theme.
+        /// </summary>
+        [property: DisplayName("Theme")]
+        [property: Category("UI")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private MosaicThemeMode _theme = MosaicThemeMode.Light;
+
+        /// <summary>
+        /// The view state information for a given window.
+        /// </summary>
+        [property: Category("UI")]
+        [property: DisplayName("Window View States")]
+        [property: Description("The view state information for a given window.")]
+        [property: Browsable(true)]
+        [ObservableProperty]
+        private ObservableCollection<WindowViewState> _windowViewStates = new();
+
+        /// <summary>
+        /// The most recently opened file explorer folder.
+        /// </summary>
+        [property: Category("File System")]
+        [property: DisplayName("Last Folder")]
+        [property: Description("The last folder opened in the file explorer.")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private string? _lastFolder;
+
+        /// <summary>
+        /// The most recently opened files.
+        /// </summary>
+        [property: Category("File System")]
+        [property: DisplayName("Recent Files")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private ObservableCollection<string> _recentFiles = new();
+
+        /// <summary>
+        /// The most recently opened folders.
+        /// </summary>
+        [property: Category("File System")]
+        [property: DisplayName("Recent Folders")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private ObservableCollection<string> _recentFolders = new();
+    }
+}

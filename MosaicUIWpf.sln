@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowCue", "src\WindowCue\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mosaic.UI.Wpf.AvalonDock", "src\Mosaic.UI.Wpf.AvalonDock\Mosaic.UI.Wpf.AvalonDock.csproj", "{1F248880-48C9-E576-842B-9B8685F68AF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicTextEditor", "src\MosaicTextEditor\MosaicTextEditor.csproj", "{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{1F248880-48C9-E576-842B-9B8685F68AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F248880-48C9-E576-842B-9B8685F68AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F248880-48C9-E576-842B-9B8685F68AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{5200EF9E-B506-4FF4-85D2-47571F16371F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{124ADAF3-B941-4B05-B9D4-3B9FFEDE2CF7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{D677F4F1-001E-41D3-BADD-0D0CADBC832D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F2D52DB6-90E6-4C9B-BC1D-9425DEC03DBC} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E6C723F-B8D3-4245-A4FD-B44794B89E84}
