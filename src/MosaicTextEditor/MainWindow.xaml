@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     x:Name="RootWindow"
-    Title="MosaicTextEditor"
+    Title="Mosaic Text Editor"
     Width="1200"
     Height="760"
     MinWidth="900"
@@ -146,11 +146,6 @@
             </MenuItem>
 
             <MenuItem Header="_View">
-                <MenuItem Command="{Binding ViewFileExplorerCommand}" Header="View _File Explorer" />
-                <MenuItem Command="{Binding ViewPropertiesCommand}" Header="View _Properties" />
-                <MenuItem Command="{Binding ViewSettingsCommand}" Header="View _Settings" />
-                <MenuItem Command="{Binding ViewOutputCommand}" Header="View _Output" />
-                <Separator />
                 <MenuItem Header="_Theme">
                     <MenuItem
                         x:Name="ThemeLightMenuItem"
@@ -168,6 +163,11 @@
                         Header="_Blue"
                         IsCheckable="True" />
                 </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding ViewFileExplorerCommand}" Header="View _File Explorer" />
+                <MenuItem Command="{Binding ViewPropertiesCommand}" Header="View _Properties" />
+                <MenuItem Command="{Binding ViewOutputCommand}" Header="View _Output" />
+                <MenuItem Command="{Binding ViewSettingsCommand}" Header="View _Settings" />
             </MenuItem>
         </Menu>
 
@@ -194,10 +194,10 @@
                                 <DockPanel>
                                     <mosaic:SearchBox
                                         x:Name="FilesSearchBox"
-                                        DockPanel.Dock="Top"
                                         Margin="6"
-                                        Watermark="Search files"
-                                        TextChanged="FilesSearchBox_OnTextChanged" />
+                                        DockPanel.Dock="Top"
+                                        TextChanged="FilesSearchBox_OnTextChanged"
+                                        Watermark="Search files" />
                                     <mosaic:Files
                                         x:Name="FileExplorerFilesControl"
                                         Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"

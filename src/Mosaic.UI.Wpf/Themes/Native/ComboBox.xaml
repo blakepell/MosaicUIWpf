@@ -87,7 +87,7 @@
                             <Setter TargetName="templateRoot" Property="BorderBrush" Value="{DynamicResource ComboBox.Disabled.Border}" />
                             <Setter TargetName="splitBorder" Property="Background" Value="{DynamicResource ComboBox.Disabled.Background}" />
                             <Setter TargetName="splitBorder" Property="BorderBrush" Value="{DynamicResource ComboBox.Disabled.Border}" />
-                            <Setter TargetName="arrow" Property="Fill" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            <Setter TargetName="arrow" Property="Fill" Value="{DynamicResource ComboBox.Disabled.Glyph}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -165,7 +165,8 @@
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsEnabled" Value="false">
-                <Setter TargetName="border" Property="Opacity" Value="0.56" />
+                <Setter TargetName="border" Property="Background" Value="{DynamicResource ComboBox.Disabled.Editable.Background}" />
+                <Setter TargetName="PART_EditableTextBox" Property="Foreground" Value="{DynamicResource ComboBox.Disabled.Foreground}" />
             </Trigger>
             <Trigger Property="IsKeyboardFocusWithin" Value="true">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
@@ -259,6 +260,9 @@
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
         </Grid>
         <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBox.Disabled.Foreground}" />
+            </Trigger>
             <Trigger SourceName="PART_Popup" Property="HasDropShadow" Value="true">
                 <Setter TargetName="shadow" Property="Margin" Value="0,0,5,5" />
                 <Setter TargetName="shadow" Property="Color" Value="#71000000" />
@@ -293,6 +297,9 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Template" Value="{DynamicResource ComboBoxTemplate}" />
         <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource ComboBox.Disabled.Foreground}" />
+            </Trigger>
             <Trigger Property="IsEditable" Value="true">
                 <Setter Property="IsTabStop" Value="false" />
                 <Setter Property="Padding" Value="2" />
@@ -331,7 +338,9 @@
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Item.SelectedActive.Border}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ComboBoxItem.Items.Disabled.Background}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ComboBoxItem.Items.Disabled.Border}" />
+                            <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItem.Items.Disabled.Foreground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

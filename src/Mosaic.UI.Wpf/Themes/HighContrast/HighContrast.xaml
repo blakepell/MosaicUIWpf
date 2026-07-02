@@ -93,4 +93,16 @@
     <SolidColorBrush x:Key="ScrollBar.MouseOver.Border" Color="#FFFFFF00" />
     <SolidColorBrush x:Key="ScrollBar.MouseOver.Glyph" Color="#FFFFFF00" />
     <SolidColorBrush x:Key="ScrollBar.MouseOver.Thumb" Color="#FFFFFF00" />
+
+    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FF0F0F0F" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Foreground" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FF0F0F0F" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Background" Color="#FF000000" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Border" Color="#FF6B6B6B" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Foreground" Color="#FFE0E0E0" />
 </ResourceDictionary>

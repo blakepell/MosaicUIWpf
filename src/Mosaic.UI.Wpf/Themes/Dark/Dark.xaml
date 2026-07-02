@@ -249,13 +249,14 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="#FF569DE5" />
 
-    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF0F0F0" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFD9D9D9" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFBFBFBF" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FFBFBFBF" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FF4F4F53" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Foreground" Color="#FFF1F1F1" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFF1F1F1" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FF4F4F53" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="#FF2D2D30" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="#FF4F4F53" />
 
     <!--  ComboBoxItem  -->
     <SolidColorBrush x:Key="ComboBoxItem.Items.Hover.Background" Color="#FF2A2D2E" />
@@ -269,6 +270,9 @@
     <SolidColorBrush x:Key="ComboBoxItem.Items.Focus.Border" Color="#FF007ACC" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Background" Color="#FF264F78" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Border" Color="#FF007ACC" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Background" Color="#FF252526" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Border" Color="#FF4F4F53" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Foreground" Color="#FFF1F1F1" />
 
     <!--  ListBox  -->
     <SolidColorBrush x:Key="Item.Static.Background" Color="Transparent" />

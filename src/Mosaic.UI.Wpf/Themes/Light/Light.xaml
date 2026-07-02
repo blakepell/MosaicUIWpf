@@ -249,11 +249,12 @@
     </LinearGradientBrush>
     <SolidColorBrush x:Key="ComboBox.Pressed.Editable.Button.Border" Color="#FF569DE5" />
 
-    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF0F0F0" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFD9D9D9" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FFBFBFBF" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FFFFFFFF" />
-    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FFBFBFBF" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Background" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Border" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Foreground" Color="#FF707070" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Glyph" Color="#FF707070" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Background" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Border" Color="#FFE0E0E0" />
     <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Background" Color="Transparent" />
     <SolidColorBrush x:Key="ComboBox.Disabled.Editable.Button.Border" Color="Transparent" />
 
@@ -269,6 +270,9 @@
     <SolidColorBrush x:Key="ComboBoxItem.Items.Focus.Border" Color="#FF26A0DA" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Background" Color="#5426A0DA" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.HoverFocus.Border" Color="#FF26A0DA" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Background" Color="#FFF2F2F2" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Border" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Foreground" Color="#FF707070" />
 
     <!--  ListBox  -->
     <SolidColorBrush x:Key="Item.Static.Background" Color="#FFFCFCFC" />
