@@ -31,14 +31,24 @@ namespace MosaicTextEditor
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const double DefaultFilesDockWidth = 300;
+        private const double DefaultPropertiesDockWidth = 280;
+        private const double DefaultOutputDockHeight = 150;
+        private const double DefaultToolWindowMinWidth = 220;
+        private const double DefaultOutputDockMinHeight = 100;
+
         private readonly AppViewModel _appViewModel;
+        private readonly AppSettings _appSettings;
         private readonly Dictionary<Control, EditorDocument> _documentsByControl = new();
+        private readonly HashSet<LayoutDocument> _documentsClosingAfterPrompt = new();
         private readonly Dictionary<EditorDocument, LayoutDocument> _layoutDocumentsByDocument = new();
         private readonly MainWindowViewModel _viewModel;
         private LayoutAnchorable? _filesAnchorable;
         private LayoutAnchorable? _outputAnchorable;
         private LayoutAnchorable? _propertiesAnchorable;
         private bool _initialized;
+        private bool _isClosingConfirmed;
+        private bool _suppressDocumentClosePrompt;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -51,9 +61,9 @@ namespace MosaicTextEditor
             _propertiesAnchorable = this.PropertiesAnchorable;
             _outputAnchorable = this.OutputAnchorable;
 
-            var appSettings = AppServices.GetRequiredService<AppSettings>();
+            _appSettings = AppServices.GetRequiredService<AppSettings>();
             _appViewModel = AppServices.GetRequiredService<AppViewModel>();
-            _viewModel = new MainWindowViewModel(appSettings, new EditorDialogService());
+            _viewModel = new MainWindowViewModel(_appSettings, new EditorDialogService());
             this.DataContext = _viewModel;
 
             _viewModel.DocumentAdded += this.ViewModel_OnDocumentAdded;
@@ -63,6 +73,8 @@ namespace MosaicTextEditor
 
             ThemeManager.ThemeChanged += this.ThemeManager_OnThemeChanged;
             this.Unloaded += this.MainWindow_OnUnloaded;
+
+            this.UpdateThemeMenuChecks(AppServices.GetRequiredService<ThemeManager>().Theme);
         }
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -80,6 +92,20 @@ namespace MosaicTextEditor
         {
             var theme = AppServices.GetRequiredService<ThemeManager>();
             theme.ToggleTheme();
+        }
+
+        private void ThemeLightMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Light);
+
+        private void ThemeDarkMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Dark);
+
+        private void ThemeBlueMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Blue);
+
+        private void ApplyTheme(MosaicThemeMode themeMode)
+        {
+            var theme = AppServices.GetRequiredService<ThemeManager>();
+            theme.Theme = themeMode;
+            _appSettings.Theme = themeMode;
+            this.UpdateThemeMenuChecks(themeMode);
         }
 
         private void DockingManager_OnActiveContentChanged(object? sender, EventArgs e)
@@ -105,6 +131,27 @@ namespace MosaicTextEditor
             else if (ReferenceEquals(e.Anchorable, _outputAnchorable))
             {
                 _outputAnchorable = null;
+            }
+        }
+
+        private async void DockingManager_OnDocumentClosing(object? sender, DocumentClosingEventArgs e)
+        {
+            if (_suppressDocumentClosePrompt || _documentsClosingAfterPrompt.Remove(e.Document))
+            {
+                return;
+            }
+
+            if (!this.TryGetEditorDocument(e.Document, out var document) || !document.IsModified)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+
+            if (await this.PromptToSaveDocumentAsync(document))
+            {
+                _documentsClosingAfterPrompt.Add(e.Document);
+                e.Document.Close();
             }
         }
 
@@ -144,13 +191,13 @@ namespace MosaicTextEditor
             switch (toolWindow)
             {
                 case "Files":
-                    _filesAnchorable = this.ShowToolWindow(_filesAnchorable, this.CreateFilesToolWindow, AnchorableShowStrategy.Left);
+                    _filesAnchorable = this.ShowToolWindow(_filesAnchorable, this.CreateFilesToolWindow, AnchorableShowStrategy.Left, DefaultFilesDockWidth, DefaultOutputDockHeight);
                     break;
                 case "Properties":
-                    _propertiesAnchorable = this.ShowToolWindow(_propertiesAnchorable, this.CreatePropertiesToolWindow, AnchorableShowStrategy.Right);
+                    _propertiesAnchorable = this.ShowToolWindow(_propertiesAnchorable, this.CreatePropertiesToolWindow, AnchorableShowStrategy.Right, DefaultPropertiesDockWidth, DefaultOutputDockHeight);
                     break;
                 case "Output":
-                    _outputAnchorable = this.ShowToolWindow(_outputAnchorable, this.CreateOutputToolWindow, AnchorableShowStrategy.Bottom);
+                    _outputAnchorable = this.ShowToolWindow(_outputAnchorable, this.CreateOutputToolWindow, AnchorableShowStrategy.Bottom, DefaultFilesDockWidth, DefaultOutputDockHeight);
                     break;
             }
         }
@@ -192,7 +239,7 @@ namespace MosaicTextEditor
             document.EditorControl.Dispatcher.BeginInvoke(document.FocusEditor);
         }
 
-        private LayoutAnchorable ShowToolWindow(LayoutAnchorable? anchorable, Func<LayoutAnchorable> createToolWindow, AnchorableShowStrategy strategy)
+        private LayoutAnchorable ShowToolWindow(LayoutAnchorable? anchorable, Func<LayoutAnchorable> createToolWindow, AnchorableShowStrategy strategy, double dockWidth, double dockHeight)
         {
             if (anchorable == null)
             {
@@ -209,6 +256,7 @@ namespace MosaicTextEditor
                 anchorable.AddToLayout(this.DockingManager, strategy);
             }
 
+            ApplyToolWindowDockSize(anchorable, strategy, dockWidth, dockHeight);
             anchorable.IsSelected = true;
             anchorable.IsActive = true;
             return anchorable;
@@ -314,7 +362,96 @@ namespace MosaicTextEditor
 
         private void ThemeManager_OnThemeChanged(object? sender, MosaicThemeMode e)
         {
-            this.Dispatcher.Invoke(() => this.DockingManager.Theme = new AvalonDockMosaicTheme());
+            this.Dispatcher.Invoke(() =>
+            {
+                this.DockingManager.Theme = new AvalonDockMosaicTheme();
+                this.UpdateThemeMenuChecks(e);
+            });
+        }
+
+        private async void MainWindow_OnClosing(object? sender, CancelEventArgs e)
+        {
+            if (_isClosingConfirmed)
+            {
+                return;
+            }
+
+            var modifiedDocuments = _viewModel.OpenDocuments.Where(document => document.IsModified).ToList();
+            if (modifiedDocuments.Count == 0)
+            {
+                return;
+            }
+
+            e.Cancel = true;
+
+            foreach (var document in modifiedDocuments)
+            {
+                if (!await this.PromptToSaveDocumentAsync(document))
+                {
+                    return;
+                }
+            }
+
+            _isClosingConfirmed = true;
+            _suppressDocumentClosePrompt = true;
+            this.Close();
+        }
+
+        private async Task<bool> PromptToSaveDocumentAsync(EditorDocument document)
+        {
+            this.FocusDocument(document);
+
+            var result = MessageBox.Show(
+                this,
+                $"Do you want to save changes to \"{document.FileName}\"?",
+                "Save Changes",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question);
+
+            return result switch
+            {
+                MessageBoxResult.Yes => await _viewModel.SaveDocumentWithPromptAsync(document),
+                MessageBoxResult.No => true,
+                _ => false
+            };
+        }
+
+        private bool TryGetEditorDocument(LayoutDocument layoutDocument, out EditorDocument document)
+        {
+            if (layoutDocument.Content is Control control && _documentsByControl.TryGetValue(control, out var editorDocument))
+            {
+                document = editorDocument;
+                return true;
+            }
+
+            document = null!;
+            return false;
+        }
+
+        private static void ApplyToolWindowDockSize(LayoutAnchorable anchorable, AnchorableShowStrategy strategy, double dockWidth, double dockHeight)
+        {
+            if (anchorable.Parent is not LayoutAnchorablePane pane)
+            {
+                return;
+            }
+
+            bool isHorizontalDock = (strategy & (AnchorableShowStrategy.Left | AnchorableShowStrategy.Right)) != 0;
+            if (isHorizontalDock)
+            {
+                pane.DockMinWidth = DefaultToolWindowMinWidth;
+                pane.DockWidth = new GridLength(dockWidth);
+                return;
+            }
+
+            pane.DockMinHeight = DefaultOutputDockMinHeight;
+            pane.DockHeight = new GridLength(dockHeight);
+        }
+
+        private void UpdateThemeMenuChecks(MosaicThemeMode themeMode)
+        {
+            this.ThemeLightMenuItem.IsChecked = themeMode == MosaicThemeMode.Light;
+            this.ThemeDarkMenuItem.IsChecked = themeMode == MosaicThemeMode.Dark;
+            this.ThemeBlueMenuItem.IsChecked = themeMode == MosaicThemeMode.Blue;
         }
 
         private void MainWindow_OnUnloaded(object sender, RoutedEventArgs e)

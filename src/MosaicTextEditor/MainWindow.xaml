@@ -23,6 +23,7 @@
     BorderThickness="0"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
+    Closing="MainWindow_OnClosing"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
 
@@ -106,6 +107,24 @@
                 <MenuItem Header="View _File Explorer" Command="{Binding ViewFileExplorerCommand}" />
                 <MenuItem Header="View _Properties" Command="{Binding ViewPropertiesCommand}" />
                 <MenuItem Header="View _Output" Command="{Binding ViewOutputCommand}" />
+                <Separator />
+                <MenuItem Header="_Theme">
+                    <MenuItem
+                        x:Name="ThemeLightMenuItem"
+                        Header="_Light"
+                        IsCheckable="True"
+                        Click="ThemeLightMenuItem_OnClick" />
+                    <MenuItem
+                        x:Name="ThemeDarkMenuItem"
+                        Header="_Dark"
+                        IsCheckable="True"
+                        Click="ThemeDarkMenuItem_OnClick" />
+                    <MenuItem
+                        x:Name="ThemeBlueMenuItem"
+                        Header="_Blue"
+                        IsCheckable="True"
+                        Click="ThemeBlueMenuItem_OnClick" />
+                </MenuItem>
             </MenuItem>
         </Menu>
 
@@ -113,6 +132,8 @@
             x:Name="DockingManager"
             Grid.Row="2"
             ActiveContentChanged="DockingManager_OnActiveContentChanged"
+            AnchorableClosed="DockingManager_OnAnchorableClosed"
+            DocumentClosing="DockingManager_OnDocumentClosing"
             DocumentClosed="DockingManager_OnDocumentClosed">
             <ad:DockingManager.Theme>
                 <ad:MosaicTheme />
@@ -124,10 +145,11 @@
                         <ad:LayoutAnchorablePane DockMinWidth="220" DockWidth="300">
                             <ad:LayoutAnchorable
                                 x:Name="FilesAnchorable"
-                                Title="Files"
+                                Title="File Explorer"
                                 CanClose="True"
                                 ContentId="files">
                                 <mosaic:Files
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
                                     DirectoryPath="{Binding CurrentFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     EnableFileWatcher="True"
                                     FileActivatedCommand="{Binding OpenActivatedFileCommand}"

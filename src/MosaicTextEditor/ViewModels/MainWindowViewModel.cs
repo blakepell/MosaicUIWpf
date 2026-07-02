@@ -219,11 +219,11 @@ namespace MosaicTextEditor.ViewModels
 
             if (string.IsNullOrWhiteSpace(this.ActiveDocument.FilePath))
             {
-                await this.SaveAsAsync();
+                await this.SaveDocumentWithPromptAsync(this.ActiveDocument);
                 return;
             }
 
-            await this.SaveDocumentAsync(this.ActiveDocument, this.ActiveDocument.FilePath);
+            await this.SaveDocumentToPathAsync(this.ActiveDocument, this.ActiveDocument.FilePath);
         }
 
         [RelayCommand(CanExecute = nameof(HasActiveDocument))]
@@ -241,8 +241,28 @@ namespace MosaicTextEditor.ViewModels
             string? path = _dialogService.ShowSaveFileDialog(this.ActiveDocument, initialDirectory);
             if (!string.IsNullOrWhiteSpace(path))
             {
-                await this.SaveDocumentAsync(this.ActiveDocument, path);
+                await this.SaveDocumentToPathAsync(this.ActiveDocument, path);
             }
+        }
+
+        /// <summary>
+        /// Saves the specified document and reports whether the save completed.
+        /// </summary>
+        /// <param name="document">The document to save.</param>
+        public async Task<bool> SaveDocumentWithPromptAsync(EditorDocument document)
+        {
+            if (!string.IsNullOrWhiteSpace(document.FilePath))
+            {
+                return await this.SaveDocumentToPathAsync(document, document.FilePath);
+            }
+
+            string? path = _dialogService.ShowSaveFileDialog(document, this.CurrentFolder);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
+            return await this.SaveDocumentToPathAsync(document, path);
         }
 
         [RelayCommand]
@@ -299,7 +319,7 @@ namespace MosaicTextEditor.ViewModels
             }
         }
 
-        private async Task SaveDocumentAsync(EditorDocument document, string path)
+        private async Task<bool> SaveDocumentToPathAsync(EditorDocument document, string path)
         {
             string? oldPath = document.FilePath;
 
@@ -309,11 +329,13 @@ namespace MosaicTextEditor.ViewModels
                 this.UpdateOpenPath(document, oldPath);
                 this.AddRecentFile(document.FilePath);
                 this.StatusText = $"Saved file: {document.FilePath}";
+                return true;
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
             {
                 MessageBox.Show($"The file could not be saved.\r\n\r\n{ex.Message}", "Save File", MessageBoxButton.OK, MessageBoxImage.Warning);
                 this.StatusText = $"Could not save file: {path}";
+                return false;
             }
         }
 
