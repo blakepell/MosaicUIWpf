@@ -14,6 +14,7 @@
         x:Key="PropertyGridTextBoxStyle"
         BasedOn="{StaticResource {x:Type TextBox}}"
         TargetType="TextBox">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
@@ -48,6 +49,7 @@
     <DataTemplate x:Key="BoolEditor">
         <CheckBox
             Margin="2,2,0,2"
+            HorizontalAlignment="Left"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             IsChecked="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
@@ -57,9 +59,12 @@
     <!--  EnumEditor  -->
     <DataTemplate x:Key="EnumEditor">
         <ComboBox
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
             IsReadOnly="{Binding IsReadOnly}"
             ItemsSource="{Binding EnumValues}"
             SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
@@ -69,6 +74,7 @@
     <DataTemplate x:Key="NumberEditor">
         <local:NumericTextBox
             Padding="4"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
@@ -82,6 +88,7 @@
     <DataTemplate x:Key="DecimalEditor">
         <local:NumericTextBox
             Padding="4"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
@@ -94,6 +101,7 @@
     <!--  DateOnlyEditor  -->
     <DataTemplate x:Key="DateOnlyEditor">
         <DatePicker
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
@@ -106,15 +114,18 @@
     <!--  ColorEditor  -->
     <DataTemplate x:Key="ColorEditor">
         <local:HexColorTextBox
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
             Color="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
     <!--  StringListEditor  -->
     <DataTemplate x:Key="StringListEditor">
-        <Grid>
+        <Grid HorizontalAlignment="Stretch">
             <!--  Styled ToggleButton to look like a ComboBox  -->
             <ToggleButton
                 x:Name="TogglePopupButton"
@@ -278,7 +289,10 @@
                                                     BorderThickness="0,0,0,1">
                                                     <ContentControl
                                                         Margin="0,0,0,0"
+                                                        HorizontalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Stretch"
                                                         VerticalAlignment="Center"
+                                                        VerticalContentAlignment="Stretch"
                                                         Content="{Binding}"
                                                         ContentTemplateSelector="{StaticResource PropertyEditorSelector}" />
                                                 </Border>

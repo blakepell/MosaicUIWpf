@@ -138,14 +138,20 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (PropertyDescriptor pd in props)
             {
-                var attr = pd.GetAttribute<PropertyGridAttribute>();
+                var backingFieldAttributes = GetBackingFieldAttributes(Object, pd).ToArray();
+                var attr = GetAttribute<PropertyGridAttribute>(pd, backingFieldAttributes);
                 
                 if (attr is { Ignore: true })
                 {
                     continue;
                 }
 
-                var propertyItem = new PropertyItem(pd, Object, attr)
+                if (!IsBrowsable(pd, backingFieldAttributes))
+                {
+                    continue;
+                }
+
+                var propertyItem = new PropertyItem(pd, Object, attr, backingFieldAttributes)
                 {
                     RevertInvalidValues = RevertInvalidValues
                 };
@@ -166,6 +172,71 @@ namespace Mosaic.UI.Wpf.Controls
                 view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
                 view.SortDescriptions.Add(new SortDescription("DisplayName", ListSortDirection.Ascending));
             }
+        }
+
+        /// <summary>
+        /// Gets attributes from a matching backing field when source generators place metadata there.
+        /// </summary>
+        private static IEnumerable<Attribute> GetBackingFieldAttributes(object owner, PropertyDescriptor propertyDescriptor)
+        {
+            var ownerType = owner.GetType();
+            var fields = ownerType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            foreach (var field in fields)
+            {
+                if (IsBackingFieldForProperty(field.Name, propertyDescriptor.Name))
+                {
+                    return field.GetCustomAttributes().OfType<Attribute>();
+                }
+            }
+
+            return Enumerable.Empty<Attribute>();
+        }
+
+        /// <summary>
+        /// Determines whether the property should be visible in the grid.
+        /// </summary>
+        private static bool IsBrowsable(PropertyDescriptor propertyDescriptor, IEnumerable<Attribute> additionalAttributes)
+        {
+            if (!propertyDescriptor.IsBrowsable)
+            {
+                return false;
+            }
+
+            return !additionalAttributes.OfType<BrowsableAttribute>().Any(static attr => !attr.Browsable);
+        }
+
+        /// <summary>
+        /// Finds an attribute on the descriptor first, then on source-generator backing fields.
+        /// </summary>
+        private static T? GetAttribute<T>(PropertyDescriptor propertyDescriptor, IEnumerable<Attribute> additionalAttributes)
+            where T : Attribute
+        {
+            return propertyDescriptor.Attributes.OfType<T>().FirstOrDefault()
+                ?? additionalAttributes.OfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Matches normal, CommunityToolkit.Mvvm, and compiler generated backing-field names.
+        /// </summary>
+        private static bool IsBackingFieldForProperty(string fieldName, string propertyName)
+        {
+            if (string.Equals(fieldName, propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (string.Equals(fieldName, "_" + propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (string.Equals(fieldName, "m_" + propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return string.Equals(fieldName, $"<{propertyName}>k__BackingField", StringComparison.Ordinal);
         }
 
         #endregion

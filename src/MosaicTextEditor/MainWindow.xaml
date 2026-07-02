@@ -148,6 +148,7 @@
             <MenuItem Header="_View">
                 <MenuItem Command="{Binding ViewFileExplorerCommand}" Header="View _File Explorer" />
                 <MenuItem Command="{Binding ViewPropertiesCommand}" Header="View _Properties" />
+                <MenuItem Command="{Binding ViewSettingsCommand}" Header="View _Settings" />
                 <MenuItem Command="{Binding ViewOutputCommand}" Header="View _Output" />
                 <Separator />
                 <MenuItem Header="_Theme">

@@ -25,6 +25,7 @@ using System.Windows.Media;
 using AvalonDockMosaicTheme = Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme;
 using FileItem = Mosaic.UI.Wpf.Controls.FileItem;
 using FilesControl = Mosaic.UI.Wpf.Controls.Files;
+using PropertyGridControl = Mosaic.UI.Wpf.Controls.PropertyGrid;
 using SearchBoxControl = Mosaic.UI.Wpf.Controls.SearchBox;
 
 namespace MosaicTextEditor
@@ -49,6 +50,7 @@ namespace MosaicTextEditor
         private LayoutAnchorable? _filesAnchorable;
         private LayoutAnchorable? _outputAnchorable;
         private LayoutAnchorable? _propertiesAnchorable;
+        private LayoutAnchorable? _settingsAnchorable;
         private bool _initialized;
         private bool _isClosingConfirmed;
         private bool _suppressDocumentClosePrompt;
@@ -136,6 +138,10 @@ namespace MosaicTextEditor
             {
                 _propertiesAnchorable = null;
             }
+            else if (ReferenceEquals(e.Anchorable, _settingsAnchorable))
+            {
+                _settingsAnchorable = null;
+            }
             else if (ReferenceEquals(e.Anchorable, _outputAnchorable))
             {
                 _outputAnchorable = null;
@@ -203,6 +209,9 @@ namespace MosaicTextEditor
                     break;
                 case "Properties":
                     _propertiesAnchorable = this.ShowToolWindow(_propertiesAnchorable, this.CreatePropertiesToolWindow, AnchorableShowStrategy.Right, DefaultPropertiesDockWidth, DefaultOutputDockHeight);
+                    break;
+                case "Settings":
+                    _settingsAnchorable = this.ShowToolWindow(_settingsAnchorable, this.CreateSettingsToolWindow, AnchorableShowStrategy.Right, DefaultPropertiesDockWidth, DefaultOutputDockHeight);
                     break;
                 case "Output":
                     _outputAnchorable = this.ShowToolWindow(_outputAnchorable, this.CreateOutputToolWindow, AnchorableShowStrategy.Bottom, DefaultFilesDockWidth, DefaultOutputDockHeight);
@@ -326,6 +335,17 @@ namespace MosaicTextEditor
             AddPropertyRow(grid, 3, "Modified", "ActiveDocument.IsModified", "False");
 
             return CreateToolWindow("Properties", "properties", grid);
+        }
+
+        private LayoutAnchorable CreateSettingsToolWindow()
+        {
+            var propertyGrid = new PropertyGridControl
+            {
+                Object = _appSettings,
+                RevertInvalidValues = true
+            };
+
+            return CreateToolWindow("Settings", "settings", propertyGrid);
         }
 
         private LayoutAnchorable CreateOutputToolWindow()

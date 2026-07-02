@@ -275,6 +275,9 @@ namespace MosaicTextEditor.ViewModels
         private void ViewProperties() => this.ToolWindowRequested?.Invoke(this, "Properties");
 
         [RelayCommand]
+        private void ViewSettings() => this.ToolWindowRequested?.Invoke(this, "Settings");
+
+        [RelayCommand]
         private void ViewOutput() => this.ToolWindowRequested?.Invoke(this, "Output");
 
         private bool HasActiveDocument() => this.ActiveDocument != null;

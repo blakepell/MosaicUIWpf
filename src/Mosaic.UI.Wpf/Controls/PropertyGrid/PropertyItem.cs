@@ -87,15 +87,24 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="pd">The property descriptor.</param>
         /// <param name="owner">The owner object.</param>
         /// <param name="attr">Optional property grid attribute.</param>
-        public PropertyItem(PropertyDescriptor pd, object owner, PropertyGridAttribute? attr = null)
+        /// <param name="additionalAttributes">Additional attributes discovered outside the property descriptor.</param>
+        public PropertyItem(
+            PropertyDescriptor pd,
+            object owner,
+            PropertyGridAttribute? attr = null,
+            IEnumerable<Attribute>? additionalAttributes = null)
         {
+            var mergedAttributes = additionalAttributes?.ToArray() ?? [];
+
             _owner = owner;
             _propertyDescriptor = pd;
             Name = pd.Name;
-            DisplayName = attr?.DisplayName ?? pd.DisplayName ?? pd.Name;
-            IsReadOnly = attr?.IsReadOnly ?? pd?.IsReadOnly ?? false;
-            Category = attr?.Category ?? pd.Category;
-            Description = attr?.Description ?? pd.Description;
+            DisplayName = attr?.DisplayName ?? GetAttribute<DisplayNameAttribute>(pd, mergedAttributes)?.DisplayName ?? pd.DisplayName ?? pd.Name;
+            IsReadOnly = pd.IsReadOnly
+                || attr is { IsReadOnly: true }
+                || mergedAttributes.OfType<ReadOnlyAttribute>().Any(static readOnlyAttribute => readOnlyAttribute.IsReadOnly);
+            Category = GetCategory(pd, attr, mergedAttributes);
+            Description = attr?.Description ?? GetAttribute<DescriptionAttribute>(pd, mergedAttributes)?.Description ?? pd.Description;
             PropertyType = pd.PropertyType;
             _value = pd.GetValue(owner);
             _lastValidValue = _value;
@@ -104,7 +113,7 @@ namespace Mosaic.UI.Wpf.Controls
             EditorType = attr?.EditorType;
 
             // Determine MaxLength from multiple sources
-            MaxLength = DetermineMaxLength(pd, attr);
+            MaxLength = DetermineMaxLength(pd, attr, mergedAttributes);
 
             // Add event handler to listen for property changes on the owner object
             if (owner is INotifyPropertyChanged notifyPropertyChanged)
@@ -127,8 +136,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         /// <param name="pd">The property descriptor.</param>
         /// <param name="attr">The PropertyGrid attribute.</param>
+        /// <param name="additionalAttributes">Additional attributes discovered outside the property descriptor.</param>
         /// <returns>The maximum length, or 0 if no limit is specified.</returns>
-        private int DetermineMaxLength(PropertyDescriptor pd, PropertyGridAttribute? attr)
+        private int DetermineMaxLength(PropertyDescriptor pd, PropertyGridAttribute? attr, IEnumerable<Attribute> additionalAttributes)
         {
             // First check PropertyGridAttribute
             if (attr?.MaxLength > 0)
@@ -137,14 +147,14 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             // Check for StringLength attribute on the property
-            var stringLengthAttr = pd.Attributes.OfType<StringLengthAttribute>().FirstOrDefault();
+            var stringLengthAttr = GetAttribute<StringLengthAttribute>(pd, additionalAttributes);
             if (stringLengthAttr?.MaximumLength > 0)
             {
                 return stringLengthAttr.MaximumLength;
             }
 
             // Check for MaxLength attribute on the property
-            var maxLengthAttr = pd.Attributes.OfType<MaxLengthAttribute>().FirstOrDefault();
+            var maxLengthAttr = GetAttribute<MaxLengthAttribute>(pd, additionalAttributes);
             if (maxLengthAttr?.Length > 0)
             {
                 return maxLengthAttr.Length;
@@ -152,6 +162,33 @@ namespace Mosaic.UI.Wpf.Controls
 
             // No maximum length specified
             return 0;
+        }
+
+        /// <summary>
+        /// Finds an attribute on the descriptor first, then in additional attribute sources.
+        /// </summary>
+        private static T? GetAttribute<T>(PropertyDescriptor propertyDescriptor, IEnumerable<Attribute> additionalAttributes)
+            where T : Attribute
+        {
+            return propertyDescriptor.Attributes.OfType<T>().FirstOrDefault()
+                ?? additionalAttributes.OfType<T>().FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Determines the category while letting standard Category attributes work with default PropertyGrid attributes.
+        /// </summary>
+        private static string? GetCategory(
+            PropertyDescriptor propertyDescriptor,
+            PropertyGridAttribute? propertyGridAttribute,
+            IEnumerable<Attribute> additionalAttributes)
+        {
+            if (propertyGridAttribute != null && propertyGridAttribute.Category != "Misc")
+            {
+                return propertyGridAttribute.Category;
+            }
+
+            return GetAttribute<CategoryAttribute>(propertyDescriptor, additionalAttributes)?.Category
+                ?? propertyDescriptor.Category;
         }
 
         /// <summary>

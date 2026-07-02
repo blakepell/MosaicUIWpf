@@ -58,7 +58,8 @@ namespace MosaicTextEditor.Common
         /// </summary>
         [property: DisplayName("Theme")]
         [property: Category("UI")]
-        [property: Browsable(false)]
+        [property: Browsable(true)]
+        [ReadOnly(true)]
         [ObservableProperty]
         private MosaicThemeMode _theme = MosaicThemeMode.Light;
 
@@ -68,7 +69,7 @@ namespace MosaicTextEditor.Common
         [property: Category("UI")]
         [property: DisplayName("Window View States")]
         [property: Description("The view state information for a given window.")]
-        [property: Browsable(true)]
+        [Browsable(false)]
         [ObservableProperty]
         private ObservableCollection<WindowViewState> _windowViewStates = new();
 
