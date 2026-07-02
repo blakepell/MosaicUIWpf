@@ -21,8 +21,11 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using AvalonDockMosaicTheme = Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme;
+using FileItem = Mosaic.UI.Wpf.Controls.FileItem;
 using FilesControl = Mosaic.UI.Wpf.Controls.Files;
+using SearchBoxControl = Mosaic.UI.Wpf.Controls.SearchBox;
 
 namespace MosaicTextEditor
 {
@@ -106,6 +109,11 @@ namespace MosaicTextEditor
             theme.Theme = themeMode;
             _appSettings.Theme = themeMode;
             this.UpdateThemeMenuChecks(themeMode);
+        }
+
+        private void FilesSearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.ApplyFilesFilter(this.FileExplorerFilesControl, this.FilesSearchBox.Text);
         }
 
         private void DockingManager_OnActiveContentChanged(object? sender, EventArgs e)
@@ -274,6 +282,7 @@ namespace MosaicTextEditor
         {
             var files = new FilesControl
             {
+                Background = this.TryFindResource(MosaicTheme.WindowBackgroundBrush) as Brush,
                 EnableFileWatcher = true,
                 Filter = "*",
                 ShowFolders = true
@@ -285,7 +294,19 @@ namespace MosaicTextEditor
             });
             files.SetBinding(FilesControl.FileActivatedCommandProperty, new Binding(nameof(MainWindowViewModel.OpenActivatedFileCommand)));
 
-            return CreateToolWindow("Files", "files", files);
+            var searchBox = new SearchBoxControl
+            {
+                Margin = new Thickness(6),
+                Watermark = "Search files"
+            };
+            searchBox.TextChanged += (_, _) => this.ApplyFilesFilter(files, searchBox.Text);
+
+            var panel = new DockPanel();
+            DockPanel.SetDock(searchBox, Dock.Top);
+            panel.Children.Add(searchBox);
+            panel.Children.Add(files);
+
+            return CreateToolWindow("File Explorer", "files", panel);
         }
 
         private LayoutAnchorable CreatePropertiesToolWindow()
@@ -314,6 +335,7 @@ namespace MosaicTextEditor
                 Margin = new Thickness(0),
                 Padding = new Thickness(8),
                 BorderThickness = new Thickness(0),
+                FontFamily = new FontFamily("Consolas"),
                 IsReadOnly = true,
                 TextWrapping = TextWrapping.Wrap
             };
@@ -358,6 +380,44 @@ namespace MosaicTextEditor
             Grid.SetRow(valueBlock, row);
             Grid.SetColumn(valueBlock, 1);
             grid.Children.Add(valueBlock);
+        }
+
+        private void ApplyFilesFilter(FilesControl files, string searchText)
+        {
+            var view = CollectionViewSource.GetDefaultView(files.Items);
+            if (view == null)
+            {
+                return;
+            }
+
+            view.Filter = item => FileExplorerFilterMatches(item, searchText);
+            view.Refresh();
+        }
+
+        private static bool FileExplorerFilterMatches(object item, string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                return true;
+            }
+
+            if (item is not FileItem fileItem)
+            {
+                return false;
+            }
+
+            if (fileItem.IsParentNavigation)
+            {
+                return true;
+            }
+
+            return ContainsFilterText(fileItem.Name, searchText)
+                || ContainsFilterText(fileItem.FullPath, searchText);
+        }
+
+        private static bool ContainsFilterText(string value, string searchText)
+        {
+            return value.Contains(searchText, StringComparison.OrdinalIgnoreCase);
         }
 
         private void ThemeManager_OnThemeChanged(object? sender, MosaicThemeMode e)

@@ -190,13 +190,22 @@
                                 Title="File Explorer"
                                 CanClose="True"
                                 ContentId="files">
-                                <mosaic:Files
-                                    Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
-                                    DirectoryPath="{Binding CurrentFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    EnableFileWatcher="True"
-                                    FileActivatedCommand="{Binding OpenActivatedFileCommand}"
-                                    Filter="*"
-                                    ShowFolders="True" />
+                                <DockPanel>
+                                    <mosaic:SearchBox
+                                        x:Name="FilesSearchBox"
+                                        DockPanel.Dock="Top"
+                                        Margin="6"
+                                        Watermark="Search files"
+                                        TextChanged="FilesSearchBox_OnTextChanged" />
+                                    <mosaic:Files
+                                        x:Name="FileExplorerFilesControl"
+                                        Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+                                        DirectoryPath="{Binding CurrentFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        EnableFileWatcher="True"
+                                        FileActivatedCommand="{Binding OpenActivatedFileCommand}"
+                                        Filter="*"
+                                        ShowFolders="True" />
+                                </DockPanel>
                             </ad:LayoutAnchorable>
                         </ad:LayoutAnchorablePane>
 
@@ -277,6 +286,7 @@
                                 Margin="0"
                                 Padding="8"
                                 BorderThickness="0"
+                                FontFamily="Consolas"
                                 IsReadOnly="True"
                                 Text="{Binding StatusText}"
                                 TextWrapping="Wrap" />
