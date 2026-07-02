@@ -1,5 +1,7 @@
+using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Shell;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -222,11 +224,18 @@ namespace Mosaic.UI.Wpf.Behaviors
             if (!GetIsEnabled(window))
             {
                 window.SourceInitialized -= Window_SourceInitialized;
+                window.SizeChanged -= Window_SizeChanged;
+                window.StateChanged -= Window_StateChanged;
+                ClearRoundWindowRegion(window);
                 return;
             }
 
             window.SourceInitialized -= Window_SourceInitialized;
             window.SourceInitialized += Window_SourceInitialized;
+            window.SizeChanged -= Window_SizeChanged;
+            window.SizeChanged += Window_SizeChanged;
+            window.StateChanged -= Window_StateChanged;
+            window.StateChanged += Window_StateChanged;
             Apply(window);
         }
 
@@ -235,6 +244,22 @@ namespace Mosaic.UI.Wpf.Behaviors
             if (sender is Window window && GetIsEnabled(window))
             {
                 Apply(window);
+            }
+        }
+
+        private static void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is Window window && GetIsEnabled(window))
+            {
+                ApplyRoundWindowRegion(window);
+            }
+        }
+
+        private static void Window_StateChanged(object? sender, EventArgs e)
+        {
+            if (sender is Window window && GetIsEnabled(window))
+            {
+                ApplyRoundWindowRegion(window);
             }
         }
 
@@ -265,6 +290,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             }
 
             ApplyRoundBorder(window);
+            ApplyRoundWindowRegion(window);
         }
 
         /// <summary>
@@ -285,6 +311,86 @@ namespace Mosaic.UI.Wpf.Behaviors
                 // Only clear the template if we are the ones who set it.
                 window.ClearValue(Control.TemplateProperty);
             }
+        }
+
+        /// <summary>
+        /// Applies a native rounded region to the HWND so pixels outside the rounded border are not rendered.
+        /// </summary>
+        private static void ApplyRoundWindowRegion(Window window)
+        {
+            if (!GetRoundBorder(window) || window.WindowState == WindowState.Maximized)
+            {
+                ClearRoundWindowRegion(window);
+                return;
+            }
+
+            var hwnd = new WindowInteropHelper(window).Handle;
+
+            if (hwnd == IntPtr.Zero || !Win32.GetWindowRect(hwnd, out var rect))
+            {
+                return;
+            }
+
+            int width = rect.Right - rect.Left;
+            int height = rect.Bottom - rect.Top;
+
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            double radius = GetMaxCornerRadius(GetCornerRadius(window));
+
+            if (radius <= 0)
+            {
+                ClearRoundWindowRegion(window);
+                return;
+            }
+
+            int dpi = Win32.GetDpiForWindow(hwnd);
+            double dpiScale = dpi > 0 ? dpi / 96d : 1d;
+            int diameter = Math.Max(1, (int)Math.Round(radius * 2d * dpiScale));
+
+            SetDwmCornerPreference(hwnd, DwmWindowCornerPreference.Round);
+
+            IntPtr region = Win32.CreateRoundRectRgn(0, 0, width + 1, height + 1, diameter, diameter);
+
+            if (region == IntPtr.Zero)
+            {
+                return;
+            }
+
+            if (Win32.SetWindowRgn(hwnd, region, true) == 0)
+            {
+                Win32.DeleteObject(region);
+            }
+        }
+
+        /// <summary>
+        /// Clears any native rounded region applied by <see cref="ApplyRoundWindowRegion"/>.
+        /// </summary>
+        private static void ClearRoundWindowRegion(Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+
+            if (hwnd != IntPtr.Zero)
+            {
+                Win32.SetWindowRgn(hwnd, IntPtr.Zero, true);
+                SetDwmCornerPreference(hwnd, DwmWindowCornerPreference.Default);
+            }
+        }
+
+        private static double GetMaxCornerRadius(CornerRadius cornerRadius)
+        {
+            return Math.Max(
+                Math.Max(cornerRadius.TopLeft, cornerRadius.TopRight),
+                Math.Max(cornerRadius.BottomRight, cornerRadius.BottomLeft));
+        }
+
+        private static void SetDwmCornerPreference(IntPtr hwnd, DwmWindowCornerPreference preference)
+        {
+            int value = (int)preference;
+            Win32.DwmSetWindowAttribute(hwnd, DwmWindowAttributes.WindowCornerPreference, ref value, sizeof(int));
         }
     }
 }

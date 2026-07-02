@@ -12,23 +12,16 @@
         of being clipped at the corners. Applied automatically by WindowChromeBehavior.RoundBorder.
     -->
     <ControlTemplate x:Key="{x:Static themes:MosaicTheme.RoundedWindowTemplate}" TargetType="{x:Type Window}">
-        <!--
-            A full-rectangle background fill sits behind the rounded border so the corner triangles outside the
-            rounded border are painted with the window background (clipped to the rounded window shape by the chrome)
-            instead of showing the opaque window as black.
-        -->
-        <Border Background="{TemplateBinding Background}">
-            <controls:ClipBorder
-                x:Name="PART_WindowBorder"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{Binding Path=(behaviors:WindowChromeBehavior.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}">
-                <AdornerDecorator>
-                    <ContentPresenter />
-                </AdornerDecorator>
-            </controls:ClipBorder>
-        </Border>
+        <controls:ClipBorder
+            x:Name="PART_WindowBorder"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="{Binding Path=(behaviors:WindowChromeBehavior.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}">
+            <AdornerDecorator>
+                <ContentPresenter />
+            </AdornerDecorator>
+        </controls:ClipBorder>
         <ControlTemplate.Triggers>
             <!--  When maximized the rounded corners and resize border no longer apply; square the border and inset the content so it is not pushed off-screen.  -->
             <Trigger Property="WindowState" Value="Maximized">

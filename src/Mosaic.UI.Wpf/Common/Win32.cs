@@ -228,6 +228,25 @@ namespace Mosaic.UI.Wpf.Common
         public static extern bool DeleteObject(IntPtr hObject);
 
         /// <summary>
+        /// Creates a region with rounded corners.
+        /// </summary>
+        /// <param name="nLeftRect">The x-coordinate of the upper-left corner.</param>
+        /// <param name="nTopRect">The y-coordinate of the upper-left corner.</param>
+        /// <param name="nRightRect">The x-coordinate of the lower-right corner.</param>
+        /// <param name="nBottomRect">The y-coordinate of the lower-right corner.</param>
+        /// <param name="nWidthEllipse">The width of the ellipse used for the rounded corners.</param>
+        /// <param name="nHeightEllipse">The height of the ellipse used for the rounded corners.</param>
+        /// <returns>The region handle.</returns>
+        [DllImport(Gdi32, SetLastError = true)]
+        public static extern IntPtr CreateRoundRectRgn(
+            int nLeftRect,
+            int nTopRect,
+            int nRightRect,
+            int nBottomRect,
+            int nWidthEllipse,
+            int nHeightEllipse);
+
+        /// <summary>
         /// Creates a bitmap from raw pixel data.
         /// </summary>
         /// <param name="nWidth">The bitmap width.</param>
@@ -418,6 +437,9 @@ namespace Mosaic.UI.Wpf.Common
         [DllImport(User32)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
+        [DllImport(User32, SetLastError = true)]
+        public static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool bRedraw);
+
         [DllImport(User32)]
         public static extern int GetDpiForWindow(IntPtr hwnd);
 
@@ -461,7 +483,19 @@ namespace Mosaic.UI.Wpf.Common
         DISPLAYFRAME = 1,
         FORCE_ICONIC_REPRESENTATION = 7,
         HAS_ICONIC_BITMAP = 10,
-        UseImmersiveDarkMode = 20
+        UseImmersiveDarkMode = 20,
+        WindowCornerPreference = 33
+    }
+
+    /// <summary>
+    /// DWM corner preference values for top-level windows.
+    /// </summary>
+    public enum DwmWindowCornerPreference
+    {
+        Default = 0,
+        DoNotRound = 1,
+        Round = 2,
+        RoundSmall = 3
     }
 
     [Flags]
