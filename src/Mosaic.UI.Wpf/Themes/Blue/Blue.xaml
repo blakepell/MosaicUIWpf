@@ -35,7 +35,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlSelectedBorderColor}">#FF798ADE</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundColor}">#FF20339A</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderColor}">#FF798ADE</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FF121B4D</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FF0D1438</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FFF4F7FF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}">#FFD7DEFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#FF263FC9</Color>
