@@ -102,6 +102,10 @@ For a complete wiring example, see `MosaicTemplateApp` in the repository.
 
 ![Light Theme](./docs/images/screen-property-grid.png)
 
+## Blue Theme (Text Editor Demo Project)
+
+![Blue Theme](./docs/images/TextEditorBlueTheme.png)
+
 ## Architecture Blueprint
 
 See `docs/ARCHITECTURE_BLUEPRINT.md` for the control-library architecture, theming model, interoperability rules, accessibility baseline, and DX guidelines.
