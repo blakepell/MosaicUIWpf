@@ -21,17 +21,29 @@
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
     BorderThickness="0"
+    Closing="MainWindow_OnClosing"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
-    Closing="MainWindow_OnClosing"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
 
     <Window.InputBindings>
-        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewFileCommand}" />
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenFileCommand}" />
-        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}" />
-        <KeyBinding Key="S" Modifiers="Control+Shift" Command="{Binding SaveAsCommand}" />
+        <KeyBinding
+            Key="N"
+            Command="{Binding NewFileCommand}"
+            Modifiers="Control" />
+        <KeyBinding
+            Key="O"
+            Command="{Binding OpenFileCommand}"
+            Modifiers="Control" />
+        <KeyBinding
+            Key="S"
+            Command="{Binding SaveCommand}"
+            Modifiers="Control" />
+        <KeyBinding
+            Key="S"
+            Command="{Binding SaveAsCommand}"
+            Modifiers="Control+Shift" />
     </Window.InputBindings>
 
     <Grid>
@@ -61,16 +73,31 @@
             </mosaic:WindowTitleBar.RightContent>
         </mosaic:WindowTitleBar>
 
-        <Menu Grid.Row="1" Padding="2" Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}">
+        <Menu
+            Grid.Row="1"
+            Padding="2"
+            Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}">
             <MenuItem Header="_File">
-                <MenuItem Header="_New File" Command="{Binding NewFileCommand}" InputGestureText="Ctrl+N" />
-                <MenuItem Header="New _Markdown File" Command="{Binding NewMarkdownFileCommand}" />
+                <MenuItem
+                    Command="{Binding NewFileCommand}"
+                    Header="_New File"
+                    InputGestureText="Ctrl+N" />
+                <MenuItem Command="{Binding NewMarkdownFileCommand}" Header="New _Markdown File" />
                 <Separator />
-                <MenuItem Header="_Open File..." Command="{Binding OpenFileCommand}" InputGestureText="Ctrl+O" />
-                <MenuItem Header="Open _Folder..." Command="{Binding OpenFolderCommand}" />
+                <MenuItem
+                    Command="{Binding OpenFileCommand}"
+                    Header="_Open File..."
+                    InputGestureText="Ctrl+O" />
+                <MenuItem Command="{Binding OpenFolderCommand}" Header="Open _Folder..." />
                 <Separator />
-                <MenuItem Header="_Save" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S" />
-                <MenuItem Header="Save _As..." Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S" />
+                <MenuItem
+                    Command="{Binding SaveCommand}"
+                    Header="_Save"
+                    InputGestureText="Ctrl+S" />
+                <MenuItem
+                    Command="{Binding SaveAsCommand}"
+                    Header="Save _As..."
+                    InputGestureText="Ctrl+Shift+S" />
                 <Separator />
                 <MenuItem Header="Recent _Files" ItemsSource="{Binding RecentFiles}">
                     <MenuItem.ItemContainerStyle>
@@ -91,39 +118,54 @@
                     </MenuItem.ItemContainerStyle>
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="E_xit" Command="{Binding ExitCommand}" />
+                <MenuItem Command="{Binding ExitCommand}" Header="E_xit" />
             </MenuItem>
 
             <MenuItem Header="_Edit">
-                <MenuItem Header="Cu_t" Command="Cut" InputGestureText="Ctrl+X" />
-                <MenuItem Header="_Copy" Command="Copy" InputGestureText="Ctrl+C" />
-                <MenuItem Header="_Paste" Command="Paste" InputGestureText="Ctrl+V" />
-                <MenuItem Header="_Delete" Command="Delete" InputGestureText="Del" />
+                <MenuItem
+                    Command="Cut"
+                    Header="Cu_t"
+                    InputGestureText="Ctrl+X" />
+                <MenuItem
+                    Command="Copy"
+                    Header="_Copy"
+                    InputGestureText="Ctrl+C" />
+                <MenuItem
+                    Command="Paste"
+                    Header="_Paste"
+                    InputGestureText="Ctrl+V" />
+                <MenuItem
+                    Command="Delete"
+                    Header="_Delete"
+                    InputGestureText="Del" />
                 <Separator />
-                <MenuItem Header="Select _All" Command="SelectAll" InputGestureText="Ctrl+A" />
+                <MenuItem
+                    Command="SelectAll"
+                    Header="Select _All"
+                    InputGestureText="Ctrl+A" />
             </MenuItem>
 
             <MenuItem Header="_View">
-                <MenuItem Header="View _File Explorer" Command="{Binding ViewFileExplorerCommand}" />
-                <MenuItem Header="View _Properties" Command="{Binding ViewPropertiesCommand}" />
-                <MenuItem Header="View _Output" Command="{Binding ViewOutputCommand}" />
+                <MenuItem Command="{Binding ViewFileExplorerCommand}" Header="View _File Explorer" />
+                <MenuItem Command="{Binding ViewPropertiesCommand}" Header="View _Properties" />
+                <MenuItem Command="{Binding ViewOutputCommand}" Header="View _Output" />
                 <Separator />
                 <MenuItem Header="_Theme">
                     <MenuItem
                         x:Name="ThemeLightMenuItem"
+                        Click="ThemeLightMenuItem_OnClick"
                         Header="_Light"
-                        IsCheckable="True"
-                        Click="ThemeLightMenuItem_OnClick" />
+                        IsCheckable="True" />
                     <MenuItem
                         x:Name="ThemeDarkMenuItem"
+                        Click="ThemeDarkMenuItem_OnClick"
                         Header="_Dark"
-                        IsCheckable="True"
-                        Click="ThemeDarkMenuItem_OnClick" />
+                        IsCheckable="True" />
                     <MenuItem
                         x:Name="ThemeBlueMenuItem"
+                        Click="ThemeBlueMenuItem_OnClick"
                         Header="_Blue"
-                        IsCheckable="True"
-                        Click="ThemeBlueMenuItem_OnClick" />
+                        IsCheckable="True" />
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -133,8 +175,8 @@
             Grid.Row="2"
             ActiveContentChanged="DockingManager_OnActiveContentChanged"
             AnchorableClosed="DockingManager_OnAnchorableClosed"
-            DocumentClosing="DockingManager_OnDocumentClosing"
-            DocumentClosed="DockingManager_OnDocumentClosed">
+            DocumentClosed="DockingManager_OnDocumentClosed"
+            DocumentClosing="DockingManager_OnDocumentClosing">
             <ad:DockingManager.Theme>
                 <ad:MosaicTheme />
             </ad:DockingManager.Theme>
@@ -181,16 +223,45 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock FontWeight="SemiBold" Text="Name" />
-                                    <TextBlock Grid.Column="1" Margin="12,0,0,0" Text="{Binding ActiveDocument.FileName, TargetNullValue=-}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        Text="{Binding ActiveDocument.FileName, TargetNullValue=-}"
+                                        TextTrimming="CharacterEllipsis" />
 
-                                    <TextBlock Grid.Row="1" Margin="0,8,0,0" FontWeight="SemiBold" Text="Path" />
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="12,8,0,0" Text="{Binding ActiveDocument.FilePath, TargetNullValue=(unsaved)}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Margin="0,8,0,0"
+                                        FontWeight="SemiBold"
+                                        Text="Path" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="12,8,0,0"
+                                        Text="{Binding ActiveDocument.FilePath, TargetNullValue=(unsaved)}"
+                                        TextTrimming="CharacterEllipsis" />
 
-                                    <TextBlock Grid.Row="2" Margin="0,8,0,0" FontWeight="SemiBold" Text="Type" />
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="12,8,0,0" Text="{Binding ActiveDocument.Kind, TargetNullValue=-}" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Margin="0,8,0,0"
+                                        FontWeight="SemiBold"
+                                        Text="Type" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Margin="12,8,0,0"
+                                        Text="{Binding ActiveDocument.Kind, TargetNullValue=-}" />
 
-                                    <TextBlock Grid.Row="3" Margin="0,8,0,0" FontWeight="SemiBold" Text="Modified" />
-                                    <TextBlock Grid.Row="3" Grid.Column="1" Margin="12,8,0,0" Text="{Binding ActiveDocument.IsModified, TargetNullValue=False}" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Margin="0,8,0,0"
+                                        FontWeight="SemiBold"
+                                        Text="Modified" />
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Margin="12,8,0,0"
+                                        Text="{Binding ActiveDocument.IsModified, TargetNullValue=False}" />
                                 </Grid>
                             </ad:LayoutAnchorable>
                         </ad:LayoutAnchorablePane>
