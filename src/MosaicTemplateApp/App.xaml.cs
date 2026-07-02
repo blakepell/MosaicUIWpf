@@ -8,7 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.Memory;
 using Mosaic.UI.Wpf;
+using Mosaic.UI.Wpf.Themes;
 using MosaicTemplateApp.Common;
 using System.Windows;
 
@@ -22,6 +24,14 @@ namespace MosaicTemplateApp
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            var appSettings = AppServices.GetRequiredService<AppSettings>();
+
+            var appViewModel = AppServices.GetRequiredService<AppViewModel>();
+            appViewModel.AppSettings = appSettings;
+
+            var themeManager = AppServices.GetRequiredService<ThemeManager>();
+            themeManager.Theme = appSettings.Theme;
         }
 
         private void App_OnExit(object sender, ExitEventArgs e)

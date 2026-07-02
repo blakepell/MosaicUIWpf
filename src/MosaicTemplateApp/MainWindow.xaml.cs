@@ -11,6 +11,7 @@
 using System.Windows;
 using Argus.Memory;
 using Mosaic.UI.Wpf.Themes;
+using MosaicTemplateApp.Common;
 
 namespace MosaicTemplateApp
 {
@@ -30,6 +31,10 @@ namespace MosaicTemplateApp
         {
             var theme = AppServices.GetRequiredService<ThemeManager>();
             theme.ToggleTheme();
+
+            var appSettings = AppServices.GetRequiredService<AppSettings>();
+            appSettings.Theme = theme.Theme;
+            App.SaveAppSettings();
         }
     }
 }
