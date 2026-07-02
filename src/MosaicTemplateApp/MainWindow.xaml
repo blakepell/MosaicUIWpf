@@ -17,7 +17,7 @@
     theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
-    BorderThickness="1"
+    BorderThickness="0"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"

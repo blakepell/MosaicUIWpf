@@ -37,6 +37,16 @@ namespace Mosaic.UI.Wpf.Common
                 new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.Inherits));
 
         /// <summary>
+        /// Identifies the attached property that enables hover highlighting for ancestor tree items.
+        /// </summary>
+        public static readonly DependencyProperty IsAncestorHoverHighlightEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsAncestorHoverHighlightEnabled",
+                typeof(bool),
+                typeof(TreeViewHelper),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+
+        /// <summary>
         /// Gets the scroll animation setting.
         /// </summary>
         /// <param name="obj">The object that owns the attached property.</param>
@@ -74,6 +84,28 @@ namespace Mosaic.UI.Wpf.Common
         public static bool GetIsExpansionAnimation(DependencyObject obj)
         {
             return (bool)obj.GetValue(IsExpansionAnimationProperty);
+        }
+
+        /// <summary>
+        /// Sets a value that indicates whether hovering a child item also highlights its ancestor items.
+        /// </summary>
+        /// <param name="obj">The object that owns the attached property.</param>
+        /// <param name="value">
+        /// <see langword="true" /> to highlight ancestor items on hover; otherwise, <see langword="false" />.
+        /// </param>
+        public static void SetIsAncestorHoverHighlightEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsAncestorHoverHighlightEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Gets a value that indicates whether hovering a child item also highlights its ancestor items.
+        /// </summary>
+        /// <param name="obj">The object that owns the attached property.</param>
+        /// <returns><see langword="true" /> if ancestor items highlight on hover; otherwise, <see langword="false" />.</returns>
+        public static bool GetIsAncestorHoverHighlightEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsAncestorHoverHighlightEnabledProperty);
         }
 
         /// <summary>
