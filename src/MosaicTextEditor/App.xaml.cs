@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.Diagnostics;
 using Argus.Memory;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Themes;
@@ -21,8 +22,12 @@ namespace MosaicTextEditor
     /// </summary>
     public partial class App : MosaicApp<AppSettings, AppViewModel>
     {
+        public static Stopwatch StartupTime = new();
+
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+            StartupTime.Start();
+
             base.OnStartup(e);
 
             var appSettings = AppServices.GetRequiredService<AppSettings>();

@@ -12,6 +12,7 @@ using Argus.Memory;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
+using Mosaic.UI.Wpf.Logging;
 using Mosaic.UI.Wpf.Themes;
 using MosaicTextEditor.Common;
 using MosaicTextEditor.Models;
@@ -49,6 +50,7 @@ namespace MosaicTextEditor
         private readonly Dictionary<EditorDocument, LayoutDocument> _layoutDocumentsByDocument = new();
         private readonly MainWindowViewModel _viewModel;
         private LayoutAnchorable? _filesAnchorable;
+        private LayoutAnchorable? _logViewerAnchorable;
         private LayoutAnchorable? _outputAnchorable;
         private LayoutAnchorable? _propertiesAnchorable;
         private LayoutAnchorable? _settingsAnchorable;
@@ -64,6 +66,7 @@ namespace MosaicTextEditor
             this.InitializeComponent();
 
             _filesAnchorable = this.FilesAnchorable;
+            _logViewerAnchorable = this.LoggerControl;
             _propertiesAnchorable = this.PropertiesAnchorable;
             _outputAnchorable = this.OutputAnchorable;
 
@@ -92,6 +95,10 @@ namespace MosaicTextEditor
 
             _initialized = true;
             await _viewModel.InitializeAsync(_appViewModel.StartupPath);
+
+            App.StartupTime.Stop();
+            Logger.Log(LogSeverity.Info, $"Startup {App.StartupTime.Elapsed.Seconds}s {App.StartupTime.Elapsed.Milliseconds}ms");
+
         }
 
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
@@ -142,6 +149,10 @@ namespace MosaicTextEditor
             else if (ReferenceEquals(e.Anchorable, _settingsAnchorable))
             {
                 _settingsAnchorable = null;
+            }
+            else if (ReferenceEquals(e.Anchorable, _logViewerAnchorable))
+            {
+                _logViewerAnchorable = null;
             }
             else if (ReferenceEquals(e.Anchorable, _outputAnchorable))
             {
@@ -224,6 +235,9 @@ namespace MosaicTextEditor
                     break;
                 case "Settings":
                     _settingsAnchorable = this.ShowToolWindow(_settingsAnchorable, this.CreateSettingsToolWindow, AnchorableShowStrategy.Right, DefaultPropertiesDockWidth, DefaultOutputDockHeight);
+                    break;
+                case "LogViewer":
+                    _logViewerAnchorable = this.ShowToolWindow(_logViewerAnchorable, this.CreateLogViewerToolWindow, AnchorableShowStrategy.Bottom, DefaultFilesDockWidth, DefaultOutputDockHeight);
                     break;
                 case "Output":
                     _outputAnchorable = this.ShowToolWindow(_outputAnchorable, this.CreateOutputToolWindow, AnchorableShowStrategy.Bottom, DefaultFilesDockWidth, DefaultOutputDockHeight);
@@ -358,6 +372,17 @@ namespace MosaicTextEditor
             };
 
             return CreateToolWindow("Settings", "settings", propertyGrid);
+        }
+
+        private LayoutAnchorable CreateLogViewerToolWindow()
+        {
+            var logViewer = new LogViewer
+            {
+                IpAddressVisible = false,
+                UsernameVisible = false
+            };
+
+            return CreateToolWindow("Log Viewer", "logViewer", logViewer);
         }
 
         private LayoutAnchorable CreateOutputToolWindow()

@@ -1,0 +1,43 @@
+<UserControl
+    x:Class="Mosaic.UI.Wpf.Logging.LogViewerTabHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    d:DesignHeight="32"
+    d:DesignWidth="120"
+    mc:Ignorable="d">
+    <Grid Margin="0,0,8,0">
+        <TextBlock
+            Margin="0,4,6,0"
+            VerticalAlignment="Center"
+            Text="{Binding Title, ElementName=Root}" />
+        <Border
+            MinWidth="16"
+            Height="16"
+            Padding="4,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="#D92828"
+            CornerRadius="8">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding NotificationCount, ElementName=Root}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="10"
+                FontWeight="SemiBold"
+                Foreground="White"
+                Text="{Binding NotificationCount, ElementName=Root}" />
+        </Border>
+    </Grid>
+</UserControl>

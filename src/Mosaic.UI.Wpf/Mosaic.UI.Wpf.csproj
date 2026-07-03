@@ -39,6 +39,7 @@
     <None Remove="Assets\Images\skip-forward-30.png" />
     <None Remove="Assets\Images\stop-30.png" />
     <None Remove="Assets\Images\warning-48.png" />
+    <None Remove="Assets\termina3-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\vs-close-16.png" />
     <None Remove="Assets\vs-delete-16.png" />

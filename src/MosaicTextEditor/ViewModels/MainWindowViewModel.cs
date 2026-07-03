@@ -280,6 +280,9 @@ namespace MosaicTextEditor.ViewModels
         [RelayCommand]
         private void ViewOutput() => this.ToolWindowRequested?.Invoke(this, "Output");
 
+        [RelayCommand]
+        private void ViewLogViewer() => this.ToolWindowRequested?.Invoke(this, "LogViewer");
+
         private bool HasActiveDocument() => this.ActiveDocument != null;
 
         private async Task OpenFilePathAsync(string path)

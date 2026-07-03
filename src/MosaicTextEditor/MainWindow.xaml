@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ad="https://github.com/blakepell/MosaicUIWpf"
+    xmlns:logging="clr-namespace:Mosaic.UI.Wpf.Logging;assembly=Mosaic.UI.Wpf"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     x:Name="RootWindow"
@@ -165,6 +166,7 @@
                 </MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding ViewFileExplorerCommand}" Header="View _File Explorer" />
+                <MenuItem Command="{Binding ViewLogViewerCommand}" Header="View _Log Viewer" />
                 <MenuItem Command="{Binding ViewPropertiesCommand}" Header="View _Properties" />
                 <MenuItem Command="{Binding ViewOutputCommand}" Header="View _Output" />
                 <MenuItem Command="{Binding ViewSettingsCommand}" Header="View _Settings" />
@@ -277,7 +279,18 @@
                         </ad:LayoutAnchorablePane>
                     </ad:LayoutPanel>
 
-                    <ad:LayoutAnchorablePane DockHeight="150" DockMinHeight="100">
+                    <ad:LayoutAnchorablePane
+                        x:Name="LoggerAnchorable"
+                        DockHeight="150"
+                        DockMinHeight="100">
+                        <ad:LayoutAnchorable
+                            x:Name="LoggerControl"
+                            Title="Log Viewer"
+                            CanClose="True"
+                            ContentId="logViewer">
+                            <logging:LogViewer IpAddressVisible="False" UsernameVisible="False" />
+                        </ad:LayoutAnchorable>
+
                         <ad:LayoutAnchorable
                             x:Name="OutputAnchorable"
                             Title="Output"

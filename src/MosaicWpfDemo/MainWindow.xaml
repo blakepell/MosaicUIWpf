@@ -1212,7 +1212,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/text-48.png"
+                    ImageSource="/Assets/terminal3-48.png"
                     Text="Block Caret Behavior">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
