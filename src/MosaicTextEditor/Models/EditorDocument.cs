@@ -115,13 +115,15 @@ namespace MosaicTextEditor.Models
         public static EditorDocument CreateMarkdown(string fileName) => new(EditorDocumentKind.Markdown, fileName);
 
         /// <summary>
-        /// Loads the specified file into a syntax editor document.
+        /// Loads the specified file into the editor surface resolved for its type (e.g. markdown files
+        /// open in the markdown editor); files without a specialized editor open in the syntax editor.
         /// </summary>
         /// <param name="path">The file path to load.</param>
-        public static async Task<EditorDocument> LoadSyntaxFileAsync(string path)
+        public static async Task<EditorDocument> LoadFileAsync(string path)
         {
             string text = await File.ReadAllTextAsync(path);
-            var document = CreateSyntax(Path.GetFileName(path));
+            var kind = EditorRegistry.ResolveKind(path);
+            var document = new EditorDocument(kind, Path.GetFileName(path));
             document.SetText(text, markModified: false);
             document.SetFilePath(path);
             document.IsModified = false;

@@ -310,7 +310,7 @@ namespace MosaicTextEditor.ViewModels
 
             try
             {
-                var document = await EditorDocument.LoadSyntaxFileAsync(fullPath);
+                var document = await EditorDocument.LoadFileAsync(fullPath);
                 this.AddDocument(document);
                 this.AddRecentFile(fullPath);
                 this.StatusText = $"Opened file: {fullPath}";

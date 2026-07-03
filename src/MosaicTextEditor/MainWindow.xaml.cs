@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 using AvalonDockMosaicTheme = Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme;
 using FileItem = Mosaic.UI.Wpf.Controls.FileItem;
 using FilesControl = Mosaic.UI.Wpf.Controls.Files;
@@ -462,6 +463,8 @@ namespace MosaicTextEditor
 
         private async void MainWindow_OnClosing(object? sender, CancelEventArgs e)
         {
+            // Once the user has answered every save prompt this handler re-enters with the flag set
+            // and lets the close proceed unimpeded.
             if (_isClosingConfirmed)
             {
                 return;
@@ -473,19 +476,26 @@ namespace MosaicTextEditor
                 return;
             }
 
+            // Cancel this close pass while we prompt. The save prompt can complete synchronously
+            // (e.g. clicking "No"), so we must not call Close() from here - doing so re-enters the
+            // Closing event and throws "Cannot ... Close ... while a Window is closing".
             e.Cancel = true;
 
             foreach (var document in modifiedDocuments)
             {
                 if (!await this.PromptToSaveDocumentAsync(document))
                 {
+                    // User cancelled; keep the window open.
                     return;
                 }
             }
 
             _isClosingConfirmed = true;
             _suppressDocumentClosePrompt = true;
-            this.Close();
+
+            // Defer the real close so the current Closing event fully unwinds first, avoiding the
+            // re-entrant Close() crash on the synchronous prompt paths.
+            _ = this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(this.Close));
         }
 
         private async Task<bool> PromptToSaveDocumentAsync(EditorDocument document)
