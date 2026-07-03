@@ -10,10 +10,12 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mosaic.UI.Wpf.Controls;
+using MosaicTextEditor.Common;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -33,7 +35,7 @@ namespace MosaicTextEditor.Models
         /// </summary>
         /// <param name="kind">The editor surface kind.</param>
         /// <param name="fileName">The initial display file name.</param>
-        private EditorDocument(EditorDocumentKind kind, string fileName)
+        private EditorDocument(EditorDocumentKind kind, string fileName, AppSettings appSettings)
         {
             this.Kind = kind;
             this.FileName = fileName;
@@ -58,6 +60,11 @@ namespace MosaicTextEditor.Models
                 {
                     Language = SyntaxLanguage.None
                 };
+                BindingOperations.SetBinding(_syntaxEditor, SyntaxEditor.FontSizeProperty, new Binding(nameof(AppSettings.FontSize))
+                {
+                    Source = appSettings,
+                    Mode = BindingMode.OneWay
+                });
                 _syntaxEditor.TextChanged += this.SyntaxEditor_OnTextChanged;
                 this.EditorControl = _syntaxEditor;
             }
@@ -107,23 +114,23 @@ namespace MosaicTextEditor.Models
         /// <summary>
         /// Creates a blank syntax editor document.
         /// </summary>
-        public static EditorDocument CreateSyntax(string fileName) => new(EditorDocumentKind.Syntax, fileName);
+        public static EditorDocument CreateSyntax(string fileName, AppSettings appSettings) => new(EditorDocumentKind.Syntax, fileName, appSettings);
 
         /// <summary>
         /// Creates a blank markdown editor document.
         /// </summary>
-        public static EditorDocument CreateMarkdown(string fileName) => new(EditorDocumentKind.Markdown, fileName);
+        public static EditorDocument CreateMarkdown(string fileName, AppSettings appSettings) => new(EditorDocumentKind.Markdown, fileName, appSettings);
 
         /// <summary>
         /// Loads the specified file into the editor surface resolved for its type (e.g. markdown files
         /// open in the markdown editor); files without a specialized editor open in the syntax editor.
         /// </summary>
         /// <param name="path">The file path to load.</param>
-        public static async Task<EditorDocument> LoadFileAsync(string path)
+        public static async Task<EditorDocument> LoadFileAsync(string path, AppSettings appSettings)
         {
             string text = await File.ReadAllTextAsync(path);
             var kind = EditorRegistry.ResolveKind(path);
-            var document = new EditorDocument(kind, Path.GetFileName(path));
+            var document = new EditorDocument(kind, Path.GetFileName(path), appSettings);
             document.SetText(text, markModified: false);
             document.SetFilePath(path);
             document.IsModified = false;

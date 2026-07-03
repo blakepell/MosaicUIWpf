@@ -147,14 +147,14 @@ namespace MosaicTextEditor.ViewModels
         [RelayCommand]
         private void NewFile()
         {
-            var document = EditorDocument.CreateSyntax($"Untitled {_untitledCount++}");
+            var document = EditorDocument.CreateSyntax($"Untitled {_untitledCount++}", _appSettings);
             this.AddDocument(document);
         }
 
         [RelayCommand]
         private void NewMarkdownFile()
         {
-            var document = EditorDocument.CreateMarkdown($"Untitled Markdown {_untitledMarkdownCount++}.md");
+            var document = EditorDocument.CreateMarkdown($"Untitled Markdown {_untitledMarkdownCount++}.md", _appSettings);
             this.AddDocument(document);
         }
 
@@ -313,7 +313,7 @@ namespace MosaicTextEditor.ViewModels
 
             try
             {
-                var document = await EditorDocument.LoadFileAsync(fullPath);
+                var document = await EditorDocument.LoadFileAsync(fullPath, _appSettings);
                 this.AddDocument(document);
                 this.AddRecentFile(fullPath);
                 this.StatusText = $"Opened file: {fullPath}";
