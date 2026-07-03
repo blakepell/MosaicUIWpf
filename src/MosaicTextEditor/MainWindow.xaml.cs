@@ -483,6 +483,7 @@ namespace MosaicTextEditor
             {
                 this.DockingManager.Theme = new AvalonDockMosaicTheme();
                 this.UpdateThemeMenuChecks(e);
+                Logger.Log(LogSeverity.Info, $"Theme changed: {e.ToString()}");
             });
         }
 
