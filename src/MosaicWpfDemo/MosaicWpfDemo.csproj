@@ -505,6 +505,13 @@
 			<Link>LinkedSources\MessageBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ModalDialogExample.xaml">
+			<Link>LinkedSources\ModalDialogExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ModalDialogExample.xaml.cs">
+			<Link>LinkedSources\ModalDialogExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\LoopbackWaveformVisualizerExample.xaml">
 			<Link>LinkedSources\LoopbackWaveformVisualizerExample.xaml</Link>
 		</EmbeddedResource>

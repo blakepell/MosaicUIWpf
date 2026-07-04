@@ -610,6 +610,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Modal Dialog  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/collage-48.png"
+                    Text="Modal Dialog">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Modal Dialog" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ModalDialogExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ModalDialogExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ModalDialog}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ModalDialogExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Numeric Text Box  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

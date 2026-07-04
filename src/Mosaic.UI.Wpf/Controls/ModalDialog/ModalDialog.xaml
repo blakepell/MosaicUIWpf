@@ -17,19 +17,20 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ModalDialog}">
                     <Grid>
-                        <local:ClipBorder
+                        <!--  A plain Border is used intentionally: it rounds the card without clipping child content.  -->
+                        <Border
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
-                            <local:ClipBorder.Effect>
+                            <Border.Effect>
                                 <DropShadowEffect
                                     BlurRadius="32"
                                     Direction="270"
                                     Opacity="0.45"
                                     ShadowDepth="8"
                                     Color="#000000" />
-                            </local:ClipBorder.Effect>
+                            </Border.Effect>
                             <Grid Margin="{TemplateBinding Padding}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -101,7 +102,7 @@
                                 <!--  Dialog body.  -->
                                 <ContentPresenter Grid.Row="1" />
                             </Grid>
-                        </local:ClipBorder>
+                        </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Description" Value="">
