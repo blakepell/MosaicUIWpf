@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaSwap - Advanced Color Tool</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        gray: {
+                            850: '#1f2937',
+                            900: '#111827',
+                            950: '#030712',
+                        }
+                    },
+                    cursor: {
+                        crosshair: 'crosshair',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Checkerboard Pattern for Transparency */
+        .checkerboard {
+            background-color: #1f2937;
+            background-image: 
+                linear-gradient(45deg, #374151 25%, transparent 25%), 
+                linear-gradient(-45deg, #374151 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #374151 75%), 
+                linear-gradient(-45deg, transparent 75%, #374151 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        /* Hide scrollbar for sleek look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
+        }
+
+        /* Loupe Styling */
+        #loupe {
+            position: fixed; /* Changed from absolute to fixed to avoid clipping */
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5), inset 0 0 2px rgba(255,255,255,0.2);
+            image-rendering: pixelated; /* Essential for seeing pixels clearly */
+            z-index: 9999; /* High z-index to ensure it sits on top of modals if needed */
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #3b82f6;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-200 h-screen flex flex-col overflow-hidden font-sans selection:bg-blue-500 selection:text-white">
+
+    <!-- Shades & Tints Panel -->
+    <aside id="shadesPanel" class="fixed inset-y-0 left-0 w-72 bg-gray-900 border-r border-gray-800 shadow-2xl transform -translate-x-full transition-transform duration-300 z-50 flex flex-col">
+        <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-gray-900">
+            <div>
+                <h3 class="font-bold text-white">Shades & Tints</h3>
+                <p class="text-xs text-gray-500">Click to copy hex</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="exportCSS()" class="flex items-center gap-1 px-2 py-1 bg-gray-800 hover:bg-blue-900/30 text-blue-400 text-xs font-medium rounded border border-gray-700 hover:border-blue-500/50 transition-colors" title="Export CSS Variables">
+                    <i data-lucide="file-code" class="w-3 h-3"></i> Export
+                </button>
+                <button onclick="toggleShadesPanel(false)" class="text-gray-500 hover:text-white p-1 hover:bg-gray-800 rounded transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div id="shadesContainer" class="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+            <!-- Swatches injected here -->
+        </div>
+    </aside>
+
+    <!-- Header -->
+    <header class="h-16 border-b border-gray-800 bg-gray-900 flex items-center justify-between px-6 shrink-0 z-20 shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-lg">
+                <i data-lucide="palette" class="text-white w-5 h-5"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight text-white">Chroma<span class="text-blue-400">Swap</span></h1>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button onclick="undoLastAction()" id="undoBtn" class="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white disabled:opacity-30 transition-colors" disabled>
+                <i data-lucide="undo-2" class="w-4 h-4"></i> Undo
+            </button>
+            <div class="h-6 w-px bg-gray-700"></div>
+            <input type="file" id="fileInput" accept="image/*" class="hidden">
+            <button onclick="document.getElementById('fileInput').click()" class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-md text-sm font-medium transition-colors border border-gray-700">
+                <i data-lucide="upload" class="w-4 h-4"></i> Open Image
+            </button>
+            <button onclick="saveImage()" id="saveBtn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md text-sm font-medium text-white transition-colors shadow-lg shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <i data-lucide="download" class="w-4 h-4"></i> Save
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 relative overflow-hidden flex items-center justify-center bg-gray-950 p-8" id="dropZone">
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center pointer-events-none transition-opacity duration-300">
+            <div class="w-24 h-24 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-800 shadow-xl">
+                <i data-lucide="image-plus" class="w-10 h-10 text-gray-600"></i>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-300">No Image Selected</h2>
+            <p class="text-gray-500 mt-2 text-sm">Drag & drop, paste, or click Open Image</p>
+        </div>
+
+        <!-- Canvas Container -->
+        <div id="canvasContainer" class="relative hidden shadow-2xl rounded-lg overflow-hidden border border-gray-800 max-w-full max-h-full">
+            <div class="checkerboard absolute inset-0 -z-10"></div>
+            <canvas id="mainCanvas" class="cursor-crosshair block max-w-full max-h-full object-contain"></canvas>
+            
+            <!-- Loupe removed from here to prevent overflow clipping -->
+        </div>
+
+    </main>
+
+    <!-- Loupe moved to body for fixed positioning support -->
+    <canvas id="loupe" width="100" height="100" class="rounded-full border-2 border-white/20 hidden"></canvas>
+
+    <!-- Footer / Color Info -->
+    <footer class="h-auto min-h-[80px] border-t border-gray-800 bg-gray-900 p-4 shrink-0 z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Selected Color Preview -->
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="relative group cursor-pointer" onclick="toggleShadesPanel(true)" title="Click to view shades">
+                    <div id="colorPreview" class="w-12 h-12 rounded-lg border border-gray-600 shadow-inner bg-transparent checkerboard transition-transform active:scale-95">
+                        <!-- Filled by JS -->
+                        <div id="colorPreviewFill" class="w-full h-full rounded-lg"></div>
+                    </div>
+                    <!-- Added helper badge -->
+                    <div class="absolute -top-2 -right-2 bg-gray-700 text-[10px] w-5 h-5 flex items-center justify-center rounded-full border border-gray-600 shadow-sm z-10">
+                        <i data-lucide="chevrons-right" class="w-3 h-3 text-white"></i>
+                    </div>
+                    <span class="absolute -top-2 -right-2 bg-blue-600 text-[10px] px-1.5 py-0.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">Expand</span>
+                </div>
+                
+                <div class="flex flex-col">
+                    <span class="text-xs text-gray-500 font-medium uppercase tracking-wider">Active Color</span>
+                    <span id="colorName" class="text-sm text-gray-300 font-mono">Select a pixel</span>
+                </div>
+            </div>
+
+            <!-- Color Values -->
+            <div class="flex-1 grid grid-cols-3 gap-2 md:gap-6 w-full max-w-2xl">
+                <!-- HEX -->
+                <div class="bg-gray-800/50 rounded-md p-2 flex items-center justify-between border border-gray-700/50 group hover:border-blue-500/30 transition-colors">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-gray-500 font-bold tracking-wider">HEX</span>
+                        <span id="valHex" class="font-mono text-sm text-blue-400 select-all">#------</span>
+                    </div>
+                    <button onclick="copyToClipboard('valHex')" class="p-1.5 hover:bg-gray-700 rounded text-gray-500 hover:text-white transition-colors" title="Copy HEX">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <!-- RGB -->
+                <div class="bg-gray-800/50 rounded-md p-2 flex items-center justify-between border border-gray-700/50 group hover:border-green-500/30 transition-colors">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-gray-500 font-bold tracking-wider">RGB</span>
+                        <span id="valRgb" class="font-mono text-sm text-green-400 select-all">---, ---, ---</span>
+                    </div>
+                    <button onclick="copyToClipboard('valRgb')" class="p-1.5 hover:bg-gray-700 rounded text-gray-500 hover:text-white transition-colors" title="Copy RGB">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <!-- HSV -->
+                <div class="bg-gray-800/50 rounded-md p-2 flex items-center justify-between border border-gray-700/50 group hover:border-purple-500/30 transition-colors">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-gray-500 font-bold tracking-wider">HSV</span>
+                        <span id="valHsv" class="font-mono text-sm text-purple-400 select-all">---, ---, ---</span>
+                    </div>
+                    <button onclick="copyToClipboard('valHsv')" class="p-1.5 hover:bg-gray-700 rounded text-gray-500 hover:text-white transition-colors" title="Copy HSV">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <button id="swapBtn" onclick="openSwapModal()" class="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium rounded-lg shadow-lg shadow-indigo-900/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale" disabled>
+                <i data-lucide="arrow-left-right" class="w-4 h-4"></i> Swap Colors
+            </button>
+        </div>
+    </footer>
+
+    <!-- Swap Modal -->
+    <div id="swapModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-200">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl w-full max-w-md transform scale-95 transition-transform duration-200 p-6" id="swapModalContent">
+            
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Swap Colors</h3>
+                    <p class="text-sm text-gray-500">Replace the selected color globally.</p>
+                </div>
+                <button onclick="closeSwapModal()" class="text-gray-500 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Color Inputs -->
+                <div class="flex items-center gap-4">
+                    <!-- From -->
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">From</label>
+                        <div class="flex items-center gap-2 p-2 bg-gray-800 rounded-lg border border-gray-700">
+                            <div id="swapFromPreview" class="w-8 h-8 rounded bg-white shadow-sm shrink-0"></div>
+                            <span id="swapFromHex" class="font-mono text-sm text-gray-300">#FFFFFF</span>
+                        </div>
+                    </div>
+                    
+                    <i data-lucide="arrow-right" class="text-gray-600"></i>
+
+                    <!-- To -->
+                    <div class="flex-1">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">To</label>
+                        <div class="flex items-center gap-2 p-2 bg-gray-800 rounded-lg border border-gray-700 focus-within:border-blue-500 transition-colors">
+                            <div class="relative w-8 h-8 rounded overflow-hidden shrink-0 shadow-sm border border-gray-600">
+                                <input type="color" id="targetColorInput" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer" value="#3b82f6">
+                            </div>
+                            <input type="text" id="targetColorHex" class="bg-transparent border-none text-sm font-mono text-white w-full focus:outline-none uppercase" value="#3B82F6" maxlength="7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Match Shading Option -->
+                <div class="flex items-center gap-3 bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
+                    <input type="checkbox" id="smartSwapCheck" class="w-5 h-5 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900 cursor-pointer">
+                    <div>
+                        <label for="smartSwapCheck" class="text-sm font-medium text-gray-300 block cursor-pointer select-none">Match Shading</label>
+                        <p class="text-xs text-gray-500">Preserve gradients (e.g., Red→White becomes Blue→White)</p>
+                    </div>
+                </div>
+
+                <!-- Tolerance Slider -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-300">Tolerance</label>
+                        <span id="toleranceVal" class="text-sm font-mono text-blue-400">10%</span>
+                    </div>
+                    <input type="range" id="toleranceRange" min="0" max="100" value="10" class="range-slider w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-2">Higher tolerance includes similar shades. Required for JPEGs.</p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-3 mt-8">
+                    <button onclick="closeSwapModal()" class="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors">Cancel</button>
+                    <button onclick="executeSwap()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium shadow-lg shadow-blue-900/40 transition-transform active:scale-95">
+                        Confirm Swap
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-xl border border-gray-700 flex items-center gap-2 translate-y-10 opacity-0 transition-all duration-300 pointer-events-none z-50">
+        <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        <span id="toastMsg" class="text-sm">Action Complete</span>
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- State Management ---
+        const state = {
+            originalImage: null,
+            currentImageData: null, // For undo functionality logic
+            history: [],
+            currentStep: -1,
+            selectedColor: { r: 0, g: 0, b: 0, a: 255 },
+            scale: 1,
+            fileName: 'chromaswap-image',
+            palette: [] // Stores current generated shades for export
+        };
+
+        // --- DOM Elements ---
+        const canvas = document.getElementById('mainCanvas');
+        // REMOVED { willReadFrequently: true } to prevent browser crashes on large images
+        const ctx = canvas.getContext('2d');
+        const loupe = document.getElementById('loupe');
+        const loupeCtx = loupe.getContext('2d');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        
+        // --- Initialization ---
+        
+        // Drag and Drop - Refactored to prevent layout thrashing crash
+        let dragCounter = 0;
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Use dragenter/dragleave with counter to avoid flickering when dragging over children
+        dropZone.addEventListener('dragenter', (e) => {
+            dragCounter++;
+            dropZone.classList.add('bg-gray-900');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            dragCounter--;
+            if (dragCounter === 0) {
+                dropZone.classList.remove('bg-gray-900');
+            }
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            dragCounter = 0;
+            dropZone.classList.remove('bg-gray-900');
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Paste Support
+        window.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                    const blob = items[i].getAsFile();
+                    handleFiles([blob]);
+                    showToast("Image pasted from clipboard");
+                    return;
+                }
+            }
+        });
+
+        // Keyboard Shortcuts
+        window.addEventListener('keydown', (e) => {
+            // Check for Ctrl+Z or Cmd+Z
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                undoLastAction();
+            }
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (!file.type.startsWith('image/')) {
+                    showToast('Please upload an image file.', 'error');
+                    return;
+                }
+                state.fileName = file.name.split('.')[0];
+                const reader = new FileReader();
+                reader.onload = (e) => loadImage(e.target.result);
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadImage(src) {
+            const img = new Image();
+            img.onload = () => {
+                // Resize handling could go here if image is massive, 
+                // but for now we keep original resolution for quality.
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Draw initial image
+                ctx.drawImage(img, 0, 0);
+                
+                // Update State
+                state.originalImage = img;
+                state.history = [ctx.getImageData(0, 0, canvas.width, canvas.height)];
+                state.currentStep = 0;
+                
+                // UI Updates
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('canvasContainer').classList.remove('hidden');
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('swapBtn').disabled = true; // Disable until color selected
+                document.getElementById('undoBtn').disabled = true;
+
+                // Reset Footer
+                updateColorInfo(0,0,0,0);
+            };
+            img.src = src;
+        }
+
+        // --- Interaction Logic ---
+
+        // Mouse Move for Loupe
+        canvas.addEventListener('mousemove', (e) => {
+            if (!state.originalImage) return;
+
+            const rect = canvas.getBoundingClientRect();
+            
+            // Calculate scale ratio between CSS size and actual canvas size
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // Show Loupe
+            loupe.classList.remove('hidden');
+            
+            // Fixed positioning uses clientX/Y directly
+            loupe.style.left = (e.clientX - 50) + 'px'; // Centered on cursor (offset by radius)
+            loupe.style.top = (e.clientY - 50) + 'px';  // Centered on cursor
+
+            // Draw Loupe Content
+            // Clear loupe
+            loupeCtx.clearRect(0, 0, loupe.width, loupe.height);
+            
+            // Draw a portion of the main canvas into the loupe, magnified
+            // Source x,y,w,h -> Dest x,y,w,h
+            const zoomLevel = 4;
+            const sourceSize = loupe.width / zoomLevel;
+            
+            // Draw background (checkerboard) first for transparency
+            loupeCtx.fillStyle = '#1f2937';
+            loupeCtx.fillRect(0,0,100,100);
+
+            try {
+                loupeCtx.drawImage(
+                    canvas, 
+                    Math.min(Math.max(0, x - sourceSize/2), canvas.width - sourceSize),
+                    Math.min(Math.max(0, y - sourceSize/2), canvas.height - sourceSize),
+                    sourceSize, sourceSize,
+                    0, 0, loupe.width, loupe.height
+                );
+            } catch(err) {
+                // Edge case handling usually not needed due to clamping above
+            }
+            
+            // Draw Crosshair on Loupe
+            loupeCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            loupeCtx.lineWidth = 1;
+            loupeCtx.beginPath();
+            loupeCtx.moveTo(loupe.width/2, 0);
+            loupeCtx.lineTo(loupe.width/2, loupe.height);
+            loupeCtx.moveTo(0, loupe.height/2);
+            loupeCtx.lineTo(loupe.width, loupe.height/2);
+            loupeCtx.stroke();
+            
+            // Add border ring
+            loupeCtx.strokeStyle = 'rgba(59, 130, 246, 0.8)';
+            loupeCtx.lineWidth = 2;
+            loupeCtx.beginPath();
+            loupeCtx.arc(loupe.width/2, loupe.height/2, loupe.width/2 - 1, 0, Math.PI * 2);
+            loupeCtx.stroke();
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            loupe.classList.add('hidden');
+        });
+
+        // Click to Pick Color
+        canvas.addEventListener('click', (e) => {
+            if (!state.originalImage) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = Math.floor((e.clientX - rect.left) * scaleX);
+            const y = Math.floor((e.clientY - rect.top) * scaleY);
+
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const r = pixel[0];
+            const g = pixel[1];
+            const b = pixel[2];
+            const a = pixel[3];
+
+            state.selectedColor = { r, g, b, a };
+            updateColorInfo(r, g, b, a);
+            
+            document.getElementById('swapBtn').disabled = false;
+        });
+
+        function updateColorInfo(r, g, b, a) {
+            const hex = rgbToHex(r, g, b);
+            const hsv = rgbToHsv(r, g, b);
+
+            document.getElementById('valHex').innerText = hex;
+            document.getElementById('valRgb').innerText = `${r}, ${g}, ${b}`;
+            document.getElementById('valHsv').innerText = `${hsv.h}°, ${hsv.s}%, ${hsv.v}%`;
+
+            document.getElementById('colorPreviewFill').style.backgroundColor = `rgba(${r},${g},${b},${a/255})`;
+            
+            if(a === 0) {
+                 document.getElementById('colorName').innerText = "Transparent";
+            } else {
+                 document.getElementById('colorName').innerText = "R:" + r + " G:" + g + " B:" + b;
+            }
+        }
+
+        // --- Color Utilities ---
+
+        function componentToHex(c) {
+            const hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHsv(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, v = max;
+            const d = max - min;
+            s = max == 0 ? 0 : d / max;
+
+            if (max == min) {
+                h = 0; 
+            } else {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                v: Math.round(v * 100)
+            };
+        }
+
+        // Accepts H [0-360], S [0-100], V [0-100]
+        function hsvToRgb(h, s, v) {
+            s /= 100;
+            v /= 100;
+            const c = v * s;
+            const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+            const m = v - c;
+
+            let r = 0, g = 0, b = 0;
+
+            if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+            else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+            else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+            else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+            else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+            else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+
+            return {
+                r: Math.round((r + m) * 255),
+                g: Math.round((g + m) * 255),
+                b: Math.round((b + m) * 255)
+            };
+        }
+
+        function copyToClipboard(source) {
+            let text = source;
+            // Check if source is an ID of an element
+            const element = document.getElementById(source);
+            if (element) {
+                text = element.innerText;
+            }
+            
+            // Fallback for iframe/permissions policy restrictions using execCommand
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Ensure textarea is not visible but part of DOM
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(`Copied ${text}`);
+                } else {
+                    showToast('Copy failed', 'error');
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showToast('Copy failed', 'error');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 2000);
+        }
+
+        // --- Shades Panel Logic ---
+
+        function toggleShadesPanel(show) {
+            const panel = document.getElementById('shadesPanel');
+            if (show) {
+                generateShades();
+                panel.classList.remove('-translate-x-full');
+            } else {
+                panel.classList.add('-translate-x-full');
+            }
+        }
+
+        function generateShades() {
+            const container = document.getElementById('shadesContainer');
+            container.innerHTML = '';
+            state.palette = []; // Reset palette storage
+            
+            const { r, g, b } = state.selectedColor;
+
+            // Helper to mix colors: c1 is base, c2 is mix target (0 for black, 255 for white)
+            const mix = (c1, c2, weight) => Math.round(c1 + (c2 - c1) * weight);
+            const rgbToHexStr = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+
+            // We want a scale from 50 (lightest) to 1050 (darkest).
+            // Base will be around 550.
+            
+            // Generate 10 lighter (Tints) - mixing with White
+            // Loop from 10 down to 1 so lightest is top
+            for (let i = 10; i >= 1; i--) {
+                const weight = i / 12; 
+                const nr = mix(r, 255, weight);
+                const ng = mix(g, 255, weight);
+                const nb = mix(b, 255, weight);
+                const hex = rgbToHexStr(nr, ng, nb);
+                
+                // Map: i=10 -> 50, i=1 -> 500
+                const scaleNum = (11 - i) * 50; 
+                const label = `shade-${scaleNum}`;
+                
+                state.palette.push({ name: label, hex: hex });
+                container.appendChild(createSwatch(hex, label));
+            }
+
+            // Base Color
+            const baseHex = rgbToHexStr(r, g, b);
+            const baseLabel = 'shade-550 (Base)';
+            state.palette.push({ name: 'shade-550', hex: baseHex, isBase: true });
+            container.appendChild(createSwatch(baseHex, baseLabel, true));
+
+            // Generate 10 darker (Shades) - mixing with Black
+            for (let i = 1; i <= 10; i++) {
+                const weight = i / 12;
+                const nr = mix(r, 0, weight);
+                const ng = mix(g, 0, weight);
+                const nb = mix(b, 0, weight);
+                const hex = rgbToHexStr(nr, ng, nb);
+                
+                // Map: i=1 -> 600, i=10 -> 1050
+                const scaleNum = 550 + (i * 50);
+                const label = `shade-${scaleNum}`;
+                
+                state.palette.push({ name: label, hex: hex });
+                container.appendChild(createSwatch(hex, label));
+            }
+        }
+
+        function createSwatch(hex, label, isActive = false) {
+            const div = document.createElement('div');
+            div.className = `group flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all border ${
+                isActive 
+                ? 'bg-gray-800 border-blue-500/50 ring-1 ring-blue-500/20' 
+                : 'border-transparent hover:bg-gray-800 hover:border-gray-700'
+            }`;
+            
+            div.onclick = () => copyToClipboard(hex);
+
+            // Color Box
+            const colorBox = document.createElement('div');
+            colorBox.className = 'w-10 h-10 rounded border border-gray-700 shadow-sm shrink-0 checkerboard';
+            
+            const fill = document.createElement('div');
+            fill.className = 'w-full h-full rounded';
+            fill.style.backgroundColor = hex;
+            colorBox.appendChild(fill);
+
+            // Info
+            const info = document.createElement('div');
+            info.className = 'flex flex-col min-w-0';
+            
+            const hexSpan = document.createElement('span');
+            hexSpan.className = `text-sm font-mono truncate ${isActive ? 'text-blue-400 font-bold' : 'text-gray-300'}`;
+            hexSpan.innerText = hex;
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'text-[10px] text-gray-500 uppercase tracking-wider truncate';
+            labelSpan.innerText = label;
+
+            info.appendChild(hexSpan);
+            info.appendChild(labelSpan);
+
+            // Copy Icon
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-gray-500';
+            iconDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
+
+            div.appendChild(colorBox);
+            div.appendChild(info);
+            div.appendChild(iconDiv);
+            
+            return div;
+        }
+        
+        function exportCSS() {
+            if (state.palette.length === 0) return;
+            
+            let cssContent = `/* Generated by ChromaSwap */\n:root {\n`;
+            
+            state.palette.forEach(color => {
+                cssContent += `  --${color.name}: ${color.hex};${color.isBase ? ' /* Base Color */' : ''}\n`;
+            });
+            
+            cssContent += `}`;
+            
+            const blob = new Blob([cssContent], { type: 'text/css' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'chromaswap-palette.css';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showToast("CSS exported!");
+        }
+
+        // --- Swap Logic & Modal ---
+
+        const modal = document.getElementById('swapModal');
+        const modalContent = document.getElementById('swapModalContent');
+        const toleranceRange = document.getElementById('toleranceRange');
+        const toleranceVal = document.getElementById('toleranceVal');
+        const targetColorInput = document.getElementById('targetColorInput');
+        const targetColorHex = document.getElementById('targetColorHex');
+        const smartSwapCheck = document.getElementById('smartSwapCheck');
+
+        function openSwapModal() {
+            modal.classList.remove('hidden');
+            // Small delay to allow display block to apply before opacity transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+
+            // Set From Color
+            const { r, g, b } = state.selectedColor;
+            document.getElementById('swapFromPreview').style.backgroundColor = `rgb(${r},${g},${b})`;
+            document.getElementById('swapFromHex').innerText = rgbToHex(r,g,b);
+        }
+
+        function closeSwapModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        // Sync Hex Text Input and Color Picker
+        targetColorInput.addEventListener('input', (e) => {
+            targetColorHex.value = e.target.value.toUpperCase();
+        });
+
+        targetColorHex.addEventListener('input', (e) => {
+            let val = e.target.value;
+            if(!val.startsWith('#')) val = '#' + val;
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+                targetColorInput.value = val;
+            }
+        });
+
+        toleranceRange.addEventListener('input', (e) => {
+            toleranceVal.innerText = e.target.value + '%';
+        });
+
+        // The Core Algorithm
+        function executeSwap() {
+            const sourceRgb = state.selectedColor;
+            const targetHex = targetColorHex.value.startsWith('#') ? targetColorHex.value : '#' + targetColorHex.value;
+            const targetRgb = hexToRgb(targetHex);
+            const smartSwap = smartSwapCheck.checked;
+            
+            if (!targetRgb) {
+                showToast("Invalid Hex Color", 'error');
+                return;
+            }
+
+            const tolerance = parseInt(toleranceRange.value);
+            
+            // Get pixel data
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+
+            // Euclidean distance threshold for tolerance (max distance is approx 441 for 255,255,255)
+            // Tolerance % maps to distance. 
+            const threshold = (tolerance / 100) * 442; 
+
+            // If Smart Swap is on, compute HSV for source and target once
+            let sourceHsv, targetHsv;
+            if (smartSwap) {
+                sourceHsv = rgbToHsv(sourceRgb.r, sourceRgb.g, sourceRgb.b);
+                targetHsv = rgbToHsv(targetRgb.r, targetRgb.g, targetRgb.b);
+            }
+
+            let count = 0;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i+1];
+                const b = data[i+2];
+                // a = data[i+3];
+
+                // Calculate distance from source color
+                const dist = Math.sqrt(
+                    Math.pow(r - sourceRgb.r, 2) + 
+                    Math.pow(g - sourceRgb.g, 2) + 
+                    Math.pow(b - sourceRgb.b, 2)
+                );
+
+                if (dist <= threshold) {
+                    if (smartSwap) {
+                        // Convert current pixel to HSV
+                        const pixelHsv = rgbToHsv(r, g, b);
+                        
+                        // Calculate differences
+                        const sDiff = pixelHsv.s - sourceHsv.s;
+                        const vDiff = pixelHsv.v - sourceHsv.v;
+
+                        // Apply diffs to target (Lock Hue to target)
+                        const newH = targetHsv.h;
+                        const newS = Math.max(0, Math.min(100, targetHsv.s + sDiff));
+                        const newV = Math.max(0, Math.min(100, targetHsv.v + vDiff));
+
+                        const newRgb = hsvToRgb(newH, newS, newV);
+                        
+                        data[i] = newRgb.r;
+                        data[i+1] = newRgb.g;
+                        data[i+2] = newRgb.b;
+                    } else {
+                        // Standard flat replacement
+                        data[i] = targetRgb.r;
+                        data[i+1] = targetRgb.g;
+                        data[i+2] = targetRgb.b;
+                    }
+                    count++;
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+            
+            // Save to history
+            saveHistory(imageData);
+            
+            closeSwapModal();
+            showToast(`Swapped pixels.`);
+        }
+
+        function saveHistory(imageData) {
+            // Remove any forward history if we were in the middle of undo stack
+            state.history = state.history.slice(0, state.currentStep + 1);
+            state.history.push(imageData);
+            state.currentStep++;
+            document.getElementById('undoBtn').disabled = false;
+        }
+
+        function undoLastAction() {
+            if (state.currentStep > 0) {
+                state.currentStep--;
+                const prevData = state.history[state.currentStep];
+                ctx.putImageData(prevData, 0, 0);
+                
+                if (state.currentStep === 0) {
+                    document.getElementById('undoBtn').disabled = true;
+                }
+                showToast('Undo successful');
+            }
+        }
+
+        function saveImage() {
+            if (!state.originalImage) return;
+            const link = document.createElement('a');
+            link.download = `${state.fileName}-edited.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+    </script>
+</body>
+</html>
