@@ -156,6 +156,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [MarkdownEditor](./docs/MarkdownEditor.md) | A self-contained markdown editor built on the Mosaic SyntaxEditor (AvalonEdit). Provides a formatting toolbar, list/heading helpers, markdown-aware key handling, an extended context menu, and document modification tracking. |
 | [MarkdownViewer](./docs/MarkdownViewer.md) | A lookless, WPF-native Markdown viewer that renders Markdown text into a FlowDocument hosted in a read-only RichTextBox so formatted content can be selected and copied as rich text. |
 | [MessageBox](./docs/MessageBox.md) | A themed, drop-in replacement for System.Windows.MessageBox. Mirrors the full set of Show overloads and reuses the standard WPF dialog enums. Switch with a single using alias. Honors the active Mosaic light/dark/high-contrast theme. |
+| [ModalDialog](./docs/ModalDialog.md) | A lookless modal dialog that displays arbitrary content centered in a host element's adorner layer. While open, the host is dimmed and optionally blurred, focus is cycled inside the dialog, and ShowAsync completes with the value passed to Close. |
 | [NumericTextBox](./docs/NumericTextBox.md) | TextBox that only allows digits, minus sign and a decimal point. |
 | [ProgressRing](./docs/ProgressRing.md) | A progress ring component to indicate that a long running process is occurring. |
 | [PropertyGrid](./docs/PropertyGrid.md) | A control that displays the properties of an object in a grid format. |
@@ -182,6 +183,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [TagBox](./docs/TagBox.md) | A specialized input control that turns typed text into removable, vibrantly-colored tags. Enter commits the current text as a tag, each tag has an ✕ button, and Backspace removes the last tag. Tags are surfaced through a bindable Tags collection. |
 | [ToggleButton](./docs/ToggleButton.md) | Represents a button control that can switch between two states: checked and unchecked. This implementation looks like a theme styled switch. |
 | [ToggleSwitch](./docs/ToggleSwitch.md) | Represents a toggle switch control that allows users to switch between two states, such as "On" and "Off". |
+| [Toast / ToastManager](./docs/ToastManager.md) | Displays transient ToastMessage notification cards in a host element's adorner layer. Toasts support success, info, warning and error severities, timed or persistent dismissal, and quadrant-based positioning. |
 | [TwoPaneView](./docs/TwoPaneView.md) | Represents a container with two views that size and position content in the available space, either side-by-side or top-bottom. |
 | [TypingProgress](./docs/TypingProgress.md) | Represents a control that visually indicates typing progress, typically used in chat or messaging scenarios. |
 | [ValidationSummaryPanel](./docs/ValidationSummaryPanel.md) | A validation summary panel that displays all validation errors from child controls in a form. Supports both WPF's built-in validation and IDataErrorInfo/INotifyDataErrorInfo. |
