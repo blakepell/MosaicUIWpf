@@ -1,0 +1,111 @@
+<UserControl
+    x:Class="Mosaic.UI.Wpf.Controls.ToastMessage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignWidth="360"
+    Focusable="False"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="ToastCloseButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#C8FFFFFF" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="bg"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="4">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="11"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="&#xE711;" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#1FFFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bg" Property="Background" Value="#33FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border
+        x:Name="cardBorder"
+        MinWidth="300"
+        MaxWidth="380"
+        Margin="0,4"
+        BorderBrush="#26FFFFFF"
+        BorderThickness="1"
+        CornerRadius="8"
+        SnapsToDevicePixels="True">
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="16"
+                Opacity="0.45"
+                ShadowDepth="2" />
+        </Border.Effect>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Severity accent bar  -->
+            <Border
+                x:Name="accentBar"
+                Grid.Column="0"
+                Width="4"
+                Margin="6,8"
+                CornerRadius="2" />
+
+            <!--  Severity icon  -->
+            <TextBlock
+                x:Name="iconTextBlock"
+                Grid.Column="1"
+                Margin="8,14,0,0"
+                VerticalAlignment="Top"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="16" />
+
+            <StackPanel Grid.Column="2" Margin="12,10,8,12">
+                <TextBlock
+                    x:Name="titleTextBlock"
+                    FontSize="14"
+                    FontWeight="SemiBold"
+                    Foreground="#FFFFFF"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="messageTextBlock"
+                    Margin="0,2,0,0"
+                    FontSize="12.5"
+                    Foreground="#C8FFFFFF"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+
+            <Button
+                x:Name="closeButton"
+                Grid.Column="3"
+                Margin="0,6,6,0"
+                VerticalAlignment="Top"
+                Click="OnCloseButtonClick"
+                Style="{StaticResource ToastCloseButtonStyle}"
+                ToolTip="Close" />
+        </Grid>
+    </Border>
+</UserControl>

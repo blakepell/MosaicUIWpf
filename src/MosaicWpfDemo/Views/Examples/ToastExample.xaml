@@ -1,0 +1,150 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ToastExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    x:Name="Root"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="OnLoaded"
+    mc:Ignorable="d">
+    <StackPanel Margin="10">
+        <TextBlock
+            Margin="0,0,0,4"
+            FontWeight="SemiBold"
+            Text="Mosaic.UI.Wpf.Controls.ToastManager displays ToastMessage notifications in an adorner over a host element." />
+        <TextBlock
+            Margin="0,0,0,12"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="Click Show Toast for a quick default, or use the drop-down to pick a severity, duration and screen quadrant." />
+
+        <StackPanel Orientation="Horizontal">
+            <controls:SplitButton
+                Width="150"
+                HorizontalAlignment="Left"
+                Click="OnShowToastClick"
+                Content="Show Toast">
+                <controls:SplitButton.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Severity">
+                            <MenuItem Click="OnSeverityClick" Header="Success" Tag="Success" />
+                            <MenuItem Click="OnSeverityClick" Header="Info" Tag="Info" />
+                            <MenuItem Click="OnSeverityClick" Header="Warning" Tag="Warning" />
+                            <MenuItem Click="OnSeverityClick" Header="Error" Tag="Error" />
+                        </MenuItem>
+                        <MenuItem Header="Duration">
+                            <MenuItem Click="OnDurationClick" Header="Short (2s)" Tag="Short" />
+                            <MenuItem Click="OnDurationClick" Header="Long (6s)" Tag="Long" />
+                            <MenuItem Click="OnDurationClick" Header="Stay open until closed" Tag="Persist" />
+                        </MenuItem>
+                        <MenuItem Header="Quadrant">
+                            <MenuItem Click="OnQuadrantClick" Header="Top Left" Tag="TopLeft" />
+                            <MenuItem Click="OnQuadrantClick" Header="Top Right" Tag="TopRight" />
+                            <MenuItem Click="OnQuadrantClick" Header="Bottom Left" Tag="BottomLeft" />
+                            <MenuItem Click="OnQuadrantClick" Header="Bottom Right" Tag="BottomRight" />
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Click="OnDismissAllClick" Header="Dismiss All" />
+                    </ContextMenu>
+                </controls:SplitButton.ContextMenu>
+            </controls:SplitButton>
+        </StackPanel>
+
+        <TextBlock
+            Margin="0,16,0,6"
+            FontWeight="SemiBold"
+            Text="Severity" />
+        <WrapPanel>
+            <controls:AccentButton
+                Width="110"
+                Margin="0,0,8,8"
+                Click="OnSuccessClick"
+                Content="Success" />
+            <controls:AccentButton
+                Width="110"
+                Margin="0,0,8,8"
+                Click="OnInfoClick"
+                Content="Info" />
+            <controls:AccentButton
+                Width="110"
+                Margin="0,0,8,8"
+                Click="OnWarningClick"
+                Content="Warning" />
+            <controls:AccentButton
+                Width="110"
+                Margin="0,0,8,8"
+                Click="OnErrorClick"
+                Content="Error" />
+        </WrapPanel>
+
+        <TextBlock
+            Margin="0,8,0,6"
+            FontWeight="SemiBold"
+            Text="Duration" />
+        <WrapPanel>
+            <controls:AccentButton
+                Width="150"
+                Margin="0,0,8,8"
+                Click="OnShortDurationClick"
+                Content="Short (2s)" />
+            <controls:AccentButton
+                Width="150"
+                Margin="0,0,8,8"
+                Click="OnLongDurationClick"
+                Content="Long (6s)" />
+            <controls:AccentButton
+                Width="150"
+                Margin="0,0,8,8"
+                Click="OnPersistClick"
+                Content="Stay Open" />
+        </WrapPanel>
+
+        <TextBlock
+            Margin="0,8,0,6"
+            FontWeight="SemiBold"
+            Text="Quadrant" />
+        <WrapPanel>
+            <controls:AccentButton
+                Width="130"
+                Margin="0,0,8,8"
+                Click="OnTopLeftClick"
+                Content="Top Left" />
+            <controls:AccentButton
+                Width="130"
+                Margin="0,0,8,8"
+                Click="OnTopRightClick"
+                Content="Top Right" />
+            <controls:AccentButton
+                Width="130"
+                Margin="0,0,8,8"
+                Click="OnBottomLeftClick"
+                Content="Bottom Left" />
+            <controls:AccentButton
+                Width="130"
+                Margin="0,0,8,8"
+                Click="OnBottomRightClick"
+                Content="Bottom Right" />
+        </WrapPanel>
+
+        <controls:AccentButton
+            Width="140"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Left"
+            Click="OnDismissAllClick"
+            Content="Dismiss All" />
+
+        <controls:InfoCard
+            Title="Last Action"
+            Margin="0,16,0,0"
+            AccentBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}">
+            <TextBlock
+                x:Name="StatusTextBlock"
+                Margin="12"
+                Text="No toast has been shown yet." />
+        </controls:InfoCard>
+    </StackPanel>
+</UserControl>

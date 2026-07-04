@@ -540,6 +540,13 @@
 			<Link>LinkedSources\TagBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ToastExample.xaml">
+			<Link>LinkedSources\ToastExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ToastExample.xaml.cs">
+			<Link>LinkedSources\ToastExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\TextBoxBehaviorsExample.xaml">
 			<Link>LinkedSources\TextBoxBehaviorsExample.xaml</Link>
 		</EmbeddedResource>
