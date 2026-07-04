@@ -228,7 +228,10 @@
                                 Grid.Row="1"
                                 Padding="0"
                                 VerticalScrollBarVisibility="Auto">
-                                <ItemsControl Margin="0" ItemsSource="{TemplateBinding Properties}">
+                                <ItemsControl
+                                    Grid.IsSharedSizeScope="True"
+                                    Margin="0"
+                                    ItemsSource="{TemplateBinding Properties}">
                                     <!--  Group by Category  -->
                                     <ItemsControl.GroupStyle>
                                         <GroupStyle>
@@ -264,7 +267,8 @@
                                         <DataTemplate>
                                             <Grid Margin="0">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="200" />
+                                                    <ColumnDefinition Width="200" SharedSizeGroup="PropertyGridLabelColumn" />
+                                                    <ColumnDefinition Width="5" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
@@ -274,17 +278,41 @@
                                                     VerticalAlignment="Stretch"
                                                     Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
                                                     BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                                                    BorderThickness="0,0,1,1">
-                                                    <TextBlock
+                                                    BorderThickness="0,0,0,1">
+                                                    <StackPanel
                                                         Margin="6,0,0,0"
                                                         VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
-                                                        Text="{Binding DisplayName}"
-                                                        ToolTip="{Binding Description}" />
+                                                        Orientation="Horizontal"
+                                                        ToolTip="{Binding Description}">
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                                            Text="{Binding DisplayName}"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                        <local:AdaptiveImage
+                                                            Width="12"
+                                                            Height="12"
+                                                            Margin="4,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Source="/Mosaic.UI.Wpf;component/Assets/vs-lock-16.png"
+                                                            Visibility="{Binding IsReadOnly, Converter={StaticResource BoolToVis}}" />
+                                                    </StackPanel>
                                                 </Border>
 
-                                                <Border
+                                                <GridSplitter
                                                     Grid.Column="1"
+                                                    Width="5"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Background="Transparent"
+                                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                                    BorderThickness="1,0,0,1"
+                                                    ResizeBehavior="PreviousAndNext"
+                                                    ResizeDirection="Columns"
+                                                    ShowsPreview="True" />
+
+                                                <Border
+                                                    Grid.Column="2"
                                                     BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                                                     BorderThickness="0,0,0,1">
                                                     <ContentControl
@@ -298,7 +326,7 @@
                                                 </Border>
 
                                                 <Button
-                                                    Grid.Column="2"
+                                                    Grid.Column="3"
                                                     Padding="4,0,4,0"
                                                     Command="{Binding OpenEditorCommand}"
                                                     Content="..."
