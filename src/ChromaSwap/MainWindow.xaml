@@ -18,6 +18,7 @@
     BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
     BorderThickness="0"
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
+    Icon="/Assets/app.png"
     Loaded="MainWindow_OnLoaded"
     WindowStartupLocation="CenterScreen">
 
@@ -98,7 +99,10 @@
         </Grid.RowDefinitions>
 
         <!--  Title Bar  -->
-        <mosaic:WindowTitleBar Grid.Row="0">
+        <mosaic:WindowTitleBar
+            Grid.Row="0"
+            IconSource="/Assets/app.png"
+            TitleAlignment="Center">
             <mosaic:WindowTitleBar.RightContent>
                 <Button
                     Width="48"

@@ -16,81 +16,97 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
 
-    <DockPanel Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" LastChildFill="True">
+    <Grid Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}">
+        <DockPanel LastChildFill="True">
 
-        <!--  System Buttons (Right)  -->
-        <StackPanel
-            VerticalAlignment="Center"
-            DockPanel.Dock="Right"
-            Orientation="Horizontal">
+            <!--  System Buttons (Right)  -->
+            <StackPanel
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
 
-            <!--  User-supplied right content (e.g. theme toggle, settings)  -->
-            <ContentPresenter Content="{Binding RightContent, ElementName=TitleBarControl}" />
+                <!--  User-supplied right content (e.g. theme toggle, settings)  -->
+                <ContentPresenter Content="{Binding RightContent, ElementName=TitleBarControl}" />
 
-            <!--  Minimize  -->
-            <Button
-                x:Name="MinimizeButton"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Click="OnMinimizeClick"
-                Content="&#xE921;"
-                FontFamily="Segoe MDL2 Assets"
-                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
-                ToolTip="Minimize"
-                Visibility="{Binding ShowMinimizeButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+                <!--  Minimize  -->
+                <Button
+                    x:Name="MinimizeButton"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="OnMinimizeClick"
+                    Content="&#xE921;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
+                    ToolTip="Minimize"
+                    Visibility="{Binding ShowMinimizeButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
 
-            <!--  Maximize / Restore  -->
-            <Button
-                x:Name="MaxRestoreButton"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Click="OnMaxRestoreClick"
-                Content="&#xE922;"
-                FontFamily="Segoe MDL2 Assets"
-                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
-                ToolTip="Maximize/Restore"
-                Visibility="{Binding ShowMaxRestoreButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+                <!--  Maximize / Restore  -->
+                <Button
+                    x:Name="MaxRestoreButton"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="OnMaxRestoreClick"
+                    Content="&#xE922;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
+                    ToolTip="Maximize/Restore"
+                    Visibility="{Binding ShowMaxRestoreButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
 
-            <!--  Close  -->
-            <Button
-                x:Name="CloseButton"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Click="OnCloseClick"
-                Content="&#xE8BB;"
-                FontFamily="Segoe MDL2 Assets"
-                Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
-                ToolTip="Close"
-                Visibility="{Binding ShowCloseButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
-        </StackPanel>
+                <!--  Close  -->
+                <Button
+                    x:Name="CloseButton"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="OnCloseClick"
+                    Content="&#xE8BB;"
+                    FontFamily="Segoe MDL2 Assets"
+                    Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarCloseButtonStyle}}"
+                    ToolTip="Close"
+                    Visibility="{Binding ShowCloseButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
 
-        <!--  App Icon  -->
-        <Image
-            Width="16"
-            Height="16"
-            Margin="8,0,4,0"
-            VerticalAlignment="Center"
-            DockPanel.Dock="Left"
-            Source="{Binding IconSource, ElementName=TitleBarControl}"
-            Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+            <!--  App Icon  -->
+            <Image
+                Width="16"
+                Height="16"
+                Margin="8,0,4,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                Source="{Binding IconSource, ElementName=TitleBarControl}"
+                Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
 
-        <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
-        <ContentPresenter
-            VerticalAlignment="Center"
-            Content="{Binding LeftContent, ElementName=TitleBarControl}"
-            DockPanel.Dock="Left" />
+            <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
+            <ContentPresenter
+                VerticalAlignment="Center"
+                Content="{Binding LeftContent, ElementName=TitleBarControl}"
+                DockPanel.Dock="Left" />
 
-        <!--  Title text — fills remaining space; transparent background keeps mouse-hit-test intact  -->
-        <Border Background="Transparent">
+            <!--  Transparent fill keeps mouse-hit-test intact for dragging empty title bar space.  -->
+            <Border Background="Transparent" />
+        </DockPanel>
+
+        <!--  Title text overlays the full title bar so Center means the window's true center.  -->
+        <Border Background="Transparent" IsHitTestVisible="False">
             <TextBlock
                 x:Name="TitleTextBlock"
-                Margin="4,0,8,0"
                 HorizontalAlignment="{Binding TitleAlignment, ElementName=TitleBarControl}"
                 VerticalAlignment="Center"
                 FontFamily="Segoe UI"
                 FontSize="12"
                 FontWeight="Normal"
-                Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}" />
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}"
+                TextTrimming="CharacterEllipsis">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="32,0,8,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TitleAlignment, ElementName=TitleBarControl}" Value="Center">
+                                <Setter Property="Margin" Value="0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </Border>
-    </DockPanel>
+    </Grid>
 </UserControl>
