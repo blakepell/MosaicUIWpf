@@ -19,6 +19,29 @@
         VerticalScrollBarVisibility="Auto">
 
         <StackPanel Margin="20" Orientation="Vertical">
+            <!--  Radial (HSV Wheel) Color Picker  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Radial Color Picker">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Click a hue along the perimeter ring; the inner square shows every shade of that hue for fine tuning.  Edit the hex value (with a one-click copy button) or the individual R/G/B/A channels on the right." />
+                    <mosaic:RadialColorPicker
+                        x:Name="RadialPicker"
+                        HorizontalAlignment="Left"
+                        ColorChanged="RadialColorPicker_ColorChanged"
+                        SelectedColor="#FF3F8CFF" />
+                    <TextBlock
+                        x:Name="RadialColorText"
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="Selected: #FF3F8CFF" />
+                </StackPanel>
+            </GroupBox>
+
             <!--  Hex Color Text Box Examples  -->
             <GroupBox
                 Margin="0,0,0,20"

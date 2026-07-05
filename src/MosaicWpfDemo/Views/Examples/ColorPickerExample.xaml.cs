@@ -37,5 +37,13 @@ namespace MosaicWpfDemo.Views.Examples
                 BasicColorText.Text = $"Selected: {e.HexValue} ({e.Color})";
             }
         }
+
+        private void RadialColorPicker_ColorChanged(object sender, ColorChangedEventArgs e)
+        {
+            if (RadialColorText != null)
+            {
+                RadialColorText.Text = $"Selected: {e.HexValue} ({e.Color})";
+            }
+        }
     }
 }
