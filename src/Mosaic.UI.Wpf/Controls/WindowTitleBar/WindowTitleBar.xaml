@@ -67,11 +67,14 @@
 
             <!--  App Icon  -->
             <Image
+                x:Name="WindowIconImage"
                 Width="16"
                 Height="16"
                 Margin="8,0,4,0"
                 VerticalAlignment="Center"
+                Cursor="Arrow"
                 DockPanel.Dock="Left"
+                MouseLeftButtonDown="OnWindowIconMouseLeftButtonDown"
                 Source="{Binding IconSource, ElementName=TitleBarControl}"
                 Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
 

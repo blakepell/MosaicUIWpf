@@ -9,6 +9,8 @@
  */
 
 using System.Windows.Data;
+using System.Windows.Interop;
+using Mosaic.UI.Wpf.Common;
 
 namespace Mosaic.UI.Wpf.Controls
 {
@@ -330,9 +332,57 @@ namespace Mosaic.UI.Wpf.Controls
                 : WindowState.Maximized;
         }
 
+        private void ShowSystemMenu()
+        {
+            if (_parentWindow == null)
+            {
+                return;
+            }
+
+            var helper = new WindowInteropHelper(_parentWindow);
+            var hwnd = helper.Handle;
+
+            if (hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var menu = Win32.GetSystemMenu(hwnd, false);
+
+            if (menu == IntPtr.Zero)
+            {
+                return;
+            }
+
+            Win32.SetForegroundWindow(hwnd);
+
+            var screenPoint = WindowIconImage.PointToScreen(new Point(0, WindowIconImage.ActualHeight));
+            var command = Win32.TrackPopupMenu(
+                menu,
+                TrackPopupMenuFlags.TPM_LEFTALIGN | TrackPopupMenuFlags.TPM_TOPALIGN | TrackPopupMenuFlags.TPM_RETURNCMD,
+                (int)screenPoint.X,
+                (int)screenPoint.Y,
+                0,
+                hwnd,
+                IntPtr.Zero);
+
+            if (command == 0)
+            {
+                return;
+            }
+
+            Win32.SendMessage(hwnd, WindowsMessageCodes.WM_SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+        }
+
         #endregion
 
         #region Event Handlers
+
+        private void OnWindowIconMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            ShowSystemMenu();
+        }
 
         private void OnTitleBarMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

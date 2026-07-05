@@ -158,6 +158,29 @@ namespace Mosaic.UI.Wpf.Common
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         /// <summary>
+        /// Gets a copy of the window menu for the specified window.
+        /// </summary>
+        /// <param name="hWnd">The window handle.</param>
+        /// <param name="bRevert"><see langword="true" /> to reset the menu; otherwise, <see langword="false" />.</param>
+        /// <returns>The system menu handle.</returns>
+        [DllImport(User32)]
+        public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        /// <summary>
+        /// Displays a shortcut menu at the specified screen coordinates.
+        /// </summary>
+        /// <param name="hMenu">The menu handle.</param>
+        /// <param name="uFlags">Menu positioning and return behavior flags.</param>
+        /// <param name="x">The horizontal screen coordinate.</param>
+        /// <param name="y">The vertical screen coordinate.</param>
+        /// <param name="nReserved">Reserved; must be zero.</param>
+        /// <param name="hWnd">The owner window handle.</param>
+        /// <param name="prcRect">Ignored.</param>
+        /// <returns>The selected command identifier when requested by flags; otherwise, zero.</returns>
+        [DllImport(User32)]
+        public static extern int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
+
+        /// <summary>
         /// Posts a message to a window.
         /// </summary>
         /// <param name="hWnd">The target window handle.</param>
@@ -474,6 +497,13 @@ namespace Mosaic.UI.Wpf.Common
 
         public const int WM_DWMSENDICONICTHUMBNAIL = 0x0323;
         public const int WM_DWMSENDICONICLIVEPREVIEWBITMAP = 0x0326;
+    }
+
+    internal class TrackPopupMenuFlags
+    {
+        public const uint TPM_LEFTALIGN = 0x0000;
+        public const uint TPM_TOPALIGN = 0x0000;
+        public const uint TPM_RETURNCMD = 0x0100;
     }
 
     [Flags]

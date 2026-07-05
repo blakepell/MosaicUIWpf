@@ -76,4 +76,5 @@ xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
 - `WindowTitleBar` expects the window to have a `WindowChrome` applied (either via `WindowChromeBehavior` behavior or directly via `WindowChrome.WindowChrome`). Without it, the OS title bar will overlap.
 - The caption height in `WindowChrome` should match the `Height` of the `WindowTitleBar` row.
 - `MosaicApp<TSettings, TViewModel>` and the `mosaic-setup-project` skill wire this automatically.
+- Left-clicking the title bar icon opens the native Windows system menu.
 - Minimize / Maximize / Close buttons are implemented to call `SystemCommands` methods on the parent window.

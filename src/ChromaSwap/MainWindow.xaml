@@ -190,8 +190,8 @@
 
                     <Button
                         x:Name="OpenButton"
-                        Click="OpenButton_OnClick"
-                        Padding="12,6">
+                        Padding="12,6"
+                        Click="OpenButton_OnClick">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 VerticalAlignment="Center"
@@ -306,9 +306,7 @@
                         Data="M50,0 L50,100 M0,50 L100,50"
                         Stroke="#80FFFFFF"
                         StrokeThickness="1" />
-                    <Ellipse
-                        Stroke="#CC3B82F6"
-                        StrokeThickness="3" />
+                    <Ellipse Stroke="#CC3B82F6" StrokeThickness="3" />
                 </Grid>
             </Canvas>
 
