@@ -220,6 +220,11 @@
 
         public static ComponentResourceKey ButtonBorderThickness { get; } = new(typeof(MosaicTheme), "ButtonBorderThickness");
 
+        /// <summary>
+        /// Gets the resource key for the corner radius applied to Mosaic button templates.
+        /// </summary>
+        public static ComponentResourceKey ButtonCornerRadius { get; } = new(typeof(MosaicTheme), "ButtonCornerRadius");
+
         public static ComponentResourceKey WindowTitleBarButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarButtonStyle");
         public static ComponentResourceKey WindowTitleBarCloseButtonStyle { get; } = new(typeof(MosaicTheme), "WindowTitleBarCloseButtonStyle");
 

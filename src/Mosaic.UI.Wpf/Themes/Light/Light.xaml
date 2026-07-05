@@ -165,6 +165,7 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TagDeleteHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TagDeleteHoverBackgroundColor}}" />
 
     <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
+    <CornerRadius x:Key="{x:Static themes:MosaicTheme.ButtonCornerRadius}">0</CornerRadius>
 
     <!--  Button  -->
     <Color x:Key="Button.Static.BackgroundColor">#FFDDDDDD</Color>

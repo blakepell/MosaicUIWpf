@@ -19,6 +19,8 @@
                     SystemColors="True"
                     Theme="Dark" />
             </ResourceDictionary.MergedDictionaries>
+
+            <CornerRadius x:Key="{x:Static mosaic:MosaicTheme.ButtonCornerRadius}">4</CornerRadius>
         </ResourceDictionary>
     </Application.Resources>
 </wpf:MosaicApp>

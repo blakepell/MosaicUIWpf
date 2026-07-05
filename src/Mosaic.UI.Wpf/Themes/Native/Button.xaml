@@ -19,6 +19,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource {x:Static themes:MosaicTheme.ButtonCornerRadius}}"
                         SnapsToDevicePixels="true">
                         <ContentPresenter
                             x:Name="contentPresenter"
