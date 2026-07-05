@@ -149,6 +149,9 @@
             <Trigger Property="AccentButtonType" Value="Default">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Button.Disabled.Foreground}" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
