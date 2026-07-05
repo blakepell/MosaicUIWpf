@@ -60,8 +60,8 @@
     <DataTemplate x:Key="EnumEditor">
         <ComboBox
             HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
             VerticalAlignment="Center"
+            HorizontalContentAlignment="Stretch"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
@@ -115,8 +115,8 @@
     <DataTemplate x:Key="ColorEditor">
         <local:HexColorTextBox
             HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Stretch"
             VerticalAlignment="Center"
+            HorizontalContentAlignment="Stretch"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             BorderThickness="0"
             IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
@@ -229,8 +229,8 @@
                                 Padding="0"
                                 VerticalScrollBarVisibility="Auto">
                                 <ItemsControl
-                                    Grid.IsSharedSizeScope="True"
                                     Margin="0"
+                                    Grid.IsSharedSizeScope="True"
                                     ItemsSource="{TemplateBinding Properties}">
                                     <!--  Group by Category  -->
                                     <ItemsControl.GroupStyle>
@@ -318,8 +318,8 @@
                                                     <ContentControl
                                                         Margin="0,0,0,0"
                                                         HorizontalAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
                                                         VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Stretch"
                                                         VerticalContentAlignment="Stretch"
                                                         Content="{Binding}"
                                                         ContentTemplateSelector="{StaticResource PropertyEditorSelector}" />

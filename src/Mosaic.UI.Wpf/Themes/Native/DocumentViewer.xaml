@@ -32,7 +32,11 @@
             <DrawingGroup>
                 <GeometryDrawing Geometry="M10,10 m-6,0 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 M14.5,14.5 L21,21">
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#FF9E9E9E" Thickness="2.2" StartLineCap="Round" EndLineCap="Round" />
+                        <Pen
+                            Brush="#FF9E9E9E"
+                            EndLineCap="Round"
+                            StartLineCap="Round"
+                            Thickness="2.2" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingGroup>
@@ -142,9 +146,9 @@
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal">
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="ApplicationCommands.Print"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Print">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -152,9 +156,9 @@
                                             Source="{DynamicResource Mosaic.DocumentViewer.PrintIcon}" />
                                     </Button>
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="ApplicationCommands.Copy"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Copy">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -162,9 +166,9 @@
                                             Source="{DynamicResource Mosaic.DocumentViewer.CopyIcon}" />
                                     </Button>
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="ApplicationCommands.Find"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Find">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -178,9 +182,9 @@
                                         Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
 
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="NavigationCommands.DecreaseZoom"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Zoom out">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -194,9 +198,9 @@
                                         Text="{Binding Zoom, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0:0}%}"
                                         TextAlignment="Center" />
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="NavigationCommands.IncreaseZoom"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Zoom in">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -210,9 +214,9 @@
                                         Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
 
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="{x:Static DocumentViewer.FitToWidthCommand}"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Fit width">
                                         <controls:AdaptiveImage
                                             Width="16"
@@ -220,10 +224,10 @@
                                             Source="{DynamicResource Mosaic.DocumentViewer.FitWidthIcon}" />
                                     </Button>
                                     <Button
-                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         Command="{x:Static DocumentViewer.FitToMaxPagesAcrossCommand}"
                                         CommandParameter="1"
                                         CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.DocumentViewer.ToolBarButton}"
                                         ToolTip="Whole page">
                                         <controls:AdaptiveImage
                                             Width="16"

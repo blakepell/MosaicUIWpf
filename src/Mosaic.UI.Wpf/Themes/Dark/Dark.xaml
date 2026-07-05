@@ -168,22 +168,22 @@
     <CornerRadius x:Key="{x:Static themes:MosaicTheme.ButtonCornerRadius}">0</CornerRadius>
 
     <!--  Button  -->
-    <Color x:Key="Button.Static.BackgroundColor">#FF2D2D30</Color>
+    <Color x:Key="Button.Static.BackgroundColor">#41444A</Color>
     <SolidColorBrush x:Key="Button.Static.Background" Color="{DynamicResource Button.Static.BackgroundColor}" />
 
-    <Color x:Key="Button.Static.BorderColor">#FF505055</Color>
+    <Color x:Key="Button.Static.BorderColor">#323438</Color>
     <SolidColorBrush x:Key="Button.Static.Border" Color="{DynamicResource Button.Static.BorderColor}" />
 
-    <Color x:Key="Button.MouseOver.BackgroundColor">#FF3A96DD</Color>
+    <Color x:Key="Button.MouseOver.BackgroundColor">#004681</Color>
     <SolidColorBrush x:Key="Button.MouseOver.Background" Color="{DynamicResource Button.MouseOver.BackgroundColor}" />
 
-    <Color x:Key="Button.MouseOver.BorderColor">#FF569DE5</Color>
+    <Color x:Key="Button.MouseOver.BorderColor">#00203B</Color>
     <SolidColorBrush x:Key="Button.MouseOver.Border" Color="{DynamicResource Button.MouseOver.BorderColor}" />
 
-    <Color x:Key="Button.Pressed.BackgroundColor">#FF094771</Color>
+    <Color x:Key="Button.Pressed.BackgroundColor">#00589D</Color>
     <SolidColorBrush x:Key="Button.Pressed.Background" Color="{DynamicResource Button.Pressed.BackgroundColor}" />
 
-    <Color x:Key="Button.Pressed.BorderColor">#FF003366</Color>
+    <Color x:Key="Button.Pressed.BorderColor">#00325E</Color>
     <SolidColorBrush x:Key="Button.Pressed.Border" Color="{DynamicResource Button.Pressed.BorderColor}" />
 
     <SolidColorBrush x:Key="SplitButton.Open.Background" Color="{DynamicResource Button.Pressed.BackgroundColor}" />

@@ -67,7 +67,10 @@
                                 x:Name="PART_WheelCanvas"
                                 Grid.Column="0"
                                 VerticalAlignment="Top">
-                                <Image x:Name="PART_HueImage" Canvas.Left="0" Canvas.Top="0" />
+                                <Image
+                                    x:Name="PART_HueImage"
+                                    Canvas.Left="0"
+                                    Canvas.Top="0" />
 
                                 <!--  Inscribed saturation/value square (position/size set in code-behind)  -->
                                 <Border
