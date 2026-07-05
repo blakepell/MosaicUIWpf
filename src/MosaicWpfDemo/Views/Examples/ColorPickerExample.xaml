@@ -42,6 +42,48 @@
                 </StackPanel>
             </GroupBox>
 
+            <!--  Radial Color Picker Box (drop-down)  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Radial Color Picker Box (Drop-Down)">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="A compact color field: type a hex value directly, or click the drop-down arrow to pick a color from the radial wheel.  Ideal for property panels and dialogs." />
+                    <WrapPanel>
+                        <StackPanel Width="240" Margin="0,0,20,10">
+                            <TextBlock FontWeight="Bold" Text="Default (with alpha)" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="The drop-down exposes the full wheel including the alpha channel." />
+                            <mosaic:RadialColorPickerBox
+                                x:Name="RadialBox"
+                                Width="220"
+                                HorizontalAlignment="Left"
+                                CornerRadius="6"
+                                SelectedColor="#FF9C27B0" />
+                        </StackPanel>
+                        <StackPanel Width="240" Margin="0,0,0,10">
+                            <TextBlock FontWeight="Bold" Text="RGB only (no alpha)" />
+                            <TextBlock
+                                Margin="0,2,0,6"
+                                TextWrapping="Wrap"
+                                Text="Set ShowAlpha=False to hide the transparency editor in the drop-down." />
+                            <mosaic:RadialColorPickerBox
+                                x:Name="RadialBoxNoAlpha"
+                                Width="220"
+                                HorizontalAlignment="Left"
+                                CornerRadius="6"
+                                SelectedColor="#FF00A884"
+                                ShowAlpha="False" />
+                        </StackPanel>
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+
             <!--  Hex Color Text Box Examples  -->
             <GroupBox
                 Margin="0,0,0,20"

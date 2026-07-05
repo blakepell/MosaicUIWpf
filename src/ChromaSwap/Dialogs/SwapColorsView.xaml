@@ -62,11 +62,12 @@
                     FontWeight="SemiBold"
                     Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                     Text="TO" />
-                <mosaic:HexColorTextBox
+                <mosaic:RadialColorPickerBox
                     x:Name="TargetHexBox"
                     Height="46"
                     VerticalContentAlignment="Center"
-                    CornerRadius="6" />
+                    CornerRadius="6"
+                    ShowAlpha="False" />
             </StackPanel>
         </Grid>
 

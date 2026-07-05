@@ -1,0 +1,129 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Mosaic.UI.Wpf.Converters"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style TargetType="{x:Type local:RadialColorPickerBox}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:RadialColorPickerBox}">
+                    <Border
+                        x:Name="PART_RootBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Color preview swatch  -->
+                            <Border
+                                Grid.Column="0"
+                                Width="22"
+                                Margin="4"
+                                VerticalAlignment="Stretch"
+                                Background="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Converter={conv:ColorToBrushConverter}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}"
+                                BorderThickness="1"
+                                CornerRadius="2" />
+
+                            <!--  Editable hex text  -->
+                            <TextBox
+                                x:Name="PART_HexTextBox"
+                                Grid.Column="1"
+                                Padding="4,2"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                CaretBrush="{TemplateBinding Foreground}"
+                                FontFamily="Consolas"
+                                Foreground="{TemplateBinding Foreground}"
+                                ToolTip="Enter a hex color (#AARRGGBB, #RRGGBB, or #RGB) or use the drop-down" />
+
+                            <!--  Drop-down toggle  -->
+                            <ToggleButton
+                                x:Name="PART_DropDownToggle"
+                                Grid.Column="2"
+                                Width="24"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Focusable="False"
+                                IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                ToolTip="Open color picker">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="tgl" Background="{TemplateBinding Background}">
+                                            <Path
+                                                Width="8"
+                                                Height="4"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Data="M 0 0 L 4 4 L 8 0 Z"
+                                                Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="tgl" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <!--  Radial color picker drop-down  -->
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=PART_RootBorder}"
+                                PopupAnimation="Slide"
+                                StaysOpen="False">
+                                <Border
+                                    Margin="0,4,8,8"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="12"
+                                            Opacity="0.35"
+                                            ShadowDepth="2"
+                                            Color="Black" />
+                                    </Border.Effect>
+                                    <local:RadialColorPicker
+                                        x:Name="PART_Picker"
+                                        Margin="4"
+                                        BorderThickness="0"
+                                        SelectedColor="{Binding SelectedColor, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                        ShowAlpha="{Binding ShowAlpha, RelativeSource={RelativeSource TemplatedParent}}"
+                                        WheelDiameter="{Binding WheelDiameter, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="PART_RootBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -41,7 +41,7 @@ namespace ChromaSwap.Dialogs
             this.FromColor = fromColor;
             FromSwatch.Background = new SolidColorBrush(fromColor);
             FromHexText.Text = ColorUtils.ToHex(fromColor);
-            TargetHexBox.Color = initialTarget;
+            TargetHexBox.SelectedColor = initialTarget;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace ChromaSwap.Dialogs
         /// <summary>
         /// The replacement color chosen by the user.
         /// </summary>
-        public Color TargetColor => Color.FromRgb(TargetHexBox.Color.R, TargetHexBox.Color.G, TargetHexBox.Color.B);
+        public Color TargetColor => Color.FromRgb(TargetHexBox.SelectedColor.R, TargetHexBox.SelectedColor.G, TargetHexBox.SelectedColor.B);
 
         /// <summary>
         /// The tolerance percentage (0-100) for matching similar shades.
