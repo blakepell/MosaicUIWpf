@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ChromaSwap
 {
@@ -130,6 +131,7 @@ namespace ChromaSwap
                 if (dialog.ShowDialog(this) == true)
                 {
                     this.LoadImageFromFile(dialog.FileName);
+                    this.ShowToast("Select a pixel and then choose the Swap Colors button.", ToastSeverity.Info);
                 }
             }
             catch (Exception ex)
@@ -151,6 +153,7 @@ namespace ChromaSwap
                 if (e.Data.GetData(DataFormats.FileDrop) is string[] { Length: > 0 } files)
                 {
                     this.LoadImageFromFile(files[0]);
+                    this.ShowToast("Select a pixel and then choose the Swap Colors button.", ToastSeverity.Info);
                 }
             }
             catch (Exception ex)
