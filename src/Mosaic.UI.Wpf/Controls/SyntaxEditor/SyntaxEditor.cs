@@ -36,6 +36,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// - Uncomment Selection: Ctrl+K, Ctrl+U
     /// - Move Line or Selection Up: Ctrl+Up
     /// - Move Line or Selection Down: Ctrl+Down
+    /// - Go To Line: Ctrl+G
     /// 
     /// The editor defaults to Consolas 12 with line numbers enabled. Colors for the editing surface
     /// (background, foreground, line numbers, selection, current line) are derived from the Mosaic
@@ -123,6 +124,15 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(MoveSelectionDownCommand),
             typeof(SyntaxEditor),
             new InputGestureCollection { new KeyGesture(Key.Down, ModifierKeys.Control) });
+
+        /// <summary>
+        /// Command that prompts for a line number and moves the caret to that line.
+        /// </summary>
+        public static readonly RoutedUICommand GoToLineCommand = new(
+            "Go To Line",
+            nameof(GoToLineCommand),
+            typeof(SyntaxEditor),
+            new InputGestureCollection { new KeyGesture(Key.G, ModifierKeys.Control) });
 
         #endregion
 
@@ -275,11 +285,13 @@ namespace Mosaic.UI.Wpf.Controls
             this.CommandBindings.Add(new CommandBinding(UncommentSelectionCommand, (_, _) => this.UncommentSelectedLines(), this.OnCommentCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(MoveSelectionUpCommand, (_, _) => this.MoveSelectedLinesUp(), this.OnLineMoveCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(MoveSelectionDownCommand, (_, _) => this.MoveSelectedLinesDown(), this.OnLineMoveCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(GoToLineCommand, this.OnGoToLineCommandExecuted, this.OnGoToLineCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted, this.OnFindCommandCanExecute));
             this.TextArea.InputBindings.Add(new KeyBinding(CommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.C)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(UncommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.U)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionUpCommand, new KeyGesture(Key.Up, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionDownCommand, new KeyGesture(Key.Down, ModifierKeys.Control)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(GoToLineCommand, new KeyGesture(Key.G, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(ApplicationCommands.Find, new KeyGesture(Key.F, ModifierKeys.Control)) { CommandTarget = this });
 
             this.ContextMenu = new ContextMenu();
@@ -575,6 +587,158 @@ namespace Mosaic.UI.Wpf.Controls
         {
             e.CanExecute = this.IsEnabled;
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Opens the go-to-line prompt and moves the caret to the confirmed line.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command execution.</param>
+        private async void OnGoToLineCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (this.Document == null)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            int? lineNumber = await this.PromptForLineNumberAsync();
+            if (lineNumber.HasValue)
+            {
+                this.GoToLine(lineNumber.Value);
+            }
+        }
+
+        /// <summary>
+        /// Reports whether the go-to-line command can execute.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command query.</param>
+        private void OnGoToLineCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.IsEnabled && this.Document != null && this.Document.LineCount > 0;
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Prompts the user for a valid document line number.
+        /// </summary>
+        /// <returns>The confirmed line number; otherwise, <see langword="null"/> when cancelled.</returns>
+        private async Task<int?> PromptForLineNumberAsync()
+        {
+            if (this.Document == null)
+            {
+                return null;
+            }
+
+            int lineCount = Math.Max(1, this.Document.LineCount);
+            var input = new TextBox
+            {
+                MinWidth = 220,
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = Math.Clamp(this.TextArea.Caret.Line, 1, lineCount).ToString()
+            };
+
+            var okButton = new Button
+            {
+                Content = "OK",
+                IsDefault = true,
+                MinWidth = 80,
+                Margin = new Thickness(0, 0, 8, 0)
+            };
+
+            var cancelButton = new Button
+            {
+                Content = "Cancel",
+                MinWidth = 80,
+                Height = 25
+
+            };
+
+            var buttons = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Orientation = Orientation.Horizontal
+            };
+            buttons.Children.Add(okButton);
+            buttons.Children.Add(cancelButton);
+
+            var content = new StackPanel
+            {
+                Margin = new Thickness(4)
+            };
+
+            content.Children.Add(input);
+            content.Children.Add(buttons);
+
+            var dialog = new ModalDialog
+            {
+                Title = "Go To Line",
+                Description = $"Enter a line number between 1 and {lineCount}:",
+                Content = content,
+                BlurRadius = 0,
+                CloseOnBackdropClick = false,
+                CloseOnEscape = true
+            };
+
+            int? result = null;
+            okButton.Click += (_, _) =>
+            {
+                if (!int.TryParse(input.Text, out int lineNumber) || lineNumber < 1 || lineNumber > lineCount)
+                {
+                    MessageBox.Show($"Enter a line number from 1 to {lineCount}.", "Go To Line", MessageBoxButton.OK, MessageBoxImage.Information);
+                    input.Focus();
+                    input.SelectAll();
+                    return;
+                }
+
+                result = lineNumber;
+                dialog.Close(true);
+            };
+
+            cancelButton.Click += (_, _) => dialog.Close(null);
+
+            dialog.Opened += (_, _) =>
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                {
+                    input.Focus();
+                    input.SelectAll();
+                });
+            };
+
+            return await dialog.ShowAsync(this.GetDialogHost()) == true ? result : null;
+        }
+
+        /// <summary>
+        /// Resolves the host element used by <see cref="ModalDialog"/> for its adorner layer.
+        /// </summary>
+        /// <returns>The root window content when available; otherwise this editor.</returns>
+        private UIElement GetDialogHost()
+        {
+            return Window.GetWindow(this)?.Content as UIElement ?? this;
+        }
+
+        /// <summary>
+        /// Moves the caret to the start of the requested line and scrolls it into view.
+        /// </summary>
+        /// <param name="lineNumber">The one-based line number to focus.</param>
+        private void GoToLine(int lineNumber)
+        {
+            if (this.Document == null || lineNumber < 1 || lineNumber > this.Document.LineCount)
+            {
+                return;
+            }
+
+            DocumentLine line = this.Document.GetLineByNumber(lineNumber);
+            this.CaretOffset = line.Offset;
+            this.SelectionLength = 0;
+            this.ScrollToLine(lineNumber);
+            this.Focus();
+            this.TextArea.Focus();
+            this.TextArea.Caret.BringCaretToView();
+            this.UpdateStatusBar();
         }
 
         /// <summary>
