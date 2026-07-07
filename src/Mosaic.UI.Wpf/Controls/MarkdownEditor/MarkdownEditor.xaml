@@ -232,7 +232,8 @@
             Grid.Row="1"
             FontFamily="Consolas"
             FontSize="13"
-            Language="Markdown" />
+            Language="Markdown"
+            StatusBarVisible="False" />
 
         <StatusBar
             Grid.Row="2"

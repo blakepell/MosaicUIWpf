@@ -17,6 +17,7 @@ using Mosaic.UI.Wpf.Input;
 using Mosaic.UI.Wpf.Themes;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Windows.Controls.Primitives;
 using System.Xml;
 
 // ReSharper disable CheckNamespace
@@ -41,10 +42,18 @@ namespace Mosaic.UI.Wpf.Controls
     /// theme indicated by <see cref="Theme"/>. When <see cref="FollowGlobalTheme"/> is <c>true</c>
     /// (the default) the editor also tracks <see cref="ThemeManager.ThemeChanged"/>.
     /// </remarks>
+    [TemplatePart(Name = PartStatusBar, Type = typeof(StatusBar))]
+    [TemplatePart(Name = PartLineTextBlock, Type = typeof(TextBlock))]
+    [TemplatePart(Name = PartColumnTextBlock, Type = typeof(TextBlock))]
+    [TemplatePart(Name = PartCharacterTextBlock, Type = typeof(TextBlock))]
     [DefaultEvent(nameof(ContextMenuRequested))]
     [DefaultProperty(nameof(Language))]
     public class SyntaxEditor : TextEditor
     {
+        private const string PartStatusBar = "PART_StatusBar";
+        private const string PartLineTextBlock = "PART_LineTextBlock";
+        private const string PartColumnTextBlock = "PART_ColumnTextBlock";
+        private const string PartCharacterTextBlock = "PART_CharacterTextBlock";
         private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.{0}.{1}.xshd";
         private static readonly Uri SearchPanelResourceUri = new("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/AvalonEdit/SearchPanel.xaml", UriKind.Absolute);
 
@@ -57,6 +66,10 @@ namespace Mosaic.UI.Wpf.Controls
 
         private SearchPanel? _searchPanel;
         private bool _subscribedToGlobalTheme;
+        private StatusBar? _statusBar;
+        private TextBlock? _lineTextBlock;
+        private TextBlock? _columnTextBlock;
+        private TextBlock? _characterTextBlock;
 
         #region Routed Commands
 
@@ -222,6 +235,27 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(ClearVisibleProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="StatusBarVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty StatusBarVisibleProperty = DependencyProperty.Register(
+            nameof(StatusBarVisible),
+            typeof(bool),
+            typeof(SyntaxEditor),
+            new PropertyMetadata(true, OnStatusBarVisibleChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the status bar that displays the current line,
+        /// column, and character code is visible. Defaults to <c>true</c>.
+        /// </summary>
+        [Category("Mosaic")]
+        [Description("Whether the caret status bar is visible.")]
+        public bool StatusBarVisible
+        {
+            get => (bool)this.GetValue(StatusBarVisibleProperty);
+            set => this.SetValue(StatusBarVisibleProperty, value);
+        }
+
         #endregion
 
         /// <summary>
@@ -251,6 +285,8 @@ namespace Mosaic.UI.Wpf.Controls
             this.ContextMenu = new ContextMenu();
             this.ContextMenuOpening += this.OnContextMenuOpening;
             this.PreviewKeyDown += this.OnPreviewKeyDown;
+            this.TextChanged += this.OnTextChanged;
+            this.TextArea.Caret.PositionChanged += this.OnCaretPositionChanged;
             this.Loaded += this.OnLoaded;
             this.Unloaded += this.OnUnloaded;
 
@@ -258,6 +294,120 @@ namespace Mosaic.UI.Wpf.Controls
             this.EnsureSearchPanelInstalled();
             this.ApplyTheme();
             this.ReloadHighlighting();
+        }
+
+        /// <inheritdoc />
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            this.InstallStatusBar();
+            this.UpdateStatusBarVisibility();
+            this.UpdateStatusBar();
+        }
+
+        /// <summary>
+        /// Wraps AvalonEdit's default scroll viewer with a status bar without replacing its template.
+        /// </summary>
+        private void InstallStatusBar()
+        {
+            if (_statusBar?.Parent != null)
+            {
+                return;
+            }
+
+            if (this.GetTemplateChild("PART_ScrollViewer") is not ScrollViewer scrollViewer)
+            {
+                return;
+            }
+
+            var statusBar = this.CreateStatusBar();
+            var dockPanel = new DockPanel { LastChildFill = true };
+            DockPanel.SetDock(statusBar, Dock.Bottom);
+            dockPanel.Children.Add(statusBar);
+
+            switch (scrollViewer.Parent)
+            {
+                case Decorator decorator:
+                    if (decorator.Child != scrollViewer)
+                    {
+                        return;
+                    }
+
+                    decorator.Child = null;
+                    dockPanel.Children.Add(scrollViewer);
+                    decorator.Child = dockPanel;
+                    break;
+
+                case Panel panel:
+                    int index = panel.Children.IndexOf(scrollViewer);
+                    if (index < 0)
+                    {
+                        return;
+                    }
+
+                    panel.Children.RemoveAt(index);
+                    dockPanel.Children.Add(scrollViewer);
+                    panel.Children.Insert(index, dockPanel);
+                    break;
+
+                default:
+                    return;
+            }
+
+            _statusBar = statusBar;
+        }
+
+        /// <summary>
+        /// Creates the status bar shown under the editor surface.
+        /// </summary>
+        /// <returns>A configured status bar.</returns>
+        private StatusBar CreateStatusBar()
+        {
+            var statusBar = new StatusBar
+            {
+                Name = PartStatusBar
+            };
+            statusBar.SetResourceReference(BackgroundProperty, MosaicTheme.ControlBackgroundBrush);
+            statusBar.SetResourceReference(ForegroundProperty, MosaicTheme.ControlTextForegroundBrush);
+
+            _lineTextBlock = CreateStatusTextBlock(PartLineTextBlock, "Ln 1");
+            _columnTextBlock = CreateStatusTextBlock(PartColumnTextBlock, "Col 1");
+            _characterTextBlock = CreateStatusTextBlock(PartCharacterTextBlock, "Ch 32");
+
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            panel.Children.Add(_lineTextBlock);
+            panel.Children.Add(_columnTextBlock);
+            panel.Children.Add(_characterTextBlock);
+
+            statusBar.Items.Add(new StatusBarItem
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Content = panel
+            });
+
+            return statusBar;
+        }
+
+        /// <summary>
+        /// Creates a status bar text block with the shared sizing and spacing used by caret indicators.
+        /// </summary>
+        /// <param name="name">The element name.</param>
+        /// <param name="text">The initial text.</param>
+        /// <returns>A configured text block.</returns>
+        private static TextBlock CreateStatusTextBlock(string name, string text)
+        {
+            return new TextBlock
+            {
+                Name = name,
+                MinWidth = 40,
+                Margin = new Thickness(7, 0, 7, 0),
+                Text = text,
+                VerticalAlignment = VerticalAlignment.Center
+            };
         }
 
         /// <summary>
@@ -464,6 +614,66 @@ namespace Mosaic.UI.Wpf.Controls
         private static void OnLanguageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as SyntaxEditor)?.ReloadHighlighting();
+        }
+
+        /// <summary>
+        /// Applies the status bar visibility when <see cref="StatusBarVisible"/> changes.
+        /// </summary>
+        /// <param name="d">The dependency object that changed.</param>
+        /// <param name="e">The event data for the property change.</param>
+        private static void OnStatusBarVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as SyntaxEditor)?.UpdateStatusBarVisibility();
+        }
+
+        /// <summary>
+        /// Updates the status bar when the caret moves.
+        /// </summary>
+        /// <param name="sender">The source of the caret event.</param>
+        /// <param name="e">The event data for the caret event.</param>
+        private void OnCaretPositionChanged(object? sender, EventArgs e)
+        {
+            this.UpdateStatusBar();
+        }
+
+        /// <summary>
+        /// Updates the status bar when text changes without moving the caret.
+        /// </summary>
+        /// <param name="sender">The source of the text event.</param>
+        /// <param name="e">The event data for the text event.</param>
+        private void OnTextChanged(object? sender, EventArgs e)
+        {
+            this.UpdateStatusBar();
+        }
+
+        /// <summary>
+        /// Applies the current <see cref="StatusBarVisible"/> value to the status bar template part.
+        /// </summary>
+        private void UpdateStatusBarVisibility()
+        {
+            if (_statusBar != null)
+            {
+                _statusBar.Visibility = this.StatusBarVisible ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        /// <summary>
+        /// Recomputes the caret line, column, and character displayed in the status bar.
+        /// </summary>
+        private void UpdateStatusBar()
+        {
+            if (_lineTextBlock == null || _columnTextBlock == null || _characterTextBlock == null || this.Document == null)
+            {
+                return;
+            }
+
+            var caret = this.TextArea.Caret;
+            _lineTextBlock.Text = $"Ln {caret.Line}";
+            _columnTextBlock.Text = $"Col {caret.Column}";
+
+            int offset = Math.Clamp(this.CaretOffset, 0, this.Document.TextLength);
+            char ch = offset < this.Document.TextLength ? this.Document.GetCharAt(offset) : ' ';
+            _characterTextBlock.Text = $"Ch {(int)ch}";
         }
 
         #region Global theme tracking
