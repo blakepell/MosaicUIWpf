@@ -112,17 +112,16 @@
             Grid.Row="5"
             Grid.Column="0"
             Width="250"
-            Compact="True"            
-            SearchBoxVisibility="Collapsed"
             HorizontalAlignment="Left"
             HorizontalContentAlignment="Left"
-            ContentPresenter="{Binding ElementName=ExampleContent2}">
+            Compact="True"
+            ContentPresenter="{Binding ElementName=ExampleContent2}"
+            SearchBoxVisibility="Collapsed">
             <mosaic:SideMenuItem
                 ContentType="{x:Type views:AboutView}"
                 ContentTypeIsSingleton="True"
                 ImageSource="pack://application:,,,/Assets/collage-48.png"
-                Text="About">
-            </mosaic:SideMenuItem>
+                Text="About" />
 
             <!--  Debug  -->
             <mosaic:SideMenuItem
@@ -166,34 +165,26 @@
             Grid.ColumnSpan="2"
             Margin="0,0,0,10" />
 
-        <!--  Compact SideMenu with drag-and-drop reordering enabled.
-              Items can be dragged to a new position. Selection requires a
-              full click (mouse-up) so that mouse-down is reserved for drag. -->
+        <!--
+            Compact SideMenu with drag-and-drop reordering enabled.
+            Items can be dragged to a new position. Selection requires a
+            full click (mouse-up) so that mouse-down is reserved for drag.
+        -->
         <mosaic:SideMenu
             Grid.Row="8"
             Grid.Column="0"
             Width="250"
-            Compact="True"
-            EnableDragAndDropReordering="True"
             HorizontalAlignment="Left"
             HorizontalContentAlignment="Left"
+            Compact="True"
+            EnableDragAndDropReordering="True"
             SearchBoxVisibility="Collapsed"
             VerticalScrollViewerVisibility="Auto">
-            <mosaic:SideMenuItem
-                ImageSource="pack://application:,,,/Assets/collage-48.png"
-                Text="Item One" />
-            <mosaic:SideMenuItem
-                ImageSource="pack://application:,,,/Assets/avatar-48.png"
-                Text="Item Two" />
-            <mosaic:SideMenuItem
-                ImageSource="/Assets/bug-48.png"
-                Text="Item Three" />
-            <mosaic:SideMenuItem
-                ImageSource="pack://application:,,,/Assets/collage-48.png"
-                Text="Item Four" />
-            <mosaic:SideMenuItem
-                ImageSource="pack://application:,,,/Assets/avatar-48.png"
-                Text="Item Five" />
+            <mosaic:SideMenuItem ImageSource="pack://application:,,,/Assets/collage-48.png" Text="Item One" />
+            <mosaic:SideMenuItem ImageSource="pack://application:,,,/Assets/avatar-48.png" Text="Item Two" />
+            <mosaic:SideMenuItem ImageSource="/Assets/bug-48.png" Text="Item Three" />
+            <mosaic:SideMenuItem ImageSource="pack://application:,,,/Assets/collage-48.png" Text="Item Four" />
+            <mosaic:SideMenuItem ImageSource="pack://application:,,,/Assets/avatar-48.png" Text="Item Five" />
         </mosaic:SideMenu>
 
         <StackPanel

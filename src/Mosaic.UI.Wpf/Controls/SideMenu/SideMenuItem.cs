@@ -69,6 +69,14 @@ namespace Mosaic.UI.Wpf.Controls
         private ObservableCollection<SideMenuItem> _children = new();
 
         /// <summary>
+        /// Gets or sets an explicit, already-instantiated framework object to display as this item's content.
+        /// When set, this instance is used verbatim (behaving like a singleton that is reused every time the
+        /// item is selected) and takes precedence over <see cref="ContentType"/> reflection-based creation.
+        /// </summary>
+        [ObservableProperty]
+        private object? _content;
+
+        /// <summary>
         /// Gets or sets the type of content associated with the current instance.
         /// </summary>
         [ObservableProperty]

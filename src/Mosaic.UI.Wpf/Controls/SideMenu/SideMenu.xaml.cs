@@ -226,7 +226,7 @@ namespace Mosaic.UI.Wpf.Controls
                     sideMenu.ItemClicked?.Invoke(sideMenu, clickArgs);
                 }
 
-                if (sideMenu.ContentPresenter != null && item?.ContentType != null)
+                if (sideMenu.ContentPresenter != null && item != null && (item.Content != null || item.ContentType != null))
                 {
                     object? contentInstance = sideMenu.GetContentInstance(item, out bool refreshRecipient);
 
@@ -246,6 +246,13 @@ namespace Mosaic.UI.Wpf.Controls
         private object? GetContentInstance(SideMenuItem item, out bool refreshRecipient)
         {
             refreshRecipient = true;
+
+            // An explicitly supplied instance always wins. It is reused as-is (like a singleton) each time
+            // the item is selected, and is refreshed on every activation so updated parameters flow through.
+            if (item.Content != null)
+            {
+                return item.Content;
+            }
 
             if (item.ContentType == null)
             {
@@ -298,7 +305,7 @@ namespace Mosaic.UI.Wpf.Controls
             // Only update the selection (and therefore the content view) when this item has content.
             // A dialog-only item shows its dialog but leaves the current selection highlighted so the
             // menu selection keeps matching what is displayed in the content area.
-            if (item.ContentType != null || item.DialogContentType == null)
+            if (item.Content != null || item.ContentType != null || item.DialogContentType == null)
             {
                 SelectedItem = item;
             }

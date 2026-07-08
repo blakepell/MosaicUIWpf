@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <AssemblyVersion>2026.7.4.1</AssemblyVersion>
-    <FileVersion>2026.7.4.1</FileVersion>
-    <PackageVersion>2026.7.4.1</PackageVersion>
+    <AssemblyVersion>2026.7.8.1</AssemblyVersion>
+    <FileVersion>2026.7.8.1</FileVersion>
+    <PackageVersion>2026.7.8.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
