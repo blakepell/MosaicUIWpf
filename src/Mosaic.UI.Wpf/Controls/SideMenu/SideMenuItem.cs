@@ -77,20 +77,73 @@ namespace Mosaic.UI.Wpf.Controls
         private object? _content;
 
         /// <summary>
-        /// Gets or sets the type of content associated with the current instance.
+        /// Gets or sets the type of content to display when this item is selected. The parent
+        /// <see cref="SideMenu"/> creates an instance of this type and shows it in its content area.
+        /// How that instance is created and how long it lives is governed by
+        /// <see cref="ReuseContentInstance"/> and <see cref="ContentTypeIsSingleton"/> (see the remarks
+        /// on those members). This property is ignored when <see cref="Content"/> is set, since an
+        /// explicit instance always takes precedence over reflection-based creation.
         /// </summary>
         [ObservableProperty]
         private Type? _contentType;
 
         /// <summary>
-        /// Gets or sets a value indicating whether the content type is a singleton.
+        /// Gets or sets a value indicating whether <see cref="ContentType"/> should be resolved as an
+        /// <b>application-wide</b> singleton through the shared dependency-injection container
+        /// (<c>AppServices</c>). Defaults to <see langword="true"/>.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <see langword="true"/>, the first time the item is activated the type is registered as a
+        /// singleton in the shared service collection (created via its constructor if it was not already
+        /// registered) and thereafter resolved from the container. Because the instance is keyed by type
+        /// in the global container, it is shared with <i>every</i> consumer that resolves that same type —
+        /// other menu items, view models, or anything else using <c>AppServices</c>. Use this when the view
+        /// is genuinely a single, shared application component whose state should be consistent everywhere
+        /// it appears.
+        /// </para>
+        /// <para>
+        /// When <see langword="false"/>, a brand-new instance is created on every selection (transient),
+        /// so the content is rebuilt from scratch each time the item is shown.
+        /// </para>
+        /// <para>
+        /// This flag has no effect when <see cref="ReuseContentInstance"/> is <see langword="true"/> (that
+        /// path is evaluated first and never touches the container) or when <see cref="Content"/> is set.
+        /// </para>
+        /// </remarks>
         [ObservableProperty]
         private bool _contentTypeIsSingleton = true;
 
         /// <summary>
-        /// Gets or sets a value indicating whether this item should reuse the same content instance each time it is selected.
+        /// Gets or sets a value indicating whether this item should cache and reuse a single instance of
+        /// <see cref="ContentType"/> that is <b>local to this menu item</b>. Defaults to
+        /// <see langword="false"/>.
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When <see langword="true"/>, the item creates the content the first time it is selected and then
+        /// holds onto that same instance for its own reuse on subsequent selections. Unlike
+        /// <see cref="ContentTypeIsSingleton"/>, this cache lives on the menu item itself and does <i>not</i>
+        /// go through the dependency-injection container, so the instance is <b>not</b> shared with other
+        /// items or the rest of the app — two different items pointing at the same
+        /// <see cref="ContentType"/> each keep their own reused instance. Use this to preserve a view's
+        /// state (scroll position, entered text, etc.) across selections without exposing it globally.
+        /// </para>
+        /// <para>
+        /// This flag takes precedence over <see cref="ContentTypeIsSingleton"/>: when it is
+        /// <see langword="true"/> the singleton/DI logic is skipped entirely. It is, in turn, ignored when
+        /// <see cref="Content"/> is set.
+        /// </para>
+        /// <para>
+        /// <b>Choosing between them:</b> use <see cref="ReuseContentInstance"/> for a per-item cached view;
+        /// use <see cref="ContentTypeIsSingleton"/> for one instance shared app-wide via DI; leave both at
+        /// their defaults (<see cref="ReuseContentInstance"/> off, <see cref="ContentTypeIsSingleton"/> on)
+        /// to get the common "one shared instance" behavior; and set <see cref="ContentTypeIsSingleton"/> to
+        /// <see langword="false"/> with <see cref="ReuseContentInstance"/> off to get a fresh instance every
+        /// time. Setting both <see langword="true"/> is redundant — <see cref="ReuseContentInstance"/> wins
+        /// and the singleton flag is never consulted.
+        /// </para>
+        /// </remarks>
         [ObservableProperty]
         private bool _reuseContentInstance;
 
