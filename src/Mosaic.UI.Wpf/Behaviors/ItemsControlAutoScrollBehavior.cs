@@ -14,132 +14,111 @@ using Microsoft.Xaml.Behaviors;
 namespace Mosaic.UI.Wpf.Behaviors
 {
     /// <summary>
-    /// Scrolls the <see cref="ItemsControl"/> to the last item when the collection changes.
+    /// Automatically scrolls an <see cref="ItemsControl"/> (e.g. a ListView) to its last item whenever
+    /// new items are added, so the newest log entries stay in view.
     /// </summary>
     public class ItemsControlAutoScrollBehavior : Behavior<ItemsControl>
     {
-        private INotifyCollectionChanged? _itemsCollection;
-
         /// <summary>
-        /// Event for when the behavior is attached where we can set up events and tracking code.
+        /// When <c>true</c> (the default) the control auto-scrolls to the end as items arrive; when
+        /// <c>false</c> the behavior does nothing.
         /// </summary>
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
+            nameof(IsEnabled),
+            typeof(bool),
+            typeof(ItemsControlAutoScrollBehavior),
+            new PropertyMetadata(true));
+
+        public bool IsEnabled
+        {
+            get => (bool)GetValue(IsEnabledProperty);
+            set => SetValue(IsEnabledProperty, value);
+        }
+
+        private INotifyCollectionChanged? _items;
+
         protected override void OnAttached()
         {
             base.OnAttached();
 
-            // Subscribe to the CollectionChanged event of the ItemsControl's items
-            _itemsCollection = AssociatedObject.Items as INotifyCollectionChanged;
-
-            if (_itemsCollection != null)
-            {
-                _itemsCollection.CollectionChanged += OnCollectionChanged;
-            }
+            _items = AssociatedObject.Items;
+            _items.CollectionChanged += OnItemsChanged;
         }
 
-        /// <summary>
-        /// Event for When the behavior is detached where we will cleanup resources.
-        /// </summary>
         protected override void OnDetaching()
         {
+            if (_items != null)
+            {
+                _items.CollectionChanged -= OnItemsChanged;
+                _items = null;
+            }
+
             base.OnDetaching();
-
-            // Unsubscribe from the CollectionChanged event
-            if (_itemsCollection != null)
-            {
-                _itemsCollection.CollectionChanged -= OnCollectionChanged;
-                _itemsCollection = null;
-            }
         }
 
-        /// <summary>
-        /// Event for when the collection change.s
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        private void OnItemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            ScrollToLastItem();
+            // Exit early when disabled, or when the change isn't one that adds items.
+            if (!IsEnabled)
+            {
+                return;
+            }
+
+            if (e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Reset)
+            {
+                return;
+            }
+
+            ScrollToEnd();
         }
 
-        /// <summary>
-        /// Scrolls the last item into view.
-        /// </summary>
-        private void ScrollToLastItem()
+        private void ScrollToEnd()
         {
-            try
-            {
-                // Ensure the last item is scrolled into view after the UI updates
-                AssociatedObject.Dispatcher.BeginInvoke(() =>
-                {
-                    // Each type of control has to be handled here.
-                    if (AssociatedObject is ListView { Items.Count: > 0 } lv)
-                    {
-                        lv.ScrollToLastItem();
-                    }
-                    else if (AssociatedObject is ListBox { Items.Count: > 0 } lb)
-                    {
-                        lb.ScrollIntoView(lb.Items[^1]);
-                    }
-                    else if (AssociatedObject is ItemsControl { Items.Count: > 0 } ic)
-                    {
-                        VirtualizedScrollIntoView(ic, ic.Items[^1]);
-                    }
-                    else if (AssociatedObject.Items.Count > 0)
-                    {
-                        var lastItem = AssociatedObject.Items[^1];
+            var items = AssociatedObject.Items;
 
-                        if (AssociatedObject.ItemContainerGenerator.ContainerFromItem(lastItem) is FrameworkElement container)
-                        {
-                            container.BringIntoView();
-                        }
-                    }
-                });
-            }
-            catch (Exception ex)
+            if (items.Count == 0)
             {
-                MessageBox.Show(ex.Message, "Error");
+                return;
             }
+
+            var lastItem = items[items.Count - 1];
+
+            // Defer until after the new container has been generated and laid out.
+            AssociatedObject.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    if (AssociatedObject is ListBox listBox)
+                    {
+                        listBox.ScrollIntoView(lastItem);
+                    }
+                    else
+                    {
+                        FindScrollViewer(AssociatedObject)?.ScrollToBottom();
+                    }
+                }),
+                DispatcherPriority.Background);
         }
 
-        public static void VirtualizedScrollIntoView(ItemsControl control, object item)
+        private static ScrollViewer? FindScrollViewer(DependencyObject root)
         {
-            // this is basically getting a reference to the ScrollViewer defined in the ItemsControl's style (identified above).
-            // you *could* enumerate over the ItemsControl's children until you hit a scroll viewer, but this is quick and
-            // dirty!
-            // First 0 in the GetChild returns the Border from the ControlTemplate, and the second 0 gets the ScrollViewer from
-            // the Border.
-            try
+            if (root is ScrollViewer scrollViewer)
             {
-                if (control == null || !control.HasItems || item == null)
-                {
-                    return;
-                }
+                return scrollViewer;
+            }
 
-                if (VisualTreeHelper.GetChildrenCount(control) == 0)
-                {
-                    return;
-                }
+            int count = VisualTreeHelper.GetChildrenCount(root);
 
-                ScrollViewer? sv = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild((DependencyObject)control, 0), 0) as ScrollViewer;
+            for (int i = 0; i < count; i++)
+            {
+                var result = FindScrollViewer(VisualTreeHelper.GetChild(root, i));
 
-                if (sv == null)
+                if (result != null)
                 {
-                    return;
-                }
-
-                // now get the index of the item your passing in
-                int index = control.Items.IndexOf(item);
-                if (index != -1)
-                {
-                    // since the scroll viewer is using content scrolling not pixel based scrolling we just tell it to scroll to the index of the item
-                    // and viola!  we scroll there!
-                    sv.ScrollToVerticalOffset(index);
+                    return result;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
+
+            return null;
         }
     }
 }
