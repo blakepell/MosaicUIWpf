@@ -41,3 +41,19 @@ Small property bridge for AvalonEdit runtime styling and hyperlink behavior.
 |---|---|---|
 | `CaretBrush` | `Brush` | Sets `TextArea.Caret.CaretBrush`. |
 | `EnableHyperLinks` | `bool` | Enables AvalonEdit hyperlink detection/clicking and disables the Ctrl modifier requirement. |
+
+## AvalonEditCopyBehavior
+
+Attached to a `Button` (not the editor). On click, copies the target `TextEditor`'s selected text to the clipboard, or the entire text if nothing is selected.
+
+| Property | Type | Description |
+|---|---|---|
+| `TargetTextEditor` | `TextEditor` | The editor to copy from. |
+
+```xml
+<Button Content="Copy">
+    <i:Interaction.Behaviors>
+        <behaviors:AvalonEditCopyBehavior TargetTextEditor="{Binding ElementName=XamlEditor}" />
+    </i:Interaction.Behaviors>
+</Button>
+```

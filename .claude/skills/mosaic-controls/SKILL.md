@@ -111,16 +111,49 @@ For detailed property/event/example documentation, read the individual file list
 
 ---
 
-## Integration Packages And Behaviors
+## Behaviors
 
-These are not all main-assembly controls, but they are part of the Mosaic usage surface and have demo examples.
+Behaviors live in the `Mosaic.UI.Wpf.Behaviors` namespace and add functionality to **existing** WPF controls without subclassing them — reach for one before authoring a new control. Most are `Behavior<T>` (attached inside `<i:Interaction.Behaviors>`); `GridViewSortBehavior`, `WindowChromeBehavior`, and `BrushModifier` are attached-property helpers (applied as `behaviors:Foo.Bar="..."`). The namespace is also mapped to the canonical Mosaic URI, so `mosaic:`-prefixed usage works too. See [Behaviors.md](controls/Behaviors.md) for full property/usage details.
+
+```xml
+xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+```
+
+| Behavior | Attaches to | Description | Details |
+|---|---|---|---|
+| `FocusBehavior` | `Control` | Focuses the control when it loads | [Behaviors.md](controls/Behaviors.md) |
+| `BlinkingBehavior` | `FrameworkElement` | Blinks an element by animating its opacity | [Behaviors.md](controls/Behaviors.md) |
+| `FrameworkElementZoomFontSizeOnMouseWheelBehavior` | `FrameworkElement` | Ctrl+MouseWheel font-size zoom (clamped min/max) | [Behaviors.md](controls/Behaviors.md) |
+| `BrushModifier` | `Control`/`Border`/`Panel` | Lightens/darkens the background brush by an HSL percentage | [Behaviors.md](controls/Behaviors.md) |
+| `TextBoxCopyBehavior` | `Button` | Copies a target `TextBox`'s (selected) text to the clipboard on click | [Behaviors.md](controls/Behaviors.md) |
+| `TextBoxClearTextOnEscapeBehavior` | `TextBoxBase` | Clears the text box when Escape is pressed | [Behaviors.md](controls/Behaviors.md) |
+| `BlockCaretBehavior` | `TextBox` | Terminal-style full-width block caret | [Behaviors.md](controls/Behaviors.md) |
+| `ItemsControlAutoScrollBehavior` | `ItemsControl` | Auto-scrolls to the newest item when the collection changes | [Behaviors.md](controls/Behaviors.md) |
+| `ItemsControlFilterBehavior` | `TextBox` | Debounced text filter over a target `ItemsControl` | [Behaviors.md](controls/Behaviors.md) |
+| `DataGridFilterBehavior` | `TextBox` | Debounced full-text filter over a target `DataGrid` | [Behaviors.md](controls/Behaviors.md) |
+| `DataGridLastColumnFillBehavior` | `DataGrid` | Stretches the last column to fill remaining width | [Behaviors.md](controls/Behaviors.md) |
+| `GridViewLastColumnFillBehavior` | `ListView` | Auto-sizes the last `GridView` column | [Behaviors.md](controls/Behaviors.md) |
+| `GridViewSortBehavior` | `ListView`/`GridViewColumn` | Click-header sorting for a `GridView` | [Behaviors.md](controls/Behaviors.md) |
+| `ListViewDeleteBehavior` | `ListView` | Deletes selected items on the Delete key (optional confirm) | [Behaviors.md](controls/Behaviors.md) |
+| `OpenContextMenuBehavior` | `ButtonBase` | Opens the button's `ContextMenu` on click | [Behaviors.md](controls/Behaviors.md) |
+| `OpenWindowBehavior` | `ButtonBase`/`MenuItem` | Opens a `Window` of a given type on click (modal/modeless) | [Behaviors.md](controls/Behaviors.md) |
+| `CloseWindowOnEscapeBehavior` | `Window` | Closes the window on Escape | [Behaviors.md](controls/Behaviors.md) |
+| `WindowChromeBehavior` | `Window` | Custom borderless chrome, themed brushes, rounded corners | [Behaviors.md](controls/Behaviors.md) |
+| `AvalonTextEditorBindingBehavior` | AvalonEdit `TextEditor` | Bindable text, selection, selected text, and caret offset | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+| `AvalonEditPropertiesBehavior` | AvalonEdit `TextEditor` | Binds caret brush and hyperlink enablement | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+| `AvalonEditVtTerminalBehavior` | AvalonEdit `TextEditor` | Applies a retro VT/CRT visual skin | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+| `AvalonEditCopyBehavior` | `Button` | Copies a target `TextEditor`'s (selected) text to the clipboard on click | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
+
+> **File name ≠ class name** for four behaviors: `AvalonEditBindingBehavior.cs` → `AvalonTextEditorBindingBehavior`, `TextBoxClearOnEscapeBehavior.cs` → `TextBoxClearTextOnEscapeBehavior`, `CloseWindowOnEscape.cs` → `CloseWindowOnEscapeBehavior`, `ButtonOpenContextMenu.cs` → `OpenContextMenuBehavior`. Use the class name in XAML.
+
+## Integration Packages
+
+These are not main-assembly controls, but are part of the Mosaic usage surface and have demo examples.
 
 | Item | Kind | Namespace / URI | Description | Details |
 |---|---|---|---|---|
 | `DockingManager` / `MosaicTheme` | Separate package/project | `https://github.com/blakepell/MosaicUIWpf` | Mosaic-themed AvalonDock fork/integration for IDE-style document and tool-window docking | [AvalonDock.md](controls/AvalonDock.md) |
-| `AvalonEditVtTerminalBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Applies a retro VT/CRT visual skin to AvalonEdit `TextEditor` controls | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
-| `AvalonTextEditorBindingBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Adds bindable text, selection, selected text, and caret offset to AvalonEdit `TextEditor` | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
-| `AvalonEditPropertiesBehavior` | Behavior | `Mosaic.UI.Wpf.Behaviors` | Binds caret brush and hyperlink enablement for AvalonEdit `TextEditor` | [AvalonEditBehaviors.md](controls/AvalonEditBehaviors.md) |
 
 ## Support Controls
 
