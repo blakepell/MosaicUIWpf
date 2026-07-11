@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -8,8 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Collections.Specialized;
 using Microsoft.Xaml.Behaviors;
+using System.Collections.Specialized;
+using ListBox = System.Windows.Controls.ListBox;
 
 namespace Mosaic.UI.Wpf.Behaviors
 {
@@ -17,11 +18,14 @@ namespace Mosaic.UI.Wpf.Behaviors
     /// Automatically scrolls an <see cref="ItemsControl"/> (e.g. a ListView) to its last item whenever
     /// new items are added, so the newest log entries stay in view.
     /// </summary>
+    /// <remarks>
+    /// Note: the behavior coalesces rapid collection changes into one dispatcher operation so bulk
+    /// additions do not repeatedly force layout.
+    /// </remarks>
     public class ItemsControlAutoScrollBehavior : Behavior<ItemsControl>
     {
         /// <summary>
-        /// When <c>true</c> (the default) the control auto-scrolls to the end as items arrive; when
-        /// <c>false</c> the behavior does nothing.
+        /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
             nameof(IsEnabled),
@@ -29,6 +33,13 @@ namespace Mosaic.UI.Wpf.Behaviors
             typeof(ItemsControlAutoScrollBehavior),
             new PropertyMetadata(true));
 
+        /// <summary>
+        /// Gets or sets a value that indicates whether the control scrolls to the end as items arrive.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> if the behavior scrolls to the end when items are added or reset;
+        /// otherwise, <see langword="false" />. The default is <see langword="true" />.
+        /// </value>
         public bool IsEnabled
         {
             get => (bool)GetValue(IsEnabledProperty);
@@ -37,6 +48,15 @@ namespace Mosaic.UI.Wpf.Behaviors
 
         private INotifyCollectionChanged? _items;
 
+        /// <summary>
+        /// True when a scroll-to-end has already been queued on the dispatcher but has not yet run.
+        /// Lets a burst of adds (e.g. a bulk load) coalesce into a single scroll at the end.
+        /// </summary>
+        private bool _scrollQueued;
+
+        /// <summary>
+        /// Attaches collection change tracking to the associated control.
+        /// </summary>
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -45,6 +65,9 @@ namespace Mosaic.UI.Wpf.Behaviors
             _items.CollectionChanged += OnItemsChanged;
         }
 
+        /// <summary>
+        /// Detaches collection change tracking from the associated control.
+        /// </summary>
         protected override void OnDetaching()
         {
             if (_items != null)
@@ -56,6 +79,11 @@ namespace Mosaic.UI.Wpf.Behaviors
             base.OnDetaching();
         }
 
+        /// <summary>
+        /// Handles item collection changes that may require scrolling.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data for the collection change.</param>
         private void OnItemsChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             // Exit early when disabled, or when the change isn't one that adds items.
@@ -69,9 +97,36 @@ namespace Mosaic.UI.Wpf.Behaviors
                 return;
             }
 
-            ScrollToEnd();
+            QueueScrollToEnd();
         }
 
+        /// <summary>
+        /// Schedules a single scroll-to-end on the dispatcher. If one is already pending (because many
+        /// items are being added in quick succession), this is a no-op so a bulk load scrolls only
+        /// once, after the last item has been added, rather than once per item.
+        /// </summary>
+        private void QueueScrollToEnd()
+        {
+            if (_scrollQueued)
+            {
+                return;
+            }
+
+            _scrollQueued = true;
+
+            // Background priority runs after the pending item additions and their layout have completed.
+            AssociatedObject.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    _scrollQueued = false;
+                    ScrollToEnd();
+                }),
+                DispatcherPriority.Background);
+        }
+
+        /// <summary>
+        /// Scrolls the associated control to its last item.
+        /// </summary>
         private void ScrollToEnd()
         {
             var items = AssociatedObject.Items;
@@ -83,22 +138,23 @@ namespace Mosaic.UI.Wpf.Behaviors
 
             var lastItem = items[items.Count - 1];
 
-            // Defer until after the new container has been generated and laid out.
-            AssociatedObject.Dispatcher.BeginInvoke(
-                new Action(() =>
-                {
-                    if (AssociatedObject is ListBox listBox)
-                    {
-                        listBox.ScrollIntoView(lastItem);
-                    }
-                    else
-                    {
-                        FindScrollViewer(AssociatedObject)?.ScrollToBottom();
-                    }
-                }),
-                DispatcherPriority.Background);
+            if (AssociatedObject is ListBox listBox)
+            {
+                listBox.ScrollIntoView(lastItem);
+            }
+            else
+            {
+                FindScrollViewer(AssociatedObject)?.ScrollToBottom();
+            }
         }
 
+        /// <summary>
+        /// Finds the first <see cref="ScrollViewer"/> in the visual tree.
+        /// </summary>
+        /// <param name="root">The visual tree root to search.</param>
+        /// <returns>
+        /// The first <see cref="ScrollViewer"/> found under <paramref name="root"/>, or <see langword="null" /> when no scroll viewer exists.
+        /// </returns>
         private static ScrollViewer? FindScrollViewer(DependencyObject root)
         {
             if (root is ScrollViewer scrollViewer)
