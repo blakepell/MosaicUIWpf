@@ -348,11 +348,10 @@
                                     Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                                     Text="Click to copy hex" />
                             </StackPanel>
-                            <Button
+                            <mosaic:SplitButton
                                 Grid.Column="1"
                                 Click="ExportCssButton_OnClick"
-                                Style="{StaticResource QuietButtonStyle}"
-                                ToolTip="Export CSS Variables">
+                                ToolTip="Export palette">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock
                                         VerticalAlignment="Center"
@@ -360,7 +359,13 @@
                                         Text="&#xEDE1;" />
                                     <TextBlock Margin="5,0,0,0" Text="Export" />
                                 </StackPanel>
-                            </Button>
+                                <mosaic:SplitButton.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Click="ExportCssButton_OnClick" Header="Export to CSS" />
+                                        <MenuItem Click="ExportResourceDictionaryButton_OnClick" Header="Export to ResourceDictionary" />
+                                    </ContextMenu>
+                                </mosaic:SplitButton.ContextMenu>
+                            </mosaic:SplitButton>
                             <Button
                                 Grid.Column="2"
                                 Margin="4,0,0,0"
