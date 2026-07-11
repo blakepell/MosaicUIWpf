@@ -218,6 +218,26 @@
                             <TextBlock Margin="6,0,0,0" Text="Save" />
                         </StackPanel>
                     </mosaic:AccentButton>
+
+                    <!--  Swap action  -->
+                    <mosaic:AccentButton
+                        x:Name="SwapButton"
+                        Margin="10,0,0,0"
+                        Padding="18,8"
+                        AccentButtonType="FluentGreen"
+                        Click="SwapButton_OnClick"
+                        IsEnabled="False">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                Text="&#xE8AB;" />
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                FontWeight="SemiBold"
+                                Text="Swap Colors" />
+                        </StackPanel>
+                    </mosaic:AccentButton>
                 </StackPanel>
             </Grid>
         </Border>
@@ -506,6 +526,7 @@
                     <Border
                         Margin="4,0"
                         Padding="10,6"
+                        MaxHeight="50"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1"
@@ -541,6 +562,7 @@
                     <Border
                         Margin="4,0"
                         Padding="10,6"
+                        MaxHeight="50"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1"
@@ -578,6 +600,7 @@
                         Padding="10,6"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                        MaxHeight="50"
                         BorderThickness="1"
                         CornerRadius="6">
                         <Grid>
@@ -608,27 +631,6 @@
                         </Grid>
                     </Border>
                 </UniformGrid>
-
-                <!--  Swap action  -->
-                <mosaic:AccentButton
-                    x:Name="SwapButton"
-                    Grid.Column="2"
-                    Margin="16,0,0,0"
-                    Padding="18,8"
-                    AccentButtonType="ThemeAccent"
-                    Click="SwapButton_OnClick"
-                    IsEnabled="False">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontFamily="Segoe MDL2 Assets"
-                            Text="&#xE8AB;" />
-                        <TextBlock
-                            Margin="8,0,0,0"
-                            FontWeight="SemiBold"
-                            Text="Swap Colors" />
-                    </StackPanel>
-                </mosaic:AccentButton>
             </Grid>
         </Border>
     </Grid>
