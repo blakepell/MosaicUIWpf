@@ -35,6 +35,8 @@ namespace ChromaSwap
     public partial class MainWindow : Window
     {
         private const int MaxHistoryEntries = 21;
+        private const int PalettePanelOffset = -310;
+        private const double LoupeSize = 100;
 
         private WriteableBitmap? _bitmap;
         private readonly List<byte[]> _history = new();
@@ -43,8 +45,39 @@ namespace ChromaSwap
         private string _fileName = "chromaswap-image";
         private ToastManager? _toasts;
         private readonly ObservableCollection<ShadeSwatch> _shades = new();
+        private PalettePanelMode _palettePanelMode = PalettePanelMode.Shades;
         private bool _shadesPanelOpen;
         private bool _isSwapping;
+
+        private enum PalettePanelMode
+        {
+            Shades,
+            ExtractedPalette
+        }
+
+        private sealed class ColorBucket
+        {
+            public int Count { get; set; }
+
+            public long R { get; set; }
+
+            public long G { get; set; }
+
+            public long B { get; set; }
+
+            public Color ToColor()
+            {
+                if (this.Count == 0)
+                {
+                    return Colors.Transparent;
+                }
+
+                return Color.FromRgb(
+                    (byte)Math.Clamp(this.R / this.Count, 0, 255),
+                    (byte)Math.Clamp(this.G / this.Count, 0, 255),
+                    (byte)Math.Clamp(this.B / this.Count, 0, 255));
+            }
+        }
 
         public MainWindow()
         {
@@ -260,6 +293,10 @@ namespace ChromaSwap
 
             _selectedColor = null;
             _shades.Clear();
+            _palettePanelMode = PalettePanelMode.Shades;
+            PalettePanelTitle.Text = "Shades & Tints";
+            PalettePanelSubtitle.Text = "Click to copy hex";
+            this.SetShadesPanelOpen(false);
 
             EmptyState.Visibility = Visibility.Collapsed;
             CanvasContainer.Visibility = Visibility.Visible;
@@ -276,18 +313,34 @@ namespace ChromaSwap
         #region Pixel picking / loupe
 
         /// <summary>
-        /// Maps a mouse position over the (uniformly stretched) image element to pixel coordinates.
+        /// Maps a mouse position in a visual coordinate space to bitmap pixel coordinates.
         /// </summary>
-        /// <param name="position">The mouse position relative to the image element.</param>
-        private (int X, int Y)? ToPixel(Point position)
+        /// <param name="position">The mouse position relative to <paramref name="relativeTo"/>.</param>
+        /// <param name="relativeTo">The visual that owns <paramref name="position"/>.</param>
+        private (int X, int Y)? ToPixel(Point position, Visual relativeTo)
         {
             if (_bitmap == null || MainImage.ActualWidth <= 0 || MainImage.ActualHeight <= 0)
             {
                 return null;
             }
 
-            int x = (int)Math.Floor(position.X * _bitmap.PixelWidth / MainImage.ActualWidth);
-            int y = (int)Math.Floor(position.Y * _bitmap.PixelHeight / MainImage.ActualHeight);
+            GeneralTransform transform = MainImage.TransformToVisual(relativeTo);
+            GeneralTransform? inverse = transform.Inverse;
+
+            if (inverse == null)
+            {
+                return null;
+            }
+
+            Point imagePosition = inverse.Transform(position);
+
+            if (imagePosition.X < 0 || imagePosition.Y < 0 || imagePosition.X > MainImage.ActualWidth || imagePosition.Y > MainImage.ActualHeight)
+            {
+                return null;
+            }
+
+            int x = (int)Math.Floor(imagePosition.X * _bitmap.PixelWidth / MainImage.ActualWidth);
+            int y = (int)Math.Floor(imagePosition.Y * _bitmap.PixelHeight / MainImage.ActualHeight);
 
             x = Math.Clamp(x, 0, _bitmap.PixelWidth - 1);
             y = Math.Clamp(y, 0, _bitmap.PixelHeight - 1);
@@ -316,23 +369,60 @@ namespace ChromaSwap
 
             try
             {
-                var pixel = this.ToPixel(e.GetPosition(MainImage));
+                var canvasPos = e.GetPosition(LoupeCanvas);
+                GeneralTransform transform = MainImage.TransformToVisual(LoupeCanvas);
+                GeneralTransform? inverse = transform.Inverse;
 
-                if (pixel == null)
+                if (inverse == null || MainImage.ActualWidth <= 0 || MainImage.ActualHeight <= 0)
                 {
+                    Loupe.Visibility = Visibility.Collapsed;
                     return;
                 }
 
-                // 25px of source magnified 4x fills the 100px loupe.
-                int sourceSize = Math.Min(25, Math.Min(_bitmap.PixelWidth, _bitmap.PixelHeight));
-                int cropX = Math.Clamp(pixel.Value.X - sourceSize / 2, 0, _bitmap.PixelWidth - sourceSize);
-                int cropY = Math.Clamp(pixel.Value.Y - sourceSize / 2, 0, _bitmap.PixelHeight - sourceSize);
+                Point imagePos = inverse.Transform(canvasPos);
 
-                LoupeImage.Source = new CroppedBitmap(_bitmap, new Int32Rect(cropX, cropY, sourceSize, sourceSize));
+                if (imagePos.X < 0 || imagePos.Y < 0 || imagePos.X > MainImage.ActualWidth || imagePos.Y > MainImage.ActualHeight)
+                {
+                    Loupe.Visibility = Visibility.Collapsed;
+                    return;
+                }
 
-                var canvasPos = e.GetPosition(LoupeCanvas);
-                Canvas.SetLeft(Loupe, canvasPos.X - 50);
-                Canvas.SetTop(Loupe, canvasPos.Y - 50);
+                // Fractional bitmap coordinates of the cursor.
+                double bmpX = imagePos.X * _bitmap.PixelWidth / MainImage.ActualWidth;
+                double bmpY = imagePos.Y * _bitmap.PixelHeight / MainImage.ActualHeight;
+
+                // On-screen size of one bitmap pixel, including the current wheel zoom.
+                Rect screenBounds = transform.TransformBounds(new Rect(0, 0, MainImage.ActualWidth, MainImage.ActualHeight));
+                double screenPixelSize = screenBounds.Width / _bitmap.PixelWidth;
+
+                // The loupe magnifies to at least 2x what's on screen, never below 4px per pixel.
+                double loupePixelSize = Math.Max(4.0, screenPixelSize * 2.0);
+
+                // Crop the smallest pixel rect covering the loupe window around the cursor. The
+                // rect is clipped (not clamped) at the bitmap edges: the translate below keeps the
+                // cursor pixel dead-center and the checkerboard shows through past the edge.
+                double half = LoupeSize / 2.0 / loupePixelSize;
+                int cropX = Math.Max(0, (int)Math.Floor(bmpX - half));
+                int cropY = Math.Max(0, (int)Math.Floor(bmpY - half));
+                int cropRight = Math.Min(_bitmap.PixelWidth, (int)Math.Ceiling(bmpX + half));
+                int cropBottom = Math.Min(_bitmap.PixelHeight, (int)Math.Ceiling(bmpY + half));
+                int cropWidth = cropRight - cropX;
+                int cropHeight = cropBottom - cropY;
+
+                if (cropWidth <= 0 || cropHeight <= 0)
+                {
+                    Loupe.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                LoupeImage.Source = new CroppedBitmap(_bitmap, new Int32Rect(cropX, cropY, cropWidth, cropHeight));
+                LoupeImage.Width = cropWidth * loupePixelSize;
+                LoupeImage.Height = cropHeight * loupePixelSize;
+                Canvas.SetLeft(LoupeImage, LoupeSize / 2.0 - (bmpX - cropX) * loupePixelSize);
+                Canvas.SetTop(LoupeImage, LoupeSize / 2.0 - (bmpY - cropY) * loupePixelSize);
+
+                Canvas.SetLeft(Loupe, canvasPos.X - LoupeSize / 2.0);
+                Canvas.SetTop(Loupe, canvasPos.Y - LoupeSize / 2.0);
                 Loupe.Visibility = Visibility.Visible;
             }
             catch (Exception)
@@ -356,7 +446,7 @@ namespace ChromaSwap
 
             try
             {
-                var pixel = this.ToPixel(e.GetPosition(MainImage));
+                var pixel = this.ToPixel(e.GetPosition(LoupeCanvas), LoupeCanvas);
 
                 if (pixel == null)
                 {
@@ -367,7 +457,7 @@ namespace ChromaSwap
                 this.UpdateColorInfo(_selectedColor);
                 SwapButton.IsEnabled = true;
 
-                if (_shadesPanelOpen)
+                if (_shadesPanelOpen && _palettePanelMode == PalettePanelMode.Shades)
                 {
                     this.GenerateShades();
                 }
@@ -375,6 +465,33 @@ namespace ChromaSwap
             catch (Exception ex)
             {
                 this.ShowToast($"Unable to read pixel: {ex.Message}", ToastSeverity.Error);
+            }
+        }
+
+        private async void MainImage_OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_bitmap == null)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            try
+            {
+                int? count = await this.ShowPaletteSizeDialogAsync();
+
+                if (count == null)
+                {
+                    return;
+                }
+
+                this.GenerateExtractedPalette(count.Value);
+                this.SetShadesPanelOpen(true);
+            }
+            catch (Exception ex)
+            {
+                this.ShowToast($"Palette extraction failed: {ex.Message}", ToastSeverity.Error);
             }
         }
 
@@ -440,6 +557,9 @@ namespace ChromaSwap
                 return;
             }
 
+            _palettePanelMode = PalettePanelMode.Shades;
+            PalettePanelTitle.Text = "Shades & Tints";
+            PalettePanelSubtitle.Text = "Click to copy hex";
             this.GenerateShades();
             this.SetShadesPanelOpen(true);
         }
@@ -472,7 +592,7 @@ namespace ChromaSwap
             }
             else
             {
-                var slideOut = new DoubleAnimation(-310, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease };
+                var slideOut = new DoubleAnimation(PalettePanelOffset, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease };
                 slideOut.Completed += (_, _) =>
                 {
                     if (!_shadesPanelOpen)
@@ -498,8 +618,6 @@ namespace ChromaSwap
             }
 
             var c = _selectedColor.Value;
-            var normalForeground = (Brush)this.FindResource(MosaicTheme.ControlTextForegroundBrush);
-            var accentForeground = (Brush)this.FindResource(MosaicTheme.AccentBrush);
 
             void Add(byte r, byte g, byte b, string cssName, string label, bool isBase)
             {
@@ -513,8 +631,7 @@ namespace ChromaSwap
                     Hex = ColorUtils.ToHex(color),
                     CssName = cssName,
                     Brush = brush,
-                    IsBase = isBase,
-                    HexForeground = isBase ? accentForeground : normalForeground
+                    IsBase = isBase
                 });
             }
 
@@ -537,6 +654,230 @@ namespace ChromaSwap
                 Add(ColorUtils.Mix(c.R, 0, weight), ColorUtils.Mix(c.G, 0, weight), ColorUtils.Mix(c.B, 0, weight),
                     $"shade-{scale}", $"shade-{scale}", false);
             }
+        }
+
+        private async Task<int?> ShowPaletteSizeDialogAsync()
+        {
+            var countBox = new ComboBox
+            {
+                MinWidth = 180,
+                Margin = new Thickness(0, 4, 0, 14)
+            };
+
+            int selectedCount = 16;
+            foreach (int count in new[] { 4, 8, 16, 32, 64, 128, 256 })
+            {
+                countBox.Items.Add(count);
+            }
+
+            countBox.SelectedItem = selectedCount;
+            countBox.SelectionChanged += (_, _) =>
+            {
+                selectedCount = countBox.SelectedItem switch
+                {
+                    int count => count,
+                    ComboBoxItem { Content: int count } => count,
+                    ComboBoxItem { Content: string text } when int.TryParse(text, out int count) => count,
+                    string text when int.TryParse(text, out int count) => count,
+                    _ => selectedCount
+                };
+            };
+
+            var extractButton = new Button
+            {
+                Content = "Extract",
+                IsDefault = true,
+                MinWidth = 80,
+                MinHeight = 25,
+                Margin = new Thickness(0, 0, 8, 0)
+            };
+
+            var cancelButton = new Button
+            {
+                Content = "Cancel",
+                IsCancel = true,
+                MinWidth = 80
+            };
+
+            var buttons = new StackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Orientation = Orientation.Horizontal
+            };
+            buttons.Children.Add(extractButton);
+            buttons.Children.Add(cancelButton);
+
+            var content = new StackPanel
+            {
+                Margin = new Thickness(4)
+            };
+            content.Children.Add(new TextBlock { Text = "Colors" });
+            content.Children.Add(countBox);
+            content.Children.Add(buttons);
+
+            var dialog = new ModalDialog
+            {
+                Title = "Extract Palette",
+                Description = "Choose how many common image colors to extract.",
+                Content = content,
+                CloseOnBackdropClick = false,
+                CloseOnEscape = true
+            };
+
+            int? result = null;
+            extractButton.Click += (_, _) =>
+            {
+                result = selectedCount;
+                dialog.Close(true);
+            };
+
+            cancelButton.Click += (_, _) => dialog.Close(null);
+
+            dialog.Opened += (_, _) =>
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+                {
+                    countBox.Focus();
+                });
+            };
+
+            return await dialog.ShowAsync(RootGrid) == true ? result : null;
+        }
+
+        private void GenerateExtractedPalette(int requestedCount)
+        {
+            if (_bitmap == null)
+            {
+                return;
+            }
+
+            _palettePanelMode = PalettePanelMode.ExtractedPalette;
+            _shades.Clear();
+
+            int width = _bitmap.PixelWidth;
+            int height = _bitmap.PixelHeight;
+            int stride = width * 4;
+            var pixels = new byte[height * stride];
+            _bitmap.CopyPixels(pixels, stride, 0);
+
+            var buckets = new Dictionary<int, ColorBucket>();
+            for (int i = 0; i < pixels.Length; i += 4)
+            {
+                byte b = pixels[i];
+                byte g = pixels[i + 1];
+                byte r = pixels[i + 2];
+                byte a = pixels[i + 3];
+
+                if (a < 16)
+                {
+                    continue;
+                }
+
+                int key = ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3);
+
+                if (!buckets.TryGetValue(key, out ColorBucket? bucket))
+                {
+                    bucket = new ColorBucket();
+                    buckets[key] = bucket;
+                }
+
+                bucket.Count++;
+                bucket.R += r;
+                bucket.G += g;
+                bucket.B += b;
+            }
+
+            if (buckets.Count == 0)
+            {
+                this.ShowToast("No visible colors found.", ToastSeverity.Info);
+                return;
+            }
+
+            int targetCount = Math.Clamp(requestedCount, 4, 256);
+            int candidateCount = Math.Min(buckets.Count, Math.Max(targetCount * 24, 512));
+            var candidates = buckets.Values
+                .OrderByDescending(bucket => bucket.Count)
+                .Take(candidateCount)
+                .Select(bucket => new { Bucket = bucket, Color = bucket.ToColor() })
+                .ToList();
+
+            var selected = new List<(Color Color, int Count)>();
+            var used = new HashSet<Color>();
+
+            while (selected.Count < targetCount && selected.Count < candidates.Count)
+            {
+                var bestCandidate = candidates
+                    .Where(candidate => !used.Contains(candidate.Color))
+                    .Select(candidate => new
+                    {
+                        candidate.Color,
+                        candidate.Bucket.Count,
+                        Score = CalculatePaletteCandidateScore(candidate.Color, candidate.Bucket.Count, candidates[0].Bucket.Count, selected)
+                    })
+                    .OrderByDescending(candidate => candidate.Score)
+                    .FirstOrDefault();
+
+                if (bestCandidate == null)
+                {
+                    break;
+                }
+
+                selected.Add((bestCandidate.Color, bestCandidate.Count));
+                used.Add(bestCandidate.Color);
+            }
+
+            int index = 1;
+            foreach (var item in selected)
+            {
+                string name = $"color-{index:000}";
+                _shades.Add(this.CreatePaletteSwatch(item.Color, name, $"{name} ({item.Count:N0})", false));
+                index++;
+            }
+
+            PalettePanelTitle.Text = "Extracted Palette";
+            PalettePanelSubtitle.Text = $"{_shades.Count} colors from image";
+            this.ShowToast($"Extracted {_shades.Count} colors.");
+        }
+
+        private static double CalculatePaletteCandidateScore(Color color, int count, int highestCount, List<(Color Color, int Count)> selected)
+        {
+            if (selected.Count == 0)
+            {
+                return count;
+            }
+
+            double minDistance = selected
+                .Select(item => ColorDistance(color, item.Color))
+                .DefaultIfEmpty(441.67)
+                .Min();
+
+            double frequencyScore = highestCount == 0 ? 0 : count / (double)highestCount;
+            double distanceScore = Math.Clamp(minDistance / 441.67, 0, 1);
+
+            return frequencyScore * 0.65 + distanceScore * 0.35;
+        }
+
+        private static double ColorDistance(Color a, Color b)
+        {
+            int dr = a.R - b.R;
+            int dg = a.G - b.G;
+            int db = a.B - b.B;
+            return Math.Sqrt(dr * dr + dg * dg + db * db);
+        }
+
+        private ShadeSwatch CreatePaletteSwatch(Color color, string cssName, string label, bool isBase)
+        {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+
+            return new ShadeSwatch
+            {
+                Name = label,
+                Hex = ColorUtils.ToHex(color),
+                CssName = cssName,
+                Brush = brush,
+                IsBase = isBase
+            };
         }
 
         private void Swatch_OnClick(object sender, RoutedEventArgs e)

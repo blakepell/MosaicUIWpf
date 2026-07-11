@@ -48,9 +48,5 @@ namespace ChromaSwap.Common
         /// </summary>
         public FontWeight FontWeight => this.IsBase ? FontWeights.Bold : FontWeights.Normal;
 
-        /// <summary>
-        /// The hex label brush; accent colored for the base entry.
-        /// </summary>
-        public required Brush HexForeground { get; init; }
     }
 }

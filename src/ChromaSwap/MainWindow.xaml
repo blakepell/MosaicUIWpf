@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:mosaicBehaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="ChromaSwap"
     Width="1200"
@@ -227,6 +228,7 @@
             Grid.Row="2"
             AllowDrop="True"
             Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
+            ClipToBounds="True"
             DragOver="WorkspaceGrid_OnDragOver"
             Drop="WorkspaceGrid_OnDrop">
 
@@ -281,8 +283,15 @@
                     MouseLeave="MainImage_OnMouseLeave"
                     MouseLeftButtonDown="MainImage_OnMouseLeftButtonDown"
                     MouseMove="MainImage_OnMouseMove"
+                    MouseRightButtonDown="MainImage_OnMouseRightButtonDown"
+                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                     Stretch="Uniform"
-                    StretchDirection="DownOnly" />
+                    StretchDirection="DownOnly">
+                    <b:Interaction.Behaviors>
+                        <!--  Zoom the whole container so the checkerboard and border scale with the image.  -->
+                        <mosaicBehaviors:ImageMouseWheelZoomBehavior MaxZoom="64" ZoomTarget="{Binding ElementName=CanvasContainer}" />
+                    </b:Interaction.Behaviors>
+                </Image>
             </Border>
 
             <!--  Loupe overlay (never hit-testable)  -->
@@ -299,10 +308,13 @@
                             RadiusY="50" />
                     </Grid.Clip>
                     <Rectangle Fill="{StaticResource CheckerboardBrush}" />
-                    <Image
-                        x:Name="LoupeImage"
-                        RenderOptions.BitmapScalingMode="NearestNeighbor"
-                        Stretch="Fill" />
+                    <!--  Canvas host: a Grid layout-clips oversized children to the 100x100 slot, a Canvas doesn't.  -->
+                    <Canvas>
+                        <Image
+                            x:Name="LoupeImage"
+                            RenderOptions.BitmapScalingMode="NearestNeighbor"
+                            Stretch="Fill" />
+                    </Canvas>
                     <Path
                         Data="M50,0 L50,100 M0,50 L100,50"
                         Stroke="#80FFFFFF"
@@ -342,8 +354,9 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock FontWeight="Bold" Text="Shades &amp; Tints" />
+                                <TextBlock x:Name="PalettePanelTitle" FontWeight="Bold" Text="Shades &amp; Tints" />
                                 <TextBlock
+                                    x:Name="PalettePanelSubtitle"
                                     FontSize="{DynamicResource {x:Static theme:MosaicTheme.FontSizeSmall}}"
                                     Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
                                     Text="Click to copy hex" />
@@ -412,8 +425,18 @@
                                                 <TextBlock
                                                     FontFamily="{DynamicResource {x:Static theme:MosaicTheme.MonospaceFontFamily}}"
                                                     FontWeight="{Binding FontWeight}"
-                                                    Foreground="{Binding HexForeground}"
-                                                    Text="{Binding Hex}" />
+                                                    Text="{Binding Hex}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="{x:Type TextBlock}">
+                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.ControlTextForegroundBrush}}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsBase}" Value="True">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
                                                 <TextBlock
                                                     FontSize="{DynamicResource {x:Static theme:MosaicTheme.FontSizeSmall}}"
                                                     Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
