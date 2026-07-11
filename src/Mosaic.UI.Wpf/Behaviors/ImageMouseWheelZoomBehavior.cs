@@ -119,6 +119,28 @@ namespace Mosaic.UI.Wpf.Behaviors
         }
 
         /// <summary>
+        /// Identifies the <see cref="RequireCtrl"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty RequireCtrlProperty = DependencyProperty.Register(
+            nameof(RequireCtrl),
+            typeof(bool),
+            typeof(ImageMouseWheelZoomBehavior),
+            new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the Ctrl key must be held to zoom.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> to require Ctrl while using the mouse wheel; otherwise,
+        /// <see langword="false" />. The default is <see langword="false" />.
+        /// </value>
+        public bool RequireCtrl
+        {
+            get => (bool)GetValue(RequireCtrlProperty);
+            set => SetValue(RequireCtrlProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="ZoomTarget"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ZoomTargetProperty = DependencyProperty.Register(
@@ -225,7 +247,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         {
             var target = _appliedTarget;
 
-            if (target == null || e.Delta == 0)
+            if (target == null || e.Delta == 0 || (this.RequireCtrl && (Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control))
             {
                 return;
             }

@@ -354,7 +354,10 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock x:Name="PalettePanelTitle" FontWeight="Bold" Text="Shades &amp; Tints" />
+                                <TextBlock
+                                    x:Name="PalettePanelTitle"
+                                    FontWeight="Bold"
+                                    Text="Shades &amp; Tints" />
                                 <TextBlock
                                     x:Name="PalettePanelSubtitle"
                                     FontSize="{DynamicResource {x:Static theme:MosaicTheme.FontSizeSmall}}"

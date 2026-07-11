@@ -1316,6 +1316,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Image Mouse Wheel Zoom Behavior  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/zoom-in-48.png"
+                    Text="Image Mouse Wheel Zoom Behavior">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Image Mouse Wheel Zoom Behavior" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ImageMouseWheelZoomBehaviorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ImageMouseWheelZoomBehaviorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:ImageMouseWheelZoomBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ImageMouseWheelZoomBehaviorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/zoom-in-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  ListView Delete Behavior  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

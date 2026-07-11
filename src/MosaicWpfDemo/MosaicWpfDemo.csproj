@@ -249,6 +249,13 @@
 			<Link>LinkedSources\GridViewBehaviorsExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ImageMouseWheelZoomBehaviorExample.xaml">
+			<Link>LinkedSources\ImageMouseWheelZoomBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ImageMouseWheelZoomBehaviorExample.xaml.cs">
+			<Link>LinkedSources\ImageMouseWheelZoomBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\OpenWindowBehaviorExample.xaml">
 			<Link>LinkedSources\OpenWindowBehaviorExample.xaml</Link>
 		</EmbeddedResource>
