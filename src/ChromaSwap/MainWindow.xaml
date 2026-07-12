@@ -106,21 +106,33 @@
             IconSource="/Assets/app.png"
             TitleAlignment="Center">
             <mosaic:WindowTitleBar.RightContent>
-                <Button
-                    Width="48"
-                    Click="ButtonToggleTheme_OnClick"
-                    Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Toggle Theme">
-                    <Button.ContentTemplate>
-                        <DataTemplate>
-                            <Viewbox Width="16" Height="16">
-                                <Canvas Width="512" Height="512">
-                                    <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
-                                </Canvas>
-                            </Viewbox>
-                        </DataTemplate>
-                    </Button.ContentTemplate>
-                </Button>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Width="48"
+                        Click="GettingStartedButton_OnClick"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
+                        ToolTip="Getting Started">
+                        <TextBlock
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="16"
+                            Text="&#xE897;" />
+                    </Button>
+                    <Button
+                        Width="48"
+                        Click="ButtonToggleTheme_OnClick"
+                        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
+                        ToolTip="Toggle Theme">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <Viewbox Width="16" Height="16">
+                                    <Canvas Width="512" Height="512">
+                                        <Path Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                                    </Canvas>
+                                </Viewbox>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+                </StackPanel>
             </mosaic:WindowTitleBar.RightContent>
         </mosaic:WindowTitleBar>
 
@@ -303,10 +315,15 @@
                     MouseLeave="MainImage_OnMouseLeave"
                     MouseLeftButtonDown="MainImage_OnMouseLeftButtonDown"
                     MouseMove="MainImage_OnMouseMove"
-                    MouseRightButtonDown="MainImage_OnMouseRightButtonDown"
                     RenderOptions.BitmapScalingMode="NearestNeighbor"
                     Stretch="Uniform"
                     StretchDirection="DownOnly">
+                    <Image.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Click="CopyImageMenuItem_OnClick" Header="Copy Image" />
+                            <MenuItem Click="ExtractPaletteMenuItem_OnClick" Header="Extract Palette" />
+                        </ContextMenu>
+                    </Image.ContextMenu>
                     <b:Interaction.Behaviors>
                         <!--  Zoom the whole container so the checkerboard and border scale with the image.  -->
                         <mosaicBehaviors:ImageMouseWheelZoomBehavior MaxZoom="64" ZoomTarget="{Binding ElementName=CanvasContainer}" />
@@ -399,6 +416,7 @@
                                     <ContextMenu>
                                         <MenuItem Click="ExportCssButton_OnClick" Header="Export to CSS" />
                                         <MenuItem Click="ExportResourceDictionaryButton_OnClick" Header="Export to ResourceDictionary" />
+                                        <MenuItem Click="ExportHtmlPreviewButton_OnClick" Header="Export as HTML Preview" />
                                     </ContextMenu>
                                 </mosaic:SplitButton.ContextMenu>
                             </mosaic:SplitButton>
@@ -426,6 +444,12 @@
                                         Click="Swatch_OnClick"
                                         Style="{StaticResource QuietButtonStyle}"
                                         ToolTip="Copy hex">
+                                        <Button.ContextMenu>
+                                            <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                <MenuItem Click="ShowSwatchShades_OnClick" Header="Show Shades" />
+                                                <MenuItem Click="SetSwatchAsActiveColor_OnClick" Header="Set as Active Color" />
+                                            </ContextMenu>
+                                        </Button.ContextMenu>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
@@ -470,6 +494,108 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!--  Getting Started slide-in panel  -->
+            <Border
+                x:Name="GettingStartedPanel"
+                Width="340"
+                HorizontalAlignment="Right"
+                Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1,0,0,0"
+                RenderTransformOrigin="1,0"
+                Visibility="Collapsed">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="GettingStartedPanelTransform" X="350" />
+                </Border.RenderTransform>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Padding="18,14" BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlSeparatorBrush}}" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock FontSize="18" FontWeight="Bold" Text="Getting Started" />
+                                <TextBlock
+                                    Margin="0,3,36,0"
+                                    Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="Create a polished color swap in a few simple steps."
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <Button
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Click="CloseGettingStartedButton_OnClick"
+                                Style="{StaticResource QuietButtonStyle}"
+                                ToolTip="Close">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;" />
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" Padding="18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <TextBlock
+                                Margin="0,0,0,18"
+                                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="ChromaSwap helps you select a color from an image and replace it while preserving the image's detail."
+                                TextWrapping="Wrap" />
+
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="1" />
+                                </Border>
+                                <StackPanel Margin="12,0,0,0" Width="255">
+                                    <TextBlock FontWeight="SemiBold" Text="Open an image" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click Open Image, drag and drop a file into the workspace, or paste one with Ctrl+V." TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="2" />
+                                </Border>
+                                <StackPanel Margin="12,0,0,0" Width="255">
+                                    <TextBlock FontWeight="SemiBold" Text="Choose the source color" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click a pixel in the image. Use the magnifying loupe for precise selection and the color readouts below for confirmation." TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="3" />
+                                </Border>
+                                <StackPanel Margin="12,0,0,0" Width="255">
+                                    <TextBlock FontWeight="SemiBold" Text="Swap the color" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click Swap Colors, choose a replacement, then adjust tolerance. Enable matching shading to retain highlights and gradients." TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
+                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="4" />
+                                </Border>
+                                <StackPanel Margin="12,0,0,0" Width="255">
+                                    <TextBlock FontWeight="SemiBold" Text="Explore the palette" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Open Shades &amp; Tints or extract a palette. Click any swatch to copy its hex value, or export the palette for your project." TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
+                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="5" />
+                                </Border>
+                                <StackPanel Margin="12,0,0,0" Width="255">
+                                    <TextBlock FontWeight="SemiBold" Text="Save your result" />
+                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Use Undo if needed, then click Save to export the edited image as a PNG." TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
                     </ScrollViewer>
                 </Grid>
             </Border>

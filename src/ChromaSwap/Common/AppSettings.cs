@@ -53,6 +53,15 @@ namespace ChromaSwap.Common
         private MosaicThemeMode _theme = MosaicThemeMode.Dark;
 
         /// <summary>
+        /// Whether the introductory Getting Started panel has been shown at least once.
+        /// </summary>
+        [property: DisplayName("Getting Started Shown")]
+        [property: Category("UI")]
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private bool _hasShownGettingStarted;
+
+        /// <summary>
         /// The view state information for a given window.
         /// </summary>
         [property: Category("UI")]

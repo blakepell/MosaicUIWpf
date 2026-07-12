@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Themes;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Security;
 using System.Windows;
@@ -36,6 +37,7 @@ namespace ChromaSwap
     {
         private const int MaxHistoryEntries = 21;
         private const int PalettePanelOffset = -310;
+        private const int GettingStartedPanelOffset = 350;
         private const double LoupeSize = 100;
 
         private WriteableBitmap? _bitmap;
@@ -47,6 +49,7 @@ namespace ChromaSwap
         private readonly ObservableCollection<ShadeSwatch> _shades = new();
         private PalettePanelMode _palettePanelMode = PalettePanelMode.Shades;
         private bool _shadesPanelOpen;
+        private bool _gettingStartedPanelOpen;
         private bool _isSwapping;
 
         private enum PalettePanelMode
@@ -102,6 +105,58 @@ namespace ChromaSwap
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             _toasts = new ToastManager(RootGrid);
+
+            var appSettings = AppServices.GetRequiredService<AppSettings>();
+            if (!appSettings.HasShownGettingStarted)
+            {
+                this.SetGettingStartedPanelOpen(true);
+                appSettings.HasShownGettingStarted = true;
+                App.SaveAppSettings();
+            }
+        }
+
+        private void GettingStartedButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.SetGettingStartedPanelOpen(!_gettingStartedPanelOpen);
+        }
+
+        private void CloseGettingStartedButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.SetGettingStartedPanelOpen(false);
+        }
+
+        /// <summary>
+        /// Slides the Getting Started panel in or out from the right edge.
+        /// </summary>
+        /// <param name="open">True to slide the panel in, false to slide it out.</param>
+        private void SetGettingStartedPanelOpen(bool open)
+        {
+            if (_gettingStartedPanelOpen == open)
+            {
+                return;
+            }
+
+            _gettingStartedPanelOpen = open;
+            var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+            if (open)
+            {
+                GettingStartedPanel.Visibility = Visibility.Visible;
+                GettingStartedPanelTransform.BeginAnimation(TranslateTransform.XProperty,
+                    new DoubleAnimation(0, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease });
+            }
+            else
+            {
+                var slideOut = new DoubleAnimation(GettingStartedPanelOffset, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease };
+                slideOut.Completed += (_, _) =>
+                {
+                    if (!_gettingStartedPanelOpen)
+                    {
+                        GettingStartedPanel.Visibility = Visibility.Collapsed;
+                    }
+                };
+                GettingStartedPanelTransform.BeginAnimation(TranslateTransform.XProperty, slideOut);
+            }
         }
 
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
@@ -468,14 +523,36 @@ namespace ChromaSwap
             }
         }
 
-        private async void MainImage_OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        /// <summary>
+        /// Copies the current image to the Windows clipboard.
+        /// </summary>
+        private void CopyImageMenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             if (_bitmap == null)
             {
                 return;
             }
 
-            e.Handled = true;
+            try
+            {
+                Clipboard.SetImage(_bitmap);
+                this.ShowToast("Image copied to clipboard");
+            }
+            catch (Exception ex)
+            {
+                this.ShowToast($"Unable to copy image: {ex.Message}", ToastSeverity.Error);
+            }
+        }
+
+        /// <summary>
+        /// Prompts for a palette size and extracts that palette from the current image.
+        /// </summary>
+        private async void ExtractPaletteMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_bitmap == null)
+            {
+                return;
+            }
 
             try
             {
@@ -886,6 +963,88 @@ namespace ChromaSwap
             {
                 this.CopyToClipboard(swatch.Hex);
             }
+        }
+
+        private void ShowSwatchShades_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!this.TrySetActiveSwatch(sender))
+            {
+                return;
+            }
+
+            _palettePanelMode = PalettePanelMode.Shades;
+            PalettePanelTitle.Text = "Shades & Tints";
+            PalettePanelSubtitle.Text = "Click to copy hex";
+            this.GenerateShades();
+        }
+
+        private void SetSwatchAsActiveColor_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.TrySetActiveSwatch(sender);
+        }
+
+        private bool TrySetActiveSwatch(object sender)
+        {
+            if (sender is not FrameworkElement { DataContext: ShadeSwatch swatch })
+            {
+                return false;
+            }
+
+            _selectedColor = (Color)ColorConverter.ConvertFromString(swatch.Hex);
+            this.UpdateColorInfo(_selectedColor);
+            SwapButton.IsEnabled = true;
+            this.ShowToast($"Active color set to {swatch.Hex}.");
+            return true;
+        }
+
+        private void ExportHtmlPreviewButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_shades.Count == 0)
+            {
+                this.ShowToast("Nothing to export yet.", ToastSeverity.Info);
+                return;
+            }
+
+            try
+            {
+                var dialog = new SaveFileDialog
+                {
+                    Title = "Export HTML Preview",
+                    FileName = "chromaswap-palette.html",
+                    Filter = "HTML Files|*.html;*.htm|All Files|*.*"
+                };
+
+                if (dialog.ShowDialog(this) != true)
+                {
+                    return;
+                }
+
+                File.WriteAllText(dialog.FileName, this.BuildHtmlPreviewExport());
+                Process.Start(new ProcessStartInfo(dialog.FileName) { UseShellExecute = true });
+                this.ShowToast("HTML preview exported!");
+            }
+            catch (Exception ex)
+            {
+                this.ShowToast($"Export failed: {ex.Message}", ToastSeverity.Error);
+            }
+        }
+
+        private string BuildHtmlPreviewExport()
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">");
+            sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>ChromaSwap Palette</title>");
+            sb.AppendLine("<style>:root{color-scheme:light dark}*{box-sizing:border-box}body{margin:0;font:16px system-ui,sans-serif;background:#f4f6f8;color:#18202a}main{max-width:1100px;margin:auto;padding:48px 24px}h1{margin:0}p{color:#607080}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;margin-top:32px}.card{overflow:hidden;border-radius:14px;background:white;box-shadow:0 6px 24px #17202a18}.color{height:150px}.details{padding:16px}.name{font-weight:700}.hex{margin-top:5px;font-family:ui-monospace,monospace;color:#607080}@media(prefers-color-scheme:dark){body{background:#111820;color:#eef3f8}.card{background:#1d2732}p,.hex{color:#a9b6c3}}</style></head><body><main>");
+            sb.Append("<h1>ChromaSwap Palette</h1><p>").Append(_shades.Count).AppendLine(" colors · Generated by ChromaSwap</p><section class=\"grid\">");
+            foreach (var shade in _shades)
+            {
+                sb.Append("<article class=\"card\"><div class=\"color\" style=\"background:").Append(shade.Hex)
+                    .Append("\"></div><div class=\"details\"><div class=\"name\">").Append(System.Net.WebUtility.HtmlEncode(shade.Name))
+                    .Append("</div><div class=\"hex\">").Append(shade.Hex).AppendLine("</div></div></article>");
+            }
+
+            sb.AppendLine("</section></main></body></html>");
+            return sb.ToString();
         }
 
         private async void ExportCssButton_OnClick(object sender, RoutedEventArgs e)
