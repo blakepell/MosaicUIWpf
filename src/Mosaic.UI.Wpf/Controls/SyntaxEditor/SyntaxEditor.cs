@@ -936,6 +936,7 @@ namespace Mosaic.UI.Wpf.Controls
             var selectionFg = ResolveColor(dictionary, MosaicTheme.SelectionForegroundColor, null, Colors.White);
             var border = ResolveColor(dictionary, MosaicTheme.ControlBorderColor, null, Colors.Gray);
             var hover = ResolveColor(dictionary, MosaicTheme.ControlHoverBackgroundColor, null, lineNumbers);
+            var hyperLink = ResolveColor(dictionary, MosaicTheme.HyperLinkColor, MosaicTheme.HyperLinkHoverColor, Colors.CornflowerBlue);
 
             this.Background = new SolidColorBrush(background);
             this.Foreground = new SolidColorBrush(foreground);
@@ -948,6 +949,9 @@ namespace Mosaic.UI.Wpf.Controls
 
             this.TextArea.TextView.CurrentLineBackground = new SolidColorBrush(Color.FromArgb(0x28, hover.R, hover.G, hover.B));
             this.TextArea.TextView.CurrentLineBorder = new Pen(new SolidColorBrush(Color.FromArgb(0x40, hover.R, hover.G, hover.B)), 1.0);
+
+            // No setting here for the hover color :/
+            this.TextArea.TextView.LinkTextForegroundBrush = new SolidColorBrush(hyperLink);
 
             this.BorderBrush = new SolidColorBrush(border);
             this.BorderThickness = new Thickness(1);
