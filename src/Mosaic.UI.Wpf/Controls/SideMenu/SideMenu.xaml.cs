@@ -323,6 +323,50 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Selects a menu item by its zero-based index, counting only selectable items
+        /// (i.e. <see cref="SideMenuHeader"/> entries are skipped).
+        /// </summary>
+        public void SelectByIndex(int index)
+        {
+            int nonHeaderIndex = 0;
+
+            foreach (var item in MenuItems)
+            {
+                if (item is SideMenuHeader)
+                {
+                    continue;
+                }
+
+                if (nonHeaderIndex == index)
+                {
+                    SelectItem(item);
+                    return;
+                }
+
+                nonHeaderIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Selects a menu item by its <see cref="SideMenuItem.Text"/> property.
+        /// </summary>
+        /// <param name="text"></param>
+        public void SelectByText(string text)
+        {
+            var menuItem = this.MenuItems.FirstOrDefault(x => x.Text.Equals(text, StringComparison.OrdinalIgnoreCase));
+
+            if (menuItem is SideMenuHeader)
+            {
+                return;
+            }
+
+            if (menuItem != null)
+            {
+                SelectItem(menuItem);
+            }
+        }
+
+        /// <summary>
         /// Shows the <see cref="SideMenuItem.DialogContentType"/> as a dialog (modal) or modeless window.
         /// When shown modally the dialog's owner is set to the window hosting this menu.
         /// </summary>
@@ -346,31 +390,6 @@ namespace Mosaic.UI.Wpf.Controls
             else
             {
                 window.Show();
-            }
-        }
-
-        /// <summary>
-        /// Selects a menu item by its zero-based index, counting only selectable items
-        /// (i.e. <see cref="SideMenuHeader"/> entries are skipped).
-        /// </summary>
-        public void SelectByIndex(int index)
-        {
-            int nonHeaderIndex = 0;
-
-            foreach (var item in MenuItems)
-            {
-                if (item is SideMenuHeader)
-                {
-                    continue;
-                }
-
-                if (nonHeaderIndex == index)
-                {
-                    SelectItem(item);
-                    return;
-                }
-
-                nonHeaderIndex++;
             }
         }
 
