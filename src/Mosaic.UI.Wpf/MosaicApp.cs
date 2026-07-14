@@ -68,6 +68,12 @@ namespace Mosaic.UI.Wpf
         private static ConcurrentDictionary<string, ResourceDictionary> CachedResources { get; set; }
 
         /// <summary>
+        /// If the app should not save the settings on exit.  This will be used when it exits early before
+        /// settings are even loaded (as to not save out and corrupt an existing settings file).
+        /// </summary>
+        public static bool SkipSaveOnExit { get; set; } = false;
+
+        /// <summary>
         /// Initializes static members of the <see cref="MosaicApp"/> class.
         /// </summary>
         static MosaicApp()
@@ -116,6 +122,11 @@ namespace Mosaic.UI.Wpf
         /// <param name="e"></param>
         protected new void OnExit(ExitEventArgs e)
         {
+            if (SkipSaveOnExit)
+            {
+                return;
+            }
+
             SaveSettings();
         }
 
