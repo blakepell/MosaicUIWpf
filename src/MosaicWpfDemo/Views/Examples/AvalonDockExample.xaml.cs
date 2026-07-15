@@ -6,9 +6,13 @@
  */
 
 using Mosaic.UI.Wpf;
+using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows;
+using Mosaic.UI.Wpf.Controls;
 using AvalonDockMosaicTheme = Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme;
+using System.Drawing;
+using System.Windows.Media;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -19,6 +23,12 @@ namespace MosaicWpfDemo.Views.Examples
             InitializeComponent();
             ThemeManager.ThemeChanged += OnMosaicThemeChanged;
             Unloaded += OnUnloaded;
+
+            this.DockingManager.Add(new SyntaxEditor()
+            {
+                Language = SyntaxLanguage.Xml,
+                Text = "<html></html>"
+            }, "Sample HTML", Colors.Green, false, true, true);
         }
 
         private void OnMosaicThemeChanged(object? sender, MosaicThemeMode e)

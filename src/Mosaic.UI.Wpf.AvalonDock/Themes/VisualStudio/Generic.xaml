@@ -21,6 +21,7 @@
         TargetType="{x:Type MenuItem}">
         <Setter Property="HeaderTemplate" Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplate}" />
         <Setter Property="HeaderTemplateSelector" Value="{Binding Path=Root.Manager.DocumentPaneMenuItemHeaderTemplateSelector}" />
+        <Setter Property="Command" Value="{Binding Path=., Converter={avalonDockConverters:ActivateCommandLayoutItemFromLayoutModelConverter}}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" />
         <Setter Property="Template" Value="{StaticResource MLibMenuItem}" />
@@ -123,7 +124,7 @@
                                 Focusable="False"
                                 Style="{StaticResource AvalonDockThemeVs2013ToolButtonStyle}">
                                 <avalonDockControls:DropDownButton.DropDownContextMenu>
-                                    <ContextMenu ItemsSource="{Binding Model.ChildrenSorted, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <ContextMenu ItemContainerStyle="{StaticResource AvalonDockThemeVs2013MenuItemStyle}" ItemsSource="{Binding Model.ChildrenSorted, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </avalonDockControls:DropDownButton.DropDownContextMenu>
                                 <Path
                                     x:Name="MenuDropDownButtonImage"
@@ -173,6 +174,11 @@
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="BD" Property="BorderBrush" Value="{DynamicResource {x:Static reskeys:ResourceKeys.DocumentWellTabSelectedInactiveBackground}}" />
                         </MultiDataTrigger>
+
+                        <!--  Document Well : full-width accent line follows the selected tab's custom color (LayoutContent.TabBackground)  -->
+                        <DataTrigger Binding="{Binding SelectedItem.HasTabBackground, RelativeSource={RelativeSource Self}}" Value="True">
+                            <Setter TargetName="BD" Property="BorderBrush" Value="{Binding SelectedItem.TabBackground, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </DataTrigger>
 
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
