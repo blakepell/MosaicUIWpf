@@ -1568,6 +1568,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="transform">The transformation to apply to the parsed JSON node.</param>
         private void TransformJson(Func<JsonNode, string> transform)
         {
+            if (this.IsReadOnly)
+            {
+                return;
+            }
+
             string text = this.Text;
             if (string.IsNullOrWhiteSpace(text))
             {
