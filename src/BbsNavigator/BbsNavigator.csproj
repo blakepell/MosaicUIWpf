@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Assets\add-48.png" />
+    <None Remove="Assets\edit-property-48.png" />
+    <None Remove="Assets\minus-48.png" />
+    <None Remove="Assets\terminal-gray-48.png" />
+    <None Remove="Assets\terminal-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mosaic.UI.Wpf.AvalonDock\Mosaic.UI.Wpf.AvalonDock.csproj" />
+    <ProjectReference Include="..\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\add-48.png" />
+    <Resource Include="Assets\app.png" />
+    <Resource Include="Assets\edit-property-48.png" />
+    <Resource Include="Assets\minus-48.png" />
+    <Resource Include="Assets\terminal-gray-48.png" />
+    <Resource Include="Assets\terminal-48.png" />
+  </ItemGroup>
+</Project>

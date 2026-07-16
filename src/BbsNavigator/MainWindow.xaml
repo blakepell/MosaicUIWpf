@@ -1,0 +1,260 @@
+<Window
+    x:Class="BbsNavigator.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ad="https://github.com/blakepell/MosaicUIWpf"
+    xmlns:converters="clr-namespace:BbsNavigator.Converters"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:models="clr-namespace:BbsNavigator.Models"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    Title="BBS Navigator"
+    Width="1280"
+    Height="820"
+    MinWidth="900"
+    MinHeight="600"
+    mosaic:WindowChromeBehavior.CaptionHeight="0"
+    mosaic:WindowChromeBehavior.CornerRadius="10"
+    mosaic:WindowChromeBehavior.GlassFrameThickness="0"
+    mosaic:WindowChromeBehavior.IsEnabled="True"
+    mosaic:WindowChromeBehavior.ResizeBorderThickness="5"
+    mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
+    Loaded="MainWindow_OnLoaded"
+    WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36" />
+            <RowDefinition Height="28" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <mosaic:WindowTitleBar
+            Grid.Row="0"
+            IconSource="/Assets/app.png"
+            ShowIcon="True"
+            TitleAlignment="Center"
+            TitleText="BBS Navigator">
+            <mosaic:WindowTitleBar.RightContent>
+                <Button
+                    Width="48"
+                    Click="ToggleTheme_OnClick"
+                    Content="◐"
+                    FontSize="17"
+                    Style="{DynamicResource {x:Static mosaic:MosaicTheme.WindowTitleBarButtonStyle}}"
+                    ToolTip="Toggle light and dark themes" />
+            </mosaic:WindowTitleBar.RightContent>
+        </mosaic:WindowTitleBar>
+
+        <Menu
+            Grid.Row="1"
+            Margin="4,0,0,0"
+            Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+            <MenuItem Header="_File">
+                <MenuItem
+                    Click="ConnectSelected_OnClick"
+                    Header="_Connect"
+                    InputGestureText="Enter" />
+                <MenuItem Click="DisconnectSelected_OnClick" Header="_Disconnect" />
+                <Separator />
+                <MenuItem Click="Exit_OnClick" Header="E_xit" />
+            </MenuItem>
+            <MenuItem Header="_Directory">
+                <MenuItem
+                    Click="AddBbs_OnClick"
+                    Header="_Add BBS…"
+                    InputGestureText="Ctrl+N" />
+                <MenuItem Click="EditBbs_OnClick" Header="_Edit BBS…" />
+                <MenuItem Click="RemoveBbs_OnClick" Header="_Remove BBS" />
+            </MenuItem>
+            <MenuItem Header="_Setup">
+                <MenuItem Click="Options_OnClick" Header="_Options…" />
+                <MenuItem Click="ToggleTheme_OnClick" Header="Toggle _Theme" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Click="About_OnClick" Header="_About BBS Navigator" />
+            </MenuItem>
+        </Menu>
+
+        <Border
+            Grid.Row="2"
+            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="1,0,1,1">
+            <ad:DockingManager x:Name="DockingManager" DocumentClosed="DockingManager_OnDocumentClosed">
+                <ad:DockingManager.Theme>
+                    <ad:MosaicTheme />
+                </ad:DockingManager.Theme>
+                <ad:LayoutRoot>
+                    <ad:LayoutPanel Orientation="Horizontal">
+                        <ad:LayoutAnchorablePane DockMinWidth="230" DockWidth="290">
+                            <ad:LayoutAnchorable
+                                Title="BBS Directory"
+                                CanAutoHide="True"
+                                CanClose="False"
+                                CanHide="False"
+                                ContentId="bbs-directory">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Border
+                                        Padding="2"
+                                        Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+                                        BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+                                        BorderThickness="0,0,0,1">
+                                        <DockPanel>
+                                            <ToolBar>
+                                                <Button Margin="2,0,0,0" Click="AddBbs_OnClick">
+                                                    <mosaic:SimpleStackPanel Orientation="Horizontal">
+                                                        <Image
+                                                            Width="18"
+                                                            Height="18"
+                                                            Source="pack://application:,,,/BbsNavigator;component/Assets/add-48.png" />
+                                                        <TextBlock Margin="4,0,0,0" Text="Add" />
+                                                    </mosaic:SimpleStackPanel>
+                                                </Button>
+
+                                                <Button Margin="2,0,0,0" Click="EditBbs_OnClick">
+                                                    <mosaic:SimpleStackPanel Orientation="Horizontal">
+                                                        <Image
+                                                            Width="18"
+                                                            Height="18"
+                                                            Source="pack://application:,,,/BbsNavigator;component/Assets/edit-property-48.png" />
+                                                        <TextBlock Margin="4,0,0,0" Text="Edit" />
+                                                    </mosaic:SimpleStackPanel>
+                                                </Button>
+
+                                                <Button Margin="2,0,0,0" Click="RemoveBbs_OnClick">
+                                                    <mosaic:SimpleStackPanel Orientation="Horizontal">
+                                                        <Image
+                                                            Width="18"
+                                                            Height="18"
+                                                            Source="pack://application:,,,/BbsNavigator;component/Assets/minus-48.png" />
+                                                        <TextBlock Margin="4,0,0,0" Text="Remove" />
+                                                    </mosaic:SimpleStackPanel>
+                                                </Button>
+                                            </ToolBar>
+                                        </DockPanel>
+                                    </Border>
+
+                                    <mosaic:SearchBox
+                                        Grid.Row="1"
+                                        Margin="8"
+                                        Watermark="Search saved systems…">
+                                        <i:Interaction.Behaviors>
+                                            <mosaic:ItemsControlFilterBehavior TargetItemsControl="{Binding ElementName=BbsTree}" />
+                                        </i:Interaction.Behaviors>
+                                    </mosaic:SearchBox>
+
+                                    <TreeView
+                                        x:Name="BbsTree"
+                                        Grid.Row="2"
+                                        BorderThickness="0"
+                                        ItemsSource="{Binding BbsProfiles}"
+                                        MouseDoubleClick="BbsTree_OnMouseDoubleClick">
+                                        <TreeView.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type models:BbsProfile}">
+                                                <Border
+                                                    Padding="8,7"
+                                                    Background="Transparent"
+                                                    CornerRadius="3">
+                                                    <Grid ToolTip="{Binding LastConnected, Converter={x:Static converters:LastConnectedConverter.Instance}}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="28" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <Image
+                                                            x:Name="ConnectionIcon"
+                                                            Width="18"
+                                                            Height="18"
+                                                            Margin="0,0,8,0"
+                                                            VerticalAlignment="Center"
+                                                            Source="Assets/terminal-gray-48.png" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Text="{Binding Name}"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                        <mosaic:Shield
+                                                            Grid.Row="1"
+                                                            Grid.Column="1"
+                                                            Margin="0,2,0,0"
+                                                            Label="{Binding Host}"
+                                                            ValueBackgroundBrush="Green"
+                                                            ValueForegroundBrush="White"
+                                                            Value="{Binding Port}" />
+                                                    </Grid>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static models:BbsConnectionState.Connected}">
+                                                        <Setter TargetName="ConnectionIcon" Property="Source" Value="Assets/terminal-48.png" />
+                                                    </DataTrigger>
+                                                    <!--  Placeholder until a dedicated connecting icon is available.  -->
+                                                    <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static models:BbsConnectionState.Connecting}">
+                                                        <Setter TargetName="ConnectionIcon" Property="Source" Value="Assets/terminal-gray-48.png" />
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </TreeView.ItemTemplate>
+                                    </TreeView>
+
+                                    <TextBlock
+                                        Grid.Row="3"
+                                        Margin="10,7"
+                                        FontSize="11"
+                                        Opacity="0.7"
+                                        Text="Double-click a system to connect" />
+                                </Grid>
+                            </ad:LayoutAnchorable>
+                        </ad:LayoutAnchorablePane>
+
+                        <ad:LayoutDocumentPane>
+                            <ad:LayoutDocument
+                                Title="Welcome"
+                                CanClose="True"
+                                ContentId="welcome"
+                                IsSelected="True">
+                                <Grid Margin="36">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock
+                                        FontSize="30"
+                                        FontWeight="SemiBold"
+                                        Text="BBS Navigator" />
+                                    <TextBlock
+                                        Grid.Row="1"
+                                        MaxWidth="620"
+                                        Margin="0,12,0,22"
+                                        HorizontalAlignment="Left"
+                                        FontSize="15"
+                                        LineHeight="24"
+                                        Text="Choose a saved bulletin board from the directory and double-click it to open a terminal tab. Pin, auto-hide, or resize the directory just like an IDE tool window."
+                                        TextWrapping="Wrap" />
+                                    <mosaic:InfoCard
+                                        Title="Quick start"
+                                        Grid.Row="2"
+                                        MaxWidth="620"
+                                        HorizontalAlignment="Left"
+                                        HeaderContent="Telnet terminal sessions">
+                                        <TextBlock Text="Use Directory → Add BBS to save another system. Connection status appears both beside the saved system and above its terminal." TextWrapping="Wrap" />
+                                    </mosaic:InfoCard>
+                                </Grid>
+                            </ad:LayoutDocument>
+                        </ad:LayoutDocumentPane>
+                    </ad:LayoutPanel>
+                </ad:LayoutRoot>
+            </ad:DockingManager>
+        </Border>
+    </Grid>
+</Window>

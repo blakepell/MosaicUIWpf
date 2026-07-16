@@ -517,10 +517,16 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Border Padding="18,14" BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlSeparatorBrush}}" BorderThickness="0,0,0,1">
+                    <Border
+                        Padding="18,14"
+                        BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlSeparatorBrush}}"
+                        BorderThickness="0,0,0,1">
                         <Grid>
                             <StackPanel>
-                                <TextBlock FontSize="18" FontWeight="Bold" Text="Getting Started" />
+                                <TextBlock
+                                    FontSize="18"
+                                    FontWeight="Bold"
+                                    Text="Getting Started" />
                                 <TextBlock
                                     Margin="0,3,36,0"
                                     Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
@@ -538,7 +544,11 @@
                         </Grid>
                     </Border>
 
-                    <ScrollViewer Grid.Row="1" Padding="18" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer
+                        Grid.Row="1"
+                        Padding="18"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
                         <StackPanel>
                             <TextBlock
                                 Margin="0,0,0,18"
@@ -547,52 +557,117 @@
                                 TextWrapping="Wrap" />
 
                             <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
-                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="1" />
+                                <Border
+                                    Width="30"
+                                    Height="30"
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                    CornerRadius="15">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="1" />
                                 </Border>
-                                <StackPanel Margin="12,0,0,0" Width="255">
+                                <StackPanel Width="255" Margin="12,0,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="Open an image" />
-                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click Open Image, drag and drop a file into the workspace, or paste one with Ctrl+V." TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="Click Open Image, drag and drop a file into the workspace, or paste one with Ctrl+V."
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </StackPanel>
 
                             <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
-                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="2" />
+                                <Border
+                                    Width="30"
+                                    Height="30"
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                    CornerRadius="15">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="2" />
                                 </Border>
-                                <StackPanel Margin="12,0,0,0" Width="255">
+                                <StackPanel Width="255" Margin="12,0,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="Choose the source color" />
-                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click a pixel in the image. Use the magnifying loupe for precise selection and the color readouts below for confirmation." TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="Click a pixel in the image. Use the magnifying loupe for precise selection and the color readouts below for confirmation."
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </StackPanel>
 
                             <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
-                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="3" />
+                                <Border
+                                    Width="30"
+                                    Height="30"
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                    CornerRadius="15">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="3" />
                                 </Border>
-                                <StackPanel Margin="12,0,0,0" Width="255">
+                                <StackPanel Width="255" Margin="12,0,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="Swap the color" />
-                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Click Swap Colors, choose a replacement, then adjust tolerance. Enable matching shading to retain highlights and gradients." TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="Click Swap Colors, choose a replacement, then adjust tolerance. Enable matching shading to retain highlights and gradients."
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </StackPanel>
 
                             <StackPanel Margin="0,0,0,18" Orientation="Horizontal">
-                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="4" />
+                                <Border
+                                    Width="30"
+                                    Height="30"
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                    CornerRadius="15">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="4" />
                                 </Border>
-                                <StackPanel Margin="12,0,0,0" Width="255">
+                                <StackPanel Width="255" Margin="12,0,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="Explore the palette" />
-                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Open Shades &amp; Tints or extract a palette. Click any swatch to copy its hex value, or export the palette for your project." TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="Open Shades &amp; Tints or extract a palette. Click any swatch to copy its hex value, or export the palette for your project."
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal">
-                                <Border Width="30" Height="30" Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}" CornerRadius="15">
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="White" Text="5" />
+                                <Border
+                                    Width="30"
+                                    Height="30"
+                                    Background="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
+                                    CornerRadius="15">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="5" />
                                 </Border>
-                                <StackPanel Margin="12,0,0,0" Width="255">
+                                <StackPanel Width="255" Margin="12,0,0,0">
                                     <TextBlock FontWeight="SemiBold" Text="Save your result" />
-                                    <TextBlock Margin="0,4,0,0" Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}" Text="Use Undo if needed, then click Save to export the edited image as a PNG." TextWrapping="Wrap" />
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="Use Undo if needed, then click Save to export the edited image as a PNG."
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
@@ -650,9 +725,9 @@
                     MaxWidth="700"
                     Columns="3">
                     <Border
+                        MaxHeight="50"
                         Margin="4,0"
                         Padding="10,6"
-                        MaxHeight="50"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1"
@@ -686,9 +761,9 @@
                     </Border>
 
                     <Border
+                        MaxHeight="50"
                         Margin="4,0"
                         Padding="10,6"
-                        MaxHeight="50"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
                         BorderThickness="1"
@@ -722,11 +797,11 @@
                     </Border>
 
                     <Border
+                        MaxHeight="50"
                         Margin="4,0"
                         Padding="10,6"
                         Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundLightBrush}}"
                         BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
-                        MaxHeight="50"
                         BorderThickness="1"
                         CornerRadius="6">
                         <Grid>

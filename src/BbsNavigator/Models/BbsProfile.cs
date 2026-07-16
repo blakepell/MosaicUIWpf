@@ -1,0 +1,88 @@
+/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
+using Cysharp.Text;
+
+namespace BbsNavigator.Models
+{
+    /// <summary>
+    /// Defines a saved bulletin board system endpoint.
+    /// </summary>
+    public partial class BbsProfile : ObservableObject
+    {
+        [ObservableProperty]
+        private Guid _id = Guid.NewGuid();
+
+        [property: Category("BBS")]
+        [ObservableProperty]
+        private string _name = "New BBS";
+
+        [property: Category("Connection")]
+        [ObservableProperty]
+        private string _host = "localhost";
+
+        [property: Category("Connection")]
+        [ObservableProperty]
+        private int _port = 23;
+
+        [property: Category("Connection")]
+        [ObservableProperty]
+        private DateTime? _lastConnected;
+
+        [property: Category("BBS")]
+        [ObservableProperty]
+        private string _description = string.Empty;
+
+        [property: Category("Connection")]
+        [property: DisplayName("Reconnect automatically")]
+        [ObservableProperty]
+        private bool _autoReconnect = true;
+
+        [property: Category("Terminal")]
+        [property: DisplayName("Show typed characters locally")]
+        [property: Description("Displays keyboard input immediately for systems that do not negotiate or provide remote echo.")]
+        [ObservableProperty]
+        private bool _localEcho;
+
+        [JsonIgnore]
+        [ObservableProperty]
+        private BbsConnectionState _connectionState = BbsConnectionState.Disconnected;
+
+        /// <summary>
+        /// Gets the host and port in display form.
+        /// </summary>
+        [JsonIgnore]
+        public string Endpoint => $"{Host}:{Port}";
+
+        partial void OnHostChanged(string value)
+        {
+            OnPropertyChanged(nameof(Endpoint));
+        }
+
+        partial void OnPortChanged(int value)
+        {
+            OnPropertyChanged(nameof(Endpoint));
+        }
+
+        /// <summary>
+        /// Overridden ToString() returns a key used in searching on the UI.
+        /// </summary>
+        public override string ToString()
+        {
+            using (var sb = ZString.CreateStringBuilder())
+            {
+                sb.Append($"{Name},{Host}:{Port},{Description}");
+                return sb.ToString();
+            }
+        }
+    }
+}

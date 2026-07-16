@@ -1,0 +1,42 @@
+<Window
+    x:Class="BbsNavigator.Views.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    Title="BBS Navigator Options"
+    Width="620"
+    Height="500"
+    mosaic:WindowChromeBehavior.CaptionHeight="0"
+    mosaic:WindowChromeBehavior.CornerRadius="10"
+    mosaic:WindowChromeBehavior.GlassFrameThickness="0"
+    mosaic:WindowChromeBehavior.IsEnabled="True"
+    mosaic:WindowChromeBehavior.ResizeBorderThickness="5"
+    mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+    Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <mosaic:WindowTitleBar
+            Grid.Row="0"
+            IconSource="/Assets/app.png"
+            ShowMaxRestoreButton="False"
+            ShowMinimizeButton="False" />
+
+        <Grid Grid.Row="1" Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Margin="0,0,0,12" FontSize="20" FontWeight="SemiBold" Text="Application options" />
+            <mosaic:PropertyGrid Grid.Row="1" Object="{Binding}" />
+            <Button Grid.Row="2" Width="90" Margin="0,12,0,0" HorizontalAlignment="Right" IsCancel="True" IsDefault="True">Close</Button>
+        </Grid>
+    </Grid>
+</Window>
