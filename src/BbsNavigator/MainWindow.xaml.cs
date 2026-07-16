@@ -17,6 +17,7 @@ using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
 using Mosaic.UI.Wpf.Themes;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -115,6 +116,58 @@ namespace BbsNavigator
             {
                 Settings.BbsProfiles.Add(editor.Profile);
             }
+        }
+
+        private void ImportBbsList_OnClick(object sender, RoutedEventArgs e)
+        {
+            string[]? fileNames = WpfUtilities.OpenFilesRequest(
+                "Import BBS List",
+                "CSV files (*.csv)|*.csv|All files (*.*)|*.*");
+
+            if (fileNames == null || fileNames.Length == 0)
+            {
+                return;
+            }
+
+            int importedCount = 0;
+            int skippedCount = 0;
+            var errors = new List<string>();
+
+            foreach (string fileName in fileNames)
+            {
+                try
+                {
+                    BbsListImportResult result = BbsListCsvImporter.Import(fileName);
+                    foreach (BbsProfile profile in result.Profiles)
+                    {
+                        Settings.BbsProfiles.Add(profile);
+                    }
+
+                    importedCount += result.Profiles.Count;
+                    skippedCount += result.SkippedCount;
+                }
+                catch (Exception ex)
+                {
+                    errors.Add($"{Path.GetFileName(fileName)}: {ex.Message}");
+                }
+            }
+
+            string summary = $"Imported {importedCount:N0} BBS profile{(importedCount == 1 ? string.Empty : "s")}.";
+            if (skippedCount > 0)
+            {
+                summary += $"\nSkipped {skippedCount:N0} row{(skippedCount == 1 ? string.Empty : "s")} without a valid TelnetAddress and bbsPort.";
+            }
+
+            if (errors.Count > 0)
+            {
+                summary += $"\n\nCould not import:\n{string.Join("\n", errors)}";
+            }
+
+            Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                summary,
+                "Import BBS List",
+                MessageBoxButton.OK,
+                errors.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
         }
 
         private void EditBbs_OnClick(object sender, RoutedEventArgs e)

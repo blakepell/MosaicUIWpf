@@ -64,6 +64,8 @@
                     Click="AddBbs_OnClick"
                     Header="_Add BBS…"
                     InputGestureText="Ctrl+N" />
+                <MenuItem Click="ImportBbsList_OnClick" Header="_Import BBS List…" />
+                <Separator />
                 <MenuItem Click="EditBbs_OnClick" Header="_Edit BBS…" />
                 <MenuItem Click="RemoveBbs_OnClick" Header="_Remove BBS" />
             </MenuItem>
