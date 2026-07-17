@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using System.Globalization;
@@ -50,6 +51,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public bool Visible { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets the terminal-controlled position of the block caret.
+        /// </summary>
+        internal TextViewPosition Position { get; set; } = new(1, 1);
+
+        /// <summary>
         /// Draw the block caret.
         /// </summary>
         /// <param name="textView"></param>
@@ -61,10 +67,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            var caret = _textArea.Caret;
-
             // Determine the visual position of the caret.
-            var pos = caret.Position;
+            var pos = Position;
             var point = textView.GetVisualPosition(pos, VisualYPosition.LineTop) - textView.ScrollOffset;
             var rect = new Rect(point, new Size(textView.WideSpaceWidth, textView.DefaultLineHeight));
 

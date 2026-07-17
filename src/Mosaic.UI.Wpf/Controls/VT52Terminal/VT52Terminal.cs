@@ -9,6 +9,7 @@
  */
 
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Rendering;
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 
 namespace Mosaic.UI.Wpf.Controls.VT52Terminal
@@ -383,6 +384,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             TextArea.TextView.Options.EnableHyperlinks = false;
             TextArea.TextView.Options.EnableEmailHyperlinks = false;
+            TextArea.Caret.CaretBrush = Brushes.Transparent;
             TextOptions.SetTextFormattingMode(this, TextFormattingMode.Display);
 
             this.TextArea.TextView.BackgroundRenderers.Add(new TerminalBackgroundRenderer(this));
@@ -2660,11 +2662,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             int targetLine = Math.Max(1, Math.Min(offset + curRow + 1, Document.LineCount));
             var line = Document.GetLineByNumber(targetLine);
             int targetColumn = Math.Max(1, Math.Min(curCol + 1, line.Length + 1)); // allow caret after last char
-            var position = TextArea.Caret.Position;
+            var position = _caretRenderer?.Position ?? new TextViewPosition(1, 1);
 
             if (position.Line != targetLine || position.Column != targetColumn)
             {
-                TextArea.Caret.Position = new TextViewPosition(targetLine, targetColumn);
+                _caretRenderer!.Position = new TextViewPosition(targetLine, targetColumn);
+                TextArea.TextView.InvalidateLayer(KnownLayer.Caret);
             }
 
             // Keep the header pinned at the very top when explicitly requested (e.g., after Reset).

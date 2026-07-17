@@ -108,5 +108,6 @@ Terminal.DataReceived += (_, data) =>
 
 - `VT52Colorizer` handles 256-color SGR sequences; it is wired automatically.
 - `TerminalScrollback` manages the scrollback history; configure its `MaxLines` property to limit memory usage.
+- Mouse clicks and text selection use AvalonEdit's selection caret without moving the terminal-controlled block cursor.
 - The control is **not** a VT52 emulator despite its name — the name is legacy.
 - Use a monospaced font (Cascadia Mono, Consolas, Courier New) for correct rendering of DEC line-drawing characters.
