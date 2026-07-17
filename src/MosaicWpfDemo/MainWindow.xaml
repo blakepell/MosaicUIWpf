@@ -14,6 +14,8 @@
     Title="Mosaic UI WPF Demo"
     Width="1200"
     Height="800"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="10"
     theme:WindowChromeBehavior.GlassFrameThickness="0"

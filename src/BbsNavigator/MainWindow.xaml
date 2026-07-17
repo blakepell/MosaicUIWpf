@@ -21,6 +21,8 @@
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>

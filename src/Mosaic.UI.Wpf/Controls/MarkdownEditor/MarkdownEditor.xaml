@@ -39,6 +39,7 @@
                     IsEnabled="{Binding IsModified, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
                     ToolTip="Save">
+                    
                     <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-save-16.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
                 </Button>
 

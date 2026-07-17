@@ -21,6 +21,8 @@
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen">
 
     <Grid HorizontalAlignment="Stretch">

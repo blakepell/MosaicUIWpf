@@ -16,6 +16,8 @@
     theme:WindowChromeBehavior.ResizeBorderThickness="5"
     theme:WindowChromeBehavior.RoundBorder="True"
     theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    UseLayoutRounding="True"
+    SnapsToDevicePixels="True"    
     Background="{DynamicResource {x:Static theme:MosaicTheme.WindowBackgroundBrush}}"
     BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.AccentBrush}}"
     BorderThickness="0"
