@@ -202,6 +202,11 @@ namespace BbsNavigator.Networking
                 }
             }
 
+            // A keyboard or Telnet negotiation write may still be unwinding after the
+            // stream is closed. Wait until it has released the send gate before disposal.
+            await _sendGate.WaitAsync().ConfigureAwait(false);
+            _sendGate.Release();
+
             return true;
         }
 

@@ -236,6 +236,15 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             new PropertyMetadata(false));
 
         /// <summary>
+        /// Identifies the <see cref="BackspaceSendsDelete"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BackspaceSendsDeleteProperty = DependencyProperty.Register(
+            nameof(BackspaceSendsDelete),
+            typeof(bool),
+            typeof(VT52Terminal),
+            new PropertyMetadata(true));
+
+        /// <summary>
         /// Identifies the <see cref="MaxScrollbackLines"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty MaxScrollbackLinesProperty = DependencyProperty.Register(
@@ -287,6 +296,20 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             get => (bool)GetValue(LocalEchoProperty);
             set => SetValue(LocalEchoProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether Backspace sends DEL (<c>0x7F</c>)
+        /// instead of BS (<c>0x08</c>).
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> to send DEL; otherwise, <see langword="false"/> to send BS.
+        /// The default is <see langword="true"/>.
+        /// </value>
+        public bool BackspaceSendsDelete
+        {
+            get => (bool)GetValue(BackspaceSendsDeleteProperty);
+            set => SetValue(BackspaceSendsDeleteProperty, value);
         }
 
         /// <summary>
@@ -656,7 +679,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 Key.PageUp => EditKey(5, mod),
                 Key.PageDown => EditKey(6, mod),
                 Key.Enter or Key.Return => _newLineMode ? "\r\n" : "\r",
-                Key.Back => "\x7f",
+                Key.Back => BackspaceSendsDelete ? "\x7f" : "\x08",
                 Key.Tab => "\t",
                 Key.Escape => "\x1b",
                 _ => null

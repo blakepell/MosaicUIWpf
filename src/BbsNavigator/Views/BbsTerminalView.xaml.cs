@@ -24,9 +24,12 @@ namespace BbsNavigator.Views
     {
         private readonly BbsTelnetConnection _connection;
         private readonly CancellationTokenSource _lifetimeCancellation = new();
+        private readonly CancellationToken _lifetimeToken;
         private readonly SemaphoreSlim _connectionGate = new(1, 1);
+        private readonly object _disposeLock = new();
         private readonly int _reconnectDelaySeconds;
-        private bool _disposed;
+        private Task? _disposeTask;
+        private volatile bool _disposed;
         private bool _manualDisconnect;
         private int _reconnectScheduled;
         private int _scrollToEndQueued;
@@ -37,6 +40,7 @@ namespace BbsNavigator.Views
         public BbsTerminalView(BbsProfile profile, double fontSize, int reconnectDelaySeconds)
         {
             InitializeComponent();
+            _lifetimeToken = _lifetimeCancellation.Token;
             Profile = profile;
             _reconnectDelaySeconds = Math.Max(1, reconnectDelaySeconds);
             _connection = new BbsTelnetConnection(profile.Host, profile.Port);
@@ -64,9 +68,17 @@ namespace BbsNavigator.Views
                 return;
             }
 
-            await _connectionGate.WaitAsync(_lifetimeCancellation.Token);
+            bool gateEntered = false;
             try
             {
+                await _connectionGate.WaitAsync(_lifetimeToken);
+                gateEntered = true;
+
+                if (_disposed)
+                {
+                    return;
+                }
+
                 if (_connection.IsConnected)
                 {
                     return;
@@ -77,12 +89,15 @@ namespace BbsNavigator.Views
                     reconnecting ? BbsConnectionState.Reconnecting : BbsConnectionState.Connecting,
                     reconnecting ? $"Reconnecting to {Profile.Endpoint}…" : $"Connecting to {Profile.Endpoint}…");
 
-                await _connection.ConnectAsync(_lifetimeCancellation.Token);
+                await _connection.ConnectAsync(_lifetimeToken);
                 UpdateStatus(BbsConnectionState.Connected, $"Connected to {Profile.Endpoint}");
                 Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
             }
-            catch (OperationCanceledException) when (_lifetimeCancellation.IsCancellationRequested)
+            catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
+            {
+            }
+            catch (ObjectDisposedException) when (_disposed)
             {
             }
             catch (Exception ex)
@@ -92,13 +107,18 @@ namespace BbsNavigator.Views
             }
             finally
             {
-                _connectionGate.Release();
+                if (gateEntered)
+                {
+                    _connectionGate.Release();
+                }
             }
         }
 
         private async void BbsTerminalView_OnLoaded(object sender, RoutedEventArgs e)
         {
             Loaded -= BbsTerminalView_OnLoaded;
+            UpdateStatus(BbsConnectionState.Connecting, $"Connecting to {Profile.Endpoint}…");
+            await Dispatcher.Yield(DispatcherPriority.Background);
             await ConnectAsync();
         }
 
@@ -161,7 +181,7 @@ namespace BbsNavigator.Views
             try
             {
                 UpdateStatus(BbsConnectionState.Reconnecting, $"Reconnecting in {_reconnectDelaySeconds} seconds…");
-                await Task.Delay(TimeSpan.FromSeconds(_reconnectDelaySeconds), _lifetimeCancellation.Token);
+                await Task.Delay(TimeSpan.FromSeconds(_reconnectDelaySeconds), _lifetimeToken);
                 await ConnectAsync(reconnecting: true);
             }
             catch (OperationCanceledException)
@@ -185,10 +205,49 @@ namespace BbsNavigator.Views
 
         private async void Disconnect_OnClick(object sender, RoutedEventArgs e)
         {
-            _manualDisconnect = true;
-            Interlocked.Exchange(ref _reconnectScheduled, 0);
-            await _connection.DisconnectAsync();
-            UpdateStatus(BbsConnectionState.Disconnected, $"Disconnected from {Profile.Endpoint}");
+            await DisconnectAsync();
+        }
+
+        private async Task DisconnectAsync()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            bool gateEntered = false;
+            try
+            {
+                await _connectionGate.WaitAsync(_lifetimeToken);
+                gateEntered = true;
+
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _manualDisconnect = true;
+                Interlocked.Exchange(ref _reconnectScheduled, 0);
+                await _connection.DisconnectAsync();
+
+                if (!_disposed)
+                {
+                    UpdateStatus(BbsConnectionState.Disconnected, $"Disconnected from {Profile.Endpoint}");
+                }
+            }
+            catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
+            {
+            }
+            catch (ObjectDisposedException) when (_disposed)
+            {
+            }
+            finally
+            {
+                if (gateEntered)
+                {
+                    _connectionGate.Release();
+                }
+            }
         }
 
         private void UpdateStatus(BbsConnectionState state, string message)
@@ -209,23 +268,35 @@ namespace BbsNavigator.Views
         }
 
         /// <inheritdoc />
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-            if (_disposed)
+            lock (_disposeLock)
             {
-                return;
+                return new ValueTask(_disposeTask ??= DisposeCoreAsync());
             }
+        }
 
+        private async Task DisposeCoreAsync()
+        {
             _disposed = true;
             _manualDisconnect = true;
             _lifetimeCancellation.Cancel();
             _connection.ConnectionLost -= Connection_OnConnectionLost;
             _connection.DataReceived -= Connection_OnDataReceived;
             Terminal.Connection = null;
-            await _connection.DisposeAsync();
-            _connectionGate.Dispose();
-            _lifetimeCancellation.Dispose();
-            Profile.ConnectionState = BbsConnectionState.Disconnected;
+
+            await _connectionGate.WaitAsync();
+            try
+            {
+                await _connection.DisposeAsync();
+            }
+            finally
+            {
+                _connectionGate.Release();
+                _connectionGate.Dispose();
+                _lifetimeCancellation.Dispose();
+                Profile.ConnectionState = BbsConnectionState.Disconnected;
+            }
         }
     }
 }

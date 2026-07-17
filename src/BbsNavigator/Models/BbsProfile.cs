@@ -53,6 +53,12 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private bool _localEcho;
 
+        [property: Category("Terminal")]
+        [property: DisplayName("Send DEL for Backspace")]
+        [property: Description("Sends DEL (0x7F) instead of Ctrl-H/BS (0x08) for systems that require it.")]
+        [ObservableProperty]
+        private bool _backspaceSendsDelete;
+
         [JsonIgnore]
         [ObservableProperty]
         private BbsConnectionState _connectionState = BbsConnectionState.Disconnected;

@@ -5,7 +5,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="520"
-    Height="360"
+    Height="390"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -106,6 +106,11 @@
                     Content="Show typed characters locally"
                     IsChecked="{Binding LocalEcho}"
                     ToolTip="Enable this for MUDs and BBSs that do not echo keyboard input back to the terminal." />
+                <CheckBox
+                    Margin="0,4,0,0"
+                    Content="Send DEL (0x7F) for Backspace"
+                    IsChecked="{Binding BackspaceSendsDelete}"
+                    ToolTip="Most classic BBSs expect Ctrl-H/BS (0x08). Enable this for systems that expect DEL (0x7F)." />
             </StackPanel>
 
             <StackPanel

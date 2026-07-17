@@ -33,6 +33,7 @@ xmlns:vt52="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI
 | Property | Type | Default | Description |
 |---|---|---|---|
 | `LocalEcho` | `bool` | `false` | When `true`, keystrokes are echoed to the display locally (useful for testing). |
+| `BackspaceSendsDelete` | `bool` | `true` | When `true`, Backspace sends DEL (`0x7F`); when `false`, it sends BS (`0x08`) for classic BBS compatibility. |
 | `ShowLineNumbers` | `bool` | `false` | Inherited from `TextEditor`; shows a line-number gutter. |
 | `DisconnectOnUnload` | `bool` | `true` | Automatically signals disconnect when the control is unloaded. |
 

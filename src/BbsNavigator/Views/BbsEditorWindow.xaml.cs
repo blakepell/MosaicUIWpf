@@ -32,7 +32,8 @@ namespace BbsNavigator.Views
                 Port = profile?.Port ?? 23,
                 Description = profile?.Description ?? string.Empty,
                 AutoReconnect = profile?.AutoReconnect ?? true,
-                LocalEcho = profile?.LocalEcho ?? false
+                LocalEcho = profile?.LocalEcho ?? false,
+                BackspaceSendsDelete = profile?.BackspaceSendsDelete ?? false
             };
             DataContext = Profile;
             Loaded += (_, _) => NameTextBox.SelectAll();

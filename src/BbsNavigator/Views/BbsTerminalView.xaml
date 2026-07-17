@@ -39,6 +39,7 @@
             Grid.Row="1"
             AutoConnect="False"
             Background="#FF080B10"
+            BackspaceSendsDelete="{Binding BackspaceSendsDelete}"
             DisconnectOnUnload="False"
             FontFamily="Cascadia Mono, Consolas"
             Foreground="#FFD8DEE9"

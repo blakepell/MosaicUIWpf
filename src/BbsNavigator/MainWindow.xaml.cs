@@ -192,6 +192,7 @@ namespace BbsNavigator
             profile.Description = editor.Profile.Description;
             profile.AutoReconnect = editor.Profile.AutoReconnect;
             profile.LocalEcho = editor.Profile.LocalEcho;
+            profile.BackspaceSendsDelete = editor.Profile.BackspaceSendsDelete;
 
             if (_documents.TryGetValue(profile.Id, out LayoutDocument? document))
             {
