@@ -3,15 +3,15 @@ using Microsoft.Win32;
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>
-    /// A simple file picker editor for string properties.
-    /// Shows an OpenFileDialog and returns the selected file path.
+    /// A simple folder picker editor for string properties.
+    /// Shows an OpenFolderDialog and returns the selected file path.
     /// If the dialog is cancelled, returns null (no change).
     /// </summary>
-    public class FilePropertyEditor : IPropertyEditor
+    public class FolderPropertyEditor : IPropertyEditor
     {
         /// <summary>
-        /// Opens a file dialog initialized with the current value (if a valid path).
-        /// Returns the selected file path, or null if the user cancels.
+        /// Opens a folder dialog initialized with the current value (if a valid path).
+        /// Returns the selected folder path, or null if the user cancels.
         /// </summary>
         /// <param name="currentValue">Current property value (expected string path).</param>
         /// <param name="propertyType">Target property type.</param>
@@ -24,11 +24,9 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 return null;
             }
-            
-            var dlg = new OpenFileDialog
+
+            var dlg = new OpenFolderDialog
             {
-                CheckFileExists = true,
-                CheckPathExists = true,
                 Multiselect = false
             };
 
@@ -37,9 +35,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 try
                 {
-                    dlg.FileName = Path.GetFileName(s);
-                    var dir = Path.GetDirectoryName(s);
-                    if (!string.IsNullOrWhiteSpace(dir) && Directory.Exists(dir))
+                    if (currentValue is string dir && Directory.Exists(dir))
                     {
                         dlg.InitialDirectory = dir;
                     }
@@ -68,7 +64,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             if (result == true)
             {
-                return dlg.FileName;
+                return dlg.FolderName;
             }
 
             // Return null to indicate no change (dialog cancelled)

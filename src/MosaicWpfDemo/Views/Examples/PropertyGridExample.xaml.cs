@@ -79,6 +79,11 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private bool _disabledBool;
 
+        [property: Category("Account")]
+        [property: PropertyGrid(EditorType = typeof(FolderPropertyEditor), IsReadOnly = true)]
+        [ObservableProperty]
+        private string? _homeFolder;
+
         [property: Category("Giving")]
         [ObservableProperty]
         private double _lifetimeGiving = 0.00;
