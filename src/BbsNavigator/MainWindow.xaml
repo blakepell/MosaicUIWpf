@@ -60,6 +60,9 @@
                     InputGestureText="Enter" />
                 <MenuItem Click="DisconnectSelected_OnClick" Header="_Disconnect" />
                 <Separator />
+                <MenuItem Click="SaveSettings_OnClick" Header="_Save Settings" />
+                <MenuItem Click="BackupSettings_OnClick" Header="_Backup Settings" />
+                <Separator />
                 <MenuItem Click="Exit_OnClick" Header="E_xit" />
             </MenuItem>
             <MenuItem Header="_Transfer">
@@ -199,6 +202,10 @@
                                                     CornerRadius="3">
                                                     <Border.ContextMenu>
                                                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                            <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
+                                                            <Separator />
+                                                            <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />
+                                                            <Separator />
                                                             <MenuItem Click="EditCredentials_OnClick" Header="_Edit Credentials…" />
                                                             <MenuItem
                                                                 Click="ViewCredentials_OnClick"
@@ -222,6 +229,16 @@
                                                             Margin="0,0,8,0"
                                                             VerticalAlignment="Center"
                                                             Source="Assets/terminal-gray-48.png" />
+                                                        <mosaic:FavoriteCheckBox
+                                                            Grid.Row="1"
+                                                            Width="18"
+                                                            Height="18"
+                                                            Margin="0,2,8,0"
+                                                            HorizontalAlignment="Left"
+                                                            IsChecked="{Binding Favorite, Mode=TwoWay}"
+                                                            Symbol="&#x2605;"
+                                                            SymbolSize="14"
+                                                            ToolTip="Favorite" />
                                                         <TextBlock
                                                             Grid.Column="1"
                                                             FontSize="12"

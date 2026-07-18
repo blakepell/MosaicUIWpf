@@ -27,21 +27,40 @@ namespace BbsNavigator.Views
         /// </summary>
         /// <param name="profile">The BBS profile whose credentials are edited.</param>
         /// <param name="encryptionPassphrase">The unlocked application-wide encryption passphrase.</param>
-        public CredentialEditorWindow(BbsProfile profile, string encryptionPassphrase)
+        /// <param name="userName">The decrypted username to display.</param>
+        /// <param name="password">The decrypted BBS password to display.</param>
+        public CredentialEditorWindow(
+            BbsProfile profile,
+            string encryptionPassphrase,
+            string userName = "",
+            string password = "")
         {
             InitializeComponent();
             _profile = profile;
             _encryptionPassphrase = encryptionPassphrase;
+            CredentialUserName = userName;
+            CredentialPassword = password;
+            DataContext = this;
             HeadingTextBlock.Text = $"Credentials for {profile.Name}";
             ExistingCredentialsTextBlock.Visibility = profile.HasCredentials ? Visibility.Visible : Visibility.Collapsed;
             RemoveButton.IsEnabled = profile.HasCredentials;
             Loaded += (_, _) => UserNameTextBox.Focus();
         }
 
+        /// <summary>
+        /// Gets or sets the username shown in the credential editor.
+        /// </summary>
+        public string CredentialUserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the BBS password shown in the credential editor.
+        /// </summary>
+        public string CredentialPassword { get; set; }
+
         private async void Save_OnClick(object sender, RoutedEventArgs e)
         {
-            string userName = UserNameTextBox.Text.Trim();
-            string password = BbsPasswordBox.Password;
+            string userName = CredentialUserName.Trim();
+            string password = CredentialPassword;
 
             if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrEmpty(password))
             {
@@ -91,6 +110,7 @@ namespace BbsNavigator.Views
         protected override void OnClosed(EventArgs e)
         {
             BbsPasswordBox.Password = string.Empty;
+            CredentialPassword = string.Empty;
             _encryptionPassphrase = string.Empty;
             base.OnClosed(e);
         }

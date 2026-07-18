@@ -154,6 +154,7 @@ namespace BbsNavigator.Views
                 UpdateStatus(BbsConnectionState.Connected, $"Connected to {Profile.Endpoint}");
                 Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
+                Profile.ConnectionCount++;
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
             {

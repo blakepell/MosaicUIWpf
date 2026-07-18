@@ -8,12 +8,15 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.IO;
 using Argus.Memory;
 using BbsNavigator.Common;
 using BbsNavigator.Models;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Themes;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -90,6 +93,53 @@ namespace BbsNavigator
         public Task LoadBbsProfilesAsync(AppSettings settings)
         {
             return _profileLoadTask ??= LoadBbsProfilesCoreAsync(settings);
+        }
+
+        /// <summary>
+        /// Immediately writes the current application settings to disk.
+        /// </summary>
+        public void SaveAppSettingsNow()
+        {
+            CompleteDeferredProfileLoad();
+
+            var settings = AppServices.GetRequiredService<AppSettings>();
+            var fileService = AppServices.GetRequiredService<JsonFileService>();
+            fileService.JsonSerializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            fileService.Save(settings, "AppSettings.json.bak");
+
+            string pendingFile = Path.Combine(fileService.FolderPath, "AppSettings.json.bak");
+            string settingsFile = Path.Combine(fileService.FolderPath, "AppSettings.json");
+            if (!File.Exists(pendingFile))
+            {
+                throw new IOException("The application settings could not be written.");
+            }
+
+            File.Copy(pendingFile, settingsFile, true);
+        }
+
+        /// <summary>
+        /// Saves the current application settings and creates today's dated backup.
+        /// </summary>
+        /// <returns>The full path of the dated backup file.</returns>
+        public string BackupAppSettings()
+        {
+            SaveAppSettingsNow();
+
+            var fileService = AppServices.GetRequiredService<JsonFileService>();
+            string settingsFile = Path.Combine(fileService.FolderPath, "AppSettings.json");
+            if (!File.Exists(settingsFile))
+            {
+                throw new FileNotFoundException("The application settings file could not be found.", settingsFile);
+            }
+
+            string backupFile = Path.Combine(
+                fileService.FolderPath,
+                $"{DateTime.Now:yyyy-MM-dd}.AppSettings.json");
+            File.Copy(settingsFile, backupFile, true);
+            return backupFile;
         }
 
         private async Task LoadBbsProfilesCoreAsync(AppSettings settings)

@@ -4,14 +4,18 @@
 
 The BBS Directory panel on the left side of the main window holds every system you have
 saved. Double-click an entry to connect; the entry's icon lights up while its session is
-open, and hovering over an entry shows when you last connected to it.
+open, and hovering over an entry shows when you last connected to it. Click the star below
+the icon, or use **Toggle Favorite** on the entry's context menu, to mark a favorite.
+Each successful connection is counted on the saved profile; failed connection attempts do
+not increase that count.
 
 Use the search box above the list to filter the directory as you type.
 
 ## Adding and editing systems
 
 Use the **Add**, **Edit**, and **Remove** buttons in the panel's toolbar, or the same
-commands on the **Directory** menu. A connection profile has these settings:
+commands on the **Directory** menu. You can also right-click a system and choose **Edit BBS
+Details…**. A connection profile has these settings:
 
 | Setting | Meaning |
 | ------- | ------- |
@@ -39,8 +43,9 @@ old connection would no longer match the profile).
 Right-click a system and choose **Edit Credentials…** to save its username and password.
 The first time you do this, BBS Navigator asks you to set one app-wide encryption
 passphrase. That passphrase is reused for every system, so you do not need to create a
-different key for each connection. During later app sessions, the first credential edit
-asks you to unlock the key once; further edits reuse it until BBS Navigator closes.
+different key for each connection. During later app sessions, the first credential view or
+edit asks you to unlock the key once; further credential actions reuse it until BBS
+Navigator closes.
 
 BBS Navigator does not save the plaintext passphrase. Instead, `AppSettings.json` contains
 an encrypted verifier used to confirm the key you enter. Usernames and passwords are
@@ -48,9 +53,9 @@ encrypted with AES-256-GCM using a key derived from that passphrase, and each en
 record has its own random salt and nonce.
 
 **View Credentials…** is enabled only when the selected system has a saved credential
-record. As an extra precaution, viewing asks for the app-wide passphrase each time. You can
-select and copy the revealed values into the terminal as needed. Use **Edit Credentials… →
-Remove Credentials** to delete them.
+record. You can select and copy the revealed values into the terminal as needed. **Edit
+Credentials…** shows the decrypted username and password after the app-wide passphrase is
+unlocked. Use **Edit Credentials… → Remove Credentials** to delete them.
 
 The encrypted settings are portable: copy the settings to another computer and use the
 same app-wide passphrase to decrypt them there. If you forget the passphrase, the

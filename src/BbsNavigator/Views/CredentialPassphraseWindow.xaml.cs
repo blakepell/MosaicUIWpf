@@ -33,8 +33,8 @@ namespace BbsNavigator.Views
                 ? "Set credential encryption passphrase"
                 : "Unlock credential encryption";
             ExplanationTextBlock.Text = isConfiguration
-                ? "Set one passphrase for every BBS credential. You will not need to enter it again while editing credentials during this app session."
-                : "Enter the app-wide passphrase once. It will be reused for credential edits until BBS Navigator closes.";
+                ? "Set one passphrase for every BBS credential. You will not need to enter it again during this app session."
+                : "Enter the app-wide passphrase once. It will be reused for credential viewing and editing until BBS Navigator closes.";
             AcceptButton.Content = isConfiguration ? "Set Passphrase" : "Unlock";
             ConfirmLabel.Visibility = isConfiguration ? Visibility.Visible : Visibility.Collapsed;
             ConfirmPassphraseBox.Visibility = isConfiguration ? Visibility.Visible : Visibility.Collapsed;

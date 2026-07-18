@@ -134,7 +134,25 @@ namespace BbsNavigator
                 return;
             }
 
-            new CredentialEditorWindow(profile, passphrase) { Owner = this }.ShowDialog();
+            BbsCredentials? credentials = null;
+            if (profile.HasCredentials)
+            {
+                credentials = await DecryptCredentialsAsync(profile, passphrase);
+                if (credentials == null)
+                {
+                    ShowCredentialDecryptionWarning();
+                    return;
+                }
+            }
+
+            new CredentialEditorWindow(
+                profile,
+                passphrase,
+                credentials?.UserName ?? string.Empty,
+                credentials?.Password ?? string.Empty)
+            {
+                Owner = this
+            }.ShowDialog();
         }
 
         /// <summary>
@@ -184,14 +202,53 @@ namespace BbsNavigator
             }
         }
 
-        private void ViewCredentials_OnClick(object sender, RoutedEventArgs e)
+        private async void ViewCredentials_OnClick(object sender, RoutedEventArgs e)
         {
             if (GetContextProfile(sender) is not { HasCredentials: true } profile)
             {
                 return;
             }
 
-            new CredentialViewerWindow(profile) { Owner = this }.ShowDialog();
+            string? passphrase = await GetCredentialEncryptionPassphraseAsync();
+            if (passphrase == null)
+            {
+                return;
+            }
+
+            BbsCredentials? credentials = await DecryptCredentialsAsync(profile, passphrase);
+            if (credentials == null)
+            {
+                ShowCredentialDecryptionWarning();
+                return;
+            }
+
+            new CredentialViewerWindow(profile, credentials) { Owner = this }.ShowDialog();
+        }
+
+        private static Task<BbsCredentials?> DecryptCredentialsAsync(BbsProfile profile, string passphrase)
+        {
+            return Task.Run(() =>
+                !string.IsNullOrWhiteSpace(profile.EncryptedCredentials) &&
+                CredentialProtector.TryUnprotect(profile.EncryptedCredentials, passphrase, out BbsCredentials? credentials)
+                    ? credentials
+                    : null);
+        }
+
+        private static void ShowCredentialDecryptionWarning()
+        {
+            Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                "The credentials could not be decrypted with the unlocked app-wide passphrase.",
+                "BBS Navigator",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+
+        private void ToggleFavorite_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is { } profile)
+            {
+                profile.Favorite = !profile.Favorite;
+            }
         }
 
         /// <summary>
@@ -303,6 +360,19 @@ namespace BbsNavigator
                 return;
             }
 
+            EditBbs(profile);
+        }
+
+        private void EditBbsDetails_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is { } profile)
+            {
+                EditBbs(profile);
+            }
+        }
+
+        private void EditBbs(BbsProfile profile)
+        {
             var editor = new BbsEditorWindow(profile) { Owner = this };
             if (editor.ShowDialog() != true)
             {
@@ -475,6 +545,58 @@ namespace BbsNavigator
                 "About BBS Navigator",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+        }
+
+        private void SaveSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current is not App app)
+            {
+                return;
+            }
+
+            try
+            {
+                app.SaveAppSettingsNow();
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    "Settings saved.",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The settings could not be saved.\n\n{ex.Message}",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void BackupSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Application.Current is not App app)
+            {
+                return;
+            }
+
+            try
+            {
+                string backupFile = app.BackupAppSettings();
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"Settings backed up to:\n\n{backupFile}",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The settings backup could not be created.\n\n{ex.Message}",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void Exit_OnClick(object sender, RoutedEventArgs e)

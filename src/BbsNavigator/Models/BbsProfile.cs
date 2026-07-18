@@ -59,12 +59,30 @@ namespace BbsNavigator.Models
         private DateTime? _lastConnected;
 
         /// <summary>
+        /// Gets or sets the number of successful connections made to this BBS.
+        /// </summary>
+        /// <value>The number of successful connections.</value>
+        [property: Category("Connection")]
+        [property: DisplayName("Successful Connections")]
+        [ObservableProperty]
+        private int _connectionCount;
+
+        /// <summary>
         /// Gets or sets the BBS description.
         /// </summary>
         /// <value>The descriptive text shown in the BBS directory.</value>
         [property: Category("BBS")]
         [ObservableProperty]
         private string _description = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether this BBS is a favorite.
+        /// </summary>
+        /// <value><see langword="true"/> when the BBS is a favorite; otherwise, <see langword="false"/>.</value>
+        [property: Category("BBS")]
+        [property: DisplayName("Favorite")]
+        [ObservableProperty]
+        private bool _favorite;
 
         /// <summary>
         /// Gets or sets a value that indicates whether the session reconnects automatically.
