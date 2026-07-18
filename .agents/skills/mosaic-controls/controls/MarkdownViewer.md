@@ -37,4 +37,5 @@ A lookless, WPF-native Markdown viewer. It renders the `Markdown` string into a 
 - `LinkClicked` is raised before default navigation and can intercept custom URI schemes.
 - Relative links to Markdown resources navigate in the viewer; other links open through the system shell.
 - `GoBack()` navigates to the previous source document.
+- Ctrl+mouse-wheel zooms the base font from 8 through 32 pixels and scales explicit heading sizes proportionally.
 - The rendered document inherits typography and foreground from the control/template so it follows Mosaic theme resources.

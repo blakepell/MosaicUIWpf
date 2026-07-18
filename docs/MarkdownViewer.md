@@ -8,5 +8,8 @@ A lookless, WPF-native Markdown viewer that renders Markdown text into a FlowDoc
 
 Files loaded from an application pack URI must use the WPF `Resource` build action.
 
+Hold `Ctrl` and turn the mouse wheel to zoom the document from 8 through 32 pixels. Each
+wheel notch changes the base size by one pixel and scales headings proportionally.
+
 ![MarkdownViewer](./images/MarkdownViewer.png)
 

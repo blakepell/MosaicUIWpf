@@ -21,6 +21,7 @@ have used since the dial-up era.
 | Add a board | **Directory → Add BBS…** or `Ctrl+N` |
 | Download files | Start the download on the BBS, then **Transfer → Download Files…** |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
+| Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |
 | Toggle light/dark theme | The ◐ button in the title bar, or **Setup → Toggle Theme** |
 | Open this guide | **Help → User Guide** |
 

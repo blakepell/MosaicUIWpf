@@ -26,6 +26,16 @@ namespace Mosaic.UI.Wpf.Controls
     public class MarkdownViewer : Control
     {
         /// <summary>
+        /// The smallest base font size reachable with Ctrl+mouse-wheel zoom.
+        /// </summary>
+        private const double MinimumZoomFontSize = 8;
+
+        /// <summary>
+        /// The largest base font size reachable with Ctrl+mouse-wheel zoom.
+        /// </summary>
+        private const double MaximumZoomFontSize = 32;
+
+        /// <summary>
         /// The name of the <see cref="RichTextBox"/> template part that hosts the rendered document.
         /// </summary>
         private const string PartRichTextBox = "PART_RichTextBox";
@@ -215,6 +225,58 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             RenderMarkdown(Markdown);
+        }
+
+        /// <inheritdoc />
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnPreviewMouseWheel(e);
+
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control || e.Delta == 0)
+            {
+                return;
+            }
+
+            double oldFontSize = FontSize;
+            double newFontSize = Math.Clamp(
+                oldFontSize + Math.Sign(e.Delta),
+                MinimumZoomFontSize,
+                MaximumZoomFontSize);
+
+            if (!newFontSize.Equals(oldFontSize))
+            {
+                SetCurrentValue(FontSizeProperty, newFontSize);
+
+                if (_richTextBox?.Document is { } document)
+                {
+                    ScaleDocumentFontSizes(document, newFontSize / oldFontSize);
+                }
+            }
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Scales every locally assigned font size in a rendered document. This includes the
+        /// document's base size and explicit Markdown heading sizes, preserving their proportions
+        /// as the user zooms.
+        /// </summary>
+        private static void ScaleDocumentFontSizes(DependencyObject element, double scale)
+        {
+            object localFontSize = element.ReadLocalValue(TextElement.FontSizeProperty);
+
+            if (localFontSize is double fontSize)
+            {
+                element.SetValue(TextElement.FontSizeProperty, fontSize * scale);
+            }
+
+            foreach (object child in LogicalTreeHelper.GetChildren(element))
+            {
+                if (child is DependencyObject dependencyObject)
+                {
+                    ScaleDocumentFontSizes(dependencyObject, scale);
+                }
+            }
         }
 
         /// <summary>
