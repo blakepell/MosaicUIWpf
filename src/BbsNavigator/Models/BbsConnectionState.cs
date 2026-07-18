@@ -15,10 +15,29 @@ namespace BbsNavigator.Models
     /// </summary>
     public enum BbsConnectionState
     {
+        /// <summary>
+        /// Indicates that no connection is active.
+        /// </summary>
         Disconnected,
+
+        /// <summary>
+        /// Indicates that a connection attempt is in progress.
+        /// </summary>
         Connecting,
+
+        /// <summary>
+        /// Indicates that the BBS session is connected.
+        /// </summary>
         Connected,
+
+        /// <summary>
+        /// Indicates that an automatic reconnection attempt is in progress.
+        /// </summary>
         Reconnecting,
+
+        /// <summary>
+        /// Indicates that the connection ended because of an error.
+        /// </summary>
         Faulted
     }
 }

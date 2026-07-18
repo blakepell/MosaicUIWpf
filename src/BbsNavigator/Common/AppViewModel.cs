@@ -17,9 +17,17 @@ namespace BbsNavigator.Common
     /// </summary>
     public partial class AppViewModel : ObservableObject
     {
+        /// <summary>
+        /// Gets or sets the application settings exposed to the user interface.
+        /// </summary>
+        /// <value>The current application settings.</value>
         [ObservableProperty]
         private AppSettings _appSettings = new();
 
+        /// <summary>
+        /// Gets or sets the application title.
+        /// </summary>
+        /// <value>The title displayed by the application.</value>
         [ObservableProperty]
         private string _title = "BBS Navigator";
     }
