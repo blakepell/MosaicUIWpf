@@ -12,6 +12,7 @@
     <None Remove="Assets\minus-48.png" />
     <None Remove="Assets\terminal-gray-48.png" />
     <None Remove="Assets\terminal-48.png" />
+    <None Remove="Docs\*.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mosaic.UI.Wpf.AvalonDock\Mosaic.UI.Wpf.AvalonDock.csproj" />
@@ -24,5 +25,6 @@
     <Resource Include="Assets\minus-48.png" />
     <Resource Include="Assets\terminal-gray-48.png" />
     <Resource Include="Assets\terminal-48.png" />
+    <Resource Include="Docs\*.md" />
   </ItemGroup>
 </Project>

@@ -36,6 +36,28 @@ namespace Mosaic.UI.Wpf.Controls
         private RichTextBox? _richTextBox;
 
         /// <summary>
+        /// The absolute URI of the document currently loaded via <see cref="Source"/>, used to
+        /// resolve relative links and images. <c>null</c> when the Markdown was supplied directly.
+        /// </summary>
+        private Uri? _resolvedSource;
+
+        /// <summary>
+        /// Previously displayed documents, most recent last, used by <see cref="GoBack"/>.
+        /// </summary>
+        private readonly Stack<Uri> _backStack = new();
+
+        /// <summary>
+        /// Suppresses history bookkeeping while <see cref="GoBack"/> changes <see cref="Source"/>.
+        /// </summary>
+        private bool _suppressHistory;
+
+        /// <summary>
+        /// Distinguishes <see cref="Markdown"/> changes made while loading a <see cref="Source"/>
+        /// document from changes made directly by the consumer.
+        /// </summary>
+        private bool _settingMarkdownFromSource;
+
+        /// <summary>
         /// Initializes static metadata for the <see cref="MarkdownViewer"/> class.
         /// </summary>
         static MarkdownViewer()
@@ -61,6 +83,73 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (string)GetValue(MarkdownProperty);
             set => SetValue(MarkdownProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="Source"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            nameof(Source),
+            typeof(Uri),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(null, OnSourceChanged));
+
+        /// <summary>
+        /// Gets or sets the URI of a Markdown document to load and display. Supports application
+        /// resource URIs for files built with the <c>Resource</c> build action (relative form
+        /// <c>/AssemblyName;component/Docs/index.md</c> or the absolute <c>pack://</c> form) as well
+        /// as local file URIs. Relative links inside the loaded document that point at other
+        /// Markdown resources navigate the viewer in place; use <see cref="GoBack"/> to return.
+        /// </summary>
+        [Category("Common")]
+        [Description("The URI of a Markdown document to load, such as a pack resource URI.")]
+        public Uri? Source
+        {
+            get => (Uri?)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the read-only <see cref="CanGoBack"/> dependency property.
+        /// </summary>
+        private static readonly DependencyPropertyKey CanGoBackPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(CanGoBack),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Identifies the <see cref="CanGoBack"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CanGoBackProperty = CanGoBackPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets a value indicating whether there is a previous document to navigate back to.
+        /// </summary>
+        [Category("Common")]
+        [Description("Whether there is a previous document to navigate back to.")]
+        public bool CanGoBack => (bool)GetValue(CanGoBackProperty);
+
+        /// <summary>
+        /// Identifies the <see cref="LinkClicked"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent LinkClickedEvent = EventManager.RegisterRoutedEvent(
+            nameof(LinkClicked),
+            RoutingStrategy.Bubble,
+            typeof(MarkdownLinkClickedEventHandler),
+            typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Occurs when the user clicks a hyperlink in the rendered document, before the viewer's
+        /// default navigation runs. Mark the event as handled to take over navigation, for example
+        /// to route a custom scheme such as <c>app:settings</c> to a page within the application.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Raised when a hyperlink is clicked, before the default navigation runs.")]
+        public event MarkdownLinkClickedEventHandler LinkClicked
+        {
+            add => AddHandler(LinkClickedEvent, value);
+            remove => RemoveHandler(LinkClickedEvent, value);
         }
 
         /// <summary>
@@ -129,8 +218,8 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Opens a hyperlink in the system default browser when the user clicks it, hit-testing the
-        /// click position so a single click works inside the read-only <see cref="RichTextBox"/>.
+        /// Navigates a hyperlink when the user clicks it, hit-testing the click position so a
+        /// single click works inside the read-only <see cref="RichTextBox"/>.
         /// </summary>
         private void OnRichTextBoxPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -153,16 +242,87 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
+            e.Handled = true;
+            NavigateTo(hyperlink.NavigateUri);
+        }
+
+        /// <summary>
+        /// Handles a clicked link: raises <see cref="LinkClicked"/> first so the application can
+        /// intercept it, then either navigates the viewer to another Markdown document (pack
+        /// resource or local <c>.md</c> file) or opens the link with the system default handler.
+        /// </summary>
+        /// <param name="uri">The link target; may be relative.</param>
+        private void NavigateTo(Uri uri)
+        {
+            var args = new MarkdownLinkClickedEventArgs(LinkClickedEvent, this, uri);
+            RaiseEvent(args);
+
+            if (args.Handled)
+            {
+                return;
+            }
+
+            var resolved = uri;
+
+            if (!resolved.IsAbsoluteUri)
+            {
+                // In-page anchors are not supported; ignore them rather than failing.
+                if (resolved.OriginalString.StartsWith("#", StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                if (_resolvedSource == null || !Uri.TryCreate(_resolvedSource, resolved.OriginalString, out resolved!))
+                {
+                    return;
+                }
+            }
+
+            // Markdown documents inside the application (or on disk) are shown in place; everything
+            // else is delegated to the shell so http/https/mailto links open normally.
+            bool isMarkdownDocument =
+                string.Equals(resolved.Scheme, System.IO.Packaging.PackUriHelper.UriSchemePack, StringComparison.OrdinalIgnoreCase) ||
+                (resolved.IsFile && string.Equals(Path.GetExtension(resolved.LocalPath), ".md", StringComparison.OrdinalIgnoreCase));
+
+            if (isMarkdownDocument)
+            {
+                SetCurrentValue(SourceProperty, resolved);
+                return;
+            }
+
             try
             {
-                Process.Start(new ProcessStartInfo(hyperlink.NavigateUri.AbsoluteUri) { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo(resolved.AbsoluteUri) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
             }
+        }
 
-            e.Handled = true;
+        /// <summary>
+        /// Navigates back to the previously displayed document, if any.
+        /// </summary>
+        public void GoBack()
+        {
+            if (_backStack.Count == 0)
+            {
+                return;
+            }
+
+            var target = _backStack.Pop();
+            _suppressHistory = true;
+
+            try
+            {
+                SetCurrentValue(SourceProperty, target);
+            }
+            finally
+            {
+                _suppressHistory = false;
+            }
+
+            SetValue(CanGoBackPropertyKey, _backStack.Count > 0);
         }
 
         /// <summary>
@@ -185,11 +345,135 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Re-renders the document when the <see cref="Markdown"/> property changes.
+        /// Re-renders the document when the <see cref="Markdown"/> property changes. Markdown set
+        /// directly by the consumer has no backing document, so relative links stop resolving until
+        /// <see cref="Source"/> is set again.
         /// </summary>
         private static void OnMarkdownChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((MarkdownViewer)d).RenderMarkdown(e.NewValue as string ?? string.Empty);
+            var viewer = (MarkdownViewer)d;
+
+            if (!viewer._settingMarkdownFromSource)
+            {
+                viewer._resolvedSource = null;
+            }
+
+            viewer.RenderMarkdown(e.NewValue as string ?? string.Empty);
+        }
+
+        /// <summary>
+        /// Loads the document when the <see cref="Source"/> property changes.
+        /// </summary>
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MarkdownViewer)d).LoadSource(e.NewValue as Uri);
+        }
+
+        /// <summary>
+        /// Loads and displays the Markdown document identified by <paramref name="uri"/>, recording
+        /// the previously displayed document in the back history.
+        /// </summary>
+        /// <param name="uri">The document to load, or <c>null</c> to clear the viewer.</param>
+        private void LoadSource(Uri? uri)
+        {
+            var previous = _resolvedSource;
+
+            if (uri == null)
+            {
+                _resolvedSource = null;
+                _backStack.Clear();
+                SetValue(CanGoBackPropertyKey, false);
+                SetMarkdownFromSource(string.Empty);
+                return;
+            }
+
+            var absolute = ToAbsoluteUri(uri);
+            string? text = absolute == null ? null : ReadSourceText(absolute);
+
+            if (!_suppressHistory && previous != null && absolute != null && absolute != previous)
+            {
+                _backStack.Push(previous);
+                SetValue(CanGoBackPropertyKey, true);
+            }
+
+            _resolvedSource = absolute;
+            SetMarkdownFromSource(text ?? $"# Document not found\n\nThe document `{uri.OriginalString}` could not be loaded.");
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Markdown"/> property on behalf of <see cref="Source"/> loading,
+        /// without clearing the resolved source used for relative link resolution.
+        /// </summary>
+        /// <param name="text">The Markdown text to display.</param>
+        private void SetMarkdownFromSource(string text)
+        {
+            _settingMarkdownFromSource = true;
+
+            try
+            {
+                SetCurrentValue(MarkdownProperty, text);
+            }
+            finally
+            {
+                _settingMarkdownFromSource = false;
+            }
+        }
+
+        /// <summary>
+        /// Converts a possibly relative source URI to an absolute URI. Relative URIs of the form
+        /// <c>/AssemblyName;component/path.md</c> are treated as application pack resources.
+        /// </summary>
+        /// <param name="uri">The URI to normalize.</param>
+        /// <returns>The absolute URI, or <c>null</c> when the URI cannot be resolved.</returns>
+        private static Uri? ToAbsoluteUri(Uri uri)
+        {
+            if (uri.IsAbsoluteUri)
+            {
+                return uri;
+            }
+
+            string path = uri.OriginalString;
+
+            if (!path.StartsWith("/", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            // Reading UriSchemePack ensures the pack:// scheme is registered before use.
+            string scheme = System.IO.Packaging.PackUriHelper.UriSchemePack;
+            return new Uri($"{scheme}://application:,,,{path}", UriKind.Absolute);
+        }
+
+        /// <summary>
+        /// Reads the Markdown text behind an absolute source URI, supporting local files and
+        /// application pack resources (files built with the <c>Resource</c> build action).
+        /// </summary>
+        /// <param name="uri">The absolute URI to read.</param>
+        /// <returns>The document text, or <c>null</c> when it could not be read.</returns>
+        private static string? ReadSourceText(Uri uri)
+        {
+            try
+            {
+                if (uri.IsFile)
+                {
+                    return File.Exists(uri.LocalPath) ? File.ReadAllText(uri.LocalPath) : null;
+                }
+
+                var resource = Application.GetResourceStream(uri);
+
+                if (resource == null)
+                {
+                    return null;
+                }
+
+                using var reader = new StreamReader(resource.Stream);
+                return reader.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -236,7 +520,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             try
             {
-                document = MarkdownFlowDocumentRenderer.Render(markdown);
+                document = MarkdownFlowDocumentRenderer.Render(markdown, _resolvedSource);
             }
             catch (Exception ex)
             {

@@ -14,6 +14,8 @@ A lookless, WPF-native Markdown viewer. It renders the `Markdown` string into a 
 | Property | Type | Default | Description |
 |---|---|---|---|
 | `Markdown` | `string` | `string.Empty` | Markdown source text to render. |
+| `Source` | `Uri?` | `null` | WPF resource or local Markdown file to load. Relative Markdown links navigate in place. |
+| `CanGoBack` | `bool` | `false` | Read-only value indicating whether `GoBack()` can return to a prior source. |
 | `IsCopyEnabled` | `bool` | `true` | Enables selection/copy interaction in the hosted `RichTextBox`. |
 | `IsDocumentReadOnly` | `bool` | `true` | Sets the hosted document read-only state. |
 
@@ -25,8 +27,14 @@ A lookless, WPF-native Markdown viewer. It renders the `Markdown` string into a 
     Markdown="{Binding PreviewMarkdown}" />
 ```
 
+```xml
+<mosaic:MarkdownViewer Source="/MyApp;component/Docs/index.md" />
+```
+
 ## Notes
 
 - Template part: `PART_RichTextBox`.
-- Hyperlinks are opened through hit-testing inside the read-only `RichTextBox`.
+- `LinkClicked` is raised before default navigation and can intercept custom URI schemes.
+- Relative links to Markdown resources navigate in the viewer; other links open through the system shell.
+- `GoBack()` navigates to the previous source document.
 - The rendered document inherits typography and foreground from the control/template so it follows Mosaic theme resources.

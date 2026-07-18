@@ -29,6 +29,7 @@ namespace BbsNavigator
     public partial class MainWindow : Window
     {
         private readonly Dictionary<Guid, LayoutDocument> _documents = new();
+        private LayoutDocument? _userGuideDocument;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
         private AppSettings Settings { get; }
@@ -39,17 +40,24 @@ namespace BbsNavigator
         public MainWindow()
         {
             InitializeComponent();
+            _userGuideDocument = InitialUserGuideDocument;
             Settings = AppServices.GetRequiredService<AppSettings>();
             DataContext = Settings;
             ThemeManager.ThemeChanged += ThemeManager_OnThemeChanged;
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, AddBbs_OnClick));
             InputBindings.Add(new KeyBinding(ApplicationCommands.New, Key.N, ModifierKeys.Control));
+            CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, UserGuide_OnClick));
         }
 
         private BbsProfile? SelectedProfile => BbsTree.SelectedItem as BbsProfile;
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (Application.Current is App app)
+            {
+                await app.LoadBbsProfilesAsync(Settings);
+            }
+
             if (BbsTree.Items.Count > 0)
             {
                 BbsTree.Focus();
@@ -305,7 +313,37 @@ namespace BbsNavigator
 
         private void Options_OnClick(object sender, RoutedEventArgs e)
         {
+            ShowOptions();
+        }
+
+        /// <summary>
+        /// Opens the application options dialog. Also used by <c>app:options</c> links in the
+        /// user guide.
+        /// </summary>
+        public void ShowOptions()
+        {
             new SettingsWindow(Settings) { Owner = this }.ShowDialog();
+        }
+
+        /// <summary>
+        /// Opens the add-BBS dialog. Also used by <c>app:add-bbs</c> links in the user guide.
+        /// </summary>
+        public void ShowAddBbs()
+        {
+            AddBbs_OnClick(this, new RoutedEventArgs());
+        }
+
+        private void UserGuide_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_userGuideDocument != null)
+            {
+                _userGuideDocument.IsActive = true;
+                return;
+            }
+
+            var view = new UserGuideView();
+            _userGuideDocument = DockingManager.Add(view, "User Guide", activate: true, canClose: true);
+            _userGuideDocument.ContentId = "user-guide";
         }
 
         private void About_OnClick(object sender, RoutedEventArgs e)
@@ -329,6 +367,12 @@ namespace BbsNavigator
 
         private async void DockingManager_OnDocumentClosed(object? sender, DocumentClosedEventArgs e)
         {
+            if (e.Document.Content is UserGuideView)
+            {
+                _userGuideDocument = null;
+                return;
+            }
+
             if (e.Document.Content is not BbsTerminalView terminal)
             {
                 return;

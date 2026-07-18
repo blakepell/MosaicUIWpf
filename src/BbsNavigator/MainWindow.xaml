@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:models="clr-namespace:BbsNavigator.Models"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:views="clr-namespace:BbsNavigator.Views"
     Title="BBS Navigator"
     Width="1280"
     Height="820"
@@ -83,6 +84,11 @@
                 <MenuItem Click="ToggleTheme_OnClick" Header="Toggle _Theme" />
             </MenuItem>
             <MenuItem Header="_Help">
+                <MenuItem
+                    Click="UserGuide_OnClick"
+                    Header="_User Guide"
+                    InputGestureText="F1" />
+                <Separator />
                 <MenuItem Click="About_OnClick" Header="_About BBS Navigator" />
             </MenuItem>
         </Menu>
@@ -165,7 +171,10 @@
                                         Grid.Row="2"
                                         BorderThickness="0"
                                         ItemsSource="{Binding BbsProfiles}"
-                                        MouseDoubleClick="BbsTree_OnMouseDoubleClick">
+                                        MouseDoubleClick="BbsTree_OnMouseDoubleClick"
+                                        ScrollViewer.CanContentScroll="True"
+                                        VirtualizingPanel.IsVirtualizing="True"
+                                        VirtualizingPanel.VirtualizationMode="Recycling">
                                         <TreeView.ItemTemplate>
                                             <DataTemplate DataType="{x:Type models:BbsProfile}">
                                                 <Border
@@ -229,38 +238,12 @@
 
                         <ad:LayoutDocumentPane>
                             <ad:LayoutDocument
-                                Title="Welcome"
+                                x:Name="InitialUserGuideDocument"
+                                Title="User Guide"
                                 CanClose="True"
-                                ContentId="welcome"
+                                ContentId="user-guide"
                                 IsSelected="True">
-                                <Grid Margin="36">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock
-                                        FontSize="30"
-                                        FontWeight="SemiBold"
-                                        Text="BBS Navigator" />
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        MaxWidth="620"
-                                        Margin="0,12,0,22"
-                                        HorizontalAlignment="Left"
-                                        FontSize="15"
-                                        LineHeight="24"
-                                        Text="Choose a saved bulletin board from the directory and double-click it to open a terminal tab. Pin, auto-hide, or resize the directory just like an IDE tool window."
-                                        TextWrapping="Wrap" />
-                                    <mosaic:InfoCard
-                                        Title="Quick start"
-                                        Grid.Row="2"
-                                        MaxWidth="620"
-                                        HorizontalAlignment="Left"
-                                        HeaderContent="Telnet terminal sessions">
-                                        <TextBlock Text="Use Directory → Add BBS to save another system. Connection status appears both beside the saved system and above its terminal." TextWrapping="Wrap" />
-                                    </mosaic:InfoCard>
-                                </Grid>
+                                <views:UserGuideView />
                             </ad:LayoutDocument>
                         </ad:LayoutDocumentPane>
                     </ad:LayoutPanel>
