@@ -11,6 +11,10 @@ not increase that count.
 
 Use the search box above the list to filter the directory as you type.
 
+Use **Sort** on the directory toolbar to build a multi-level ordering by display name,
+favorite status, last connection, or host. Each level can be ascending or descending, and
+levels are applied from top to bottom. The resulting order is stored with the profile list.
+
 ## Adding and editing systems
 
 Use the **Add**, **Edit**, and **Remove** buttons in the panel's toolbar, or the same

@@ -10,6 +10,7 @@
     <None Remove="Assets\add-48.png" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\minus-48.png" />
+    <None Remove="Assets\sort-48.png" />
     <None Remove="Assets\terminal-gray-48.png" />
     <None Remove="Assets\terminal-48.png" />
     <None Remove="Docs\*.md" />
@@ -23,6 +24,7 @@
     <Resource Include="Assets\app.png" />
     <Resource Include="Assets\edit-property-48.png" />
     <Resource Include="Assets\minus-48.png" />
+    <Resource Include="Assets\sort-48.png" />
     <Resource Include="Assets\terminal-gray-48.png" />
     <Resource Include="Assets\terminal-48.png" />
     <Resource Include="Docs\*.md" />

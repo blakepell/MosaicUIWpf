@@ -122,7 +122,7 @@
                 </ad:DockingManager.Theme>
                 <ad:LayoutRoot>
                     <ad:LayoutPanel Orientation="Horizontal">
-                        <ad:LayoutAnchorablePane DockMinWidth="230" DockWidth="290">
+                        <ad:LayoutAnchorablePane DockMinWidth="230" DockWidth="315">
                             <ad:LayoutAnchorable
                                 Title="BBS Directory"
                                 CanAutoHide="True"
@@ -170,6 +170,16 @@
                                                             Height="18"
                                                             Source="pack://application:,,,/BbsNavigator;component/Assets/minus-48.png" />
                                                         <TextBlock Margin="4,0,0,0" Text="Remove" />
+                                                    </mosaic:SimpleStackPanel>
+                                                </Button>
+
+                                                <Button x:Name="SortBbsButton" Margin="2,0,0,0" Click="SortBbs_OnClick">
+                                                    <mosaic:SimpleStackPanel Orientation="Horizontal">
+                                                        <Image
+                                                            Width="18"
+                                                            Height="18"
+                                                            Source="pack://application:,,,/BbsNavigator;component/Assets/sort-48.png" />
+                                                        <TextBlock Margin="4,0,0,0" Text="Sort" />
                                                     </mosaic:SimpleStackPanel>
                                                 </Button>
                                             </ToolBar>

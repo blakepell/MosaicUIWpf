@@ -16,6 +16,7 @@ using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
 using Mosaic.UI.Wpf.Themes;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -428,6 +429,43 @@ namespace BbsNavigator
             }
 
             Settings.BbsProfiles.Remove(profile);
+        }
+
+        private async void SortBbs_OnClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new BbsSortWindow { Owner = this };
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            SortBbsButton.IsEnabled = false;
+            try
+            {
+                if (Application.Current is App app)
+                {
+                    await app.LoadBbsProfilesAsync(Settings);
+                }
+
+                BbsProfile[] profiles = Settings.BbsProfiles.ToArray();
+                BbsSortRule[] rules = dialog.Criteria
+                    .Select(item => new BbsSortRule(item.Field, item.Direction))
+                    .ToArray();
+                BbsProfile[] sortedProfiles = await Task.Run(() => BbsProfileSorter.Sort(profiles, rules));
+                Settings.BbsProfiles = new ObservableCollection<BbsProfile>(sortedProfiles);
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The BBS directory could not be sorted.\n\n{ex.Message}",
+                    "Sort BBS Directory",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                SortBbsButton.IsEnabled = true;
+            }
         }
 
         /// <summary>
