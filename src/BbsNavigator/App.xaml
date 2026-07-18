@@ -12,7 +12,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <mosaic:ThemeManager Native="True" SystemColors="True" Theme="Dark" />
+                <mosaic:ThemeManager Native="True" SystemColors="True" Theme="Blue" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

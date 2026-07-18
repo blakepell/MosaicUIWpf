@@ -69,6 +69,16 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private BbsConnectionState _connectionState = BbsConnectionState.Disconnected;
 
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private string? _encryptedCredentials;
+
+        /// <summary>
+        /// Gets a value that indicates whether this profile contains an encrypted credential record.
+        /// </summary>
+        [JsonIgnore]
+        public bool HasCredentials => !string.IsNullOrWhiteSpace(EncryptedCredentials);
+
         /// <summary>
         /// Gets the host and port in display form.
         /// </summary>
@@ -83,6 +93,11 @@ namespace BbsNavigator.Models
         partial void OnPortChanged(int value)
         {
             OnPropertyChanged(nameof(Endpoint));
+        }
+
+        partial void OnEncryptedCredentialsChanged(string? value)
+        {
+            OnPropertyChanged(nameof(HasCredentials));
         }
 
         /// <summary>

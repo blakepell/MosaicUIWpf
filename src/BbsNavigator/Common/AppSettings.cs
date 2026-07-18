@@ -37,7 +37,7 @@ namespace BbsNavigator.Common
 
         [property: Browsable(false)]
         [ObservableProperty]
-        private MosaicThemeMode _theme = MosaicThemeMode.Dark;
+        private MosaicThemeMode _theme = MosaicThemeMode.Blue;
 
         [property: Category("Terminal")]
         [property: DisplayName("Terminal Font Size")]

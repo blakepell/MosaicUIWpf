@@ -19,6 +19,7 @@ have used since the dial-up era.
 | ------ | --- |
 | Connect to a board | Double-click it in the BBS Directory |
 | Add a board | **Directory → Add BBS…** or `Ctrl+N` |
+| Save or view login details | Right-click a board in the BBS Directory |
 | Download files | Start the download on the BBS, then **Transfer → Download Files…** |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
 | Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |

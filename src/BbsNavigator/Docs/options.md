@@ -42,6 +42,7 @@ Navigator closes.
 
 ## Theme
 
-Choose the **Light**, **Dark**, or Mosaic **Blue** theme from **Setup → Theme**. The ◐
+New installations start with the Mosaic **Blue** theme. Choose **Light**, **Dark**, or
+**Blue** from **Setup → Theme**. The ◐
 button in the title bar remains a quick light/dark toggle; from Blue it switches to
 Light. The selected theme is remembered between runs.

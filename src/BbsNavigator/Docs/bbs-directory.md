@@ -34,6 +34,26 @@ commands on the **Directory** menu. A connection profile has these settings:
 Editing a profile's host or port while its session is open closes that session tab (the
 old connection would no longer match the profile).
 
+## Saved credentials
+
+Right-click a system and choose **Edit Credentials…** to save its username and password.
+Choose an encryption passphrase that you will remember; BBS Navigator does not save that
+passphrase. The username and password are encrypted together in `AppSettings.json` using
+AES-256-GCM with a key derived from the passphrase. Each credential record has its own
+random salt and nonce.
+
+**View Credentials…** is enabled only when the selected system has a saved credential
+record. Enter the same passphrase to reveal the values. You can select and copy them into
+the terminal as needed. Use **Edit Credentials… → Remove Credentials** to delete them.
+
+The encrypted settings are portable: copy the settings to another computer and use the
+same passphrase to decrypt them there. If you forget the passphrase, the credentials
+cannot be recovered; replace or remove the encrypted record instead.
+
+> Credential encryption protects the saved values at rest. Classic Telnet is not an
+> encrypted network protocol, and BBS Navigator does not automatically type or transmit
+> stored credentials.
+
 ## Importing a BBS list
 
 **Directory → Import BBS List…** imports systems in bulk from a CSV file in the *bblist*

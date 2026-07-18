@@ -120,6 +120,34 @@ namespace BbsNavigator
             }
         }
 
+        private void EditCredentials_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is not { } profile)
+            {
+                return;
+            }
+
+            new CredentialEditorWindow(profile) { Owner = this }.ShowDialog();
+        }
+
+        private void ViewCredentials_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is not { HasCredentials: true } profile)
+            {
+                return;
+            }
+
+            new CredentialViewerWindow(profile) { Owner = this }.ShowDialog();
+        }
+
+        /// <summary>
+        /// Resolves the BBS profile represented by a directory context-menu item.
+        /// </summary>
+        private static BbsProfile? GetContextProfile(object sender)
+        {
+            return (sender as FrameworkElement)?.DataContext as BbsProfile;
+        }
+
         private void ConnectSelected_OnClick(object sender, RoutedEventArgs e)
         {
             if (SelectedProfile != null)
