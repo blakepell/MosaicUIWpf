@@ -26,6 +26,10 @@ namespace BbsNavigator
         {
             AppFolder = @"Apps\BBSNavigator";
             ProgId = "Mosaic_BBSNavigator";
+
+            // CP437 (classic DOS/ANSI art) lives in the code pages provider, which is not
+            // registered by default on modern .NET.
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
         }
 
         private void App_OnStartup(object sender, StartupEventArgs e)
@@ -56,6 +60,7 @@ namespace BbsNavigator
                     Host = "dsl-mud.org",
                     Port = 4000,
                     LocalEcho = true,
+                    TerminalEncoding = BbsEncoding.Utf8,
                     Description = "Dragonlance text based multiplayer game."
                 });
             }

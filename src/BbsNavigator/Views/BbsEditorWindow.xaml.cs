@@ -33,8 +33,10 @@ namespace BbsNavigator.Views
                 Description = profile?.Description ?? string.Empty,
                 AutoReconnect = profile?.AutoReconnect ?? true,
                 LocalEcho = profile?.LocalEcho ?? false,
-                BackspaceSendsDelete = profile?.BackspaceSendsDelete ?? false
+                BackspaceSendsDelete = profile?.BackspaceSendsDelete ?? false,
+                TerminalEncoding = profile?.TerminalEncoding ?? BbsEncoding.Cp437
             };
+            EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
             DataContext = Profile;
             Loaded += (_, _) => NameTextBox.SelectAll();
         }

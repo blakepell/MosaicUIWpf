@@ -59,6 +59,12 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private bool _backspaceSendsDelete;
 
+        [property: Category("Terminal")]
+        [property: DisplayName("Text encoding")]
+        [property: Description("How incoming bytes are interpreted. CP437 renders classic DOS box-drawing and ANSI art correctly.")]
+        [ObservableProperty]
+        private BbsEncoding _terminalEncoding = BbsEncoding.Cp437;
+
         [JsonIgnore]
         [ObservableProperty]
         private BbsConnectionState _connectionState = BbsConnectionState.Disconnected;

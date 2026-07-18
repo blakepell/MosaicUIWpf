@@ -55,6 +55,51 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private int _reconnectDelaySeconds = 5;
 
+        [property: Category("Connections")]
+        [property: DisplayName("Connect Timeout (seconds)")]
+        [property: Description("How long a connection attempt may take before it is abandoned.")]
+        [ObservableProperty]
+        private int _connectTimeoutSeconds = 15;
+
+        [property: Category("Connections")]
+        [property: DisplayName("Keepalive Interval (seconds)")]
+        [property: Description("Sends a Telnet NOP after this much idle time so routers do not drop quiet sessions. Zero disables keepalives.")]
+        [ObservableProperty]
+        private int _keepAliveSeconds = 60;
+
+        [property: Category("File Transfers")]
+        [property: DisplayName("Download Folder")]
+        [property: Description("Where downloaded files are saved.")]
+        [property: Mosaic.UI.Wpf.Controls.PropertyGrid(EditorType = typeof(Mosaic.UI.Wpf.Controls.FolderPropertyEditor), IsReadOnly = true)]
+        [ObservableProperty]
+        private string? _downloadFolder;
+
+        [property: Category("File Transfers")]
+        [property: DisplayName("Default Protocol")]
+        [property: Description("The transfer protocol offered first when uploading or downloading.")]
+        [ObservableProperty]
+        private Transfers.TransferProtocol _defaultTransferProtocol = Transfers.TransferProtocol.Zmodem;
+
+        [property: Category("File Transfers")]
+        [property: DisplayName("Auto-start ZMODEM Downloads")]
+        [property: Description("Starts receiving automatically when the remote system begins a ZMODEM send.")]
+        [ObservableProperty]
+        private bool _autoStartZmodemDownloads = true;
+
+        /// <summary>
+        /// Returns the folder downloads are saved to, creating the default location
+        /// (Downloads\BBS Navigator) when no folder has been chosen.
+        /// </summary>
+        public string ResolveDownloadFolder()
+        {
+            string folder = string.IsNullOrWhiteSpace(DownloadFolder)
+                ? System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "BBS Navigator")
+                : DownloadFolder;
+
+            System.IO.Directory.CreateDirectory(folder);
+            return folder;
+        }
+
         [property: Browsable(false)]
         [ObservableProperty]
         private ObservableCollection<BbsProfile> _bbsProfiles = new();

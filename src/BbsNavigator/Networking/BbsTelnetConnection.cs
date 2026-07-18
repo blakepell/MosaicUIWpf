@@ -33,6 +33,7 @@ namespace BbsNavigator.Networking
         private const byte OptionSuppressGoAhead = 3;
         private const byte OptionTerminalType = 24;
         private const byte OptionNaws = 31;
+        private const byte Nop = 241;
 
         private readonly SemaphoreSlim _lifecycleGate = new(1, 1);
         private readonly SemaphoreSlim _sendGate = new(1, 1);
@@ -49,6 +50,11 @@ namespace BbsNavigator.Networking
         private bool _intentionalDisconnect;
         private bool _disposed;
         private volatile bool _isConnected;
+        private volatile TelnetBinaryChannel? _binaryChannel;
+        private Decoder? _decoder;
+        private long _bytesReceived;
+        private long _bytesSent;
+        private long _lastSendTicksUtc;
 
         private enum ParserState
         {
@@ -95,9 +101,37 @@ namespace BbsNavigator.Networking
         public int Height { get; set; } = 800;
 
         /// <summary>
-        /// Gets or sets the encoding used for BBS text.
+        /// Gets or sets the encoding used for BBS text. Set this before connecting; the
+        /// incremental decoder is created when the connection opens.
         /// </summary>
         public Encoding Encoding { get; set; } = Encoding.UTF8;
+
+        /// <summary>
+        /// Gets or sets the idle interval after which a Telnet NOP is sent to keep NAT and
+        /// firewall state alive. <see cref="TimeSpan.Zero"/> disables keepalives. Set this
+        /// before connecting.
+        /// </summary>
+        public TimeSpan KeepAliveInterval { get; set; } = TimeSpan.Zero;
+
+        /// <summary>
+        /// Gets the total payload bytes received since the connection opened.
+        /// </summary>
+        public long BytesReceived => Interlocked.Read(ref _bytesReceived);
+
+        /// <summary>
+        /// Gets the total bytes sent since the connection opened.
+        /// </summary>
+        public long BytesSent => Interlocked.Read(ref _bytesSent);
+
+        /// <summary>
+        /// Gets the UTC time the current connection was established, or null when disconnected.
+        /// </summary>
+        public DateTime? ConnectedAtUtc { get; private set; }
+
+        /// <summary>
+        /// Gets whether a file transfer currently owns the byte stream.
+        /// </summary>
+        public bool IsBinaryModeActive => _binaryChannel != null;
 
         /// <inheritdoc />
         public event EventHandler<string>? DataReceived;
@@ -132,6 +166,10 @@ namespace BbsNavigator.Networking
                 _parserState = ParserState.Data;
                 _subnegotiationLength = 0;
                 _nawsEnabled = false;
+                _decoder = Encoding.GetDecoder();
+                Interlocked.Exchange(ref _bytesReceived, 0);
+                Interlocked.Exchange(ref _bytesSent, 0);
+                Interlocked.Exchange(ref _lastSendTicksUtc, DateTime.UtcNow.Ticks);
 
                 var socket = new Socket(SocketType.Stream, ProtocolType.Tcp)
                 {
@@ -147,7 +185,14 @@ namespace BbsNavigator.Networking
                     _stream = stream;
                     _readCancellation = readCancellation;
                     _isConnected = true;
+                    ConnectedAtUtc = DateTime.UtcNow;
                     _readTask = ReadLoopAsync(stream, readCancellation.Token);
+
+                    if (KeepAliveInterval > TimeSpan.Zero)
+                    {
+                        _ = KeepAliveLoopAsync(readCancellation.Token);
+                    }
+
                     return true;
                 }
                 catch
@@ -185,6 +230,8 @@ namespace BbsNavigator.Networking
                 _readCancellation?.Dispose();
                 _readCancellation = null;
                 _nawsEnabled = false;
+                ConnectedAtUtc = null;
+                _binaryChannel?.Complete();
             }
             finally
             {
@@ -216,8 +263,10 @@ namespace BbsNavigator.Networking
         /// <inheritdoc />
         public Task SendAsync(string text)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text) || _binaryChannel != null)
             {
+                // Keyboard input is discarded while a file transfer owns the stream;
+                // a stray keypress must not corrupt protocol framing.
                 return Task.CompletedTask;
             }
 
@@ -231,7 +280,7 @@ namespace BbsNavigator.Networking
         public Task SendAsync(byte[] data)
         {
             ArgumentNullException.ThrowIfNull(data);
-            return SendPayloadAsync(data);
+            return SendPayloadAsync(data, CancellationToken.None);
         }
 
         /// <inheritdoc />
@@ -275,7 +324,22 @@ namespace BbsNavigator.Networking
 
                     if (payloadLength > 0)
                     {
-                        DataReceived?.Invoke(this, Encoding.GetString(payload, 0, payloadLength));
+                        Interlocked.Add(ref _bytesReceived, payloadLength);
+                        TelnetBinaryChannel? channel = _binaryChannel;
+
+                        if (channel != null)
+                        {
+                            channel.Post(payload.AsSpan(0, payloadLength));
+                        }
+                        else
+                        {
+                            string text = DecodeText(payload, payloadLength);
+
+                            if (text.Length > 0)
+                            {
+                                DataReceived?.Invoke(this, text);
+                            }
+                        }
                     }
                 }
             }
@@ -299,6 +363,8 @@ namespace BbsNavigator.Networking
                 _readCancellation?.Dispose();
                 _readCancellation = null;
                 _readTask = null;
+                ConnectedAtUtc = null;
+                _binaryChannel?.Complete();
 
                 if (!_intentionalDisconnect)
                 {
@@ -442,7 +508,7 @@ namespace BbsNavigator.Networking
             return offset;
         }
 
-        private async Task SendPayloadAsync(ReadOnlyMemory<byte> data)
+        private async Task SendPayloadAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken)
         {
             if (!IsConnected)
             {
@@ -460,7 +526,7 @@ namespace BbsNavigator.Networking
 
             if (iacCount == 0)
             {
-                await SendRawAsync(data, CancellationToken.None).ConfigureAwait(false);
+                await SendRawAsync(data, cancellationToken).ConfigureAwait(false);
                 return;
             }
 
@@ -477,7 +543,7 @@ namespace BbsNavigator.Networking
                     }
                 }
 
-                await SendRawAsync(escaped.AsMemory(0, offset), CancellationToken.None).ConfigureAwait(false);
+                await SendRawAsync(escaped.AsMemory(0, offset), cancellationToken).ConfigureAwait(false);
             }
             finally
             {
@@ -506,10 +572,106 @@ namespace BbsNavigator.Networking
             try
             {
                 await stream.WriteAsync(data, cancellationToken).ConfigureAwait(false);
+                Interlocked.Add(ref _bytesSent, data.Length);
+                Interlocked.Exchange(ref _lastSendTicksUtc, DateTime.UtcNow.Ticks);
             }
             finally
             {
                 _sendGate.Release();
+            }
+        }
+
+        /// <summary>
+        /// Decodes payload bytes using the incremental decoder so multi-byte sequences that
+        /// split across network reads survive intact.
+        /// </summary>
+        private string DecodeText(byte[] payload, int count)
+        {
+            Decoder decoder = _decoder ??= Encoding.GetDecoder();
+            char[] chars = ArrayPool<char>.Shared.Rent(Encoding.GetMaxCharCount(count));
+
+            try
+            {
+                int charCount = decoder.GetChars(payload, 0, count, chars, 0);
+                return new string(chars, 0, charCount);
+            }
+            finally
+            {
+                ArrayPool<char>.Shared.Return(chars);
+            }
+        }
+
+        /// <summary>
+        /// Suspends terminal text delivery and hands the raw payload stream to a file
+        /// transfer protocol. Dispose the returned channel to resume terminal operation.
+        /// </summary>
+        /// <returns>The transfer channel that now owns the byte stream.</returns>
+        /// <exception cref="InvalidOperationException">Not connected, or a transfer is already active.</exception>
+        public TelnetBinaryChannel EnterBinaryMode()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+
+            if (!IsConnected)
+            {
+                throw new InvalidOperationException("The BBS is not connected.");
+            }
+
+            var channel = new TelnetBinaryChannel(this);
+
+            if (Interlocked.CompareExchange(ref _binaryChannel, channel, null) != null)
+            {
+                throw new InvalidOperationException("A file transfer is already in progress.");
+            }
+
+            return channel;
+        }
+
+        /// <summary>
+        /// Restores terminal text delivery when a transfer channel is disposed.
+        /// </summary>
+        /// <param name="channel">The channel being released.</param>
+        internal void ExitBinaryMode(TelnetBinaryChannel channel)
+        {
+            Interlocked.CompareExchange(ref _binaryChannel, null, channel);
+        }
+
+        /// <summary>
+        /// Sends transfer payload bytes with Telnet IAC escaping applied.
+        /// </summary>
+        internal async ValueTask SendBinaryAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken)
+        {
+            await SendPayloadAsync(data, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends a Telnet NOP whenever the line has been idle for the keepalive interval.
+        /// </summary>
+        private async Task KeepAliveLoopAsync(CancellationToken cancellationToken)
+        {
+            TimeSpan interval = KeepAliveInterval;
+
+            try
+            {
+                using var timer = new PeriodicTimer(interval);
+
+                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    if (!IsConnected)
+                    {
+                        break;
+                    }
+
+                    var lastSend = new DateTime(Interlocked.Read(ref _lastSendTicksUtc), DateTimeKind.Utc);
+
+                    if (DateTime.UtcNow - lastSend >= interval)
+                    {
+                        await SendRawAsync(new[] { Iac, Nop }, cancellationToken).ConfigureAwait(false);
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is OperationCanceledException or IOException or SocketException or ObjectDisposedException or InvalidOperationException)
+            {
+                // The connection is closing; the read loop reports the failure.
             }
         }
 

@@ -2,13 +2,84 @@
     x:Class="BbsNavigator.Views.BbsTerminalView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:BbsNavigator.Converters"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:vt52="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+    <UserControl.Resources>
+        <!--  Gentle entrance for the whole document when it first loads.  -->
+        <Storyboard x:Key="ViewFadeIn">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="0"
+                To="1"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!--  Slide the transfer card up from the bottom edge.  -->
+        <Storyboard x:Key="TransferPanelShow">
+            <DoubleAnimation
+                Storyboard.TargetName="TransferPanel"
+                Storyboard.TargetProperty="Opacity"
+                To="1"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                Storyboard.TargetName="TransferPanelTransform"
+                Storyboard.TargetProperty="Y"
+                To="0"
+                Duration="0:0:0.25">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="TransferPanelHide" Completed="TransferPanelHide_OnCompleted">
+            <DoubleAnimation
+                Storyboard.TargetName="TransferPanel"
+                Storyboard.TargetProperty="Opacity"
+                To="0"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                Storyboard.TargetName="TransferPanelTransform"
+                Storyboard.TargetProperty="Y"
+                To="24"
+                Duration="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <!--  Soft refresh of the status text whenever the connection state changes.  -->
+        <Storyboard x:Key="StatusPulse">
+            <DoubleAnimation
+                Storyboard.TargetName="StatusText"
+                Storyboard.TargetProperty="Opacity"
+                From="0.35"
+                To="1"
+                Duration="0:0:0.35" />
+        </Storyboard>
+
+        <Style
+            x:Key="StatusBarText"
+            TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Margin" Value="10,0,0,0" />
+            <Setter Property="Opacity" Value="0.75" />
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Border
@@ -25,28 +96,221 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <mosaic:Badge x:Name="StatusBadge" MinWidth="88" Text="Disconnected" />
-                <TextBlock x:Name="StatusText" Grid.Column="1" Margin="12,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                <mosaic:ProgressRing x:Name="BusyRing" Grid.Column="2" Width="20" Height="20" Margin="4,0,12,0" IsActive="False" />
+                <TextBlock
+                    x:Name="StatusText"
+                    Grid.Column="1"
+                    Margin="12,0"
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis" />
+                <mosaic:ProgressRing
+                    x:Name="BusyRing"
+                    Grid.Column="2"
+                    Width="20"
+                    Height="20"
+                    Margin="4,0,12,0"
+                    IsActive="False" />
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <mosaic:AccentButton x:Name="ReconnectButton" MinWidth="90" Margin="0,0,6,0" AccentButtonType="ThemeAccent" Click="Reconnect_OnClick" Content="Reconnect" />
-                    <Button x:Name="DisconnectButton" MinWidth="90" Click="Disconnect_OnClick" Content="Disconnect" />
+                    <mosaic:AccentButton
+                        x:Name="ReconnectButton"
+                        MinWidth="90"
+                        Margin="0,0,6,0"
+                        AccentButtonType="ThemeAccent"
+                        Click="Reconnect_OnClick"
+                        Content="Reconnect" />
+                    <Button
+                        x:Name="DisconnectButton"
+                        MinWidth="90"
+                        Click="Disconnect_OnClick"
+                        Content="Disconnect" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <vt52:VT52Terminal
-            x:Name="Terminal"
-            Grid.Row="1"
-            AutoConnect="False"
-            Background="#FF080B10"
-            BackspaceSendsDelete="{Binding BackspaceSendsDelete}"
-            DisconnectOnUnload="False"
-            FontFamily="Cascadia Mono, Consolas"
-            Foreground="#FFD8DEE9"
-            HorizontalScrollBarVisibility="Hidden"
-            LocalEcho="{Binding LocalEcho}"
-            SendKeyboardInputToConnection="True"
-            ShowLineNumbers="False"
-            VerticalScrollBarVisibility="Hidden" />
+        <Grid Grid.Row="1">
+            <vt52:VT52Terminal
+                x:Name="Terminal"
+                AutoConnect="False"
+                Background="#FF080B10"
+                BackspaceSendsDelete="{Binding BackspaceSendsDelete}"
+                DisconnectOnUnload="False"
+                FontFamily="Cascadia Mono, Consolas"
+                Foreground="#FFD8DEE9"
+                HorizontalScrollBarVisibility="Hidden"
+                LocalEcho="{Binding LocalEcho}"
+                SendKeyboardInputToConnection="True"
+                ShowLineNumbers="False"
+                VerticalScrollBarVisibility="Hidden" />
+
+            <!--  File transfer progress card, shown over the bottom of the terminal.  -->
+            <Border
+                x:Name="TransferPanel"
+                MaxWidth="560"
+                Margin="16,0,16,18"
+                Padding="16,12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+                BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Opacity="0"
+                Visibility="Collapsed">
+                <Border.RenderTransform>
+                    <TranslateTransform x:Name="TransferPanelTransform" Y="24" />
+                </Border.RenderTransform>
+                <Border.Effect>
+                    <DropShadowEffect
+                        BlurRadius="18"
+                        Opacity="0.35"
+                        ShadowDepth="2" />
+                </Border.Effect>
+                <Grid MinWidth="420">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel>
+                        <Button
+                            x:Name="TransferCancelButton"
+                            MinWidth="70"
+                            Click="TransferCancel_OnClick"
+                            Content="Cancel"
+                            DockPanel.Dock="Right" />
+                        <TextBlock
+                            x:Name="TransferTitle"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="Transferring…"
+                            TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                    <ProgressBar
+                        x:Name="TransferProgressBar"
+                        Grid.Row="1"
+                        Height="6"
+                        Margin="0,10,0,8"
+                        Maximum="100" />
+                    <DockPanel Grid.Row="2">
+                        <TextBlock
+                            x:Name="TransferStatsText"
+                            DockPanel.Dock="Right"
+                            FontSize="11"
+                            Opacity="0.75" />
+                        <TextBlock
+                            x:Name="TransferDetailText"
+                            FontSize="11"
+                            Opacity="0.75"
+                            TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!--  Session status bar: transfer actions on the left, live statistics on the right.  -->
+        <Border
+            Grid.Row="2"
+            Padding="6,3"
+            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ComboBox
+                    x:Name="ProtocolComboBox"
+                    MinWidth="150"
+                    Margin="2,0"
+                    VerticalAlignment="Center"
+                    FontSize="11"
+                    ToolTip="File transfer protocol">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button
+                    x:Name="DownloadButton"
+                    Grid.Column="1"
+                    Margin="6,0,0,0"
+                    Padding="8,2"
+                    Click="Download_OnClick"
+                    FontSize="11"
+                    ToolTip="Receive files from the BBS (start the download on the BBS first)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,1,5,0"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="12"
+                            Text="&#xE896;" />
+                        <TextBlock Text="Download" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    x:Name="UploadButton"
+                    Grid.Column="2"
+                    Margin="6,0,0,0"
+                    Padding="8,2"
+                    Click="Upload_OnClick"
+                    FontSize="11"
+                    ToolTip="Send files to the BBS (start the upload on the BBS first)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,1,5,0"
+                            FontFamily="Segoe MDL2 Assets"
+                            FontSize="12"
+                            Text="&#xE898;" />
+                        <TextBlock Text="Upload" />
+                    </StackPanel>
+                </Button>
+
+                <ToggleButton
+                    x:Name="CaptureToggle"
+                    Grid.Column="3"
+                    Margin="6,0,0,0"
+                    Padding="8,2"
+                    Checked="CaptureToggle_OnChecked"
+                    FontSize="11"
+                    ToolTip="Capture the session to a text file"
+                    Unchecked="CaptureToggle_OnUnchecked">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            x:Name="CaptureDot"
+                            Margin="0,0,5,0"
+                            VerticalAlignment="Center"
+                            FontSize="10"
+                            Opacity="0.6"
+                            Text="&#x25CF;" />
+                        <TextBlock Text="Capture" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <TextBlock
+                    x:Name="EncodingText"
+                    Grid.Column="5"
+                    Style="{StaticResource StatusBarText}" />
+                <TextBlock
+                    x:Name="TrafficText"
+                    Grid.Column="6"
+                    Style="{StaticResource StatusBarText}" />
+                <TextBlock
+                    x:Name="DurationText"
+                    Grid.Column="7"
+                    MinWidth="58"
+                    Style="{StaticResource StatusBarText}"
+                    TextAlignment="Right" />
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

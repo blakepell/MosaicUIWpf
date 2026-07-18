@@ -103,7 +103,7 @@ namespace BbsNavigator
                 return;
             }
 
-            var terminal = new BbsTerminalView(profile, Settings.FontSize, Settings.ReconnectDelaySeconds);
+            var terminal = new BbsTerminalView(profile, Settings);
             LayoutDocument document = DockingManager.Add(terminal, profile.Name, activate: true, canClose: true);
             document.ContentId = $"bbs-{profile.Id:N}";
             _documents[profile.Id] = document;
@@ -193,6 +193,7 @@ namespace BbsNavigator
             profile.AutoReconnect = editor.Profile.AutoReconnect;
             profile.LocalEcho = editor.Profile.LocalEcho;
             profile.BackspaceSendsDelete = editor.Profile.BackspaceSendsDelete;
+            profile.TerminalEncoding = editor.Profile.TerminalEncoding;
 
             if (_documents.TryGetValue(profile.Id, out LayoutDocument? document))
             {
@@ -234,6 +235,74 @@ namespace BbsNavigator
             Settings.BbsProfiles.Remove(profile);
         }
 
+        /// <summary>
+        /// Returns the terminal in the active document tab, if any.
+        /// </summary>
+        private BbsTerminalView? ActiveTerminal =>
+            (DockingManager.Layout?.ActiveContent as LayoutDocument)?.Content as BbsTerminalView;
+
+        private async void UploadFile_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                await terminal.StartUploadAsync();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private async void DownloadFile_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                await terminal.StartDownloadAsync();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void ToggleCapture_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                terminal.ToggleCapture();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void OpenDownloadFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string folder = Settings.ResolveDownloadFolder();
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(folder) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The download folder could not be opened.\n\n{ex.Message}",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
+        }
+
+        private static void ShowNoActiveSessionMessage()
+        {
+            Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                "Open a BBS session first: double-click a system in the directory.",
+                "BBS Navigator",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
         private void Options_OnClick(object sender, RoutedEventArgs e)
         {
             new SettingsWindow(Settings) { Owner = this }.ShowDialog();
@@ -242,7 +311,12 @@ namespace BbsNavigator
         private void About_OnClick(object sender, RoutedEventArgs e)
         {
             Mosaic.UI.Wpf.Controls.MessageBox.Show(
-                "BBS Navigator\n\nA Mosaic UI terminal client for classic bulletin board systems.",
+                "BBS Navigator\n\n" +
+                "A Mosaic UI terminal client for classic bulletin board systems.\n\n" +
+                "• Telnet with CP437, UTF-8, and Latin-1 text encodings\n" +
+                "• ZMODEM, YMODEM, and XMODEM file transfers (auto-detects ZMODEM downloads)\n" +
+                "• Session capture, keepalives, and automatic reconnection\n\n" +
+                "Tip: hold Ctrl and scroll the mouse wheel to zoom the terminal font.",
                 "About BBS Navigator",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);

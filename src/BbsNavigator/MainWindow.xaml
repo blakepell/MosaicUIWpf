@@ -61,6 +61,13 @@
                 <Separator />
                 <MenuItem Click="Exit_OnClick" Header="E_xit" />
             </MenuItem>
+            <MenuItem Header="_Transfer">
+                <MenuItem Click="DownloadFile_OnClick" Header="_Download Files…" />
+                <MenuItem Click="UploadFile_OnClick" Header="_Upload Files…" />
+                <Separator />
+                <MenuItem Click="ToggleCapture_OnClick" Header="Toggle Session _Capture" />
+                <MenuItem Click="OpenDownloadFolder_OnClick" Header="_Open Download Folder" />
+            </MenuItem>
             <MenuItem Header="_Directory">
                 <MenuItem
                     Click="AddBbs_OnClick"
