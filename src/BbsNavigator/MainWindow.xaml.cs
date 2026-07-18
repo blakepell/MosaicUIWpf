@@ -44,6 +44,7 @@ namespace BbsNavigator
             Settings = AppServices.GetRequiredService<AppSettings>();
             DataContext = Settings;
             ThemeManager.ThemeChanged += ThemeManager_OnThemeChanged;
+            UpdateThemeMenuChecks(Settings.Theme);
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, AddBbs_OnClick));
             InputBindings.Add(new KeyBinding(ApplicationCommands.New, Key.N, ModifierKeys.Control));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, UserGuide_OnClick));
@@ -67,13 +68,47 @@ namespace BbsNavigator
         private void ThemeManager_OnThemeChanged(object? sender, MosaicThemeMode e)
         {
             DockingManager.Theme = new Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme();
+            Settings.Theme = e;
+            UpdateThemeMenuChecks(e);
         }
 
         private void ToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
             var themeManager = AppServices.GetRequiredService<ThemeManager>();
             themeManager.ToggleTheme();
-            Settings.Theme = themeManager.Theme;
+        }
+
+        private void LightTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetTheme(MosaicThemeMode.Light);
+        }
+
+        private void DarkTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetTheme(MosaicThemeMode.Dark);
+        }
+
+        private void BlueTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetTheme(MosaicThemeMode.Blue);
+        }
+
+        /// <summary>
+        /// Applies one of the themes exposed by the Setup menu.
+        /// </summary>
+        private static void SetTheme(MosaicThemeMode theme)
+        {
+            AppServices.GetRequiredService<ThemeManager>().Theme = theme;
+        }
+
+        /// <summary>
+        /// Keeps the Theme submenu's check marks synchronized with the active Mosaic theme.
+        /// </summary>
+        private void UpdateThemeMenuChecks(MosaicThemeMode theme)
+        {
+            LightThemeMenuItem.IsChecked = theme == MosaicThemeMode.Light;
+            DarkThemeMenuItem.IsChecked = theme == MosaicThemeMode.Dark;
+            BlueThemeMenuItem.IsChecked = theme == MosaicThemeMode.Blue;
         }
 
         private void BbsTree_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)

@@ -22,7 +22,8 @@ have used since the dial-up era.
 | Download files | Start the download on the BBS, then **Transfer → Download Files…** |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
 | Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |
-| Toggle light/dark theme | The ◐ button in the title bar, or **Setup → Toggle Theme** |
+| Choose a theme | **Setup → Theme → Light, Dark, or Blue** |
+| Quick-toggle light/dark | The ◐ button in the title bar |
 | Open this guide | **Help → User Guide** |
 
 The guide opens as the first document when BBS Navigator starts. Links in the contents

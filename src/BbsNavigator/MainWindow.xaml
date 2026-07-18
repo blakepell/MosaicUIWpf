@@ -81,7 +81,23 @@
             </MenuItem>
             <MenuItem Header="_Setup">
                 <MenuItem Click="Options_OnClick" Header="_Options…" />
-                <MenuItem Click="ToggleTheme_OnClick" Header="Toggle _Theme" />
+                <MenuItem Header="_Theme">
+                    <MenuItem
+                        x:Name="LightThemeMenuItem"
+                        Click="LightTheme_OnClick"
+                        Header="_Light"
+                        IsCheckable="True" />
+                    <MenuItem
+                        x:Name="DarkThemeMenuItem"
+                        Click="DarkTheme_OnClick"
+                        Header="_Dark"
+                        IsCheckable="True" />
+                    <MenuItem
+                        x:Name="BlueThemeMenuItem"
+                        Click="BlueTheme_OnClick"
+                        Header="_Blue"
+                        IsCheckable="True" />
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem
