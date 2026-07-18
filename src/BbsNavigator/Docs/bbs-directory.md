@@ -37,18 +37,24 @@ old connection would no longer match the profile).
 ## Saved credentials
 
 Right-click a system and choose **Edit Credentials…** to save its username and password.
-Choose an encryption passphrase that you will remember; BBS Navigator does not save that
-passphrase. The username and password are encrypted together in `AppSettings.json` using
-AES-256-GCM with a key derived from the passphrase. Each credential record has its own
-random salt and nonce.
+The first time you do this, BBS Navigator asks you to set one app-wide encryption
+passphrase. That passphrase is reused for every system, so you do not need to create a
+different key for each connection. During later app sessions, the first credential edit
+asks you to unlock the key once; further edits reuse it until BBS Navigator closes.
+
+BBS Navigator does not save the plaintext passphrase. Instead, `AppSettings.json` contains
+an encrypted verifier used to confirm the key you enter. Usernames and passwords are
+encrypted with AES-256-GCM using a key derived from that passphrase, and each encrypted
+record has its own random salt and nonce.
 
 **View Credentials…** is enabled only when the selected system has a saved credential
-record. Enter the same passphrase to reveal the values. You can select and copy them into
-the terminal as needed. Use **Edit Credentials… → Remove Credentials** to delete them.
+record. As an extra precaution, viewing asks for the app-wide passphrase each time. You can
+select and copy the revealed values into the terminal as needed. Use **Edit Credentials… →
+Remove Credentials** to delete them.
 
 The encrypted settings are portable: copy the settings to another computer and use the
-same passphrase to decrypt them there. If you forget the passphrase, the credentials
-cannot be recovered; replace or remove the encrypted record instead.
+same app-wide passphrase to decrypt them there. If you forget the passphrase, the
+credentials cannot be recovered.
 
 > Credential encryption protects the saved values at rest. Classic Telnet is not an
 > encrypted network protocol, and BBS Navigator does not automatically type or transmit

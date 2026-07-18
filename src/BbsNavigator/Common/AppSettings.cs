@@ -39,6 +39,21 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private MosaicThemeMode _theme = MosaicThemeMode.Blue;
 
+        private string? _credentialEncryptionVerifier;
+
+        /// <summary>
+        /// Gets or sets the encrypted verifier for the application-wide credential passphrase.
+        /// </summary>
+        /// <value>
+        /// A protected verifier used to confirm the passphrase without persisting the passphrase itself.
+        /// </value>
+        [Browsable(false)]
+        public string? CredentialEncryptionVerifier
+        {
+            get => _credentialEncryptionVerifier;
+            set => SetProperty(ref _credentialEncryptionVerifier, value);
+        }
+
         [property: Category("Terminal")]
         [property: DisplayName("Terminal Font Size")]
         [property: Description("The default terminal font size.")]

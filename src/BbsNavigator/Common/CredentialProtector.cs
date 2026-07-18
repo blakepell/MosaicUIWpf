@@ -30,6 +30,33 @@ namespace BbsNavigator.Common
         private const int KeySize = 32;
         private static readonly byte[] Header = "BNC1"u8.ToArray();
         private static readonly byte[] AssociatedData = "BbsNavigator.Credentials.v1"u8.ToArray();
+        private const string VerifierUserName = "BbsNavigator.MasterPassphrase";
+        private const string VerifierPassword = "CredentialVerifier.v1";
+
+        /// <summary>
+        /// Creates an encrypted verifier for the application-wide credential passphrase.
+        /// </summary>
+        /// <param name="passphrase">The application-wide encryption passphrase.</param>
+        /// <returns>A protected verifier suitable for settings persistence.</returns>
+        public static string CreatePassphraseVerifier(string passphrase)
+        {
+            return Protect(new BbsCredentials(VerifierUserName, VerifierPassword), passphrase);
+        }
+
+        /// <summary>
+        /// Verifies an application-wide credential passphrase against a protected verifier.
+        /// </summary>
+        /// <param name="protectedVerifier">The protected verifier stored in application settings.</param>
+        /// <param name="passphrase">The application-wide encryption passphrase.</param>
+        /// <returns>
+        /// <see langword="true"/> if the passphrase authenticates the verifier; otherwise,
+        /// <see langword="false"/>.
+        /// </returns>
+        public static bool VerifyPassphrase(string protectedVerifier, string passphrase)
+        {
+            return TryUnprotect(protectedVerifier, passphrase, out BbsCredentials? verifier) &&
+                   verifier is { UserName: VerifierUserName, Password: VerifierPassword };
+        }
 
         /// <summary>
         /// Encrypts a credential record with a user-supplied passphrase.

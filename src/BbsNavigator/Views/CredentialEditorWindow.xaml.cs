@@ -20,26 +20,28 @@ namespace BbsNavigator.Views
     public partial class CredentialEditorWindow : Window
     {
         private readonly BbsProfile _profile;
+        private string _encryptionPassphrase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CredentialEditorWindow"/> class.
         /// </summary>
         /// <param name="profile">The BBS profile whose credentials are edited.</param>
-        public CredentialEditorWindow(BbsProfile profile)
+        /// <param name="encryptionPassphrase">The unlocked application-wide encryption passphrase.</param>
+        public CredentialEditorWindow(BbsProfile profile, string encryptionPassphrase)
         {
             InitializeComponent();
             _profile = profile;
+            _encryptionPassphrase = encryptionPassphrase;
             HeadingTextBlock.Text = $"Credentials for {profile.Name}";
             ExistingCredentialsTextBlock.Visibility = profile.HasCredentials ? Visibility.Visible : Visibility.Collapsed;
             RemoveButton.IsEnabled = profile.HasCredentials;
             Loaded += (_, _) => UserNameTextBox.Focus();
         }
 
-        private void Save_OnClick(object sender, RoutedEventArgs e)
+        private async void Save_OnClick(object sender, RoutedEventArgs e)
         {
             string userName = UserNameTextBox.Text.Trim();
             string password = BbsPasswordBox.Password;
-            string passphrase = PassphraseBox.Password;
 
             if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrEmpty(password))
             {
@@ -47,23 +49,12 @@ namespace BbsNavigator.Views
                 return;
             }
 
-            if (passphrase.Length < 8)
-            {
-                ShowWarning("Use an encryption passphrase containing at least 8 characters.");
-                return;
-            }
-
-            if (!string.Equals(passphrase, ConfirmPassphraseBox.Password, StringComparison.Ordinal))
-            {
-                ShowWarning("The encryption passphrases do not match.");
-                return;
-            }
-
             try
             {
-                _profile.EncryptedCredentials = CredentialProtector.Protect(
-                    new BbsCredentials(userName, password),
-                    passphrase);
+                var credentials = new BbsCredentials(userName, password);
+                string encryptionPassphrase = _encryptionPassphrase;
+                _profile.EncryptedCredentials = await Task.Run(
+                    () => CredentialProtector.Protect(credentials, encryptionPassphrase));
                 DialogResult = true;
             }
             catch (Exception ex)
@@ -100,8 +91,7 @@ namespace BbsNavigator.Views
         protected override void OnClosed(EventArgs e)
         {
             BbsPasswordBox.Password = string.Empty;
-            PassphraseBox.Password = string.Empty;
-            ConfirmPassphraseBox.Password = string.Empty;
+            _encryptionPassphrase = string.Empty;
             base.OnClosed(e);
         }
     }

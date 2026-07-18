@@ -29,6 +29,7 @@ namespace BbsNavigator
     public partial class MainWindow : Window
     {
         private readonly Dictionary<Guid, LayoutDocument> _documents = new();
+        private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
@@ -120,14 +121,67 @@ namespace BbsNavigator
             }
         }
 
-        private void EditCredentials_OnClick(object sender, RoutedEventArgs e)
+        private async void EditCredentials_OnClick(object sender, RoutedEventArgs e)
         {
             if (GetContextProfile(sender) is not { } profile)
             {
                 return;
             }
 
-            new CredentialEditorWindow(profile) { Owner = this }.ShowDialog();
+            string? passphrase = await GetCredentialEncryptionPassphraseAsync();
+            if (passphrase == null)
+            {
+                return;
+            }
+
+            new CredentialEditorWindow(profile, passphrase) { Owner = this }.ShowDialog();
+        }
+
+        /// <summary>
+        /// Gets the cached application-wide credential passphrase, configuring or unlocking it when needed.
+        /// </summary>
+        /// <returns>The unlocked passphrase, or <see langword="null"/> when the user cancels.</returns>
+        private async Task<string?> GetCredentialEncryptionPassphraseAsync()
+        {
+            if (!string.IsNullOrEmpty(_credentialEncryptionPassphrase))
+            {
+                return _credentialEncryptionPassphrase;
+            }
+
+            bool isConfiguration = string.IsNullOrWhiteSpace(Settings.CredentialEncryptionVerifier);
+
+            while (true)
+            {
+                var dialog = new CredentialPassphraseWindow(isConfiguration) { Owner = this };
+                if (dialog.ShowDialog() != true)
+                {
+                    return null;
+                }
+
+                string passphrase = dialog.Passphrase;
+                if (isConfiguration)
+                {
+                    Settings.CredentialEncryptionVerifier = await Task.Run(
+                        () => CredentialProtector.CreatePassphraseVerifier(passphrase));
+                    _credentialEncryptionPassphrase = passphrase;
+                    return passphrase;
+                }
+
+                string verifier = Settings.CredentialEncryptionVerifier!;
+                bool isValid = await Task.Run(
+                    () => CredentialProtector.VerifyPassphrase(verifier, passphrase));
+                if (isValid)
+                {
+                    _credentialEncryptionPassphrase = passphrase;
+                    return passphrase;
+                }
+
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    "The app-wide passphrase is incorrect. Check it and try again.",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
         }
 
         private void ViewCredentials_OnClick(object sender, RoutedEventArgs e)
@@ -480,6 +534,7 @@ namespace BbsNavigator
         /// <inheritdoc />
         protected override void OnClosed(EventArgs e)
         {
+            _credentialEncryptionPassphrase = null;
             ThemeManager.ThemeChanged -= ThemeManager_OnThemeChanged;
             base.OnClosed(e);
         }
