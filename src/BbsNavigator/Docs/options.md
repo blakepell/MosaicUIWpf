@@ -6,6 +6,12 @@ Open the options window with **Setup → Options…**, or [open it now](app:opti
 Settings are grouped by category, take effect immediately, and are saved when BBS
 Navigator closes.
 
+## Appearance
+
+| Setting | Meaning |
+| ------- | ------- |
+| User Guide Font Size | The saved base font size for this guide. Point at the guide and use `Ctrl` + mouse wheel to change it. |
+
 ## Terminal
 
 | Setting | Meaning |

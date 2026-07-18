@@ -26,7 +26,8 @@ have used since the dial-up era.
 | Open this guide | **Help → User Guide** |
 
 The guide opens as the first document when BBS Navigator starts. Links in the contents
-stay inside the guide; use **Back** and **Contents** above the page to move around.
+stay inside the guide; use **Back** and **Contents** above the page to move around. The
+guide remembers the font size selected with `Ctrl` + mouse wheel between runs.
 
 > **New to BBSing?** Public boards are still online and free. A good starting point is the
 > [Telnet BBS Guide](https://www.telnetbbsguide.com/), which maintains a directory of live

@@ -73,6 +73,12 @@ namespace Mosaic.UI.Wpf.Controls
         static MarkdownViewer()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MarkdownViewer), new FrameworkPropertyMetadata(typeof(MarkdownViewer)));
+            FontSizeProperty.OverrideMetadata(
+                typeof(MarkdownViewer),
+                new FrameworkPropertyMetadata(
+                    SystemFonts.MessageFontSize,
+                    FrameworkPropertyMetadataOptions.Inherits,
+                    OnFontSizeChanged));
         }
 
         /// <summary>
@@ -246,14 +252,30 @@ namespace Mosaic.UI.Wpf.Controls
             if (!newFontSize.Equals(oldFontSize))
             {
                 SetCurrentValue(FontSizeProperty, newFontSize);
-
-                if (_richTextBox?.Document is { } document)
-                {
-                    ScaleDocumentFontSizes(document, newFontSize / oldFontSize);
-                }
             }
 
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Scales the rendered document when the viewer's base font size changes through zoom,
+        /// binding, a style, or direct property assignment.
+        /// </summary>
+        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = (MarkdownViewer)d;
+
+            if (viewer._richTextBox?.Document is not { } document ||
+                e.OldValue is not double oldFontSize ||
+                e.NewValue is not double newFontSize ||
+                oldFontSize <= 0 ||
+                newFontSize <= 0 ||
+                oldFontSize.Equals(newFontSize))
+            {
+                return;
+            }
+
+            ScaleDocumentFontSizes(document, newFontSize / oldFontSize);
         }
 
         /// <summary>

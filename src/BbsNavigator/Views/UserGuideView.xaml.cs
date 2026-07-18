@@ -8,6 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.Memory;
+using BbsNavigator.Common;
 using Mosaic.UI.Wpf.Controls;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,6 +33,7 @@ namespace BbsNavigator.Views
         public UserGuideView()
         {
             InitializeComponent();
+            DataContext = AppServices.GetRequiredService<AppSettings>();
         }
 
         private void Back_OnClick(object sender, RoutedEventArgs e)

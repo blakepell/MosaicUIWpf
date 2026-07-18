@@ -45,6 +45,20 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private double _fontSize = 15.0;
 
+        private double _userGuideFontSize = 12.0;
+
+        /// <summary>
+        /// Gets or sets the persisted base font size used by the Markdown user guide.
+        /// </summary>
+        [Category("Appearance")]
+        [DisplayName("User Guide Font Size")]
+        [Description("The Markdown user guide font size. Hold Ctrl and use the mouse wheel over the guide to change it.")]
+        public double UserGuideFontSize
+        {
+            get => _userGuideFontSize;
+            set => SetProperty(ref _userGuideFontSize, Math.Clamp(value, 8.0, 32.0));
+        }
+
         [property: Browsable(false)]
         [ObservableProperty]
         private ObservableCollection<WindowViewState> _windowViewStates = new();
