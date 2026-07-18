@@ -432,6 +432,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  EnumComboBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/dropdown-field-48.png"
+                    Text="EnumComboBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="EnumComboBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.EnumComboBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.EnumComboBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:EnumComboBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:EnumComboBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dropdown-field-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  FileDropper  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

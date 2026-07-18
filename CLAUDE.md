@@ -23,7 +23,7 @@ dotnet run --project src/MosaicWpfDemo/MosaicWpfDemo.csproj
 dotnet pack src/Mosaic.UI.Wpf/Mosaic.UI.Wpf.csproj -c Release
 ```
 
-There is no test project in the solution.
+Tests live in `src/Mosaic.UI.Wpf.Tests` (xunit; WPF control tests run on manually-created STA threads). Run with `dotnet test src/Mosaic.UI.Wpf.Tests/Mosaic.UI.Wpf.Tests.csproj`.
 
 ## Architecture
 

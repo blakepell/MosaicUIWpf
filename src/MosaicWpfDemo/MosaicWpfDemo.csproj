@@ -439,6 +439,13 @@
 			<Link>LinkedSources\EditableTextBlockExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\EnumComboBoxExample.xaml">
+			<Link>LinkedSources\EnumComboBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\EnumComboBoxExample.xaml.cs">
+			<Link>LinkedSources\EnumComboBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml">
 			<Link>LinkedSources\FavoriteCheckBoxExample.xaml</Link>
 		</EmbeddedResource>
