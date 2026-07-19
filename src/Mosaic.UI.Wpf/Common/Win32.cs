@@ -514,7 +514,21 @@ namespace Mosaic.UI.Wpf.Common
         FORCE_ICONIC_REPRESENTATION = 7,
         HAS_ICONIC_BITMAP = 10,
         UseImmersiveDarkMode = 20,
-        WindowCornerPreference = 33
+        WindowCornerPreference = 33,
+        BorderColor = 34
+    }
+
+    /// <summary>
+    /// Special COLORREF sentinel values accepted by <see cref="DwmWindowAttributes.BorderColor"/> (and the
+    /// caption/text color attributes). Any other value is a standard 0x00BBGGRR COLORREF.
+    /// </summary>
+    public static class DwmColor
+    {
+        /// <summary>Let DWM pick the color (system default).</summary>
+        public const int Default = unchecked((int)0xFFFFFFFF);
+
+        /// <summary>Suppress the border entirely (no border is drawn).</summary>
+        public const int None = unchecked((int)0xFFFFFFFE);
     }
 
     /// <summary>

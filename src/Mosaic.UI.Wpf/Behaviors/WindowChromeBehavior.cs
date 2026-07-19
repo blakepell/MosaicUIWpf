@@ -2,6 +2,7 @@ using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Shell;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -291,6 +292,40 @@ namespace Mosaic.UI.Wpf.Behaviors
 
             ApplyRoundBorder(window);
             ApplyRoundWindowRegion(window);
+            ApplyDwmBorderColor(window);
+        }
+
+        /// <summary>
+        /// Syncs the Windows 11 DWM window border color (<c>DWMWA_BORDER_COLOR</c>) to the window's
+        /// <see cref="Control.BorderBrush"/>. Without this, DWM paints its own default-colored frame around the
+        /// window, which overpaints any border set on the window along the straight edges (the rounded corners are
+        /// clipped away by the window region, revealing the templated border underneath — producing a two-tone
+        /// border). Requires Windows 11 (build 22000+); the call is a harmless no-op on earlier systems.
+        /// </summary>
+        private static void ApplyDwmBorderColor(Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+
+            if (hwnd == IntPtr.Zero)
+            {
+                return;
+            }
+
+            int colorRef;
+
+            // A zero-thickness border means "no border"; suppress the DWM frame so nothing is drawn.
+            if (window.BorderThickness == default || window.BorderBrush is not SolidColorBrush brush)
+            {
+                colorRef = DwmColor.None;
+            }
+            else
+            {
+                var c = brush.Color;
+                // DWMWA_BORDER_COLOR expects a COLORREF (0x00BBGGRR); alpha is ignored by DWM.
+                colorRef = c.R | (c.G << 8) | (c.B << 16);
+            }
+
+            Win32.DwmSetWindowAttribute(hwnd, DwmWindowAttributes.BorderColor, ref colorRef, sizeof(int));
         }
 
         /// <summary>
