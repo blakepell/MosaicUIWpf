@@ -478,6 +478,7 @@ namespace BbsNavigator
             BbsProfile? profile = SelectedProfile;
             if (profile == null)
             {
+                ShowNoProfileSelectedMessage("edit");
                 return;
             }
 
@@ -529,6 +530,7 @@ namespace BbsNavigator
             BbsProfile? profile = SelectedProfile;
             if (profile == null)
             {
+                ShowNoProfileSelectedMessage("remove");
                 return;
             }
 
@@ -645,6 +647,18 @@ namespace BbsNavigator
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+        }
+
+        /// <summary>
+        /// Informs the user that a BBS must be selected before an operation can proceed.
+        /// </summary>
+        private static void ShowNoProfileSelectedMessage(string operation)
+        {
+            Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                $"Select a BBS in the directory to {operation}.",
+                "BBS Navigator",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private static void ShowNoActiveSessionMessage()

@@ -130,6 +130,7 @@
                                 CanAutoHide="True"
                                 CanClose="False"
                                 CanHide="False"
+                                CanFloat="False"
                                 ContentId="bbs-directory">
                                 <Grid>
                                     <Grid.RowDefinitions>
