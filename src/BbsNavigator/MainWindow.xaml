@@ -18,8 +18,11 @@
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
     mosaic:WindowChromeBehavior.IsEnabled="True"
     mosaic:WindowChromeBehavior.ResizeBorderThickness="5"
+    mosaic:WindowChromeBehavior.RoundBorder="True"
     mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+    BorderBrush="#2F43A8"
+    BorderThickness="1"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
     SnapsToDevicePixels="True"
@@ -129,8 +132,8 @@
                                 Title="BBS Directory"
                                 CanAutoHide="True"
                                 CanClose="False"
-                                CanHide="False"
                                 CanFloat="False"
+                                CanHide="False"
                                 ContentId="bbs-directory">
                                 <Grid>
                                     <Grid.RowDefinitions>

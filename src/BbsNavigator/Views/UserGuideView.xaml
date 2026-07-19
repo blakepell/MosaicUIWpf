@@ -32,8 +32,8 @@
         <mosaic:MarkdownViewer
             x:Name="Viewer"
             Grid.Row="1"
-            FontSize="{Binding UserGuideFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Padding="24,16"
+            FontSize="{Binding UserGuideFontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             LinkClicked="Viewer_OnLinkClicked"
             Source="/BbsNavigator;component/Docs/index.md" />
     </Grid>

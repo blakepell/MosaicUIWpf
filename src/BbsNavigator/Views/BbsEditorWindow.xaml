@@ -83,8 +83,8 @@
             <mosaic:NumericTextBox
                 Grid.Row="3"
                 Grid.Column="1"
-                Padding="4"
                 Margin="0,4"
+                Padding="4"
                 DecimalPlaces="0"
                 Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock

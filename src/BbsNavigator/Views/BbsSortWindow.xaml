@@ -15,6 +15,7 @@
     mosaic:WindowChromeBehavior.RoundBorder="True"
     mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+    BorderThickness="1"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -40,7 +41,10 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock FontSize="20" FontWeight="SemiBold" Text="Sort BBS Directory" />
+            <TextBlock
+                FontSize="20"
+                FontWeight="SemiBold"
+                Text="Sort BBS Directory" />
             <TextBlock
                 Grid.Row="1"
                 Margin="0,6,0,14"
@@ -54,7 +58,11 @@
                     <ColumnDefinition Width="140" />
                 </Grid.ColumnDefinitions>
                 <TextBlock FontWeight="SemiBold" Text="Sort By" />
-                <TextBlock Grid.Column="1" Margin="8,0,0,0" FontWeight="SemiBold" Text="Direction" />
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    FontWeight="SemiBold"
+                    Text="Direction" />
             </Grid>
 
             <Border
@@ -75,9 +83,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <ComboBox
-                                        ItemsSource="{Binding DataContext.AvailableFields, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                        SelectedItem="{Binding Field, Mode=TwoWay}">
+                                    <ComboBox ItemsSource="{Binding DataContext.AvailableFields, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" SelectedItem="{Binding Field, Mode=TwoWay}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
@@ -120,7 +126,11 @@
                     Click="AddCriterion_OnClick"
                     Content="Add Sort Level" />
                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                    <Button Width="90" Margin="0,0,8,0" Content="Cancel" IsCancel="True" />
+                    <Button
+                        Width="90"
+                        Margin="0,0,8,0"
+                        Content="Cancel"
+                        IsCancel="True" />
                     <mosaic:AccentButton
                         Width="90"
                         AccentButtonType="ThemeAccent"
