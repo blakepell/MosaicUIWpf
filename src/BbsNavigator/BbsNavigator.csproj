@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\add-48.png" />
+    <None Remove="Assets\app.png" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\minus-48.png" />
     <None Remove="Assets\sort-48.png" />
@@ -28,5 +30,8 @@
     <Resource Include="Assets\terminal-gray-48.png" />
     <Resource Include="Assets\terminal-48.png" />
     <Resource Include="Docs\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\app.ico" />
   </ItemGroup>
 </Project>

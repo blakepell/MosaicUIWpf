@@ -65,9 +65,7 @@
                 Duration="0:0:0.35" />
         </Storyboard>
 
-        <Style
-            x:Key="StatusBarText"
-            TargetType="TextBlock">
+        <Style x:Key="StatusBarText" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="FontSize" Value="11" />
             <Setter Property="Margin" Value="10,0,0,0" />
@@ -95,7 +93,10 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <mosaic:Badge x:Name="StatusBadge" MinWidth="88" Text="Disconnected" />
+                <mosaic:Badge
+                    x:Name="StatusBadge"
+                    MinWidth="88"
+                    Text="Disconnected" />
                 <TextBlock
                     x:Name="StatusText"
                     Grid.Column="1"

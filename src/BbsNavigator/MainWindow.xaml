@@ -34,7 +34,7 @@
 
         <mosaic:WindowTitleBar
             Grid.Row="0"
-            IconSource="/Assets/app.png"
+            IconSource="pack://application:,,,/BbsNavigator;component/Assets/app.png"
             ShowIcon="True"
             TitleAlignment="Center"
             TitleText="BBS Navigator">
