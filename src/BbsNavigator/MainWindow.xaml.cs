@@ -314,7 +314,13 @@ namespace BbsNavigator
 
             int importedCount = 0;
             int skippedCount = 0;
+            int duplicateCount = 0;
             var errors = new List<string>();
+
+            // Track host/port endpoints that already exist so imports never create duplicates.
+            var existingEndpoints = new HashSet<string>(
+                Settings.BbsProfiles.Select(GetEndpointKey),
+                StringComparer.OrdinalIgnoreCase);
 
             foreach (string fileName in fileNames)
             {
@@ -323,10 +329,16 @@ namespace BbsNavigator
                     BbsListImportResult result = BbsListCsvImporter.Import(fileName);
                     foreach (BbsProfile profile in result.Profiles)
                     {
+                        if (!existingEndpoints.Add(GetEndpointKey(profile)))
+                        {
+                            duplicateCount++;
+                            continue;
+                        }
+
                         Settings.BbsProfiles.Add(profile);
+                        importedCount++;
                     }
 
-                    importedCount += result.Profiles.Count;
                     skippedCount += result.SkippedCount;
                 }
                 catch (Exception ex)
@@ -341,6 +353,11 @@ namespace BbsNavigator
                 summary += $"\nSkipped {skippedCount:N0} row{(skippedCount == 1 ? string.Empty : "s")} without a valid TelnetAddress and bbsPort.";
             }
 
+            if (duplicateCount > 0)
+            {
+                summary += $"\nSkipped {duplicateCount:N0} duplicate{(duplicateCount == 1 ? string.Empty : "s")} that already exist in the directory.";
+            }
+
             if (errors.Count > 0)
             {
                 summary += $"\n\nCould not import:\n{string.Join("\n", errors)}";
@@ -351,6 +368,14 @@ namespace BbsNavigator
                 "Import BBS List",
                 MessageBoxButton.OK,
                 errors.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
+        }
+
+        /// <summary>
+        /// Builds a case-insensitive host/port key used to detect duplicate BBS profiles.
+        /// </summary>
+        private static string GetEndpointKey(BbsProfile profile)
+        {
+            return $"{profile.Host?.Trim()}:{profile.Port}";
         }
 
         private void EditBbs_OnClick(object sender, RoutedEventArgs e)
