@@ -28,12 +28,27 @@ namespace BbsNavigator.Common
         /// <exception cref="InvalidDataException">The CSV does not contain the required headers.</exception>
         public static BbsListImportResult Import(string fileName)
         {
-            using var parser = new TextFieldParser(fileName)
-            {
-                HasFieldsEnclosedInQuotes = true,
-                TextFieldType = FieldType.Delimited,
-                TrimWhiteSpace = true
-            };
+            using var parser = new TextFieldParser(fileName);
+            return Import(parser);
+        }
+
+        /// <summary>
+        /// Reads importable Telnet profiles from a bblist CSV stream.
+        /// </summary>
+        /// <param name="stream">The CSV stream to read.</param>
+        /// <returns>The imported profiles and number of rows that were skipped.</returns>
+        /// <exception cref="InvalidDataException">The CSV does not contain the required headers.</exception>
+        public static BbsListImportResult Import(Stream stream)
+        {
+            using var parser = new TextFieldParser(stream);
+            return Import(parser);
+        }
+
+        private static BbsListImportResult Import(TextFieldParser parser)
+        {
+            parser.HasFieldsEnclosedInQuotes = true;
+            parser.TextFieldType = FieldType.Delimited;
+            parser.TrimWhiteSpace = true;
             parser.SetDelimiters(",");
 
             string[]? headers = parser.ReadFields();

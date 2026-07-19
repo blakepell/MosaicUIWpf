@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="Assets\add-48.png" />
     <None Remove="Assets\app.png" />
+    <None Remove="Assets\bbslist.csv" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\minus-48.png" />
     <None Remove="Assets\sort-48.png" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <Resource Include="Assets\add-48.png" />
     <Resource Include="Assets\app.png" />
+    <Resource Include="Assets\bbslist.csv" />
     <Resource Include="Assets\edit-property-48.png" />
     <Resource Include="Assets\minus-48.png" />
     <Resource Include="Assets\sort-48.png" />

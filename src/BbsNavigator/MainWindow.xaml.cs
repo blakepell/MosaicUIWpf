@@ -61,6 +61,20 @@ namespace BbsNavigator
                 await app.LoadBbsProfilesAsync(Settings);
             }
 
+            if (Settings.BbsProfiles.Count == 0)
+            {
+                MessageBoxResult result = Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    "You have 0 BBS's setup, would you like to import the Big List of BBS's?",
+                    "BBS Navigator",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    ImportBigList(interactive: true);
+                }
+            }
+
             if (BbsTree.Items.Count > 0)
             {
                 BbsTree.Focus();
@@ -318,27 +332,14 @@ namespace BbsNavigator
             var errors = new List<string>();
 
             // Track host/port endpoints that already exist so imports never create duplicates.
-            var existingEndpoints = new HashSet<string>(
-                Settings.BbsProfiles.Select(GetEndpointKey),
-                StringComparer.OrdinalIgnoreCase);
+            HashSet<string> existingEndpoints = BuildExistingEndpointSet();
 
             foreach (string fileName in fileNames)
             {
                 try
                 {
                     BbsListImportResult result = BbsListCsvImporter.Import(fileName);
-                    foreach (BbsProfile profile in result.Profiles)
-                    {
-                        if (!existingEndpoints.Add(GetEndpointKey(profile)))
-                        {
-                            duplicateCount++;
-                            continue;
-                        }
-
-                        Settings.BbsProfiles.Add(profile);
-                        importedCount++;
-                    }
-
+                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref duplicateCount);
                     skippedCount += result.SkippedCount;
                 }
                 catch (Exception ex)
@@ -347,6 +348,109 @@ namespace BbsNavigator
                 }
             }
 
+            string summary = BuildImportSummary(importedCount, skippedCount, duplicateCount);
+            if (errors.Count > 0)
+            {
+                summary += $"\n\nCould not import:\n{string.Join("\n", errors)}";
+            }
+
+            Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                summary,
+                "Import BBS List",
+                MessageBoxButton.OK,
+                errors.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
+        }
+
+        private void ImportBigList_OnClick(object sender, RoutedEventArgs e)
+        {
+            ImportBigList(interactive: true);
+        }
+
+        /// <summary>
+        /// Imports every BBS entry from the bundled <c>Assets\bbslist.csv</c> resource, skipping
+        /// any host/port that already exists in the directory.
+        /// </summary>
+        /// <param name="interactive">When <see langword="true"/>, a summary dialog is shown afterward.</param>
+        private void ImportBigList(bool interactive)
+        {
+            int importedCount = 0;
+            int duplicateCount = 0;
+            int skippedCount = 0;
+
+            try
+            {
+                var resourceUri = new Uri("pack://application:,,,/Assets/bbslist.csv", UriKind.Absolute);
+                System.Windows.Resources.StreamResourceInfo? resource = Application.GetResourceStream(resourceUri);
+                if (resource == null)
+                {
+                    throw new FileNotFoundException("The bundled BBS list resource could not be found.");
+                }
+
+                HashSet<string> existingEndpoints = BuildExistingEndpointSet();
+                using (Stream stream = resource.Stream)
+                {
+                    BbsListImportResult result = BbsListCsvImporter.Import(stream);
+                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref duplicateCount);
+                    skippedCount = result.SkippedCount;
+                }
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The Big List could not be imported.\n\n{ex.Message}",
+                    "Import Big List",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
+            if (interactive)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    BuildImportSummary(importedCount, skippedCount, duplicateCount),
+                    "Import Big List",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+
+        /// <summary>
+        /// Builds a case-insensitive set of the host/port endpoints already present in the directory.
+        /// </summary>
+        private HashSet<string> BuildExistingEndpointSet()
+        {
+            return new HashSet<string>(
+                Settings.BbsProfiles.Select(GetEndpointKey),
+                StringComparer.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Adds profiles whose host/port endpoint is not already present, counting additions and duplicates.
+        /// </summary>
+        private void AddUniqueProfiles(
+            IReadOnlyList<BbsProfile> profiles,
+            HashSet<string> existingEndpoints,
+            ref int importedCount,
+            ref int duplicateCount)
+        {
+            foreach (BbsProfile profile in profiles)
+            {
+                if (!existingEndpoints.Add(GetEndpointKey(profile)))
+                {
+                    duplicateCount++;
+                    continue;
+                }
+
+                Settings.BbsProfiles.Add(profile);
+                importedCount++;
+            }
+        }
+
+        /// <summary>
+        /// Formats the standard import result summary message.
+        /// </summary>
+        private static string BuildImportSummary(int importedCount, int skippedCount, int duplicateCount)
+        {
             string summary = $"Imported {importedCount:N0} BBS profile{(importedCount == 1 ? string.Empty : "s")}.";
             if (skippedCount > 0)
             {
@@ -358,16 +462,7 @@ namespace BbsNavigator
                 summary += $"\nSkipped {duplicateCount:N0} duplicate{(duplicateCount == 1 ? string.Empty : "s")} that already exist in the directory.";
             }
 
-            if (errors.Count > 0)
-            {
-                summary += $"\n\nCould not import:\n{string.Join("\n", errors)}";
-            }
-
-            Mosaic.UI.Wpf.Controls.MessageBox.Show(
-                summary,
-                "Import BBS List",
-                MessageBoxButton.OK,
-                errors.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
+            return summary;
         }
 
         /// <summary>
