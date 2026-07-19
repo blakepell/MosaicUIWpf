@@ -129,6 +129,7 @@
         <Grid Grid.Row="1">
             <vt52:VT52Terminal
                 x:Name="Terminal"
+                Padding="4,0,4,0"
                 AutoConnect="False"
                 Background="#FF080B10"
                 BackspaceSendsDelete="{Binding BackspaceSendsDelete}"
