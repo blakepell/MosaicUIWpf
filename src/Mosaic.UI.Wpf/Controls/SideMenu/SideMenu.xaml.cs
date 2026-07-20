@@ -367,6 +367,22 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Returns a menu item by its <see cref="SideMenuItem.Text"/> property.
+        /// </summary>
+        /// <param name="text"></param>
+        public SideMenuItem? FindByText(string text)
+        {
+            var item = this.MenuItems.FirstOrDefault(x => x.Text.Equals(text, StringComparison.OrdinalIgnoreCase));
+
+            if (item is SideMenuItem menuItem)
+            {
+                return menuItem;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Shows the <see cref="SideMenuItem.DialogContentType"/> as a dialog (modal) or modeless window.
         /// When shown modally the dialog's owner is set to the window hosting this menu.
         /// </summary>
