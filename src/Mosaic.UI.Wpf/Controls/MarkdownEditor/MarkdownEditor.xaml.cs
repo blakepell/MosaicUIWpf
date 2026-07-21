@@ -171,13 +171,20 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="path">The path of the file to load.</param>
         public void LoadFile(string path)
         {
-            var fi = new FileInfo(path);
+            string fullPath = Path.GetFullPath(path);
+            var fi = new FileInfo(fullPath);
 
             _suppressModified = true;
-            this.Editor.Text = File.ReadAllText(path);
-            _suppressModified = false;
+            try
+            {
+                this.Editor.Text = File.ReadAllText(fullPath);
+            }
+            finally
+            {
+                _suppressModified = false;
+            }
 
-            this.FilePath = path;
+            this.FilePath = fullPath;
             this.FileName = fi.Name;
             this.IsModified = false;
         }
@@ -221,13 +228,13 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public async Task SaveAsync()
         {
-            if (this.RaiseSavingCancelled())
-            {
-                return;
-            }
-
             if (!string.IsNullOrWhiteSpace(this.FilePath))
             {
+                if (this.RaiseSavingCancelled())
+                {
+                    return;
+                }
+
                 await File.WriteAllTextAsync(this.FilePath, this.Editor.Text);
                 this.IsModified = false;
             }
@@ -258,10 +265,9 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
+            await File.WriteAllTextAsync(dialog.FileName, this.Editor.Text);
             this.FilePath = dialog.FileName;
             this.FileName = Path.GetFileName(dialog.FileName);
-
-            await File.WriteAllTextAsync(this.FilePath, this.Editor.Text);
             this.IsModified = false;
         }
 

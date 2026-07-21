@@ -51,18 +51,28 @@
 
                         <ad:LayoutDocumentPaneGroup>
                             <ad:LayoutDocumentPane>
-                                <ad:LayoutDocument
-                                    Title="Overview"
+                                <ad:LayoutMarkdownEditor
                                     ContentId="overview"
-                                    IsSelected="True">
-                                    <theme:MarkdownEditor Text="# Mosaic themed docking&#x0a;&#x0a;Document tabs, tool window captions, auto-hide tabs, menus, and docking overlays are mapped to Mosaic theme resources.&#x0a;&#x0a;Drag a tab or pin and unpin a tool window to exercise AvalonDock's themed chrome." />
-                                </ad:LayoutDocument>
-                                <ad:LayoutDocument Title="Theme usage" ContentId="xaml">
-                                    <theme:SyntaxEditor
-                                        IsReadOnly="True"
-                                        Language="Xml"
-                                        Text="&lt;ad:DockingManager&gt;&#x0a;    &lt;ad:DockingManager.Theme&gt;&#x0a;        &lt;ad:MosaicTheme /&gt;&#x0a;    &lt;/ad:DockingManager.Theme&gt;&#x0a;&lt;/ad:DockingManager&gt;" />
-                                </ad:LayoutDocument>
+                                    FileName="Overview.md"
+                                    IsSelected="True"
+                                    Text="# Mosaic themed docking&#x0a;&#x0a;Document tabs, tool window captions, auto-hide tabs, menus, and docking overlays are mapped to Mosaic theme resources.&#x0a;&#x0a;Drag a tab or pin and unpin a tool window to exercise AvalonDock's themed chrome." />
+                                <ad:LayoutSyntaxEditor
+                                    x:Name="ExtensibleSyntaxDocument"
+                                    ContentId="xaml"
+                                    FileName="ThemeUsage.xaml"
+                                    Text="&lt;ad:DockingManager&gt;&#x0a;    &lt;ad:DockingManager.Theme&gt;&#x0a;        &lt;ad:MosaicTheme /&gt;&#x0a;    &lt;/ad:DockingManager.Theme&gt;&#x0a;&lt;/ad:DockingManager&gt;">
+                                    <ad:LayoutSyntaxEditor.AdditionalToolBarItems>
+                                        <Button
+                                            Click="InsertThemeSnippetButton_OnClick"
+                                            Content="Insert theme"
+                                            ToolTip="Insert a MosaicTheme element at the caret." />
+                                        <ToggleButton
+                                            Checked="WordWrapToggle_OnChecked"
+                                            Content="Word wrap"
+                                            ToolTip="Toggle word wrapping on the public SyntaxEditor field."
+                                            Unchecked="WordWrapToggle_OnUnchecked" />
+                                    </ad:LayoutSyntaxEditor.AdditionalToolBarItems>
+                                </ad:LayoutSyntaxEditor>
                             </ad:LayoutDocumentPane>
                         </ad:LayoutDocumentPaneGroup>
 

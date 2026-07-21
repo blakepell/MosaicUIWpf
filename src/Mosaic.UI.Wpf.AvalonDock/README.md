@@ -76,3 +76,16 @@ Add the AvalonDock namespace and assign `MosaicTheme` to the `DockingManager.The
     </Grid>
 </Window>
 ```
+
+## Editor Documents
+
+`LayoutMarkdownEditor` and `LayoutSyntaxEditor` are ready-to-dock, saveable document models. Both track unsaved edits, append `*` to the tab title, expose file metadata, and provide `LoadFile`, `NewDocument`, `Save`, `SaveAsync`, and `SaveAsAsync` operations through `ISaveable`.
+
+```csharp
+var document = new LayoutSyntaxEditor("Example.cs");
+document.Editor.Language = SyntaxLanguage.CSharp;
+document.AdditionalToolBarItems.Add(new Button { Content = "Build" });
+documentPane.Children.Add(document);
+```
+
+The syntax document exposes both its `Editor` and `ToolBar` fields publicly. Items added to `AdditionalToolBarItems` are placed after the built-in save button. `Ctrl+S` saves and `Ctrl+Shift+S` opens Save As. `LayoutMarkdownEditor` hosts Mosaic's complete `MarkdownEditor`, including its formatting and save toolbar.

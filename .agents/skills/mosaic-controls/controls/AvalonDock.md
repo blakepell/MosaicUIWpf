@@ -1,7 +1,7 @@
 # AvalonDock
 
 **Package/project:** `MosaicUIWpf.AvalonDock` / `src/Mosaic.UI.Wpf.AvalonDock`  
-**Primary control:** `Mosaic.UI.Wpf.AvalonDock.DockingManager`  
+**Primary controls:** `Mosaic.UI.Wpf.AvalonDock.DockingManager`, `LayoutMarkdownEditor`, `LayoutSyntaxEditor`
 **Theme:** `Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme`  
 **Example:** `src/MosaicWpfDemo/Views/Examples/AvalonDockExample.xaml`
 
@@ -58,3 +58,5 @@ ThemeManager.ThemeChanged += (_, _) =>
 - The Mosaic theme maps AvalonDock document tabs, tool-window captions, auto-hide tabs, menus, floating windows, navigator window, and docking overlays to Mosaic theme tokens.
 - `DockingManagerExtensions.Add(...)` can add a control as a new `LayoutDocument` without hand-building the layout tree.
 - Layout serialization types live under `Mosaic.UI.Wpf.AvalonDock.Serialization`.
+- `LayoutMarkdownEditor` and `LayoutSyntaxEditor` derive from `LayoutDocument`, implement `ISaveable`, track dirty titles, and provide file load/save helpers.
+- `LayoutSyntaxEditor.Editor` and `.ToolBar` are public XAML fields. Consumers can merge buttons, separators, and other controls through `AdditionalToolBarItems`.

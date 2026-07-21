@@ -6,13 +6,10 @@
  */
 
 using Mosaic.UI.Wpf;
-using Mosaic.UI.Wpf.AvalonDock;
+using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows;
-using Mosaic.UI.Wpf.Controls;
 using AvalonDockMosaicTheme = Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme;
-using System.Drawing;
-using System.Windows.Media;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -24,11 +21,7 @@ namespace MosaicWpfDemo.Views.Examples
             ThemeManager.ThemeChanged += OnMosaicThemeChanged;
             Unloaded += OnUnloaded;
 
-            this.DockingManager.Add(new SyntaxEditor()
-            {
-                Language = SyntaxLanguage.Xml,
-                Text = "<html></html>"
-            }, "Sample HTML", Colors.Green, false, true, true);
+            this.ExtensibleSyntaxDocument.Editor.Language = SyntaxLanguage.Xml;
         }
 
         private void OnMosaicThemeChanged(object? sender, MosaicThemeMode e)
@@ -41,5 +34,21 @@ namespace MosaicWpfDemo.Views.Examples
             ThemeManager.ThemeChanged -= OnMosaicThemeChanged;
             Unloaded -= OnUnloaded;
         }
+
+        private void InsertThemeSnippetButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            const string snippet = "<ad:MosaicTheme />";
+            int caretOffset = this.ExtensibleSyntaxDocument.Editor.CaretOffset;
+
+            this.ExtensibleSyntaxDocument.Editor.Document.Insert(caretOffset, snippet);
+            this.ExtensibleSyntaxDocument.Editor.CaretOffset = caretOffset + snippet.Length;
+            this.ExtensibleSyntaxDocument.Editor.Focus();
+        }
+
+        private void WordWrapToggle_OnChecked(object sender, RoutedEventArgs e) =>
+            this.ExtensibleSyntaxDocument.Editor.WordWrap = true;
+
+        private void WordWrapToggle_OnUnchecked(object sender, RoutedEventArgs e) =>
+            this.ExtensibleSyntaxDocument.Editor.WordWrap = false;
     }
 }

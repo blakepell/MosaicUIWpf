@@ -45,7 +45,7 @@ namespace MosaicTextEditor
 
         private readonly AppViewModel _appViewModel;
         private readonly AppSettings _appSettings;
-        private readonly Dictionary<Control, EditorDocument> _documentsByControl = new();
+        private readonly Dictionary<FrameworkElement, EditorDocument> _documentsByControl = new();
         private readonly HashSet<LayoutDocument> _documentsClosingAfterPrompt = new();
         private readonly Dictionary<EditorDocument, LayoutDocument> _layoutDocumentsByDocument = new();
         private readonly MainWindowViewModel _viewModel;
@@ -129,7 +129,7 @@ namespace MosaicTextEditor
         private void DockingManager_OnActiveContentChanged(object? sender, EventArgs e)
         {
             var activeContent = this.DockingManager.Layout.ActiveContent;
-            if (activeContent is LayoutDocument { Content: Control control } && _documentsByControl.TryGetValue(control, out var document))
+            if (activeContent is LayoutDocument { Content: FrameworkElement content } && _documentsByControl.TryGetValue(content, out var document))
             {
                 _viewModel.SetActiveDocument(document);
                 document.EditorControl.Dispatcher.BeginInvoke(document.FocusEditor);
@@ -193,24 +193,26 @@ namespace MosaicTextEditor
 
         private void DockingManager_OnDocumentClosed(object? sender, DocumentClosedEventArgs e)
         {
-            if (e.Document.Content is not Control control || !_documentsByControl.TryGetValue(control, out var document))
+            if (e.Document.Content is not FrameworkElement content || !_documentsByControl.TryGetValue(content, out var document))
             {
                 return;
             }
 
             document.PropertyChanged -= this.EditorDocument_OnPropertyChanged;
-            _documentsByControl.Remove(control);
+            _documentsByControl.Remove(content);
             _layoutDocumentsByDocument.Remove(document);
             _viewModel.RemoveDocument(document);
         }
 
         private void ViewModel_OnDocumentAdded(object? sender, EditorDocument document)
         {
-            var layoutDocument = this.DockingManager.Add(document.EditorControl, document.Title, activate: true, canClose: true, moveToLast: true);
+            var layoutDocument = document.LayoutDocument;
+            layoutDocument.CanClose = true;
+            this.DocumentPane.Children.Add(layoutDocument);
             layoutDocument.ContentId = document.FilePath ?? document.GetHashCode().ToString();
             layoutDocument.Description = document.FilePath ?? document.FileName;
 
-            _documentsByControl[document.EditorControl] = document;
+            _documentsByControl[(FrameworkElement)layoutDocument.Content!] = document;
             _layoutDocumentsByDocument[document] = layoutDocument;
             document.EditorControl.AddHandler(System.Windows.Input.Keyboard.PreviewKeyDownEvent, new System.Windows.Input.KeyEventHandler((_, e) => this.EditorControl_OnPreviewKeyDown(layoutDocument, e)), true);
             document.PropertyChanged += this.EditorDocument_OnPropertyChanged;
@@ -545,7 +547,7 @@ namespace MosaicTextEditor
 
         private bool TryGetEditorDocument(LayoutDocument layoutDocument, out EditorDocument document)
         {
-            if (layoutDocument.Content is Control control && _documentsByControl.TryGetValue(control, out var editorDocument))
+            if (layoutDocument.Content is FrameworkElement content && _documentsByControl.TryGetValue(content, out var editorDocument))
             {
                 document = editorDocument;
                 return true;

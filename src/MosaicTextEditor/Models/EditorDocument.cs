@@ -9,6 +9,7 @@
  */
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using Mosaic.UI.Wpf.AvalonDock.Layout;
 using Mosaic.UI.Wpf.Controls;
 using MosaicTextEditor.Common;
 using System.ComponentModel;
@@ -28,6 +29,8 @@ namespace MosaicTextEditor.Models
     {
         private readonly MarkdownEditor? _markdownEditor;
         private readonly SyntaxEditor? _syntaxEditor;
+        private readonly LayoutMarkdownEditor? _layoutMarkdownEditor;
+        private readonly LayoutSyntaxEditor? _layoutSyntaxEditor;
         private bool _suppressModified;
 
         /// <summary>
@@ -42,30 +45,44 @@ namespace MosaicTextEditor.Models
 
             if (kind == EditorDocumentKind.Markdown)
             {
-                _markdownEditor = new MarkdownEditor
-                {
-                    FileName = fileName,
-                    StatusBarVisibility = System.Windows.Visibility.Visible
-                };
+                _layoutMarkdownEditor = new LayoutMarkdownEditor(fileName);
+                _markdownEditor = _layoutMarkdownEditor.Editor;
+                _markdownEditor.StatusBarVisibility = System.Windows.Visibility.Visible;
                 DependencyPropertyDescriptor.FromProperty(MarkdownEditor.DocumentTitleProperty, typeof(MarkdownEditor))
                     ?.AddValueChanged(_markdownEditor, this.MarkdownEditor_OnDependencyPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(MarkdownEditor.IsModifiedProperty, typeof(MarkdownEditor))
                     ?.AddValueChanged(_markdownEditor, this.MarkdownEditor_OnDependencyPropertyChanged);
 
+                this.LayoutDocument = _layoutMarkdownEditor;
                 this.EditorControl = _markdownEditor;
             }
             else
             {
-                _syntaxEditor = new SyntaxEditor
-                {
-                    Language = SyntaxLanguage.None
-                };
+                _layoutSyntaxEditor = new LayoutSyntaxEditor(fileName);
+                _syntaxEditor = _layoutSyntaxEditor.Editor;
+                _syntaxEditor.Language = SyntaxLanguage.None;
                 BindingOperations.SetBinding(_syntaxEditor, SyntaxEditor.FontSizeProperty, new Binding(nameof(AppSettings.FontSize))
                 {
                     Source = appSettings,
                     Mode = BindingMode.OneWay
                 });
                 _syntaxEditor.TextChanged += this.SyntaxEditor_OnTextChanged;
+                DependencyPropertyDescriptor.FromProperty(LayoutSyntaxEditor.IsModifiedProperty, typeof(LayoutSyntaxEditor))
+                    ?.AddValueChanged(_layoutSyntaxEditor, this.LayoutSyntaxEditor_OnDependencyPropertyChanged);
+                DependencyPropertyDescriptor.FromProperty(LayoutSyntaxEditor.FilePathProperty, typeof(LayoutSyntaxEditor))
+                    ?.AddValueChanged(_layoutSyntaxEditor, this.LayoutSyntaxEditor_OnDependencyPropertyChanged);
+
+                var wordWrapButton = new ToggleButton
+                {
+                    Content = "Wrap",
+                    ToolTip = "Toggle word wrap",
+                    Padding = new Thickness(6, 2, 6, 2)
+                };
+                wordWrapButton.Checked += (_, _) => _syntaxEditor.WordWrap = true;
+                wordWrapButton.Unchecked += (_, _) => _syntaxEditor.WordWrap = false;
+                _layoutSyntaxEditor.AdditionalToolBarItems.Add(wordWrapButton);
+
+                this.LayoutDocument = _layoutSyntaxEditor;
                 this.EditorControl = _syntaxEditor;
             }
 
@@ -81,6 +98,11 @@ namespace MosaicTextEditor.Models
         /// Gets the WPF control hosted in AvalonDock.
         /// </summary>
         public Control EditorControl { get; }
+
+        /// <summary>
+        /// Gets the reusable AvalonDock editor document hosted by the application.
+        /// </summary>
+        public LayoutDocument LayoutDocument { get; }
 
         /// <summary>
         /// Gets the current syntax language for syntax editor documents.
@@ -168,6 +190,10 @@ namespace MosaicTextEditor.Models
                 else if (_syntaxEditor != null)
                 {
                     _syntaxEditor.Text = text;
+                    if (_layoutSyntaxEditor != null)
+                    {
+                        _layoutSyntaxEditor.IsModified = markModified;
+                    }
                 }
             }
             finally
@@ -208,6 +234,13 @@ namespace MosaicTextEditor.Models
                 _markdownEditor.FileName = Path.GetFileName(this.FilePath);
                 _markdownEditor.IsModified = false;
             }
+
+            if (_layoutSyntaxEditor != null)
+            {
+                _layoutSyntaxEditor.FilePath = this.FilePath;
+                _layoutSyntaxEditor.FileName = this.FileName;
+                _layoutSyntaxEditor.IsModified = false;
+            }
         }
 
         /// <summary>
@@ -222,6 +255,12 @@ namespace MosaicTextEditor.Models
             if (_syntaxEditor != null)
             {
                 _syntaxEditor.Language = SyntaxLanguageMap.FromExtension(path);
+            }
+
+            if (_layoutSyntaxEditor != null)
+            {
+                _layoutSyntaxEditor.FilePath = this.FilePath;
+                _layoutSyntaxEditor.FileName = this.FileName;
             }
 
             if (_markdownEditor != null)
@@ -265,6 +304,11 @@ namespace MosaicTextEditor.Models
                 _markdownEditor.IsModified = value;
             }
 
+            if (_layoutSyntaxEditor != null && _layoutSyntaxEditor.IsModified != value)
+            {
+                _layoutSyntaxEditor.IsModified = value;
+            }
+
             this.UpdateTitle();
         }
 
@@ -277,6 +321,21 @@ namespace MosaicTextEditor.Models
         }
 
         private void MarkdownEditor_OnDependencyPropertyChanged(object? sender, EventArgs e) => this.SyncFromMarkdownEditor();
+
+        private void LayoutSyntaxEditor_OnDependencyPropertyChanged(object? sender, EventArgs e)
+        {
+            if (_layoutSyntaxEditor == null || _suppressModified)
+            {
+                return;
+            }
+
+            this.IsModified = _layoutSyntaxEditor.IsModified;
+            if (!string.IsNullOrWhiteSpace(_layoutSyntaxEditor.FilePath))
+            {
+                this.FilePath = _layoutSyntaxEditor.FilePath;
+                this.FileName = Path.GetFileName(_layoutSyntaxEditor.FilePath);
+            }
+        }
 
         private void SyncFromMarkdownEditor()
         {

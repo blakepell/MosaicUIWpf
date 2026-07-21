@@ -1,0 +1,10 @@
+<local:LayoutDocument
+    x:Class="Mosaic.UI.Wpf.AvalonDock.Layout.LayoutMarkdownEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.AvalonDock.Layout"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui">
+    <mosaic:MarkdownEditor
+        x:Name="Editor"
+        x:FieldModifier="public" />
+</local:LayoutDocument>

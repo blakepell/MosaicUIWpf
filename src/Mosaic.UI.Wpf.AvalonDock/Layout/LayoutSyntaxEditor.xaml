@@ -1,0 +1,43 @@
+<local:LayoutDocument
+    x:Class="Mosaic.UI.Wpf.AvalonDock.Layout.LayoutSyntaxEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.AvalonDock.Layout"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBarTray Grid.Row="0">
+            <ToolBar
+                x:Name="ToolBar"
+                x:FieldModifier="public">
+                <Button
+                    x:Name="SaveButton"
+                    Width="24"
+                    Height="24"
+                    Click="SaveButton_OnClick"
+                    HorizontalContentAlignment="Center"
+                    ToolTip="Save"
+                    VerticalContentAlignment="Center">
+                    <mosaic:AdaptiveImage
+                        Width="16"
+                        Height="16"
+                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-save-16.png"
+                        Stretch="Uniform" />
+                </Button>
+
+                <Separator
+                    x:Name="AdditionalItemsSeparator"
+                    Visibility="Collapsed" />
+            </ToolBar>
+        </ToolBarTray>
+
+        <mosaic:SyntaxEditor
+            x:Name="Editor"
+            x:FieldModifier="public"
+            Grid.Row="1" />
+    </Grid>
+</local:LayoutDocument>
