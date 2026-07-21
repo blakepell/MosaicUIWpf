@@ -24,6 +24,7 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Foreground="{TemplateBinding Foreground}"
+                            IsTextSearchEnabled="False"
                             ItemsSource="{TemplateBinding Items}"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -71,10 +72,12 @@
                                                         VerticalAlignment="Center"
                                                         RenderOptions.BitmapScalingMode="HighQuality"
                                                         Source="{Binding Icon}" />
-                                                    <TextBlock
+                                                    <controls:EditableTextBlock
                                                         VerticalAlignment="Center"
+                                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                                                        IsDoubleClickToEditEnabled="False"
                                                         Text="{Binding Name}"
-                                                        TextTrimming="CharacterEllipsis"
+                                                        TrimOnTextUpdated="True"
                                                         ToolTip="{Binding FullPath}" />
                                                 </StackPanel>
                                             </DataTemplate>

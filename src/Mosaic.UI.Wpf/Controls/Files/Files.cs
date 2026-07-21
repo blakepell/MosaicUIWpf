@@ -26,7 +26,9 @@ namespace Mosaic.UI.Wpf.Controls
     /// this behavior can be toggled off to list files only. It supports single or multiple selection, an
     /// optional file-system watcher that keeps the listing in sync with the folder, a manual
     /// <see cref="Refresh"/> method, and raises <see cref="FileDoubleClick"/> (with the
-    /// <see cref="FileInfo"/>) when a file is double-clicked.
+    /// <see cref="FileInfo"/>) when a file is double-clicked. While the list has keyboard focus,
+    /// incremental typing selects matching names, <see cref="Key.Enter"/> activates the selection, and
+    /// <see cref="Key.F2"/> starts an inline filesystem rename.
     /// </summary>
     [DefaultEvent(nameof(FileDoubleClick))]
     [DefaultProperty(nameof(DirectoryPath))]
@@ -37,12 +39,15 @@ namespace Mosaic.UI.Wpf.Controls
 
         private const string AscendingHeaderTemplateKey = "FilesAscendingHeaderTemplate";
         private const string DescendingHeaderTemplateKey = "FilesDescendingHeaderTemplate";
+        private static readonly TimeSpan IncrementalSearchTimeout = TimeSpan.FromSeconds(1);
 
         private ListView? _listView;
         private FileSystemWatcher? _watcher;
         private readonly DispatcherTimer _refreshTimer;
+        private readonly DispatcherTimer _incrementalSearchTimer;
         private GridViewColumn? _sortColumn;
         private ListSortDirection _sortDirection = ListSortDirection.Ascending;
+        private string _incrementalSearchText = string.Empty;
 
         /// <summary>
         /// Initializes static metadata for the <see cref="Files"/> class.
@@ -67,7 +72,14 @@ namespace Mosaic.UI.Wpf.Controls
                 this.Refresh();
             };
 
-            this.Unloaded += (_, _) => this.DisposeWatcher();
+            _incrementalSearchTimer = new DispatcherTimer { Interval = IncrementalSearchTimeout };
+            _incrementalSearchTimer.Tick += (_, _) => this.ResetIncrementalSearch();
+
+            this.Unloaded += (_, _) =>
+            {
+                this.DisposeWatcher();
+                this.ResetIncrementalSearch();
+            };
         }
 
         #region Dependency Properties
@@ -234,6 +246,29 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (bool)GetValue(ShowNavigateErrorMessageBoxProperty);
             set => SetValue(ShowNavigateErrorMessageBoxProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ShowRenameErrorMessageBox"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowRenameErrorMessageBoxProperty = DependencyProperty.Register(
+            nameof(ShowRenameErrorMessageBox), typeof(bool), typeof(Files),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether a warning message box is displayed when a file or
+        /// folder rename fails. The <see cref="RenameError"/> event is raised regardless of this setting.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> to show rename failures; otherwise, <see langword="false"/>. The default
+        /// is <see langword="true"/>.
+        /// </value>
+        [Category("Behavior")]
+        [Description("Whether a warning message box is shown when a file or folder rename fails. The RenameError event is raised regardless. Enabled by default.")]
+        public bool ShowRenameErrorMessageBox
+        {
+            get => (bool)GetValue(ShowRenameErrorMessageBoxProperty);
+            set => SetValue(ShowRenameErrorMessageBoxProperty, value);
         }
 
         /// <summary>
@@ -417,6 +452,22 @@ namespace Mosaic.UI.Wpf.Controls
             remove => RemoveHandler(NavigateErrorEvent, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="RenameError"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent RenameErrorEvent = EventManager.RegisterRoutedEvent(
+            nameof(RenameError), RoutingStrategy.Bubble, typeof(FilesRenameErrorEventHandler), typeof(Files));
+
+        /// <summary>
+        /// Occurs when an inline file or folder rename fails. The original name is restored before this
+        /// event is raised.
+        /// </summary>
+        public event FilesRenameErrorEventHandler RenameError
+        {
+            add => AddHandler(RenameErrorEvent, value);
+            remove => RemoveHandler(RenameErrorEvent, value);
+        }
+
         #endregion
 
         #region Template / Selection Wiring
@@ -425,12 +476,16 @@ namespace Mosaic.UI.Wpf.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+            this.ResetIncrementalSearch();
 
             if (_listView != null)
             {
                 _listView.MouseDoubleClick -= this.OnListViewMouseDoubleClick;
                 _listView.SelectionChanged -= this.OnListViewSelectionChanged;
-                _listView.KeyDown -= this.OnListViewKeyDown;
+                _listView.PreviewKeyDown -= this.OnListViewKeyDown;
+                _listView.PreviewTextInput -= this.OnListViewPreviewTextInput;
+                _listView.PreviewMouseDown -= this.OnListViewPreviewMouseDown;
+                _listView.LostKeyboardFocus -= this.OnListViewLostKeyboardFocus;
                 _listView.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.OnColumnHeaderClick));
             }
 
@@ -443,7 +498,10 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 _listView.MouseDoubleClick += this.OnListViewMouseDoubleClick;
                 _listView.SelectionChanged += this.OnListViewSelectionChanged;
-                _listView.KeyDown += this.OnListViewKeyDown;
+                _listView.PreviewKeyDown += this.OnListViewKeyDown;
+                _listView.PreviewTextInput += this.OnListViewPreviewTextInput;
+                _listView.PreviewMouseDown += this.OnListViewPreviewMouseDown;
+                _listView.LostKeyboardFocus += this.OnListViewLostKeyboardFocus;
                 _listView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.OnColumnHeaderClick));
                 this.ApplyItemContainerStyle();
             }
@@ -497,6 +555,11 @@ namespace Mosaic.UI.Wpf.Controls
             return trigger;
         }
 
+        /// <summary>
+        /// Propagates selection changes from the template list view through the control's routed event.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The selection change details.</param>
         private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // SelectedItem is two-way bound in the template; just notify the computed selection helpers.
@@ -507,6 +570,11 @@ namespace Mosaic.UI.Wpf.Controls
             this.RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, e.RemovedItems, e.AddedItems));
         }
 
+        /// <summary>
+        /// Activates the file-system item beneath a double-click in the template list view.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The mouse button event details.</param>
         private void OnListViewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             // Resolve the row that was actually double-clicked (ignore clicks on empty space or headers).
@@ -518,8 +586,82 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Processes printable text as an incremental search against visible item names.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The text composition event details.</param>
+        private void OnListViewPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (IsTextEntryFocused() || string.IsNullOrEmpty(e.Text) || e.Text.Any(char.IsControl))
+            {
+                return;
+            }
+
+            bool cycle = _incrementalSearchText.Length == 1
+                && e.Text.Length == 1
+                && string.Equals(_incrementalSearchText, e.Text, StringComparison.CurrentCultureIgnoreCase);
+
+            if (!cycle)
+            {
+                _incrementalSearchText += e.Text;
+            }
+
+            _incrementalSearchTimer.Stop();
+            _incrementalSearchTimer.Start();
+
+            this.SelectIncrementalSearchMatch(_incrementalSearchText, cycle);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Ends the current incremental search when mouse navigation begins.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The mouse button event details.</param>
+        private void OnListViewPreviewMouseDown(object sender, MouseButtonEventArgs e) => this.ResetIncrementalSearch();
+
+        /// <summary>
+        /// Ends the current incremental search when keyboard focus leaves the template list view.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The keyboard focus change details.</param>
+        private void OnListViewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (_listView?.IsKeyboardFocusWithin != true)
+            {
+                this.ResetIncrementalSearch();
+            }
+        }
+
+        /// <summary>
+        /// Handles rename, activation, and navigation keys for the template list view.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The key event details.</param>
         private void OnListViewKeyDown(object sender, KeyEventArgs e)
         {
+            if (IsTextEntryFocused())
+            {
+                return;
+            }
+
+            if (IsNavigationKey(e.Key))
+            {
+                this.ResetIncrementalSearch();
+            }
+
+            if (e.Key == Key.F2)
+            {
+                if (this.SelectedItem is { IsParentNavigation: false } renameItem)
+                {
+                    this.BeginRename(renameItem);
+                    e.Handled = true;
+                }
+
+                return;
+            }
+
             // Keyboard parity with double-click: Enter activates the focused row (navigate a folder or
             // raise the file-activated event/command).
             if (e.Key != Key.Enter)
@@ -532,6 +674,221 @@ namespace Mosaic.UI.Wpf.Controls
                 this.ActivateItem(item);
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// Determines whether a key performs list navigation or activation.
+        /// </summary>
+        /// <param name="key">The key to inspect.</param>
+        /// <returns>
+        /// <see langword="true"/> if the key performs list navigation or activation; otherwise, <see langword="false"/>.
+        /// </returns>
+        private static bool IsNavigationKey(Key key)
+        {
+            return key is Key.Left or Key.Right or Key.Up or Key.Down
+                or Key.Home or Key.End or Key.PageUp or Key.PageDown
+                or Key.Enter or Key.Escape or Key.Tab;
+        }
+
+        /// <summary>
+        /// Determines whether keyboard focus is currently inside a text-entry control.
+        /// </summary>
+        /// <returns>
+        /// <see langword="true"/> if a text-entry control has keyboard focus; otherwise, <see langword="false"/>.
+        /// </returns>
+        private static bool IsTextEntryFocused()
+        {
+            return Keyboard.FocusedElement is TextBoxBase or PasswordBox;
+        }
+
+        /// <summary>
+        /// Selects the next visible item whose name begins with the accumulated search text.
+        /// </summary>
+        /// <param name="searchText">The accumulated search text.</param>
+        /// <param name="cycle">
+        /// <see langword="true"/> to begin after the current selection and wrap; otherwise, <see langword="false"/>.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if a matching item is selected; otherwise, <see langword="false"/>.
+        /// </returns>
+        private bool SelectIncrementalSearchMatch(string searchText, bool cycle)
+        {
+            if (_listView == null || _listView.Items.Count == 0)
+            {
+                return false;
+            }
+
+            int count = _listView.Items.Count;
+            int startIndex = cycle ? Math.Max(_listView.SelectedIndex + 1, 0) : 0;
+
+            for (int offset = 0; offset < count; offset++)
+            {
+                int index = cycle ? (startIndex + offset) % count : offset;
+                if (_listView.Items[index] is not FileItem item
+                    || !item.Name.StartsWith(searchText, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                _listView.SelectedItem = item;
+                _listView.ScrollIntoView(item);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Clears the accumulated incremental-search text and stops its reset timer.
+        /// </summary>
+        private void ResetIncrementalSearch()
+        {
+            _incrementalSearchTimer.Stop();
+            _incrementalSearchText = string.Empty;
+        }
+
+        /// <summary>
+        /// Places the editable name control for an item into rename mode.
+        /// </summary>
+        /// <param name="item">The item to rename.</param>
+        private void BeginRename(FileItem item)
+        {
+            if (_listView == null)
+            {
+                return;
+            }
+
+            this.ResetIncrementalSearch();
+            _listView.ScrollIntoView(item);
+            _listView.UpdateLayout();
+
+            if (_listView.ItemContainerGenerator.ContainerFromItem(item) is not ListViewItem container)
+            {
+                return;
+            }
+
+            var editor = FindVisualDescendant<EditableTextBlock>(container);
+            if (editor == null)
+            {
+                return;
+            }
+
+            editor.ApplyTemplate();
+            editor.TextUpdated -= this.OnEditableNameTextUpdated;
+            editor.TextUpdated += this.OnEditableNameTextUpdated;
+            editor.IsFilePath = !item.IsDirectory;
+            editor.EditMode();
+        }
+
+        /// <summary>
+        /// Validates an edited name and applies the corresponding file-system rename.
+        /// </summary>
+        /// <param name="sender">The editable name control.</param>
+        /// <param name="e">The event details.</param>
+        private void OnEditableNameTextUpdated(object? sender, EventArgs e)
+        {
+            if (sender is not EditableTextBlock editor || editor.DataContext is not FileItem item)
+            {
+                return;
+            }
+
+            editor.TextUpdated -= this.OnEditableNameTextUpdated;
+
+            string originalName = item.Name;
+            string requestedName = editor.Text.Trim();
+            string sourcePath = item.FullPath;
+            string destinationPath = sourcePath;
+
+            try
+            {
+                ValidateFileName(requestedName);
+
+                string? parentPath = Path.GetDirectoryName(sourcePath);
+                if (string.IsNullOrEmpty(parentPath))
+                {
+                    throw new IOException("The item does not have a parent directory and cannot be renamed.");
+                }
+
+                destinationPath = Path.Combine(parentPath, requestedName);
+                if (string.Equals(sourcePath, destinationPath, StringComparison.Ordinal))
+                {
+                    editor.Text = originalName;
+                    return;
+                }
+
+                if (item.IsDirectory)
+                {
+                    Directory.Move(sourcePath, destinationPath);
+                    item.Update(new DirectoryInfo(destinationPath), isParentNavigation: false);
+                }
+                else
+                {
+                    File.Move(sourcePath, destinationPath);
+                    item.Update(new FileInfo(destinationPath));
+                }
+
+                CollectionViewSource.GetDefaultView(this.Items)?.Refresh();
+                this.SelectedItem = item;
+                _listView?.ScrollIntoView(item);
+            }
+            catch (Exception ex)
+            {
+                editor.Text = originalName;
+                this.OnRenameError(sourcePath, destinationPath, ex);
+            }
+            finally
+            {
+                BindingOperations.SetBinding(
+                    editor,
+                    EditableTextBlock.TextProperty,
+                    new Binding(nameof(FileItem.Name)) { Mode = BindingMode.OneWay });
+            }
+        }
+
+        /// <summary>
+        /// Validates a proposed file or folder name.
+        /// </summary>
+        /// <param name="fileName">The proposed file or folder name.</param>
+        /// <exception cref="ArgumentException">
+        /// The name is empty, reserved, or contains invalid file-name characters.
+        /// </exception>
+        private static void ValidateFileName(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                throw new ArgumentException("A file or folder name cannot be empty.", nameof(fileName));
+            }
+
+            if (fileName is "." or ".." || fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                throw new ArgumentException($"'{fileName}' is not a valid file or folder name.", nameof(fileName));
+            }
+        }
+
+        /// <summary>
+        /// Finds the first visual descendant of a specified type.
+        /// </summary>
+        /// <typeparam name="T">The descendant type to locate.</typeparam>
+        /// <param name="parent">The visual parent to search.</param>
+        /// <returns>The first matching descendant, or <see langword="null"/> when no match exists.</returns>
+        private static T? FindVisualDescendant<T>(DependencyObject parent)
+            where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T match)
+                {
+                    return match;
+                }
+
+                if (FindVisualDescendant<T>(child) is { } descendant)
+                {
+                    return descendant;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -610,6 +967,27 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Raises the <see cref="RenameError"/> event and optionally displays the failure to the user.
+        /// </summary>
+        /// <param name="sourcePath">The original full path.</param>
+        /// <param name="destinationPath">The requested full path.</param>
+        /// <param name="exception">The exception raised by the file system.</param>
+        protected virtual void OnRenameError(string sourcePath, string destinationPath, Exception exception)
+        {
+            this.RaiseEvent(new FilesRenameErrorEventArgs(
+                RenameErrorEvent,
+                this,
+                sourcePath,
+                destinationPath,
+                exception));
+
+            if (this.ShowRenameErrorMessageBox)
+            {
+                MessageBox.Show(exception.Message, "Rename Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        /// <summary>
         /// Determines whether the supplied folder lies at or below the configured <see cref="RootDirectory"/>
         /// boundary. Returns <c>true</c> for every path when no root is configured.
         /// </summary>
@@ -666,6 +1044,11 @@ namespace Mosaic.UI.Wpf.Controls
             return null;
         }
 
+        /// <summary>
+        /// Notifies a control when its selected item changes.
+        /// </summary>
+        /// <param name="d">The control whose selected item changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnSelectedItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((Files)d).OnPropertyChangedCompat();
@@ -705,6 +1088,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public static string? GetSortMemberPath(DependencyObject element) => (string?)element.GetValue(SortMemberPathProperty);
 
+        /// <summary>
+        /// Applies or reverses sorting for a clicked column header.
+        /// </summary>
+        /// <param name="sender">The template list view.</param>
+        /// <param name="e">The routed event details.</param>
         private void OnColumnHeaderClick(object sender, RoutedEventArgs e)
         {
             // Ignore the trailing "padding" header (its Column is null) and any non-header sources.
@@ -994,8 +1382,21 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Creates a collection identity key from a full path and item kind.
+        /// </summary>
+        /// <param name="fullPath">The full path of the file-system item.</param>
+        /// <param name="isDirectory">
+        /// <see langword="true"/> if the item is a directory; otherwise, <see langword="false"/>.
+        /// </param>
+        /// <returns>The identity key for the file-system item.</returns>
         private static string KeyFor(string fullPath, bool isDirectory) => (isDirectory ? "D:" : "F:") + fullPath;
 
+        /// <summary>
+        /// Creates a display item from an enumerated file-system entry.
+        /// </summary>
+        /// <param name="entry">The enumerated file-system entry.</param>
+        /// <returns>The display item for the entry.</returns>
         private static FileItem CreateItem(FileEntry entry)
         {
             return entry.Info is DirectoryInfo directory
@@ -1003,6 +1404,11 @@ namespace Mosaic.UI.Wpf.Controls
                 : new FileItem((FileInfo)entry.Info);
         }
 
+        /// <summary>
+        /// Updates an existing display item from an enumerated file-system entry.
+        /// </summary>
+        /// <param name="item">The display item to update.</param>
+        /// <param name="entry">The enumerated file-system entry.</param>
         private static void UpdateItem(FileItem item, FileEntry entry)
         {
             if (entry.Info is DirectoryInfo directory)
@@ -1015,23 +1421,44 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Refreshes a control and recreates its watcher after the directory path changes.
+        /// </summary>
+        /// <param name="d">The control whose directory path changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnDirectoryPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (Files)d;
+            control.ResetIncrementalSearch();
             control.RecreateWatcherIfNeeded();
             control.Refresh();
         }
 
+        /// <summary>
+        /// Refreshes a control after its file filter changes.
+        /// </summary>
+        /// <param name="d">The control whose file filter changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnFilterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((Files)d).Refresh();
         }
 
+        /// <summary>
+        /// Refreshes a control after its folder visibility setting changes.
+        /// </summary>
+        /// <param name="d">The control whose folder visibility setting changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnShowFoldersChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((Files)d).Refresh();
         }
 
+        /// <summary>
+        /// Refreshes a control after its navigation root changes.
+        /// </summary>
+        /// <param name="d">The control whose navigation root changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnRootDirectoryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // The visibility of the ".." parent entry depends on the boundary, so re-read the listing.
@@ -1042,6 +1469,11 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region File System Watcher
 
+        /// <summary>
+        /// Creates or disposes a control's file-system watcher when monitoring changes.
+        /// </summary>
+        /// <param name="d">The control whose monitoring setting changed.</param>
+        /// <param name="e">The dependency property change details.</param>
         private static void OnEnableFileWatcherChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (Files)d;
@@ -1096,6 +1528,11 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
+        /// <summary>
+        /// Schedules a debounced refresh after the watcher reports a file-system change.
+        /// </summary>
+        /// <param name="sender">The file-system watcher.</param>
+        /// <param name="e">The file-system change details.</param>
         private void OnWatcherChanged(object sender, FileSystemEventArgs e)
         {    
             this.Dispatcher.BeginInvoke(() =>
@@ -1105,6 +1542,9 @@ namespace Mosaic.UI.Wpf.Controls
             });
         }
 
+        /// <summary>
+        /// Detaches event handlers and disposes the current file-system watcher.
+        /// </summary>
         private void DisposeWatcher()
         {
             if (_watcher == null)
