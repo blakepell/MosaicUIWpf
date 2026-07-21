@@ -77,8 +77,8 @@
                                                         Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                                                         IsDoubleClickToEditEnabled="False"
                                                         Text="{Binding Name}"
-                                                        TrimOnTextUpdated="True"
-                                                        ToolTip="{Binding FullPath}" />
+                                                        ToolTip="{Binding FullPath}"
+                                                        TrimOnTextUpdated="True" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </GridViewColumn.CellTemplate>

@@ -11,17 +11,15 @@
         </Grid.RowDefinitions>
 
         <ToolBarTray Grid.Row="0">
-            <ToolBar
-                x:Name="ToolBar"
-                x:FieldModifier="public">
+            <ToolBar x:Name="ToolBar" x:FieldModifier="public">
                 <Button
                     x:Name="SaveButton"
                     Width="24"
                     Height="24"
-                    Click="SaveButton_OnClick"
                     HorizontalContentAlignment="Center"
-                    ToolTip="Save"
-                    VerticalContentAlignment="Center">
+                    VerticalContentAlignment="Center"
+                    Click="SaveButton_OnClick"
+                    ToolTip="Save">
                     <mosaic:AdaptiveImage
                         Width="16"
                         Height="16"
@@ -29,15 +27,13 @@
                         Stretch="Uniform" />
                 </Button>
 
-                <Separator
-                    x:Name="AdditionalItemsSeparator"
-                    Visibility="Collapsed" />
+                <Separator x:Name="AdditionalItemsSeparator" Visibility="Collapsed" />
             </ToolBar>
         </ToolBarTray>
 
         <mosaic:SyntaxEditor
             x:Name="Editor"
-            x:FieldModifier="public"
-            Grid.Row="1" />
+            Grid.Row="1"
+            x:FieldModifier="public" />
     </Grid>
 </local:LayoutDocument>
