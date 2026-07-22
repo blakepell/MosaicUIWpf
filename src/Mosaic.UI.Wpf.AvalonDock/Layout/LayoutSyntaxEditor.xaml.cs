@@ -135,6 +135,11 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         public event EventHandler<CancelEventArgs>? Saving;
 
         /// <summary>
+        /// Raised after the document has been successfully written to disk.
+        /// </summary>
+        public event EventHandler<DocumentSavedEventArgs>? Saved;
+
+        /// <summary>
         /// Signals that the XAML loader is beginning to initialize the document.
         /// </summary>
         public void BeginInit()
@@ -214,6 +219,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
 
             File.WriteAllText(this.FilePath, this.Editor.Text);
             this.IsModified = false;
+            this.RaiseSaved(this.FilePath);
         }
 
         /// <inheritdoc/>
@@ -238,6 +244,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
 
             await File.WriteAllTextAsync(this.FilePath, this.Editor.Text);
             this.IsModified = false;
+            this.RaiseSaved(this.FilePath);
         }
 
         /// <inheritdoc/>
@@ -264,6 +271,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             this.FilePath = fullPath;
             this.FileName = Path.GetFileName(fullPath);
             this.IsModified = false;
+            this.RaiseSaved(fullPath);
         }
 
         private static void OnDocumentMetadataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
@@ -286,6 +294,9 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             this.Saving?.Invoke(this, args);
             return args.Cancel;
         }
+
+        private void RaiseSaved(string filePath) =>
+            this.Saved?.Invoke(this, new DocumentSavedEventArgs(filePath));
 
         private void Editor_OnTextChanged(object? sender, EventArgs e)
         {

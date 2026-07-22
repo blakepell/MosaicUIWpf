@@ -147,6 +147,11 @@ namespace Mosaic.UI.Wpf.Controls
         public event EventHandler<CancelEventArgs>? Saving;
 
         /// <summary>
+        /// Raised after the document has been successfully written to disk.
+        /// </summary>
+        public event EventHandler<DocumentSavedEventArgs>? Saved;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MarkdownEditor"/> class.
         /// </summary>
         public MarkdownEditor()
@@ -219,6 +224,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 File.WriteAllText(this.FilePath, this.Editor.Text);
                 this.IsModified = false;
+                this.RaiseSaved(this.FilePath);
             }
         }
 
@@ -237,6 +243,7 @@ namespace Mosaic.UI.Wpf.Controls
 
                 await File.WriteAllTextAsync(this.FilePath, this.Editor.Text);
                 this.IsModified = false;
+                this.RaiseSaved(this.FilePath);
             }
             else
             {
@@ -269,6 +276,7 @@ namespace Mosaic.UI.Wpf.Controls
             this.FilePath = dialog.FileName;
             this.FileName = Path.GetFileName(dialog.FileName);
             this.IsModified = false;
+            this.RaiseSaved(dialog.FileName);
         }
 
         /// <summary>
@@ -281,6 +289,13 @@ namespace Mosaic.UI.Wpf.Controls
             this.Saving?.Invoke(this, args);
             return args.Cancel;
         }
+
+        /// <summary>
+        /// Raises the <see cref="Saved"/> event after content has been written to disk.
+        /// </summary>
+        /// <param name="filePath">The full path the document was saved to.</param>
+        private void RaiseSaved(string filePath) =>
+            this.Saved?.Invoke(this, new DocumentSavedEventArgs(filePath));
 
         #endregion
 

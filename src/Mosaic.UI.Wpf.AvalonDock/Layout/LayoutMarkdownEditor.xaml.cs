@@ -44,6 +44,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             FilePathDescriptor?.AddValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FileNameDescriptor?.AddValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             this.Editor.Saving += this.Editor_OnSaving;
+            this.Editor.Saved += this.Editor_OnSaved;
             this.Closed += this.LayoutMarkdownEditor_OnClosed;
             this.UpdateDocumentMetadata();
         }
@@ -96,6 +97,11 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         public event EventHandler<CancelEventArgs>? Saving;
 
         /// <summary>
+        /// Raised after the document has been successfully written to disk.
+        /// </summary>
+        public event EventHandler<DocumentSavedEventArgs>? Saved;
+
+        /// <summary>
         /// Signals that the XAML loader is beginning to initialize the document.
         /// </summary>
         public void BeginInit() => _isInitializing = true;
@@ -137,6 +143,8 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
 
         private void Editor_OnSaving(object? sender, CancelEventArgs e) => this.Saving?.Invoke(this, e);
 
+        private void Editor_OnSaved(object? sender, DocumentSavedEventArgs e) => this.Saved?.Invoke(this, e);
+
         private void Editor_OnDocumentMetadataChanged(object? sender, EventArgs e) => this.UpdateDocumentMetadata();
 
         private void UpdateDocumentMetadata()
@@ -156,6 +164,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             FilePathDescriptor?.RemoveValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FileNameDescriptor?.RemoveValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             this.Editor.Saving -= this.Editor_OnSaving;
+            this.Editor.Saved -= this.Editor_OnSaved;
             this.Closed -= this.LayoutMarkdownEditor_OnClosed;
         }
     }
