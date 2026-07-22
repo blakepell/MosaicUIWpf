@@ -19,6 +19,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using MessageBox = Mosaic.UI.Wpf.Controls.MessageBox;
 
 namespace Mosaic.UI.Wpf.AvalonDock.Layout
 {
@@ -218,6 +219,12 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         /// <inheritdoc/>
         public async Task SaveAsync()
         {
+            if (this.Editor.IsReadOnly)
+            {
+                MessageBox.Show("The document is currently in read only mode.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(this.FilePath))
             {
                 await this.SaveAsAsync();
