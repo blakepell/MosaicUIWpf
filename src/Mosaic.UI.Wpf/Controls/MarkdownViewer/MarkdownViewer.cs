@@ -52,6 +52,13 @@ namespace Mosaic.UI.Wpf.Controls
         private Uri? _resolvedSource;
 
         /// <summary>
+        /// The absolute base URI derived from <see cref="StorageFolder"/> (with a trailing separator),
+        /// used to resolve relative images and links when no <see cref="Source"/> is set. <c>null</c>
+        /// when no storage folder is configured.
+        /// </summary>
+        private Uri? _storageFolderUri;
+
+        /// <summary>
         /// Previously displayed documents, most recent last, used by <see cref="GoBack"/>.
         /// </summary>
         private readonly Stack<Uri> _backStack = new();
@@ -123,6 +130,30 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (Uri?)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="StorageFolder"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty StorageFolderProperty = DependencyProperty.Register(
+            nameof(StorageFolder),
+            typeof(string),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(null, OnStorageFolderChanged));
+
+        /// <summary>
+        /// Gets or sets a folder used as the base for resolving relative image and link URLs when the
+        /// Markdown is supplied directly through <see cref="Markdown"/> rather than loaded from a
+        /// <see cref="Source"/>. This mirrors the <c>MarkdownEditor.StorageFolder</c> property: an image
+        /// inserted by the editor as a relative <c>{Guid}.{extension}</c> link resolves against this
+        /// folder here. When <see cref="Source"/> is set, that document's location takes precedence.
+        /// </summary>
+        [Category("Common")]
+        [Description("A folder used as the base for resolving relative image and link URLs in directly-supplied Markdown.")]
+        public string? StorageFolder
+        {
+            get => (string?)GetValue(StorageFolderProperty);
+            set => SetValue(StorageFolderProperty, value);
         }
 
         /// <summary>
@@ -454,6 +485,48 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Rebuilds the storage-folder base URI and re-renders when <see cref="StorageFolder"/> changes.
+        /// </summary>
+        private static void OnStorageFolderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = (MarkdownViewer)d;
+            viewer._storageFolderUri = BuildStorageFolderUri(e.NewValue as string);
+            viewer.RenderMarkdown(viewer.Markdown);
+        }
+
+        /// <summary>
+        /// Builds an absolute base URI for a storage folder, ensuring a trailing directory separator so
+        /// relative file names resolve as children of the folder rather than replacing its last segment.
+        /// </summary>
+        /// <param name="folder">The storage folder path, or <c>null</c>/empty for none.</param>
+        /// <returns>The absolute folder URI, or <c>null</c> when no valid folder was supplied.</returns>
+        private static Uri? BuildStorageFolderUri(string? folder)
+        {
+            if (string.IsNullOrWhiteSpace(folder))
+            {
+                return null;
+            }
+
+            try
+            {
+                string fullPath = Path.GetFullPath(folder);
+
+                if (!fullPath.EndsWith(Path.DirectorySeparatorChar) &&
+                    !fullPath.EndsWith(Path.AltDirectorySeparatorChar))
+                {
+                    fullPath += Path.DirectorySeparatorChar;
+                }
+
+                return new Uri(fullPath, UriKind.Absolute);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Loads and displays the Markdown document identified by <paramref name="uri"/>, recording
         /// the previously displayed document in the back history.
         /// </summary>
@@ -604,7 +677,9 @@ namespace Mosaic.UI.Wpf.Controls
 
             try
             {
-                document = MarkdownFlowDocumentRenderer.Render(markdown, _resolvedSource);
+                // A loaded Source document's location takes precedence; otherwise fall back to the
+                // configured storage folder so relative images/links in directly-supplied Markdown resolve.
+                document = MarkdownFlowDocumentRenderer.Render(markdown, _resolvedSource ?? _storageFolderUri);
             }
             catch (Exception ex)
             {

@@ -23,6 +23,7 @@
         <controls:MarkdownEditor
             x:Name="Editor"
             Grid.Row="1"
-            StatusBarVisibility="Visible" />
+            StatusBarVisibility="Visible"
+            StorageFolder="C:\Temp" />
     </Grid>
 </UserControl>

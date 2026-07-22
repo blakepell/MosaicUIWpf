@@ -130,6 +130,29 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(StatusBarVisibilityProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="StorageFolder"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty StorageFolderProperty = DependencyProperty.Register(
+            nameof(StorageFolder),
+            typeof(string),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the folder that images inserted from the file system are copied into. When set,
+        /// "Insert Image from File" copies the chosen image into this folder under a generated
+        /// <c>{Guid}.{extension}</c> name and inserts a relative markdown link, so a <see cref="MarkdownViewer"/>
+        /// configured with the same <c>StorageFolder</c> can resolve and display the image.
+        /// </summary>
+        [Category("Common")]
+        [Description("The folder that images inserted from the file system are copied into, referenced by relative link.")]
+        public string? StorageFolder
+        {
+            get => (string?)this.GetValue(StorageFolderProperty);
+            set => this.SetValue(StorageFolderProperty, value);
+        }
+
         #endregion
 
         /// <summary>
@@ -151,6 +174,13 @@ namespace Mosaic.UI.Wpf.Controls
         /// Raised after the document has been successfully written to disk.
         /// </summary>
         public event EventHandler<DocumentSavedEventArgs>? Saved;
+
+        /// <summary>
+        /// Raised after a file (such as an image) has been attached to the document. The event data
+        /// reports the file's final location, which is either the original file-system location or the
+        /// generated <c>{Guid}.{extension}</c> copy inside the configured <see cref="StorageFolder"/>.
+        /// </summary>
+        public event EventHandler<FileAttachedEventArgs>? FileAttached;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MarkdownEditor"/> class.
@@ -428,6 +458,8 @@ namespace Mosaic.UI.Wpf.Controls
 
         private void InsertTableButton_Click(object sender, RoutedEventArgs e) => this.InsertTable();
 
+        private void InsertImageFromFileButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromFile();
+
         #endregion
 
         #region Markdown commands
@@ -561,7 +593,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="name">The snippet name: <c>link</c>, <c>image</c>, or <c>code</c>.</param>
         public void InsertSnippet(string name)
         {
-            switch (name)
+            switch (name.ToLower())
             {
                 case "link":
                     this.InsertLinkSnippet("[");
@@ -664,6 +696,81 @@ namespace Mosaic.UI.Wpf.Controls
 
             string base64 = Convert.ToBase64String(memoryStream.ToArray());
             this.Editor.SelectedText = $"![Image](data:image/jpeg;base64,{base64})";
+        }
+
+        /// <summary>
+        /// Prompts the user to select an image from the file system and inserts it as a markdown image.
+        /// When <see cref="StorageFolder"/> is set, the chosen file is copied into that folder under a
+        /// generated <c>{Guid}.{extension}</c> name and referenced by a relative link, so a
+        /// <see cref="MarkdownViewer"/> configured with the same <see cref="StorageFolder"/> can resolve
+        /// it. When no storage folder is set, the file is referenced in place by an absolute file URI.
+        /// </summary>
+        public void InsertImageFromFile()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select an Image",
+                Filter = "Image Files (*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp;*.tiff;*.ico)|*.png;*.jpg;*.jpeg;*.gif;*.bmp;*.webp;*.tiff;*.ico|All Files (*.*)|*.*",
+                CheckFileExists = true
+            };
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            string sourcePath = dialog.FileName;
+            string url;
+            string finalPath;
+            bool copiedToStorageFolder;
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(this.StorageFolder))
+                {
+                    Directory.CreateDirectory(this.StorageFolder);
+
+                    string fileName = $"{Guid.NewGuid()}{Path.GetExtension(sourcePath)}";
+                    string destinationPath = Path.Combine(this.StorageFolder, fileName);
+                    File.Copy(sourcePath, destinationPath, overwrite: false);
+
+                    // A relative link (just the file name) so a MarkdownViewer with the same
+                    // StorageFolder resolves the image against that folder.
+                    url = fileName;
+                    finalPath = destinationPath;
+                    copiedToStorageFolder = true;
+                }
+                else
+                {
+                    // No storage folder: reference the file in place via an absolute file URI so the
+                    // markdown renderer can load it directly.
+                    url = new Uri(sourcePath).AbsoluteUri;
+                    finalPath = sourcePath;
+                    copiedToStorageFolder = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show($"The image could not be inserted.\r\n\r\n{ex.Message}", "Insert Image", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string description = Path.GetFileNameWithoutExtension(sourcePath);
+            string markdown = $"![{description}]({url})";
+
+            if (this.Editor.SelectionLength > 0)
+            {
+                this.Editor.SelectedText = markdown;
+            }
+            else
+            {
+                int pos = this.Editor.CaretOffset;
+                this.Editor.Document.Insert(pos, markdown);
+                this.Editor.CaretOffset = pos + markdown.Length;
+            }
+
+            this.FileAttached?.Invoke(this, new FileAttachedEventArgs(finalPath, sourcePath, copiedToStorageFolder));
         }
 
         /// <summary>

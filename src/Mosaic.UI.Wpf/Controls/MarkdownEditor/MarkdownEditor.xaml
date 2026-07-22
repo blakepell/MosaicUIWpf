@@ -39,7 +39,7 @@
                     IsEnabled="{Binding IsModified, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
                     ToolTip="Save">
-                    
+
                     <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-save-16.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
                 </Button>
 
@@ -207,13 +207,37 @@
                     </Viewbox>
                 </Button>
 
-                <Button
+                <controls:SplitButton
+                    Width="32"
+                    MinWidth="48"
+                    Padding="0"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                     Click="InsertSnippetButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    DropDownButtonWidth="16"
+                    Focusable="False"
                     Tag="image"
                     ToolTip="Image">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-image-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
+                    <controls:SplitButton.Content>
+                        <controls:AdaptiveImage
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-image-32.png" />
+                    </controls:SplitButton.Content>
+                    <controls:SplitButton.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem
+                                Click="InsertSnippetButton_Click"
+                                Header="Insert Image Link"
+                                Tag="Image"
+                                ToolTip="Image" />
+                            <MenuItem
+                                Click="InsertImageFromFileButton_Click"
+                                Header="Insert Image from File..."
+                                ToolTip="Select an image from the file system to insert." />
+                        </ContextMenu>
+                    </controls:SplitButton.ContextMenu>
+                </controls:SplitButton>
 
                 <Separator />
 
