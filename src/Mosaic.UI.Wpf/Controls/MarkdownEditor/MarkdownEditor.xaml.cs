@@ -456,7 +456,7 @@ namespace Mosaic.UI.Wpf.Controls
 
         private void BlockQuoteButton_Click(object sender, RoutedEventArgs e) => this.ToggleLinePrefix(BlockQuoteTransform);
 
-        private void InsertTableButton_Click(object sender, RoutedEventArgs e) => this.InsertTable();
+        private async void InsertTableButton_Click(object sender, RoutedEventArgs e) => await this.ShowInsertTableDialogAsync();
 
         private void InsertImageFromFileButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromFile();
 
@@ -639,7 +639,7 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Inserts a default markdown table at the caret.
+        /// Inserts a default 3x3 markdown table at the caret.
         /// </summary>
         public void InsertTable()
         {
@@ -651,6 +651,144 @@ namespace Mosaic.UI.Wpf.Controls
             int pos = this.Editor.CaretOffset;
             this.Editor.Document.Insert(pos, table);
             this.Editor.CaretOffset = pos + table.Length;
+        }
+
+        /// <summary>
+        /// Inserts a markdown table with the requested dimensions as an interactive AvalonEdit snippet.
+        /// The first row is the header, followed by the column-alignment separator; every cell is a
+        /// replaceable snippet element seeded with hint text (<c>Row 1:1</c>, <c>Row 1:2</c>, …) so the
+        /// user can tab through and label each cell in turn.
+        /// </summary>
+        /// <param name="columns">The number of columns (clamped to 1-100).</param>
+        /// <param name="rows">The number of rows, including the header row (clamped to 1-100).</param>
+        public void InsertTable(int columns, int rows)
+        {
+            columns = Math.Clamp(columns, 1, 100);
+            rows = Math.Clamp(rows, 1, 100);
+
+            var snippet = new Snippet();
+
+            for (int r = 1; r <= rows; r++)
+            {
+                snippet.Elements.Add(new SnippetTextElement { Text = "| " });
+
+                for (int c = 1; c <= columns; c++)
+                {
+                    snippet.Elements.Add(new SnippetReplaceableTextElement { Text = $"Row {r}:{c}" });
+                    snippet.Elements.Add(new SnippetTextElement { Text = c < columns ? " | " : " |\r\n" });
+                }
+
+                // The header row is always followed by the column-alignment separator row.
+                if (r == 1)
+                {
+                    var separator = new StringBuilder("|");
+
+                    for (int c = 0; c < columns; c++)
+                    {
+                        separator.Append(" --- |");
+                    }
+
+                    separator.Append("\r\n");
+                    snippet.Elements.Add(new SnippetTextElement { Text = separator.ToString() });
+                }
+            }
+
+            snippet.Elements.Add(new SnippetCaretElement());
+            snippet.Insert(this.Editor.TextArea);
+            this.Editor.Focus();
+        }
+
+        /// <summary>
+        /// Shows a modal dialog prompting for the number of columns and rows, then inserts a table of
+        /// that size using <see cref="InsertTable(int, int)"/> when the user confirms.
+        /// </summary>
+        private async Task ShowInsertTableDialogAsync()
+        {
+            var dialog = new ModalDialog
+            {
+                Title = "Insert Table",
+                Description = "Choose the number of columns and rows for the table.",
+                FontSize = 13,
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true
+            };
+
+            var columnsBox = CreateNumericTextBox("3");
+            var rowsBox = CreateNumericTextBox("3");
+
+            var grid = new Grid { Margin = new Thickness(0, 0, 0, 16) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var columnsLabel = new TextBlock { Text = "Columns", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 12, 8) };
+            Grid.SetRow(columnsLabel, 0);
+            Grid.SetColumn(columnsLabel, 0);
+            columnsBox.Margin = new Thickness(0, 0, 0, 8);
+            Grid.SetRow(columnsBox, 0);
+            Grid.SetColumn(columnsBox, 1);
+
+            var rowsLabel = new TextBlock { Text = "Rows", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 12, 0) };
+            Grid.SetRow(rowsLabel, 1);
+            Grid.SetColumn(rowsLabel, 0);
+            Grid.SetRow(rowsBox, 1);
+            Grid.SetColumn(rowsBox, 1);
+
+            grid.Children.Add(columnsLabel);
+            grid.Children.Add(columnsBox);
+            grid.Children.Add(rowsLabel);
+            grid.Children.Add(rowsBox);
+
+            var cancel = new Button { Content = "Cancel", MinWidth = 90, Margin = new Thickness(0, 0, 8, 0) };
+            cancel.Click += (s, _) => ModalDialog.FindHost((DependencyObject)s!)?.Close(false);
+
+            var insert = new AccentButton { Content = "Insert", MinWidth = 90 };
+            insert.Click += (s, _) => ModalDialog.FindHost((DependencyObject)s!)?.Close(true);
+
+            var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+            buttons.Children.Add(cancel);
+            buttons.Children.Add(insert);
+
+            var panel = new StackPanel();
+            panel.Children.Add(grid);
+            panel.Children.Add(buttons);
+            dialog.Content = panel;
+
+            var host = Window.GetWindow(this)?.Content as UIElement ?? this;
+            bool? result = await dialog.ShowAsync(host);
+
+            if (result == true)
+            {
+                this.InsertTable(ParsePositiveInt(columnsBox.Text, 3), ParsePositiveInt(rowsBox.Text, 3));
+            }
+        }
+
+        /// <summary>
+        /// Creates a text box that only accepts digits, used for the table dimension inputs.
+        /// </summary>
+        /// <param name="text">The initial value.</param>
+        private static TextBox CreateNumericTextBox(string text)
+        {
+            var box = new TextBox
+            {
+                Text = text,
+                MinWidth = 80,
+                MaxLength = 3,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+
+            box.PreviewTextInput += (_, e) => e.Handled = !e.Text.All(char.IsDigit);
+            return box;
+        }
+
+        /// <summary>
+        /// Parses a positive integer, returning <paramref name="fallback"/> when the text is empty,
+        /// non-numeric, or not greater than zero.
+        /// </summary>
+        private static int ParsePositiveInt(string? text, int fallback)
+        {
+            return int.TryParse(text, out int value) && value > 0 ? value : fallback;
         }
 
         /// <summary>

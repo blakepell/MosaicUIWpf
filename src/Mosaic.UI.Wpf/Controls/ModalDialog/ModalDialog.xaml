@@ -55,7 +55,7 @@
                                             x:Name="DescriptionText"
                                             Margin="0,3,0,0"
                                             FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}"
-                                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
                                             Text="{TemplateBinding Description}"
                                             TextWrapping="Wrap" />
                                     </StackPanel>
