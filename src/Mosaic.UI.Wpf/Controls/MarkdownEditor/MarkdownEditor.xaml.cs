@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using ICSharpCode.AvalonEdit.Snippets;
 using Markdig;
 using Microsoft.Win32;
 using Mosaic.UI.Wpf.Interfaces;
@@ -563,10 +564,10 @@ namespace Mosaic.UI.Wpf.Controls
             switch (name)
             {
                 case "link":
-                    this.InsertAndSelectPlaceholder("[description](https://)", 1, "description".Length);
+                    this.InsertLinkSnippet("[");
                     break;
                 case "image":
-                    this.InsertAndSelectPlaceholder("![description](https://)", 2, "description".Length);
+                    this.InsertLinkSnippet("![");
                     break;
                 case "code":
                     // Insert a fenced code block and position the caret on the blank middle line.
@@ -579,23 +580,30 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Inserts text at the caret and selects a placeholder region within the inserted text.
+        /// Inserts a markdown link or image as an interactive AvalonEdit snippet. The description and URL are
+        /// exposed as replaceable elements so the user can tab between them; each is seeded with indicator
+        /// text ("description" / "url") that shows which part is being edited. When there is a selection,
+        /// its text is used as the initial description.
         /// </summary>
-        /// <param name="text">The text to insert.</param>
-        /// <param name="selectionStart">The offset within <paramref name="text"/> where the selection begins.</param>
-        /// <param name="selectionLength">The length of the selection.</param>
-        private void InsertAndSelectPlaceholder(string text, int selectionStart, int selectionLength)
+        /// <param name="prefix">The markdown prefix that precedes the description: <c>[</c> for a link or <c>![</c> for an image.</param>
+        private void InsertLinkSnippet(string prefix)
         {
-            int pos = this.Editor.CaretOffset;
+            string description = this.Editor.SelectionLength > 0 ? this.Editor.SelectedText : "description";
 
-            if (this.Editor.SelectionLength > 0)
+            var snippet = new Snippet
             {
-                pos = this.Editor.SelectionStart;
-                this.Editor.Document.Remove(this.Editor.SelectionStart, this.Editor.SelectionLength);
-            }
+                Elements =
+                {
+                    new SnippetTextElement { Text = prefix },
+                    new SnippetReplaceableTextElement { Text = description },
+                    new SnippetTextElement { Text = "](" },
+                    new SnippetReplaceableTextElement { Text = "url" },
+                    new SnippetTextElement { Text = ")" },
+                    new SnippetCaretElement()
+                }
+            };
 
-            this.Editor.Document.Insert(pos, text);
-            this.Editor.Select(pos + selectionStart, selectionLength);
+            snippet.Insert(this.Editor.TextArea);
         }
 
         /// <summary>
