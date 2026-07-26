@@ -132,6 +132,29 @@ namespace Mosaic.UI.Wpf.Behaviors
             set => SetValue(ShowCharacterUnderCaretProperty, value);
         }
 
+        /// <summary>
+        /// When <see langword="true"/> (the default) the block caret is rendered. Set to
+        /// <see langword="false"/> to fall back to the TextBox's normal I-beam caret without
+        /// having to remove the behavior from the TextBox.
+        /// </summary>
+        public static readonly DependencyProperty IsEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsEnabled),
+                typeof(bool),
+                typeof(BlockCaretBehavior),
+                new PropertyMetadata(true, static (d, e) => ((BlockCaretBehavior)d).OnIsEnabledChanged((bool)e.NewValue)));
+
+        /// <summary>
+        /// When <see langword="true"/> (the default) the block caret is rendered. Set to
+        /// <see langword="false"/> to fall back to the TextBox's normal I-beam caret without
+        /// having to remove the behavior from the TextBox.
+        /// </summary>
+        public bool IsEnabled
+        {
+            get => (bool)GetValue(IsEnabledProperty);
+            set => SetValue(IsEnabledProperty, value);
+        }
+
         /// <inheritdoc />
         protected override void OnAttached()
         {
@@ -143,7 +166,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             AssociatedObject.SelectionChanged += OnSelectionChanged;
             AssociatedObject.TextChanged += OnTextChanged;
 
-            if (AssociatedObject.IsLoaded)
+            if (AssociatedObject.IsLoaded && IsEnabled)
             {
                 Initialize();
             }
@@ -162,11 +185,35 @@ namespace Mosaic.UI.Wpf.Behaviors
             AssociatedObject.TextChanged -= OnTextChanged;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e) => Initialize();
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (IsEnabled)
+            {
+                Initialize();
+            }
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e) => Cleanup();
         private void OnFocusChanged(object sender, RoutedEventArgs e) => InvalidateAdorner();
         private void OnSelectionChanged(object sender, RoutedEventArgs e) => InvalidateAdorner();
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e) => InvalidateAdorner();
+
+        private void OnIsEnabledChanged(bool isEnabled)
+        {
+            if (AssociatedObject == null || !AssociatedObject.IsLoaded)
+            {
+                return;
+            }
+
+            if (isEnabled)
+            {
+                Initialize();
+            }
+            else
+            {
+                Cleanup();
+            }
+        }
 
         // TextChanged fires while the TextBox is still mid-layout, so GetRectFromCharacterIndex
         // returns stale/empty coords at that point. Deferring to Background priority ensures the
