@@ -93,13 +93,15 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
 
         /// <summary>
         /// Raised before a save operation begins. Set <see cref="CancelEventArgs.Cancel"/> to cancel the save.
+        /// The supplied <see cref="DocumentSavingEventArgs"/> exposes this document and its target file path so the
+        /// caller can inspect the current state of the control before the save occurs.
         /// </summary>
-        public event EventHandler<CancelEventArgs>? Saving;
+        public event EventHandler<DocumentSavingEventArgs>? OnSaving;
 
         /// <summary>
         /// Raised after the document has been successfully written to disk.
         /// </summary>
-        public event EventHandler<DocumentSavedEventArgs>? Saved;
+        public event EventHandler<DocumentSavedEventArgs>? OnSaved;
 
         /// <summary>
         /// Signals that the XAML loader is beginning to initialize the document.
@@ -141,9 +143,19 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         /// <inheritdoc/>
         public Task SaveAsAsync() => this.Editor.SaveAsAsync();
 
-        private void Editor_OnSaving(object? sender, CancelEventArgs e) => this.Saving?.Invoke(this, e);
+        private void Editor_OnSaving(object? sender, CancelEventArgs e)
+        {
+            var args = new DocumentSavingEventArgs(this.FilePath, this);
+            this.OnSaving?.Invoke(this, args);
 
-        private void Editor_OnSaved(object? sender, DocumentSavedEventArgs e) => this.Saved?.Invoke(this, e);
+            if (args.Cancel)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void Editor_OnSaved(object? sender, DocumentSavedEventArgs e) =>
+            this.OnSaved?.Invoke(this, new DocumentSavedEventArgs(e.FilePath, this));
 
         private void Editor_OnDocumentMetadataChanged(object? sender, EventArgs e) => this.UpdateDocumentMetadata();
 

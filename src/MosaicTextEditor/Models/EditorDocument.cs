@@ -59,7 +59,7 @@ namespace MosaicTextEditor.Models
             else
             {
                 _layoutSyntaxEditor = new LayoutSyntaxEditor(fileName);
-                _syntaxEditor = _layoutSyntaxEditor.Editor;
+                _syntaxEditor = _layoutSyntaxEditor.Editor;                
                 _syntaxEditor.Language = SyntaxLanguage.None;
                 BindingOperations.SetBinding(_syntaxEditor, SyntaxEditor.FontSizeProperty, new Binding(nameof(AppSettings.FontSize))
                 {
