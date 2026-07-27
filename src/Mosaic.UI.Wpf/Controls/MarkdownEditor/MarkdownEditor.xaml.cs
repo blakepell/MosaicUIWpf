@@ -168,12 +168,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// Raised before a save operation begins. Handlers may set <see cref="CancelEventArgs.Cancel"/>
         /// to <c>true</c> to prevent the default save behavior.
         /// </summary>
-        public event EventHandler<CancelEventArgs>? Saving;
+        public event EventHandler<DocumentSavingEventArgs>? OnSaving;
 
         /// <summary>
         /// Raised after the document has been successfully written to disk.
         /// </summary>
-        public event EventHandler<DocumentSavedEventArgs>? Saved;
+        public event EventHandler<DocumentSavedEventArgs>? OnSaved;
 
         /// <summary>
         /// Raised after a file (such as an image) has been attached to the document. The event data
@@ -311,22 +311,22 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Raises the <see cref="Saving"/> event and reports whether a handler cancelled the operation.
+        /// Raises the <see cref="OnSaving"/> event and reports whether a handler cancelled the operation.
         /// </summary>
         /// <returns><c>true</c> if the save was cancelled; otherwise, <c>false</c>.</returns>
         private bool RaiseSavingCancelled()
         {
-            var args = new CancelEventArgs();
-            this.Saving?.Invoke(this, args);
+            var args = new DocumentSavingEventArgs(this.FilePath, this);
+            this.OnSaving?.Invoke(this, args);
             return args.Cancel;
         }
 
         /// <summary>
-        /// Raises the <see cref="Saved"/> event after content has been written to disk.
+        /// Raises the <see cref="OnSaved"/> event after content has been written to disk.
         /// </summary>
         /// <param name="filePath">The full path the document was saved to.</param>
         private void RaiseSaved(string filePath) =>
-            this.Saved?.Invoke(this, new DocumentSavedEventArgs(filePath));
+            this.OnSaved?.Invoke(this, new DocumentSavedEventArgs(filePath, this));
 
         #endregion
 

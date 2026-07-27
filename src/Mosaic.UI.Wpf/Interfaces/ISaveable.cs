@@ -8,6 +8,9 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Mosaic.UI.Wpf.Controls;
+using System;
+
 namespace Mosaic.UI.Wpf.Interfaces
 {
     /// <summary>
@@ -15,6 +18,18 @@ namespace Mosaic.UI.Wpf.Interfaces
     /// </summary>
     public interface ISaveable
     {
+        /// <summary>
+        /// Raised before a save operation begins. Set <see cref="System.ComponentModel.CancelEventArgs.Cancel"/> to
+        /// <c>true</c> to cancel the save. The supplied <see cref="DocumentSavingEventArgs"/> exposes the document and
+        /// its target file path so the caller can inspect the current state before the save occurs.
+        /// </summary>
+        event EventHandler<DocumentSavingEventArgs>? OnSaving;
+
+        /// <summary>
+        /// Raised after the object has been successfully written to disk.
+        /// </summary>
+        event EventHandler<DocumentSavedEventArgs>? OnSaved;
+
         /// <summary>
         /// Synchronously saves the object.
         /// </summary>

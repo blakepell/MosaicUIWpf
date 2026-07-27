@@ -43,8 +43,8 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             DocumentTitleDescriptor?.AddValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FilePathDescriptor?.AddValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FileNameDescriptor?.AddValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
-            this.Editor.Saving += this.Editor_OnSaving;
-            this.Editor.Saved += this.Editor_OnSaved;
+            this.Editor.OnSaving += this.Editor_OnSaving;
+            this.Editor.OnSaved += this.Editor_OnSaved;
             this.Closed += this.LayoutMarkdownEditor_OnClosed;
             this.UpdateDocumentMetadata();
         }
@@ -143,7 +143,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         /// <inheritdoc/>
         public Task SaveAsAsync() => this.Editor.SaveAsAsync();
 
-        private void Editor_OnSaving(object? sender, CancelEventArgs e)
+        private void Editor_OnSaving(object? sender, DocumentSavingEventArgs e)
         {
             var args = new DocumentSavingEventArgs(this.FilePath, this);
             this.OnSaving?.Invoke(this, args);
@@ -175,8 +175,8 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
             DocumentTitleDescriptor?.RemoveValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FilePathDescriptor?.RemoveValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
             FileNameDescriptor?.RemoveValueChanged(this.Editor, this.Editor_OnDocumentMetadataChanged);
-            this.Editor.Saving -= this.Editor_OnSaving;
-            this.Editor.Saved -= this.Editor_OnSaved;
+            this.Editor.OnSaving -= this.Editor_OnSaving;
+            this.Editor.OnSaved -= this.Editor_OnSaved;
             this.Closed -= this.LayoutMarkdownEditor_OnClosed;
         }
     }

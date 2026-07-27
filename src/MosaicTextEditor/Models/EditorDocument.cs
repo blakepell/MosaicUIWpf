@@ -11,6 +11,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
 using Mosaic.UI.Wpf.Controls;
+using Mosaic.UI.Wpf.Logging;
 using MosaicTextEditor.Common;
 using System.ComponentModel;
 using System.IO;
@@ -53,6 +54,9 @@ namespace MosaicTextEditor.Models
                 DependencyPropertyDescriptor.FromProperty(MarkdownEditor.IsModifiedProperty, typeof(MarkdownEditor))
                     ?.AddValueChanged(_markdownEditor, this.MarkdownEditor_OnDependencyPropertyChanged);
 
+                _layoutMarkdownEditor.OnSaving += this.LayoutEditor_OnSaving;
+                _layoutMarkdownEditor.OnSaved += this.LayoutEditor_OnSaved;
+
                 this.LayoutDocument = _layoutMarkdownEditor;
                 this.EditorControl = _markdownEditor;
             }
@@ -81,6 +85,9 @@ namespace MosaicTextEditor.Models
                 wordWrapButton.Checked += (_, _) => _syntaxEditor.WordWrap = true;
                 wordWrapButton.Unchecked += (_, _) => _syntaxEditor.WordWrap = false;
                 _layoutSyntaxEditor.AdditionalToolBarItems.Add(wordWrapButton);
+
+                _layoutSyntaxEditor.OnSaving += this.LayoutEditor_OnSaving;
+                _layoutSyntaxEditor.OnSaved += this.LayoutEditor_OnSaved;
 
                 this.LayoutDocument = _layoutSyntaxEditor;
                 this.EditorControl = _syntaxEditor;
@@ -318,6 +325,16 @@ namespace MosaicTextEditor.Models
             {
                 this.IsModified = true;
             }
+        }
+
+        private void LayoutEditor_OnSaving(object? sender, DocumentSavingEventArgs e)
+        {
+            Logger.LogInfo($"OnSaving fired for '{e.FilePath ?? this.FileName}'.");
+        }
+
+        private void LayoutEditor_OnSaved(object? sender, DocumentSavedEventArgs e)
+        {
+            Logger.LogSuccess($"OnSaved fired for '{e.FilePath}'.");
         }
 
         private void MarkdownEditor_OnDependencyPropertyChanged(object? sender, EventArgs e) => this.SyncFromMarkdownEditor();

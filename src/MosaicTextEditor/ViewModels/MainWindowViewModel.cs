@@ -147,7 +147,7 @@ namespace MosaicTextEditor.ViewModels
         [RelayCommand]
         private void NewFile()
         {
-            var document = EditorDocument.CreateSyntax($"Untitled {_untitledCount++}", _appSettings);
+            var document = EditorDocument.CreateSyntax($"Untitled {_untitledCount++}", _appSettings);            
             this.AddDocument(document);
         }
 
