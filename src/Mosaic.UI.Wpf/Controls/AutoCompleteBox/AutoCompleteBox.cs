@@ -423,6 +423,7 @@ namespace Mosaic.UI.Wpf.Controls
             _lookupTimer.Tick += LookupTimerOnTick;
 
             FilteredItems.CollectionChanged += FilteredItemsOnCollectionChanged;
+            Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
 
@@ -513,7 +514,11 @@ namespace Mosaic.UI.Wpf.Controls
         {
             base.OnItemsSourceChanged(oldValue, newValue);
             DetachItemsSourceCollectionChanged();
-            AttachItemsSourceCollectionChanged(newValue);
+            if (IsLoaded)
+            {
+                AttachItemsSourceCollectionChanged(newValue);
+            }
+
             RefreshSuggestions(false, IsDropDownOpen);
         }
 
@@ -760,19 +765,26 @@ namespace Mosaic.UI.Wpf.Controls
             RefreshSuggestions(false, IsDropDownOpen);
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_itemsSourceCollectionChanged == null)
+            {
+                AttachItemsSourceCollectionChanged(ItemsSource);
+            }
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _lookupTimer.Stop();
-            _lookupCancellationTokenSource?.Cancel();
-            _lookupCancellationTokenSource?.Dispose();
-            _lookupCancellationTokenSource = null;
-            DetachTemplateParts();
+            CancelPendingLookup();
+            CloseDropDown();
             DetachItemsSourceCollectionChanged();
         }
 
         private void ScheduleLookup()
         {
             _lookupTimer.Stop();
+            CancelPendingLookup();
             if (!CanQuerySuggestions(false))
             {
                 ClearSuggestions();
@@ -816,8 +828,7 @@ namespace Mosaic.UI.Wpf.Controls
 
         private async Task RefreshProviderSuggestionsAsync(string searchText, bool openDropDown)
         {
-            _lookupCancellationTokenSource?.Cancel();
-            _lookupCancellationTokenSource?.Dispose();
+            CancelPendingLookup();
             var cancellationTokenSource = new CancellationTokenSource();
             _lookupCancellationTokenSource = cancellationTokenSource;
             var version = ++_lookupVersion;
@@ -866,6 +877,15 @@ namespace Mosaic.UI.Wpf.Controls
                     RaiseEvent(new AutoCompleteBoxLookupFailedEventArgs(LookupFailedEvent, this, ex));
                     SetDropDownForSuggestionState(openDropDown || IsDropDownOpen);
                 });
+            }
+            finally
+            {
+                if (ReferenceEquals(_lookupCancellationTokenSource, cancellationTokenSource))
+                {
+                    _lookupCancellationTokenSource = null;
+                }
+
+                cancellationTokenSource.Dispose();
             }
         }
 
@@ -1091,6 +1111,21 @@ namespace Mosaic.UI.Wpf.Controls
             if (openDropDown)
             {
                 SetCurrentValue(IsDropDownOpenProperty, FilteredItems.Count > 0 || IsLoading || HasNoResults);
+            }
+        }
+
+        private void CancelPendingLookup()
+        {
+            ++_lookupVersion;
+
+            var cancellationTokenSource = _lookupCancellationTokenSource;
+            _lookupCancellationTokenSource = null;
+            cancellationTokenSource?.Cancel();
+
+            if (IsLoading)
+            {
+                IsLoading = false;
+                NotifyHasNoResultsChanged();
             }
         }
 
