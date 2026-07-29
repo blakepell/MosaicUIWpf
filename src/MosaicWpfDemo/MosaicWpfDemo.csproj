@@ -43,6 +43,7 @@
 		<None Remove="Assets\flip-48.png" />
 		<None Remove="Assets\folder-rename-48.png" />
 		<None Remove="Assets\folder2-open-48.png" />
+		<None Remove="Assets\font-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
 		<None Remove="Assets\labeled-separator-96.png" />
@@ -122,6 +123,7 @@
 		<Resource Include="Assets\flip-48.png" />
 		<Resource Include="Assets\folder-rename-48.png" />
 		<Resource Include="Assets\folder2-open-48.png" />
+		<Resource Include="Assets\font-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
 		<Resource Include="Assets\labeled-separator-96.png" />
@@ -650,6 +652,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\FlipPanelExample.xaml.cs">
 			<Link>LinkedSources\FlipPanelExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\FontControlsExample.xaml">
+			<Link>LinkedSources\FontControlsExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FontControlsExample.xaml.cs">
+			<Link>LinkedSources\FontControlsExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\SymbolRatingExample.xaml">

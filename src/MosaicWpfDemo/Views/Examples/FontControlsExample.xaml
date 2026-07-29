@@ -1,0 +1,146 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.FontControlsExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        CanContentScroll="True"
+        ClipToBounds="True"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Margin="20" Orientation="Vertical">
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="FontComboBox">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="FontComboBox lists every font family installed on the system. Bind SelectedFontName to persist the choice as a string, or SelectedFontFamily to work with a FontFamily. Both properties stay in sync with the selection and with each other." />
+
+                    <mosaic:FontComboBox
+                        Width="260"
+                        HorizontalAlignment="Left"
+                        SelectedFontName="{Binding SelectedFontName, Mode=TwoWay}" />
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding SelectedFontName, StringFormat=SelectedFontName: {0}, TargetNullValue=SelectedFontName: (null)}" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="FontComboBox with Previews">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Set ShowFontPreview to True and each font name is rendered in its own font, in both the drop-down and the selection box. PreviewFontSize controls how large the preview text is. This box binds to the same property as the one above, so changing either updates both." />
+
+                    <mosaic:FontComboBox
+                        Width="260"
+                        HorizontalAlignment="Left"
+                        PreviewFontSize="16"
+                        SelectedFontName="{Binding SelectedFontName, Mode=TwoWay}"
+                        ShowFontPreview="True" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="FontAutoCompleteBox">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="FontAutoCompleteBox filters the font list as you type and previews every suggestion in the font it names — previews are on by default here. No text is required to get suggestions, so opening the drop-down lists the whole catalog. Matching is Contains by default; set FilterMode to StartsWith for prefix matching." />
+
+                    <mosaic:FontAutoCompleteBox
+                        Width="260"
+                        HorizontalAlignment="Left"
+                        SelectedFontName="{Binding SelectedFontName, Mode=TwoWay}"
+                        Watermark="Search fonts..." />
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        TextWrapping="Wrap"
+                        Text="Typed text that does not resolve to an installed font leaves the selection empty." />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Live Sample">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="The selected font name applied to a live sample. Edit the text to try the font out." />
+
+                    <TextBox
+                        MinHeight="70"
+                        AcceptsReturn="True"
+                        FontFamily="{Binding SelectedFontName}"
+                        FontSize="20"
+                        Text="{Binding SampleText, Mode=TwoWay}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox Padding="10" Header="Binding a FontFamily">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="SelectedFontFamily is the binding surface when a view model holds an actual FontFamily. The buttons assign a family by name to show that a programmatic change flows back into the selection of both controls." />
+
+                    <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                        <mosaic:FontComboBox
+                            Width="260"
+                            SelectedFontFamily="{Binding SampleFontFamily, Mode=TwoWay}"
+                            ShowFontPreview="True" />
+                        <Button
+                            Margin="10,0,0,0"
+                            Padding="10,2"
+                            Command="{Binding SetSampleFontFamilyCommand}"
+                            CommandParameter="Georgia"
+                            Content="Georgia" />
+                        <Button
+                            Margin="10,0,0,0"
+                            Padding="10,2"
+                            Command="{Binding SetSampleFontFamilyCommand}"
+                            CommandParameter="Consolas"
+                            Content="Consolas" />
+                    </StackPanel>
+
+                    <mosaic:FontAutoCompleteBox
+                        Width="260"
+                        HorizontalAlignment="Left"
+                        SelectedFontFamily="{Binding SampleFontFamily, Mode=TwoWay}" />
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding SampleFontFamily, StringFormat=SelectedFontFamily: {0}, TargetNullValue=SelectedFontFamily: (null)}" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

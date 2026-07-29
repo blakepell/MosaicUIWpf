@@ -752,7 +752,12 @@ namespace Mosaic.UI.Wpf.Controls
         private void LookupTimerOnTick(object? sender, EventArgs e)
         {
             _lookupTimer.Stop();
-            RefreshSuggestions(false);
+
+            // A debounced lookup only opens the dropdown when the user is actually in the control.
+            // Without the focus test, a lookup scheduled by a programmatic change (a bound Text
+            // value arriving, or a search property being set) would pop the dropdown open on its
+            // own.
+            RefreshSuggestions(false, IsKeyboardFocusWithin || IsDropDownOpen);
         }
 
         private void FilteredItemsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

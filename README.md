@@ -147,6 +147,8 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [FileDropper](./docs/FileDropper.md) | A drop target that accepts files dragged from the operating system. Displays a prompt, an upload icon, and accepted file types. The border turns green for valid files and red for invalid files. Raises a FileDrop event when files are dropped. |
 | [Files](./docs/Files.md) | A lookless control that lists the files in a directory using a three-column view (Name with shell icon, Date Modified, Size). Supports single or multiple selection, an optional file-system watcher, manual refresh, and a FileActivated event. |
 | [FlipPanel](./docs/FlipPanel.md) | A flip panel component that can display two different content sides and animate between them. |
+| [FontAutoCompleteBox](./docs/FontAutoCompleteBox.md) | An AutoCompleteBox that filters the font families installed on the system as you type and renders every suggestion in the font it names. |
+| [FontComboBox](./docs/FontComboBox.md) | A ComboBox that lists every font family installed on the system, exposing the selection as either a FontFamily or a font name, with optional in-font previews. |
 | [GravatarImage](./docs/GravatarImage.md) | Displays a Gravatar Image for a specified email address. |
 | [HexColorTextBox](./docs/HexColorTextBox.md) | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |
 | [Hyperlink](./docs/Hyperlink.md) | Represents a hyperlink control that displays text and provides navigation functionality. |
