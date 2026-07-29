@@ -40,12 +40,6 @@ namespace Mosaic.UI.Wpf.Controls
         private TextBox? _textBox;
         private ButtonBase? _copyButton;
 
-        /// <summary>
-        /// A lazily created <see cref="ToastNotifier"/> used when neither <see cref="ToastManager"/>
-        /// nor <see cref="ToastNotifier.Default"/> has been provided.
-        /// </summary>
-        private ToastNotifier? _fallbackToastManager;
-
         #region Dependency Properties
 
         /// <summary>
@@ -512,34 +506,12 @@ namespace Mosaic.UI.Wpf.Controls
 
         /// <summary>
         /// Resolves the manager used to display toasts: the <see cref="ToastManager"/> property, then
-        /// <see cref="ToastNotifier.Default"/>, then a manager created over the containing window's
-        /// content.
+        /// <see cref="ToastNotifier.Default"/>, then the shared manager for the surface the control is
+        /// displayed on.
         /// </summary>
         private ToastNotifier? ResolveToastManager()
         {
-            if (this.ToastManager != null)
-            {
-                return this.ToastManager;
-            }
-
-            if (ToastNotifier.Default != null)
-            {
-                return ToastNotifier.Default;
-            }
-
-            if (_fallbackToastManager != null)
-            {
-                return _fallbackToastManager;
-            }
-
-            if (Window.GetWindow(this)?.Content is not UIElement host)
-            {
-                return null;
-            }
-
-            _fallbackToastManager = new ToastNotifier(host);
-
-            return _fallbackToastManager;
+            return this.ToastManager ?? ToastNotifier.Default ?? ToastNotifier.ForElement(this);
         }
 
         /// <summary>

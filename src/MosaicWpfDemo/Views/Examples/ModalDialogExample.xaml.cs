@@ -66,7 +66,18 @@ namespace MosaicWpfDemo.Views.Examples
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 16)
             });
+
+            panel.Children.Add(new CopyTextBox()
+            {
+                Text = "Copy me to the clipboard.",
+                ShowToast = true,
+                ToastSuccessMessage = "Text Copied!",
+                ToastQuadrant = ToastQuadrant.BottomRight,
+                Margin = new Thickness(0, 0, 0, 16)
+            });
+
             panel.Children.Add(okButton);
+
             dialog.Content = panel;
 
             this.ShowResult(await dialog.ShowAsync(this.DialogHost));
