@@ -360,6 +360,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  CopyTextBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/text-48.png"
+                    Text="CopyTextBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="CopyTextBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.CopyTextBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.CopyTextBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:CopyTextBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:CopyTextBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  DatePicker  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -1,0 +1,156 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  The copy button carries a left border only so it butts up against the text box without doubling the outer border.  -->
+    <Style x:Key="MosaicCopyTextBoxButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1,0,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="ButtonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:CopyTextBox}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="SelectedBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="5,0,0,0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <!--  Placeholder copy glyph, replace by setting CopyIcon.  -->
+        <Setter Property="CopyIcon" Value="M20 109.9988C20 93.43 33.4314 79.998 50 79.998H80L80 99.998H50C44.4772 99.998 40 104.476 40 109.9988L40 249.9988C40 255.5216 44.4772 259.9988 50 259.9988L190 259.9988C195.5228 259.9988 200 255.5216 200 249.9988V219.9996H110C93.4316 219.9996 80 206.5682 80 189.9996V50C80 33.432 93.4316 20 110 20H250C266.568 20 280 33.432 280 50V189.9996C280 206.5682 266.568 219.9996 250 219.9996H220V249.9988C220 266.5674 206.568 279.9988 190 279.9988H50C33.4314 279.9988 20 266.5674 20 249.9988V109.9988zM100 189.9996C100 195.5224 104.4772 199.9996 110 199.9996H250C255.522 199.9996 260 195.5224 260 189.9996V50C260 44.476 255.522 40 250 40H110C104.4772 40 100 44.476 100 50V189.9996z" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:CopyTextBox}">
+                    <!--  The outer border draws all four sides, the button contributes only its left edge.  -->
+                    <Border
+                        x:Name="PART_Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox
+                                x:Name="PART_TextBox"
+                                Grid.Column="0"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                CaretBrush="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
+                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="ApplicationCommands.Cut" />
+                                        <MenuItem Command="ApplicationCommands.Copy" />
+                                        <MenuItem Command="ApplicationCommands.Paste" />
+                                    </ContextMenu>
+                                </TextBox.ContextMenu>
+                            </TextBox>
+
+                            <TextBlock
+                                x:Name="WatermarkTextBlock"
+                                Grid.Column="0"
+                                Margin="2,0,0,0"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalAlignment="Center"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}"
+                                IsHitTestVisible="False"
+                                Text="{TemplateBinding Watermark}"
+                                Visibility="Collapsed" />
+
+                            <Button
+                                x:Name="PART_CopyButton"
+                                Grid.Column="1"
+                                MinWidth="28"
+                                Padding="6,0,6,0"
+                                Style="{StaticResource MosaicCopyTextBoxButtonStyle}"
+                                ToolTip="{TemplateBinding CopyButtonToolTip}">
+                                <Viewbox
+                                    Width="14"
+                                    Height="14"
+                                    Stretch="Uniform">
+                                    <Path Data="{Binding CopyIcon, RelativeSource={RelativeSource AncestorType={x:Type local:CopyTextBox}}}" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{Binding SelectedBorderBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter TargetName="PART_TextBox" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                        </Trigger>
+                        <!--  Watermark  -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Text" Value="" />
+                                <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="WatermarkTextBlock" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

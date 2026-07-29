@@ -425,6 +425,13 @@
 			<Link>LinkedSources\ContentPanelExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\CopyTextBoxExample.xaml">
+			<Link>LinkedSources\CopyTextBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\CopyTextBoxExample.xaml.cs">
+			<Link>LinkedSources\CopyTextBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SideMenuExample.xaml">
 			<Link>LinkedSources\SideMenuExample.xaml</Link>
 		</EmbeddedResource>

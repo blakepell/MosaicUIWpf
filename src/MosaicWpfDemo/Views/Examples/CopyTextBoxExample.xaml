@@ -1,0 +1,98 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.CopyTextBoxExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Margin="10">
+        <TextBlock
+            Margin="0,0,0,4"
+            FontWeight="SemiBold"
+            Text="Mosaic.UI.Wpf.Controls.CopyTextBox is a text box with an attached copy button that places its text onto the clipboard." />
+        <TextBlock
+            Margin="0,0,0,12"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="The button shares the box's border, drawing only its left edge so the two read as a single control.  Clipboard failures are handled and reported through the TextCopied event." />
+
+        <TextBlock
+            Margin="0,8,0,6"
+            FontWeight="SemiBold"
+            Text="Default" />
+        <controls:CopyTextBox
+            Width="380"
+            HorizontalAlignment="Left"
+            Text="https://www.apexgate.net"
+            TextCopied="OnTextCopied" />
+
+        <TextBlock
+            Margin="0,16,0,6"
+            FontWeight="SemiBold"
+            Text="Read only with a watermark" />
+        <controls:CopyTextBox
+            Width="380"
+            HorizontalAlignment="Left"
+            IsReadOnly="True"
+            Text="sk-demo-0f4c19ab7e5d42f0bc83"
+            TextCopied="OnTextCopied"
+            Watermark="Nothing to copy" />
+
+        <controls:CopyTextBox
+            Width="380"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Left"
+            TextCopied="OnTextCopied"
+            Watermark="Type something to copy..." />
+
+        <TextBlock
+            Margin="0,16,0,6"
+            FontWeight="SemiBold"
+            Text="Rounded corners and a toast notification" />
+        <TextBlock
+            Margin="0,0,0,6"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="ShowToast is off by default.  When enabled a success or error toast is shown reporting the outcome of the copy." />
+        <controls:CopyTextBox
+            x:Name="ToastCopyTextBox"
+            Width="380"
+            HorizontalAlignment="Left"
+            CornerRadius="4"
+            ShowToast="True"
+            Text="This copy will raise a toast."
+            ToastQuadrant="BottomRight"
+            TextCopied="OnTextCopied" />
+
+        <CheckBox
+            x:Name="ShowToastCheckBox"
+            Margin="0,10,0,0"
+            Click="OnShowToastClick"
+            Content="Show a toast on copy"
+            IsChecked="True" />
+
+        <TextBlock
+            Margin="0,16,0,6"
+            FontWeight="SemiBold"
+            Text="Disabled" />
+        <controls:CopyTextBox
+            Width="380"
+            HorizontalAlignment="Left"
+            IsEnabled="False"
+            Text="Copying is unavailable." />
+
+        <controls:InfoCard
+            Title="Last Action"
+            Margin="0,16,0,0"
+            AccentBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}">
+            <TextBlock
+                x:Name="StatusTextBlock"
+                Margin="12"
+                Text="Nothing has been copied yet."
+                TextWrapping="Wrap" />
+        </controls:InfoCard>
+    </StackPanel>
+</UserControl>

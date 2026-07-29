@@ -138,6 +138,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [ClipBorder](./docs/ClipBorder.md) | Border which allows clipping to its border. Useful especially when you need to clip to round corners. |
 | [ColorPicker](./docs/ColorPicker.md) | A color picker UserControl that allows users to select colors from presets or enter hex values. |
 | [ContentPanel](./docs/ContentPanel.md) | A content panel with optional header and footer areas, configurable separators, corner radius, and header/footer brushes. |
+| [CopyTextBox](./docs/CopyTextBox.md) | A text box with an attached copy button that places its text onto the clipboard, with optional toast notification of success or failure. |
 | [DatePicker](./docs/DatePicker.md) | Represents a date picker control that displays a popup calendar for date selection. |
 | [DocumentContainer](./docs/DocumentContainer.md) | Displays an observable collection of closable, reorderable documents as tabs. |
 | [EditableTextBlock](./docs/EditableTextBlock.md) | Represents a control that displays text in a non-editable mode and allows users to switch to an editable mode to modify the text. The control supports double-click editing, text trimming, and customizable appearance. |
