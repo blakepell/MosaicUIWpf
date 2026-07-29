@@ -403,8 +403,27 @@ namespace Mosaic.UI.Wpf.Controls
             this.Opacity = 0;
 
             var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+            var scaleX = new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(180)) { EasingFunction = ease };
+
+            // Once the animation settles, drop the transform entirely.  A held ScaleTransform (even at
+            // 1.0) keeps text rendering through a transform, which prevents pixel snapping and makes
+            // labels and TextBox content look blurry for as long as the dialog is open.
+            scaleX.Completed += (_, _) =>
+            {
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+
+                if (ReferenceEquals(this.RenderTransform, scale))
+                {
+                    this.RenderTransform = Transform.Identity;
+                }
+
+                this.BeginAnimation(OpacityProperty, null);
+                this.Opacity = 1;
+            };
+
             this.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(180)));
-            scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(180)) { EasingFunction = ease });
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
             scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(180)) { EasingFunction = ease });
         }
 
@@ -435,7 +454,9 @@ namespace Mosaic.UI.Wpf.Controls
                     }
                 };
 
-                _root = new Grid();
+                // The centering happens in this grid's arrange pass, so rounding has to be enabled here
+                // for the card to land on a whole pixel boundary (and keep its text crisp).
+                _root = new Grid { UseLayoutRounding = true, SnapsToDevicePixels = true };
                 _root.Children.Add(backdrop);
                 _root.Children.Add(dialog);
 

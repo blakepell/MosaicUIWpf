@@ -13,16 +13,25 @@
         <Setter Property="MinWidth" Value="320" />
         <Setter Property="MaxWidth" Value="560" />
         <Setter Property="Focusable" Value="False" />
+        <!--
+            The dialog lives in the adorner layer, which is a separate branch of the visual tree from
+            the window content, so these do not always inherit from the consuming window.  Set them
+            here so the card and its text land on whole device pixels.
+        -->
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ModalDialog}">
                     <Grid>
-                        <!--  A plain Border is used intentionally: it rounds the card without clipping child content.  -->
-                        <Border
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <!--
+                            The drop shadow lives on its own empty Border behind the card.  An Effect forces
+                            everything beneath it into an intermediate bitmap, which disables ClearType and
+                            softens text, so the Border that actually hosts the content must stay effect-free.
+                        -->
+                        <Border CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}">
                             <Border.Effect>
                                 <DropShadowEffect
                                     BlurRadius="32"
@@ -31,6 +40,14 @@
                                     ShadowDepth="8"
                                     Color="#000000" />
                             </Border.Effect>
+                        </Border>
+
+                        <!--  A plain Border is used intentionally: it rounds the card without clipping child content.  -->
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid Margin="{TemplateBinding Padding}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
