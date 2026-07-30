@@ -14,8 +14,6 @@
     Title="Mosaic UI WPF Demo"
     Width="1200"
     Height="800"
-    UseLayoutRounding="True"
-    SnapsToDevicePixels="True"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="10"
     theme:WindowChromeBehavior.GlassFrameThickness="0"
@@ -26,6 +24,8 @@
     Foreground="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}"
     Icon="/Assets/collage-48.png"
     Loaded="MainWindow_OnLoaded"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen">
     <!--  @TitleBar  -->
     <!--  @MenuBar  -->
@@ -464,6 +464,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:EnumComboBox}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:EnumComboBoxExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dropdown-field-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  ExecutionControl  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/play-pause-stop-48.png"
+                    Text="ExecutionControl">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ExecutionControl" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ExecutionControlExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ExecutionControlExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ExecutionControl}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ExecutionControlExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/play-pause-stop-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

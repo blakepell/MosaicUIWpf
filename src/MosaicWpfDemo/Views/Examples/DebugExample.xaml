@@ -15,8 +15,18 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ToolBar Grid.Row="0">
+            <mosaic:ExecutionControl />
+        </ToolBar>
+
         <!--  VT Terminal Container  -->
         <Border
+            Grid.Row="1"
             Background="#0a0a0a"
             BorderBrush="#1a3a1a"
             BorderThickness="3"

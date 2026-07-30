@@ -57,6 +57,7 @@
 		<None Remove="Assets\password-48.png" />
 		<None Remove="Assets\penny-heads.png" />
 		<None Remove="Assets\penny-tails.png" />
+		<None Remove="Assets\play-pause-stop-48.png" />
 		<None Remove="Assets\progress-48.png" />
 		<None Remove="Assets\search-48.png" />
 		<None Remove="Assets\settings-panel-48.png" />
@@ -136,6 +137,7 @@
 		<Resource Include="Assets\password-lock-48.png" />
 		<Resource Include="Assets\penny-heads.png" />
 		<Resource Include="Assets\penny-tails.png" />
+		<Resource Include="Assets\play-pause-stop-48.png" />
 		<Resource Include="Assets\progress-48.png" />
 		<Resource Include="Assets\search-48.png" />
 		<Resource Include="Assets\settings-panel-48.png" />
@@ -453,6 +455,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\EnumComboBoxExample.xaml.cs">
 			<Link>LinkedSources\EnumComboBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ExecutionControlExample.xaml">
+			<Link>LinkedSources\ExecutionControlExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ExecutionControlExample.xaml.cs">
+			<Link>LinkedSources\ExecutionControlExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml">
