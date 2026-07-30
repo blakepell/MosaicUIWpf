@@ -150,6 +150,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [FlipPanel](./docs/FlipPanel.md) | A flip panel component that can display two different content sides and animate between them. |
 | [FontAutoCompleteBox](./docs/FontAutoCompleteBox.md) | An AutoCompleteBox that filters the font families installed on the system as you type and renders every suggestion in the font it names. |
 | [FontComboBox](./docs/FontComboBox.md) | A ComboBox that lists every font family installed on the system, exposing the selection as either a FontFamily or a font name, with optional in-font previews. |
+| [FontStyleComboBox](./docs/FontStyleComboBox.md) | A ComboBox that lists the font styles (Normal, Italic, Oblique), rendering each entry in the style it names and exposing the selection as either a FontStyle or a style name. |
 | [FontWeightComboBox](./docs/FontWeightComboBox.md) | A ComboBox that lists the standard font weights (Thin through ExtraBlack), rendering each entry in the weight it names and exposing the selection as either a FontWeight or a weight name. |
 | [GravatarImage](./docs/GravatarImage.md) | Displays a Gravatar Image for a specified email address. |
 | [HexColorTextBox](./docs/HexColorTextBox.md) | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |

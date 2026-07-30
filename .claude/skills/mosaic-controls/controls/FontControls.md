@@ -1,13 +1,13 @@
-# FontComboBox / FontAutoCompleteBox / FontWeightComboBox
+# FontComboBox / FontAutoCompleteBox / FontWeightComboBox / FontStyleComboBox
 
-**Base classes:** `ComboBox` / `AutoCompleteBox` / `ComboBox`
+**Base classes:** `ComboBox` / `AutoCompleteBox` / `ComboBox` / `ComboBox`
 **Namespace:** `Mosaic.UI.Wpf.Controls`
-**Source:** `src/Mosaic.UI.Wpf/Controls/Font/FontComboBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontAutoCompleteBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontFamilyCatalog.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontWeightComboBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontWeightCatalog.cs`
+**Source:** `src/Mosaic.UI.Wpf/Controls/Font/FontComboBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontAutoCompleteBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontFamilyCatalog.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontWeightComboBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontWeightCatalog.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontStyleComboBox.cs`, `src/Mosaic.UI.Wpf/Controls/Font/FontStyleCatalog.cs`
 **Example:** `src/MosaicWpfDemo/Views/Examples/FontControlsExample.xaml`
 
 ## Description
 
-Pickers over the fonts installed on the system plus the standard font weights. `FontComboBox` is a plain drop-down; `FontAutoCompleteBox` filters as the user types and previews each suggestion in the font it names; `FontWeightComboBox` lists the ten standard weights, each rendered in its own weight. The family pickers populate themselves from `FontFamilyCatalog` and expose the same selection surface; the weight picker uses `FontWeightCatalog`.
+Pickers over the fonts installed on the system plus the standard font weights and styles. `FontComboBox` is a plain drop-down; `FontAutoCompleteBox` filters as the user types and previews each suggestion in the font it names; `FontWeightComboBox` lists the ten standard weights, each rendered in its own weight; `FontStyleComboBox` lists Normal/Italic/Oblique, each rendered in its own style. The family pickers populate themselves from `FontFamilyCatalog` and expose the same selection surface; the weight and style pickers use `FontWeightCatalog` and `FontStyleCatalog`.
 
 ## Key Properties (family pickers)
 
@@ -27,6 +27,15 @@ Pickers over the fonts installed on the system plus the standard font weights. `
 | `SelectedFontWeight` | `FontWeight` | `FontWeights.Normal` | The selected weight. Two-way by default. |
 | `SelectedFontWeightName` | `string?` | `null` | The selected weight name, e.g. `SemiBold`. Two-way by default. |
 | `ShowWeightPreview` | `bool` | `true` | Renders each weight name in its own weight. |
+| `PreviewFontSize` | `double` | `14` | Size of the preview text. |
+
+## Key Properties (FontStyleComboBox)
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `SelectedFontStyle` | `FontStyle` | `FontStyles.Normal` | The selected style. Two-way by default. |
+| `SelectedFontStyleName` | `string?` | `null` | The selected style name, e.g. `Italic`. Two-way by default. |
+| `ShowStylePreview` | `bool` | `true` | Renders each style name in its own style. |
 | `PreviewFontSize` | `double` | `14` | Size of the preview text. |
 
 ## XAML Examples
@@ -54,6 +63,11 @@ xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
 <mosaic:FontWeightComboBox
     Width="180"
     SelectedFontWeight="{Binding HeadingWeight, Mode=TwoWay}" />
+
+<!-- Style picker; each entry renders in its own style -->
+<mosaic:FontStyleComboBox
+    Width="180"
+    SelectedFontStyle="{Binding HeadingStyle, Mode=TwoWay}" />
 ```
 
 ## FontFamilyCatalog
@@ -72,10 +86,19 @@ FontWeight? semiBold = FontWeightCatalog.Find("demibold");         // aliases an
 FontWeight? resolved = FontWeightCatalog.Resolve(someFontWeight);  // null when non-standard
 ```
 
+## FontStyleCatalog
+
+```csharp
+IReadOnlyList<FontStyle> styles = FontStyleCatalog.Styles;      // Normal, Italic, Oblique
+FontStyle? italic = FontStyleCatalog.Find("italic");            // case-insensitive by name
+FontStyle? resolved = FontStyleCatalog.Resolve(someFontStyle);  // maps to the listed value
+```
+
 ## Notes
 
 - Do not set `ItemsSource` — the controls own their item generation.
-- The `PropertyGrid` picks these up automatically: a `FontFamily` property gets a `FontComboBox` (previews on) and a `FontWeight` property gets a `FontWeightComboBox`.
+- The `PropertyGrid` picks these up automatically: a `FontFamily` property gets a `FontComboBox` (previews on), a `FontWeight` property gets a `FontWeightComboBox`, and a `FontStyle` property gets a `FontStyleComboBox`.
+- A font family without a true italic face is synthesized (faux italic) by WPF, so `Italic` and `Oblique` can render identically for some fonts.
 - `SelectedFontFamily`, `SelectedFontName`, and `SelectedItem` all stay in sync; setting any one updates the others.
 - A family that is not installed cannot be selected and leaves the selection empty. Matching is by name, ignoring case, so `new FontFamily("Arial")` resolves to the catalog's instance.
 - Assigning an `ItemTemplate` explicitly overrides whatever `ShowFontPreview` would apply.

@@ -41,6 +41,12 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private FontWeight _selectedFontWeight = FontWeights.Normal;
 
+        /// <summary>
+        /// The style applied to the live sample, bound as an actual <see cref="FontStyle"/>.
+        /// </summary>
+        [ObservableProperty]
+        private FontStyle _selectedFontStyle = FontStyles.Normal;
+
         public FontControlsExample()
         {
             InitializeComponent();

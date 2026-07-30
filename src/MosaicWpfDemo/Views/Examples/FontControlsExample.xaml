@@ -94,6 +94,36 @@
             <GroupBox
                 Margin="0,0,0,20"
                 Padding="10"
+                Header="FontStyleComboBox">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="FontStyleComboBox lists the font styles — Normal, Italic and Oblique — and renders each entry in the style it names. Bind SelectedFontStyle for a FontStyle or SelectedFontStyleName to persist the choice as a string; both stay in sync. Set ShowStylePreview to False for plain text." />
+
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:FontStyleComboBox
+                            Width="180"
+                            PreviewFontSize="16"
+                            SelectedFontStyle="{Binding SelectedFontStyle, Mode=TwoWay}" />
+
+                        <mosaic:FontStyleComboBox
+                            Width="180"
+                            Margin="10,0,0,0"
+                            SelectedFontStyle="{Binding SelectedFontStyle, Mode=TwoWay}"
+                            ShowStylePreview="False" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding SelectedFontStyle, StringFormat=SelectedFontStyle: {0}}" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
                 Header="FontAutoCompleteBox">
                 <StackPanel>
                     <TextBlock
@@ -122,13 +152,14 @@
                     <TextBlock
                         Margin="0,0,0,10"
                         TextWrapping="Wrap"
-                        Text="The selected font name and weight applied to a live sample. Edit the text to try the font out." />
+                        Text="The selected font name, weight and style applied to a live sample. Edit the text to try the font out." />
 
                     <TextBox
                         MinHeight="70"
                         AcceptsReturn="True"
                         FontFamily="{Binding SelectedFontName}"
                         FontSize="20"
+                        FontStyle="{Binding SelectedFontStyle}"
                         FontWeight="{Binding SelectedFontWeight}"
                         Text="{Binding SampleText, Mode=TwoWay}"
                         TextWrapping="Wrap" />

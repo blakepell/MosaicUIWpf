@@ -112,6 +112,11 @@ namespace MosaicWpfDemo.Views.Examples
         [ObservableProperty]
         private FontWeight _fontWeight = FontWeights.Normal;
 
+        [property: Category("Appearance")]
+        [property: Description("The style the person's name is rendered with.")]
+        [ObservableProperty]
+        private FontStyle _fontStyle = FontStyles.Normal;
+
         [property: Category("Identity")]
         [ObservableProperty]
         private Gender _gender;
