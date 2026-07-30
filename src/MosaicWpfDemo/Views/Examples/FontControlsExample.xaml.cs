@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -33,6 +34,12 @@ namespace MosaicWpfDemo.Views.Examples
 
         [ObservableProperty]
         private string _sampleText = "The quick brown fox jumps over the lazy dog. 0123456789";
+
+        /// <summary>
+        /// The weight applied to the live sample, bound as an actual <see cref="FontWeight"/>.
+        /// </summary>
+        [ObservableProperty]
+        private FontWeight _selectedFontWeight = FontWeights.Normal;
 
         public FontControlsExample()
         {

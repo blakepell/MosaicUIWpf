@@ -64,6 +64,36 @@
             <GroupBox
                 Margin="0,0,0,20"
                 Padding="10"
+                Header="FontWeightComboBox">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="FontWeightComboBox lists the standard font weights, from Thin through ExtraBlack, and renders each entry in the weight it names. Bind SelectedFontWeight for a FontWeight or SelectedFontWeightName to persist the choice as a string; both stay in sync. Set ShowWeightPreview to False for plain text." />
+
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:FontWeightComboBox
+                            Width="180"
+                            PreviewFontSize="16"
+                            SelectedFontWeight="{Binding SelectedFontWeight, Mode=TwoWay}" />
+
+                        <mosaic:FontWeightComboBox
+                            Width="180"
+                            Margin="10,0,0,0"
+                            SelectedFontWeight="{Binding SelectedFontWeight, Mode=TwoWay}"
+                            ShowWeightPreview="False" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding SelectedFontWeight, StringFormat=SelectedFontWeight: {0}}" />
+                </StackPanel>
+            </GroupBox>
+
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
                 Header="FontAutoCompleteBox">
                 <StackPanel>
                     <TextBlock
@@ -92,13 +122,14 @@
                     <TextBlock
                         Margin="0,0,0,10"
                         TextWrapping="Wrap"
-                        Text="The selected font name applied to a live sample. Edit the text to try the font out." />
+                        Text="The selected font name and weight applied to a live sample. Edit the text to try the font out." />
 
                     <TextBox
                         MinHeight="70"
                         AcceptsReturn="True"
                         FontFamily="{Binding SelectedFontName}"
                         FontSize="20"
+                        FontWeight="{Binding SelectedFontWeight}"
                         Text="{Binding SampleText, Mode=TwoWay}"
                         TextWrapping="Wrap" />
                 </StackPanel>

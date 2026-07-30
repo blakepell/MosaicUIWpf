@@ -70,6 +70,7 @@ For detailed property/event/example documentation, read the individual file list
 | `FlipPanel` | `ContentControl` | Display | Animated flip panel with front and back content faces | [FlipPanel.md](controls/FlipPanel.md) |
 | `FontAutoCompleteBox` | `AutoCompleteBox` | Input | System font picker that filters as you type and previews each suggestion in its own font | [FontControls.md](controls/FontControls.md) |
 | `FontComboBox` | `ComboBox` | Input | System font picker with optional in-font previews; binds a `FontFamily` or a font name | [FontControls.md](controls/FontControls.md) |
+| `FontWeightComboBox` | `ComboBox` | Input | Font weight picker (Thin–ExtraBlack) that renders each entry in its own weight; binds a `FontWeight` or a weight name | [FontControls.md](controls/FontControls.md) |
 | `GravatarImage` | `Image` | Media | Loads and displays a Gravatar avatar from an email address | [GravatarImage.md](controls/GravatarImage.md) |
 | `HexColorTextBox` | `ComboBox` | Input | Editable hex color field (`#RGB`, `#RRGGBB`, `#AARRGGBB`) with shade drop-down | [HexColorTextBox.md](controls/HexColorTextBox.md) |
 | `Hyperlink` | `ContentControl` | Navigation | Clickable link that opens a URI or executes an `ICommand` | [Hyperlink.md](controls/Hyperlink.md) |

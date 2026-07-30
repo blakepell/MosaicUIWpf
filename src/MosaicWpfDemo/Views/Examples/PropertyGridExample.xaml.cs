@@ -11,6 +11,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Mosaic.UI.Wpf.Controls;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Media;
 using System.ComponentModel;
 
@@ -105,6 +106,11 @@ namespace MosaicWpfDemo.Views.Examples
         [property: Description("The font used to render the person's name.")]
         [ObservableProperty]
         private FontFamily? _font;
+
+        [property: Category("Appearance")]
+        [property: Description("The weight the person's name is rendered with.")]
+        [ObservableProperty]
+        private FontWeight _fontWeight = FontWeights.Normal;
 
         [property: Category("Identity")]
         [ObservableProperty]

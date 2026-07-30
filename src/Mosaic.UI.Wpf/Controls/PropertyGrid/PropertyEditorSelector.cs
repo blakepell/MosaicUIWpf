@@ -89,6 +89,12 @@ namespace Mosaic.UI.Wpf.Controls
                 return FindTemplate(fe, "FontFamilyEditor");
             }
 
+            // FontWeight
+            if (effectiveType == typeof(FontWeight))
+            {
+                return FindTemplate(fe, "FontWeightEditor");
+            }
+
             // Fallback to text editor
             return FindTemplate(fe, "TextEditor");
         }

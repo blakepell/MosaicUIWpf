@@ -137,6 +137,19 @@
             ShowFontPreview="True" />
     </DataTemplate>
 
+    <!--  FontWeightEditor  -->
+    <DataTemplate x:Key="FontWeightEditor">
+        <local:FontWeightComboBox
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            HorizontalContentAlignment="Stretch"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
+            BorderThickness="0"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
+            IsReadOnly="{Binding IsReadOnly}"
+            SelectedFontWeight="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
+    </DataTemplate>
+
     <!--  StringListEditor  -->
     <DataTemplate x:Key="StringListEditor">
         <Grid HorizontalAlignment="Stretch">
