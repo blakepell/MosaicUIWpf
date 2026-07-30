@@ -29,6 +29,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Shield/Shield.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/SymbolRating/SymbolRating.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TabControl/TabControl.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TableSizePicker/TableSizePicker.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TagBox/TagBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/DocumentContainer/DocumentContainer.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ToggleButton/ToggleButton.xaml" />

@@ -1,0 +1,113 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:primitives="clr-namespace:System.Windows.Controls.Primitives;assembly=PresentationFramework"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style TargetType="{x:Type controls:TableSizePicker}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="CellBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+        <Setter Property="CellBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="HighlightBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
+        <Setter Property="HighlightBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+        <Setter Property="CommittedBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="CommittedBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:TableSizePicker}">
+                    <Border
+                        x:Name="RootBorder"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="3"
+                        SnapsToDevicePixels="True">
+                        <StackPanel>
+                            <!--  The grid of selectable cells.  -->
+                            <ItemsControl
+                                x:Name="PART_Grid"
+                                HorizontalAlignment="Left"
+                                Background="Transparent"
+                                Focusable="False"
+                                ItemsSource="{TemplateBinding Cells}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <primitives:UniformGrid Columns="{Binding ColumnCount, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" Rows="{Binding RowCount, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border
+                                            Width="{Binding CellWidth, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}"
+                                            Height="{Binding CellHeight, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}"
+                                            Margin="{Binding CellMargin, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}"
+                                            SnapsToDevicePixels="True">
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Background" Value="{Binding CellBackground, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                    <Setter Property="BorderBrush" Value="{Binding CellBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                    <Setter Property="BorderThickness" Value="1" />
+                                                    <Style.Triggers>
+                                                        <!--  Committed selection, shown when nothing is being previewed.  -->
+                                                        <DataTrigger Binding="{Binding IsCommittedSelected}" Value="True">
+                                                            <Setter Property="Background" Value="{Binding CommittedBackground, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                            <Setter Property="BorderBrush" Value="{Binding CommittedBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                        </DataTrigger>
+                                                        <!--  Hover / keyboard preview.  -->
+                                                        <DataTrigger Binding="{Binding IsPreviewSelected}" Value="True">
+                                                            <Setter Property="Background" Value="{Binding HighlightBackground, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                            <Setter Property="BorderBrush" Value="{Binding HighlightBorderBrush, RelativeSource={RelativeSource AncestorType={x:Type controls:TableSizePicker}}}" />
+                                                        </DataTrigger>
+                                                        <!--  The cell under the pointer or keyboard cursor, distinguished by weight and not by color alone.  -->
+                                                        <DataTrigger Binding="{Binding IsAnchor}" Value="True">
+                                                            <Setter Property="BorderThickness" Value="2" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!--  Caption, "4 × 6 Table" while hovering, otherwise the prompt.  -->
+                            <TextBlock
+                                x:Name="SelectionTextBlock"
+                                Margin="0,8,0,0"
+                                HorizontalAlignment="Center"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding SelectionText}"
+                                TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.6" />
+                            <Setter TargetName="SelectionTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

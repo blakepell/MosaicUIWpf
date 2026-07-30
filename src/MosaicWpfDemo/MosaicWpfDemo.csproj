@@ -573,6 +573,13 @@
 			<Link>LinkedSources\TabControlExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\TableSizePickerExample.xaml">
+			<Link>LinkedSources\TableSizePickerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\TableSizePickerExample.xaml.cs">
+			<Link>LinkedSources\TableSizePickerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\TagBoxExample.xaml">
 			<Link>LinkedSources\TagBoxExample.xaml</Link>
 		</EmbeddedResource>

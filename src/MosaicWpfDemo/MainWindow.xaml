@@ -846,6 +846,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Table Size Picker  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/dashboard-48.png"
+                    Text="Table Size Picker">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Table Size Picker" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.TableSizePickerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.TableSizePickerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:TableSizePicker}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TableSizePickerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dashboard-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Tag Box  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

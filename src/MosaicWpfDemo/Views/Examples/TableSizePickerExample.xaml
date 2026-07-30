@@ -1,0 +1,142 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.TableSizePickerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="800"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+
+        <!--  1. Standalone panel  -->
+        <TextBlock
+            Margin="0,10"
+            FontWeight="SemiBold"
+            Text="Standalone panel" />
+        <TextBlock
+            Margin="0,0,0,8"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="Hover to preview a region anchored at the top left cell, click to commit. Keyboard: arrows move, Enter or Space commits, Home is 1x1, End is the full grid, Escape cancels."
+            TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal">
+            <mosaic:TableSizePicker
+                x:Name="StandalonePicker"
+                ClearSelectionOnShow="False"
+                TableSizeSelected="StandalonePicker_OnTableSizeSelected" />
+
+            <StackPanel Margin="20,0,0,0" VerticalAlignment="Top">
+                <TextBlock x:Name="StandaloneResultText" Text="Nothing selected yet." />
+                <Border
+                    x:Name="PreviewBorder"
+                    Margin="0,10,0,0"
+                    Padding="6"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    Visibility="Collapsed">
+                    <!--  A real Grid is generated in code behind to show the committed size.  -->
+                    <Grid x:Name="GeneratedTable" />
+                </Border>
+                <Button
+                    Margin="0,10,0,0"
+                    Padding="10,4"
+                    HorizontalAlignment="Left"
+                    Command="{Binding ElementName=StandalonePicker, Path=ClearCommand}"
+                    Content="Clear Selection" />
+            </StackPanel>
+        </StackPanel>
+
+        <!--  2. Toolbar dropdown / popup  -->
+        <TextBlock
+            Margin="0,25,0,10"
+            FontWeight="SemiBold"
+            Text="Hosted in a Popup (toolbar dropdown)" />
+        <TextBlock
+            Margin="0,0,0,8"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="OnShow() is called when the popup opens and the popup closes itself from the RequestClose event."
+            TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal">
+            <ToggleButton
+                x:Name="InsertTableButton"
+                Padding="10,4"
+                VerticalAlignment="Top"
+                Content="Insert Table ▾" />
+            <TextBlock
+                x:Name="PopupResultText"
+                Margin="20,6,0,0"
+                Text="No table inserted." />
+        </StackPanel>
+
+        <Popup
+            AllowsTransparency="True"
+            IsOpen="{Binding ElementName=InsertTableButton, Path=IsChecked, Mode=TwoWay}"
+            Opened="InsertTablePopup_OnOpened"
+            Placement="Bottom"
+            PlacementTarget="{Binding ElementName=InsertTableButton}"
+            StaysOpen="False">
+            <mosaic:TableSizePicker
+                x:Name="PopupPicker"
+                Margin="0,2,0,0"
+                RequestClose="PopupPicker_OnRequestClose"
+                TableSizeSelected="PopupPicker_OnTableSizeSelected" />
+        </Popup>
+
+        <!--  3. Context menu  -->
+        <TextBlock
+            Margin="0,25,0,10"
+            FontWeight="SemiBold"
+            Text="Hosted in a ContextMenu" />
+        <Border
+            Padding="20"
+            HorizontalAlignment="Left"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}"
+            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="1"
+            CornerRadius="3">
+            <Border.ContextMenu>
+                <ContextMenu x:Name="TableContextMenu">
+                    <mosaic:TableSizePicker
+                        x:Name="ContextMenuPicker"
+                        RequestClose="ContextMenuPicker_OnRequestClose"
+                        TableSizeSelected="ContextMenuPicker_OnTableSizeSelected" />
+                </ContextMenu>
+            </Border.ContextMenu>
+            <TextBlock x:Name="ContextMenuResultText" Text="Right click here to pick a table size." />
+        </Border>
+
+        <!--  4. Customized  -->
+        <TextBlock
+            Margin="0,25,0,10"
+            FontWeight="SemiBold"
+            Text="Customized: 10 x 12 grid, custom brushes and captions" />
+        <mosaic:TableSizePicker
+            HorizontalAlignment="Left"
+            CellBackground="#22808080"
+            CellBorderBrush="#55808080"
+            CellHeight="12"
+            CellMargin="2"
+            CellWidth="12"
+            ColumnCount="12"
+            CommittedBackground="#FF107C10"
+            CommittedBorderBrush="#FF0B5A0B"
+            EmptySelectionText="Pick a grid size"
+            HighlightBackground="#FF6BB700"
+            HighlightBorderBrush="#FF0B5A0B"
+            RowCount="10"
+            SelectionTextFormat="{}{0} rows × {1} columns" />
+
+        <!--  5. Disabled  -->
+        <TextBlock
+            Margin="0,25,0,10"
+            FontWeight="SemiBold"
+            Text="Disabled" />
+        <mosaic:TableSizePicker HorizontalAlignment="Left" IsEnabled="False" />
+    </StackPanel>
+</UserControl>
