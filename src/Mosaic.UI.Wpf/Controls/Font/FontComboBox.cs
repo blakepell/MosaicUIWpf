@@ -89,7 +89,7 @@ namespace Mosaic.UI.Wpf.Controls
         public static readonly DependencyProperty ShowFontPreviewProperty = DependencyProperty.Register(
             nameof(ShowFontPreview), typeof(bool), typeof(FontComboBox),
             new FrameworkPropertyMetadata(false, OnShowFontPreviewChanged));
-
+        
         /// <summary>
         /// Gets or sets a value indicating whether each font name is rendered in its own font.
         /// </summary>

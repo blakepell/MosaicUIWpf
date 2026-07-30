@@ -29,7 +29,8 @@ namespace MosaicWpfDemo.Views.Examples
                 LastActive = new DateTime(2026, 1, 1),
                 Age = 42,
                 Active = true,
-                Color = Colors.Blue
+                Color = Colors.Blue,
+                Font = new FontFamily("Courier New")
             };
         }
     }
@@ -99,6 +100,11 @@ namespace MosaicWpfDemo.Views.Examples
         [property: Category("Appearance")]
         [ObservableProperty]
         private Color _color;
+
+        [property: Category("Appearance")]
+        [property: Description("The font used to render the person's name.")]
+        [ObservableProperty]
+        private FontFamily? _font;
 
         [property: Category("Identity")]
         [ObservableProperty]

@@ -123,6 +123,20 @@
             Color="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
     </DataTemplate>
 
+    <!--  FontFamilyEditor  -->
+    <DataTemplate x:Key="FontFamilyEditor">
+        <local:FontComboBox
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            HorizontalContentAlignment="Stretch"
+            local:PropertyGridValidation.PropertyItem="{Binding}"
+            BorderThickness="0"
+            IsEnabled="{Binding IsReadOnly, Converter={x:Static converters:InvertedBoolConverter.Instance}}"
+            IsReadOnly="{Binding IsReadOnly}"
+            SelectedFontFamily="{Binding Value, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}"
+            ShowFontPreview="True" />
+    </DataTemplate>
+
     <!--  StringListEditor  -->
     <DataTemplate x:Key="StringListEditor">
         <Grid HorizontalAlignment="Stretch">
