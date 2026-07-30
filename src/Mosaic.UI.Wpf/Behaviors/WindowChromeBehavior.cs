@@ -227,6 +227,7 @@ namespace Mosaic.UI.Wpf.Behaviors
                 window.SourceInitialized -= Window_SourceInitialized;
                 window.SizeChanged -= Window_SizeChanged;
                 window.StateChanged -= Window_StateChanged;
+                DetachMaximizeHook(window);
                 ClearRoundWindowRegion(window);
                 return;
             }
@@ -290,9 +291,142 @@ namespace Mosaic.UI.Wpf.Behaviors
                 window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.WindowForegroundBrush);
             }
 
+            AttachMaximizeHook(window);
             ApplyRoundBorder(window);
             ApplyRoundWindowRegion(window);
             ApplyDwmBorderColor(window);
+        }
+
+        /// <summary>
+        /// Hooks <c>WM_GETMINMAXINFO</c> on the window so a maximized borderless window is constrained to the
+        /// monitor's work area rather than covering the whole screen (and with it, the taskbar).
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="WindowStyle.None"/> window has no non-client frame, so the default maximized size Windows
+        /// hands it is the full monitor rectangle instead of the work area. Supplying the work area here restores
+        /// normal maximize behavior.
+        /// </remarks>
+        private static void AttachMaximizeHook(Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+
+            if (hwnd == IntPtr.Zero || HwndSource.FromHwnd(hwnd) is not { } source)
+            {
+                return;
+            }
+
+            // AddHook does not de-duplicate, so always remove first.
+            source.RemoveHook(MaximizeHook);
+            source.AddHook(MaximizeHook);
+        }
+
+        /// <summary>
+        /// Removes the <c>WM_GETMINMAXINFO</c> hook applied by <see cref="AttachMaximizeHook"/>.
+        /// </summary>
+        private static void DetachMaximizeHook(Window window)
+        {
+            var hwnd = new WindowInteropHelper(window).Handle;
+
+            if (hwnd != IntPtr.Zero && HwndSource.FromHwnd(hwnd) is { } source)
+            {
+                source.RemoveHook(MaximizeHook);
+            }
+        }
+
+        private static IntPtr MaximizeHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WindowsMessageCodes.WM_GETMINMAXINFO)
+            {
+                ApplyWorkAreaToMinMaxInfo(hwnd, lParam);
+            }
+
+            return IntPtr.Zero;
+        }
+
+        /// <summary>
+        /// Fills in the maximized position/size of a <c>MINMAXINFO</c> payload from the work area of the monitor
+        /// the window currently lives on.
+        /// </summary>
+        private static void ApplyWorkAreaToMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+        {
+            if (lParam == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var monitor = Win32.MonitorFromWindow(hwnd, Win32.MONITOR_DEFAULTTONEAREST);
+
+            if (monitor == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var monitorInfo = new Win32.MONITORINFO { cbSize = Marshal.SizeOf<Win32.MONITORINFO>() };
+
+            if (!Win32.GetMonitorInfo(monitor, ref monitorInfo))
+            {
+                return;
+            }
+
+            var work = monitorInfo.rcWork;
+            var bounds = monitorInfo.rcMonitor;
+
+            ReserveAutoHideTaskbarEdge(ref work, bounds);
+
+            var minMax = Marshal.PtrToStructure<Win32.MINMAXINFO>(lParam);
+
+            // The maximized position is expressed relative to the monitor's upper-left corner.
+            minMax.ptMaxPosition.X = work.Left - bounds.Left;
+            minMax.ptMaxPosition.Y = work.Top - bounds.Top;
+            minMax.ptMaxSize.X = work.Right - work.Left;
+            minMax.ptMaxSize.Y = work.Bottom - work.Top;
+            minMax.ptMaxTrackSize.X = work.Right - work.Left;
+            minMax.ptMaxTrackSize.Y = work.Bottom - work.Top;
+
+            Marshal.StructureToPtr(minMax, lParam, true);
+        }
+
+        /// <summary>
+        /// When the taskbar is set to auto-hide, its edge is not excluded from the monitor work area. If a maximized
+        /// window covers that edge exactly, the taskbar can no longer be summoned, so a single pixel is reserved.
+        /// </summary>
+        private static void ReserveAutoHideTaskbarEdge(ref Win32.RECT work, Win32.RECT monitorBounds)
+        {
+            var state = new Win32.APPBARDATA { cbSize = Marshal.SizeOf<Win32.APPBARDATA>() };
+
+            if ((Win32.SHAppBarMessage(AppBar.ABM_GETSTATE, ref state).ToInt32() & AppBar.ABS_AUTOHIDE) == 0)
+            {
+                return;
+            }
+
+            if (HasAutoHideBar(AppBar.ABE_BOTTOM, monitorBounds))
+            {
+                work.Bottom -= 1;
+            }
+            else if (HasAutoHideBar(AppBar.ABE_TOP, monitorBounds))
+            {
+                work.Top += 1;
+            }
+            else if (HasAutoHideBar(AppBar.ABE_LEFT, monitorBounds))
+            {
+                work.Left += 1;
+            }
+            else if (HasAutoHideBar(AppBar.ABE_RIGHT, monitorBounds))
+            {
+                work.Right -= 1;
+            }
+        }
+
+        private static bool HasAutoHideBar(uint edge, Win32.RECT monitorBounds)
+        {
+            var data = new Win32.APPBARDATA
+            {
+                cbSize = Marshal.SizeOf<Win32.APPBARDATA>(),
+                uEdge = edge,
+                rc = monitorBounds
+            };
+
+            return Win32.SHAppBarMessage(AppBar.ABM_GETAUTOHIDEBAREX, ref data) != IntPtr.Zero;
         }
 
         /// <summary>

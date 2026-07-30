@@ -466,6 +466,38 @@ namespace Mosaic.UI.Wpf.Common
         [DllImport(User32)]
         public static extern int GetDpiForWindow(IntPtr hwnd);
 
+        /// <summary>
+        /// Retrieves a handle to the display monitor that has the largest area of intersection with a window.
+        /// </summary>
+        /// <param name="hwnd">The window handle.</param>
+        /// <param name="dwFlags">Determines the return value if the window does not intersect any monitor.</param>
+        /// <returns>The monitor handle.</returns>
+        [DllImport(User32)]
+        public static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+
+        /// <summary>
+        /// Retrieves information about a display monitor.
+        /// </summary>
+        /// <param name="hMonitor">The monitor handle.</param>
+        /// <param name="lpmi">The structure that receives the monitor information.</param>
+        /// <returns><see langword="true" /> if the call succeeds; otherwise, <see langword="false" />.</returns>
+        [DllImport(User32, CharSet = CharSet.Auto)]
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
+        /// <summary>
+        /// Sends an appbar message to the system.
+        /// </summary>
+        /// <param name="dwMessage">The appbar message value to send.</param>
+        /// <param name="pData">The appbar data.</param>
+        /// <returns>A message dependent value.</returns>
+        [DllImport(Shell32, CallingConvention = CallingConvention.StdCall)]
+        public static extern IntPtr SHAppBarMessage(uint dwMessage, ref APPBARDATA pData);
+
+        /// <summary>
+        /// Returns the nearest monitor when a window does not intersect any monitor.
+        /// </summary>
+        public const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
@@ -473,6 +505,62 @@ namespace Mosaic.UI.Wpf.Common
             public int Top;
             public int Right;
             public int Bottom;
+        }
+
+        /// <summary>
+        /// A point in a Win32 message payload.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        /// <summary>
+        /// Information about a display monitor.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MONITORINFO
+        {
+            /// <summary>The size of the structure, in bytes.</summary>
+            public int cbSize;
+
+            /// <summary>The full bounds of the monitor in virtual screen coordinates.</summary>
+            public RECT rcMonitor;
+
+            /// <summary>The work area of the monitor (the bounds minus docked appbars such as the taskbar).</summary>
+            public RECT rcWork;
+
+            /// <summary>Monitor flags (for example <c>MONITORINFOF_PRIMARY</c>).</summary>
+            public int dwFlags;
+        }
+
+        /// <summary>
+        /// The payload of the <c>WM_GETMINMAXINFO</c> message.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MINMAXINFO
+        {
+            public POINT ptReserved;
+            public POINT ptMaxSize;
+            public POINT ptMaxPosition;
+            public POINT ptMinTrackSize;
+            public POINT ptMaxTrackSize;
+        }
+
+        /// <summary>
+        /// Application bar data used with <see cref="SHAppBarMessage"/>.
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct APPBARDATA
+        {
+            public int cbSize;
+            public IntPtr hWnd;
+            public uint uCallbackMessage;
+            public uint uEdge;
+            public RECT rc;
+            public IntPtr lParam;
         }
 
         [DllImport(Kernel32)]
@@ -494,9 +582,26 @@ namespace Mosaic.UI.Wpf.Common
         public const int WM_NCLBUTTONDOWN = 0x00A1;
         public const int WM_NCHITTEST = 0x0084;
         public const int WM_NCCALCSIZE = 0x0083;
+        public const int WM_GETMINMAXINFO = 0x0024;
 
         public const int WM_DWMSENDICONICTHUMBNAIL = 0x0323;
         public const int WM_DWMSENDICONICLIVEPREVIEWBITMAP = 0x0326;
+    }
+
+    /// <summary>
+    /// Application bar messages and edges used with <see cref="Win32.SHAppBarMessage"/>.
+    /// </summary>
+    internal static class AppBar
+    {
+        public const uint ABM_GETSTATE = 0x00000004;
+        public const uint ABM_GETAUTOHIDEBAREX = 0x0000000B;
+
+        public const int ABS_AUTOHIDE = 0x0000001;
+
+        public const uint ABE_LEFT = 0;
+        public const uint ABE_TOP = 1;
+        public const uint ABE_RIGHT = 2;
+        public const uint ABE_BOTTOM = 3;
     }
 
     internal class TrackPopupMenuFlags
