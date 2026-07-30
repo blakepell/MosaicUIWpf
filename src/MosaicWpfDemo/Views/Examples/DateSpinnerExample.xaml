@@ -1,0 +1,320 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.DateSpinnerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Margin="20" Orientation="Vertical">
+
+            <TextBlock
+                Margin="0,0,0,16"
+                TextWrapping="Wrap"
+                Text="DateSpinner picks a date with three coordinated wheels for month, day, and year rather than with a calendar grid. Fields appear in the order the current culture writes them, the wheels stay synchronized across month lengths and leap years, and values outside the permitted range are visible but not selectable." />
+
+            <!--  1. Standard full date picker, and 8. two-way binding shown beside the control.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="1. Standard date picker (two-way bound)">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="The default commit mode is Explicit, so the drop down shows Apply and Cancel. The bound view model property is shown beside the control so the two-way binding is obvious." />
+
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Header="Arrival date"
+                            IsClearButtonVisible="True"
+                            SelectedDate="{Binding ArrivalDate, Mode=TwoWay}"
+                            SelectedDateChanged="Arrival_OnSelectedDateChanged" />
+
+                        <StackPanel Margin="20,20,0,0">
+                            <TextBlock FontWeight="Bold" Text="ArrivalDate" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding ArrivalDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                            <TextBlock
+                                Margin="0,6,0,0"
+                                FontFamily="Consolas"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="{Binding ArrivalChangeCount, StringFormat=SelectedDateChanged fired {0} time(s)}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  2 and 3. Nullable with no initial value, plus a clear button.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="2 &amp; 3. Nullable with no initial value, and the clear button">
+                <WrapPanel>
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Nothing is selected, so the fields show localized placeholders. Opening and closing the drop down without touching a wheel never assigns a date." />
+                        <mosaic:DateSpinner Header="Optional date" SelectedDate="{Binding OptionalDate, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding OptionalDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="IsClearButtonVisible adds a clear affordance. It is only enabled while a date is actually selected." />
+                        <mosaic:DateSpinner
+                            Header="Clearable date"
+                            IsClearButtonVisible="True"
+                            SelectedDate="{Binding ClearableDate, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding ClearableDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  4, 5 and 7. Reduced field sets and month formatting.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="4, 5 &amp; 7. Partial dates and month formatting">
+                <WrapPanel>
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A month and year picker. IsDayVisible is False and the month is abbreviated. The hidden day component of the value is preserved." />
+                        <mosaic:DateSpinner
+                            Header="Expiration date"
+                            IsDayVisible="False"
+                            MonthDisplayMode="AbbreviatedName"
+                            SelectedDate="{Binding ExpirationDate, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding ExpirationDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A year only picker. Both the month and the day are hidden. At least one field always stays visible." />
+                        <mosaic:DateSpinner
+                            Header="Model year"
+                            IsDayVisible="False"
+                            IsMonthVisible="False"
+                            SelectedDate="{Binding ModelYear, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding ModelYear, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A month and day picker with no year, useful for recurring annual dates such as a birthday reminder." />
+                        <mosaic:DateSpinner
+                            Header="Anniversary"
+                            IsYearVisible="False"
+                            SelectedDate="{Binding Anniversary, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding Anniversary, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  6. Restricted range. Bounds come from the view model, which is the reliable way to supply dates.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="6. Restricted to a specific range">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Minimum and maximum are bound to view model properties, which avoids relying on XAML string to DateTime conversion. Open the drop down and scroll to a boundary: the months and days outside the range are dimmed and cannot be selected." />
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Header="Appointment"
+                            IsClearButtonVisible="True"
+                            MaximumDate="{Binding LatestAppointment}"
+                            MinimumDate="{Binding EarliestAppointment}"
+                            SelectedDate="{Binding AppointmentDate, Mode=TwoWay}" />
+                        <StackPanel Margin="20,20,0,0">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding EarliestAppointment, StringFormat=Minimum: {0:yyyy-MM-dd}}" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding LatestAppointment, StringFormat=Maximum: {0:yyyy-MM-dd}}" />
+                            <TextBlock
+                                Margin="0,6,0,0"
+                                FontFamily="Consolas"
+                                Text="{Binding AppointmentDate, StringFormat=Selected: {0:yyyy-MM-dd}, TargetNullValue=Selected: (null)}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  11. Explicit commit, contrasted with immediate commit.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="11. Commit modes">
+                <WrapPanel>
+                    <StackPanel Width="300" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Explicit is the default. The temporary date only reaches SelectedDate when Apply is pressed. Cancel, Escape, and clicking away all discard it." />
+                        <mosaic:DateSpinner
+                            CommitMode="Explicit"
+                            Header="Date of birth"
+                            IsClearButtonVisible="True"
+                            MaximumDate="{Binding Today}"
+                            MinimumDate="{Binding EarliestBirthDate}"
+                            SelectedDate="{Binding DateOfBirth, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding DateOfBirth, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="300" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Immediate writes every wheel movement straight through to SelectedDate and shows no action buttons. Watch the value below update as you scroll." />
+                        <mosaic:DateSpinner
+                            CommitMode="Immediate"
+                            Header="Live value"
+                            SelectedDate="{Binding LiveDate, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding LiveDate, StringFormat={}{0:yyyy-MM-dd}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  9 and 10. Form states.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="9 &amp; 10. Read only and disabled">
+                <WrapPanel>
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A read only spinner keeps its value legible and stays focusable, but the drop down will not open and the value cannot be changed or cleared." />
+                        <mosaic:DateSpinner
+                            Header="Issued on"
+                            IsClearButtonVisible="True"
+                            IsReadOnly="True"
+                            SelectedDate="{Binding IssuedDate, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A disabled spinner is dimmed and takes no input at all." />
+                        <mosaic:DateSpinner
+                            Header="Archived on"
+                            IsClearButtonVisible="True"
+                            IsEnabled="False"
+                            SelectedDate="{Binding IssuedDate, Mode=TwoWay}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  Culture, which drives both field order and month names.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="Culture aware field order">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="The field order comes from the culture's short date pattern. United States English writes month, day, year; the United Kingdom writes day, month, year; Japan writes year, month, day. Month names are localized too." />
+                    <WrapPanel>
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Margin="0,0,16,10"
+                            Culture="en-US"
+                            Header="en-US"
+                            SelectedDate="{Binding CultureDate, Mode=TwoWay}" />
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Margin="0,0,16,10"
+                            Culture="en-GB"
+                            Header="en-GB"
+                            SelectedDate="{Binding CultureDate, Mode=TwoWay}" />
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Margin="0,0,16,10"
+                            Culture="ja-JP"
+                            Header="ja-JP"
+                            SelectedDate="{Binding CultureDate, Mode=TwoWay}" />
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Margin="0,0,16,10"
+                            Culture="fr-FR"
+                            Header="fr-FR"
+                            SelectedDate="{Binding CultureDate, Mode=TwoWay}" />
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  12. Light and dark themes.  -->
+            <GroupBox Padding="10" Header="12. Light and dark themes">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Every brush in the control and its drop down is a DynamicResource against a Mosaic theme token, so switching the application theme restyles the spinner live. Use the button below, or the theme button in the title bar." />
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Padding="12,4"
+                            Click="ButtonCycleTheme_OnClick"
+                            Content="Cycle theme" />
+                        <mosaic:DateSpinner
+                            Width="260"
+                            Margin="16,0,0,0"
+                            VerticalAlignment="Top"
+                            IsClearButtonVisible="True"
+                            SelectedDate="{Binding ThemeDate, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

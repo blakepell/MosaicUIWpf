@@ -396,6 +396,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  DateSpinner  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/timeline-week-48.png"
+                    Text="DateSpinner">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="DateSpinner" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DateSpinnerExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DateSpinnerExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:DateSpinner}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DateSpinnerExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/timeline-week-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  ColorPicker  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

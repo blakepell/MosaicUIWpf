@@ -1,0 +1,432 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--
+        Localizable captions. These are keyed by ComponentResourceKey so an application can translate every
+        DateSpinner at once by merging a dictionary that redefines the same keys, without touching each instance.
+    -->
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=MonthPlaceholderText}">Month</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=DayPlaceholderText}">Day</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=YearPlaceholderText}">Year</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ApplyButtonText}">Apply</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=CancelButtonText}">Cancel</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ClearButtonText}">Clear date</sys:String>
+
+    <BooleanToVisibilityConverter x:Key="DateSpinnerBooleanToVisibilityConverter" />
+
+    <!--
+        The drop down's action buttons are styled here rather than relying on the native Button styles, which are
+        opt in, so the drop down looks correct in every host application.
+    -->
+    <Style x:Key="DateSpinnerActionButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Padding" Value="14,5" />
+        <Setter Property="MinWidth" Value="76" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="ButtonBorder"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="3"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                            <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Apply is the primary action, so it carries the accent fill.  -->
+    <Style
+        x:Key="DateSpinnerPrimaryActionButtonStyle"
+        BasedOn="{StaticResource DateSpinnerActionButtonStyle}"
+        TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+    </Style>
+
+    <Style x:Key="DateSpinnerClearButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Margin" Value="4,0,0,0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="ClearBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        SnapsToDevicePixels="True">
+                        <Path
+                            Width="8"
+                            Height="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="M0,0 L8,8 M8,0 L0,8"
+                            Stroke="{TemplateBinding Foreground}"
+                            StrokeEndLineCap="Round"
+                            StrokeStartLineCap="Round"
+                            StrokeThickness="1.4" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ClearBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="ClearBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:DateSpinner}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DateSpinner}">
+                    <StackPanel>
+                        <!--  Optional label above the entry surface.  -->
+                        <ContentPresenter
+                            x:Name="HeaderPresenter"
+                            Margin="0,0,0,4"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Focusable="False"
+                            TextElement.FontFamily="{TemplateBinding FontFamily}"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+
+                        <Grid>
+                            <!--
+                                The closed entry surface. It reads as a single control even though it hosts three
+                                fields, and a click anywhere on it opens the drop down.
+                            -->
+                            <Border
+                                x:Name="PART_Root"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                SnapsToDevicePixels="True">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{TemplateBinding FirstFieldColumnWidth}" />
+                                        <ColumnDefinition Width="{TemplateBinding SecondFieldColumnWidth}" />
+                                        <ColumnDefinition Width="{TemplateBinding ThirdFieldColumnWidth}" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Month field. Its column follows the culture's short date pattern.  -->
+                                    <Grid
+                                        x:Name="MonthField"
+                                        Grid.Column="{TemplateBinding MonthFieldIndex}"
+                                        Visibility="{Binding IsMonthVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle
+                                            Width="1"
+                                            Margin="0,1,8,1"
+                                            HorizontalAlignment="Left"
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                            Visibility="{TemplateBinding MonthSeparatorVisibility}" />
+                                        <TextBlock
+                                            x:Name="MonthTextBlock"
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Text="{TemplateBinding MonthText}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+
+                                    <!--  Day field.  -->
+                                    <Grid
+                                        x:Name="DayField"
+                                        Grid.Column="{TemplateBinding DayFieldIndex}"
+                                        Visibility="{Binding IsDayVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle
+                                            Width="1"
+                                            Margin="0,1,8,1"
+                                            HorizontalAlignment="Left"
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                            Visibility="{TemplateBinding DaySeparatorVisibility}" />
+                                        <TextBlock
+                                            x:Name="DayTextBlock"
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Text="{TemplateBinding DayText}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+
+                                    <!--  Year field.  -->
+                                    <Grid
+                                        x:Name="YearField"
+                                        Grid.Column="{TemplateBinding YearFieldIndex}"
+                                        Visibility="{Binding IsYearVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle
+                                            Width="1"
+                                            Margin="0,1,8,1"
+                                            HorizontalAlignment="Left"
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                            Visibility="{TemplateBinding YearSeparatorVisibility}" />
+                                        <TextBlock
+                                            x:Name="YearTextBlock"
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Text="{TemplateBinding YearText}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+
+                                    <!--
+                                        The clear button's enabled state comes from the routed command, which only
+                                        executes while a date is selected and the control is editable.
+                                    -->
+                                    <Button
+                                        x:Name="PART_ClearButton"
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Static controls:DateSpinner.ClearCommand}"
+                                        Style="{StaticResource DateSpinnerClearButtonStyle}"
+                                        ToolTip="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ClearButtonText}}"
+                                        Visibility="{Binding IsClearButtonVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        <AutomationProperties.Name>
+                                            <Binding
+                                                Mode="OneWay"
+                                                RelativeSource="{RelativeSource Self}"
+                                                Path="ToolTip" />
+                                        </AutomationProperties.Name>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <!--
+                                Placement="Bottom" lets WPF flip the drop down above the control and keep it inside
+                                the monitor's working area when there is not enough room below.
+                            -->
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                HorizontalOffset="0"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=PART_Root}"
+                                PopupAnimation="Fade"
+                                StaysOpen="False"
+                                VerticalOffset="2">
+                                <Border
+                                    MinWidth="{Binding ActualWidth, ElementName=PART_Root}"
+                                    Margin="8"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    SnapsToDevicePixels="True"
+                                    TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                    TextElement.FontSize="{TemplateBinding FontSize}"
+                                    TextElement.Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="10"
+                                            Direction="270"
+                                            Opacity="0.25"
+                                            ShadowDepth="2" />
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        <Grid Margin="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="{TemplateBinding FirstFieldColumnWidth}" />
+                                                <ColumnDefinition Width="{TemplateBinding SecondFieldColumnWidth}" />
+                                                <ColumnDefinition Width="{TemplateBinding ThirdFieldColumnWidth}" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <controls:DateSpinnerSelector
+                                                x:Name="PART_MonthSelector"
+                                                Grid.Column="{TemplateBinding MonthFieldIndex}"
+                                                IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Values="{Binding MonthItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Visibility="{Binding IsMonthVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
+                                                AutomationProperties.Name="Month" />
+
+                                            <controls:DateSpinnerSelector
+                                                x:Name="PART_DaySelector"
+                                                Grid.Column="{TemplateBinding DayFieldIndex}"
+                                                IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Values="{Binding DayItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Visibility="{Binding IsDayVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
+                                                AutomationProperties.Name="Day" />
+
+                                            <controls:DateSpinnerSelector
+                                                x:Name="PART_YearSelector"
+                                                Grid.Column="{TemplateBinding YearFieldIndex}"
+                                                IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Values="{Binding YearItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Visibility="{Binding IsYearVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
+                                                AutomationProperties.Name="Year" />
+                                        </Grid>
+
+                                        <!--  Explicit commit only. Immediate mode writes every change straight through.  -->
+                                        <Border
+                                            x:Name="ActionBar"
+                                            Padding="8,6"
+                                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                            BorderThickness="0,1,0,0"
+                                            Visibility="Collapsed">
+                                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                                <Button
+                                                    x:Name="PART_CancelButton"
+                                                    Margin="0,0,8,0"
+                                                    Command="{x:Static controls:DateSpinner.CancelCommand}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=CancelButtonText}}"
+                                                    Style="{StaticResource DateSpinnerActionButtonStyle}" />
+                                                <Button
+                                                    x:Name="PART_ApplyButton"
+                                                    Command="{x:Static controls:DateSpinner.ApplyCommand}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ApplyButtonText}}"
+                                                    IsDefault="False"
+                                                    Style="{StaticResource DateSpinnerPrimaryActionButtonStyle}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <!--  No header content means no space reserved for one.  -->
+                        <Trigger Property="Header" Value="{x:Null}">
+                            <Setter TargetName="HeaderPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <Trigger Property="CommitMode" Value="Explicit">
+                            <Setter TargetName="ActionBar" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--
+                            An unset control renders its placeholders in italic as well as in the muted placeholder
+                            color, so the empty state does not rely on color alone.
+                        -->
+                        <Trigger Property="HasSelectedDate" Value="False">
+                            <Setter TargetName="MonthTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="DayTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="YearTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="MonthTextBlock" Property="FontStyle" Value="Italic" />
+                            <Setter TargetName="DayTextBlock" Property="FontStyle" Value="Italic" />
+                            <Setter TargetName="YearTextBlock" Property="FontStyle" Value="Italic" />
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsReadOnly" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </MultiTrigger>
+
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                        </Trigger>
+
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                        </Trigger>
+
+                        <!--  Read only keeps the value legible and the control focusable, it just cannot be edited.  -->
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+                        </Trigger>
+
+                        <!--  Validation. Errors are shown with a border color and the message as a tooltip.  -->
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderThickness" Value="1" />
+                            <Setter Property="ToolTip" Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter TargetName="MonthTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="DayTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="YearTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="HeaderPresenter" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

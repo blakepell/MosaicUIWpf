@@ -28,9 +28,12 @@ namespace Mosaic.UI.Wpf.Controls
     public class InertiaScrollViewer : ScrollViewer
     {
         /// <summary>
-        /// Stores the last recorded location as a double value.
+        /// The destination of the current animation. Repeated wheel input accumulates from this value instead of
+        /// from the partially animated offset, which preserves momentum.
         /// </summary>
-        private static double _lastLocation;
+        private double _targetVerticalOffset;
+
+        private bool _isAnimating;
 
         /// <summary>
         /// Identifies the <see cref="IsScrollAnimation"/> dependency property.
@@ -38,15 +41,43 @@ namespace Mosaic.UI.Wpf.Controls
         /// <remarks>This property determines whether scroll animations are enabled for the <see
         /// cref="InertiaScrollViewer"/>.</remarks>
         public static readonly DependencyProperty IsScrollAnimationProperty = DependencyProperty.Register(
-            nameof(IsScrollAnimation), typeof(bool), typeof(InertiaScrollViewer), new PropertyMetadata(false, OnIsScrollAnimationChanged));
+            nameof(IsScrollAnimation), typeof(bool), typeof(InertiaScrollViewer), new PropertyMetadata(true));
 
         /// <summary>
-        /// Gets or sets a value indicating whether scroll animations are enabled.
+        /// Gets or sets a value indicating whether scroll animations are enabled. The default is
+        /// <see langword="true"/>.
         /// </summary>
         public bool IsScrollAnimation
         {
             get => (bool)GetValue(IsScrollAnimationProperty);
             set => SetValue(IsScrollAnimationProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="WheelScrollDistance"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty WheelScrollDistanceProperty = DependencyProperty.Register(
+            nameof(WheelScrollDistance), typeof(double), typeof(InertiaScrollViewer),
+            new FrameworkPropertyMetadata(320.0, null, CoerceWheelScrollDistance));
+
+        /// <summary>
+        /// Gets or sets the number of device-independent pixels added to the inertial destination for one standard
+        /// mouse-wheel detent. The default is 320.
+        /// </summary>
+        [Category("Mosaic")]
+        [Description("The inertial scroll distance, in pixels, for one standard mouse-wheel detent.")]
+        public double WheelScrollDistance
+        {
+            get => (double)this.GetValue(WheelScrollDistanceProperty);
+            set => this.SetValue(WheelScrollDistanceProperty, value);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InertiaScrollViewer"/> class.
+        /// </summary>
+        public InertiaScrollViewer()
+        {
+            this.ScrollChanged += this.OnScrollChanged;
         }
 
         /// <summary>
@@ -88,45 +119,23 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Handles changes to the <see cref="IsScrollAnimation"/> dependency property.
-        /// </summary>
-        /// <param name="d">The object on which the property value has changed. Expected to be an instance of <see
-        /// cref="InertiaScrollViewer"/>.</param>
-        /// <param name="e">Provides data about the property change, including the old and new values.</param>
-        private static void OnIsScrollAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not InertiaScrollViewer ctrl)
-            {
-                return;
-            }
-
-            if (ctrl.IsScrollAnimation)
-            {
-                ctrl.ScrollChanged -= OnScrollChanged;
-                ctrl.ScrollChanged += OnScrollChanged;
-            }
-            else
-            {
-                ctrl.ScrollChanged -= OnScrollChanged;
-            }
-        }
-
-        /// <summary>
         /// Handles the <see cref="ScrollViewer.ScrollChanged"/> event to track vertical scroll changes.
         /// </summary>
         /// <param name="sender">The source of the event, expected to be an <see cref="InertiaScrollViewer"/>.</param>
         /// <param name="e">The event data containing information about the scroll change.</param>
-        private static void OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (sender is not InertiaScrollViewer ctrl)
+            if (e.VerticalChange != 0 && !_isAnimating)
             {
-                return;
+                _targetVerticalOffset = this.VerticalOffset;
             }
+        }
 
-            if (e.VerticalChange != 0)
-            {
-                _lastLocation = ctrl.VerticalOffset;
-            }
+        private static object CoerceWheelScrollDistance(DependencyObject d, object baseValue)
+        {
+            double value = (double)baseValue;
+
+            return double.IsNaN(value) || double.IsInfinity(value) || value <= 0 ? 1.0 : value;
         }
 
         /// <summary>
@@ -139,24 +148,20 @@ namespace Mosaic.UI.Wpf.Controls
                 base.OnMouseWheel(e);
                 return;
             }
-            var wheelChange = e.Delta;
-            var newOffset = _lastLocation - wheelChange * 2;
+            double startingOffset = _isAnimating ? _targetVerticalOffset : this.VerticalOffset;
+            double wheelDetents = e.Delta / (double)Mouse.MouseWheelDeltaForOneLine;
+            double newOffset = Math.Clamp(
+                startingOffset - wheelDetents * this.WheelScrollDistance,
+                0,
+                this.ScrollableHeight);
 
-            ScrollToVerticalOffset(_lastLocation);
-
-            if (newOffset < 0)
+            if (Math.Abs(newOffset - startingOffset) < 0.5)
             {
-                newOffset = 0;
+                // Leave the event unhandled so an enclosing viewer can continue scrolling at this boundary.
+                return;
             }
 
-            if (newOffset > ScrollableHeight)
-            {
-                newOffset = ScrollableHeight;
-            }
-
-            AnimateScroll(newOffset);
-
-            _lastLocation = newOffset;
+            this.AnimateScroll(newOffset);
             e.Handled = true;
         }
 
@@ -169,21 +174,39 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="toValue">The target vertical offset to scroll to.</param>
         /// <param name="onCompleted">An optional callback that is invoked when the animation completes. If not provided, no action is taken upon
         /// completion.</param>
-        public void AnimateScroll(double toValue, Action onCompleted = null)
+        public void AnimateScroll(double toValue, Action? onCompleted = null)
         {
-            BeginAnimation(InertiaScrollViewerBehavior.VerticalOffsetProperty, null);
+            double currentOffset = this.VerticalOffset;
+            double targetOffset = Math.Clamp(toValue, 0, this.ScrollableHeight);
+
+            // Store the current effective offset as the animation property's base before replacing its clock.
+            // Otherwise removing the previous animation can briefly restore the attached property's default of zero.
+            InertiaScrollViewerBehavior.SetVerticalOffset(this, currentOffset);
+            this.BeginAnimation(InertiaScrollViewerBehavior.VerticalOffsetProperty, null);
 
             var animation = new DoubleAnimation
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-                From = VerticalOffset,
-                To = toValue,
+                From = currentOffset,
+                To = targetOffset,
                 Duration = TimeSpan.FromMilliseconds(this.AnimationDurationMilliseconds)
             };
 
             Timeline.SetDesiredFrameRate(animation, this.DesiredFrameRate);
-            animation.Completed += (s, e) => onCompleted?.Invoke();
-            BeginAnimation(InertiaScrollViewerBehavior.VerticalOffsetProperty, animation);
+            animation.Completed += (_, _) =>
+            {
+                // Make the destination the base value before removing the completed animation so the viewer stays
+                // exactly where the easing finished.
+                InertiaScrollViewerBehavior.SetVerticalOffset(this, targetOffset);
+                this.BeginAnimation(InertiaScrollViewerBehavior.VerticalOffsetProperty, null);
+                _targetVerticalOffset = targetOffset;
+                _isAnimating = false;
+                onCompleted?.Invoke();
+            };
+
+            _targetVerticalOffset = targetOffset;
+            _isAnimating = true;
+            this.BeginAnimation(InertiaScrollViewerBehavior.VerticalOffsetProperty, animation);
         }
     }
 }

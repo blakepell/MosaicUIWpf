@@ -205,6 +205,13 @@
 			<Link>LinkedSources\DatePickerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\DateSpinnerExample.xaml">
+			<Link>LinkedSources\DateSpinnerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\DateSpinnerExample.xaml.cs">
+			<Link>LinkedSources\DateSpinnerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\DebugExample.xaml">
 			<Link>LinkedSources\DebugExample.xaml</Link>
 		</EmbeddedResource>
