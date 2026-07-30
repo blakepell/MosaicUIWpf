@@ -16,6 +16,8 @@ using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using System.Windows;
+using System.Windows.Media;
 
 namespace BbsNavigator.Common
 {
@@ -65,6 +67,28 @@ namespace BbsNavigator.Common
             get => _credentialEncryptionVerifier;
             set => SetProperty(ref _credentialEncryptionVerifier, value);
         }
+
+        /// <summary>
+        /// Gets or sets the default terminal font family.
+        /// </summary>
+        /// <value>The font family used by newly created terminal views.</value>
+        [property: Category("Terminal")]
+        [property: DisplayName("Terminal Font")]
+        [property: Description("The default terminal font family.")]
+        [property: JsonConverter(typeof(Mosaic.UI.Wpf.Controls.FontFamilyJsonSerializer))]
+        [ObservableProperty]
+        private FontFamily _fontFamily = new("Cascadia Mono");
+
+        /// <summary>
+        /// Gets or sets the default terminal font weight.
+        /// </summary>
+        /// <value>The font weight used by newly created terminal views.</value>
+        [property: Category("Terminal")]
+        [property: DisplayName("Terminal Font Weight")]
+        [property: Description("The default terminal font weight.")]
+        [property: JsonConverter(typeof(Mosaic.UI.Wpf.Controls.FontWeightJsonSerializer))]
+        [ObservableProperty]
+        private FontWeight _fontWeight = FontWeights.Normal;
 
         /// <summary>
         /// Gets or sets the default terminal font size.

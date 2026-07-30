@@ -108,6 +108,15 @@ namespace BbsNavigator.Views
         public BbsProfile Profile { get; }
 
         /// <summary>
+        /// Gets the application settings that supply the terminal font options bound in XAML.
+        /// </summary>
+        /// <remarks>
+        /// The view's <see cref="FrameworkElement.DataContext"/> is the <see cref="Profile"/>, so the
+        /// terminal binds its font through this property with a <c>RelativeSource</c> to the view.
+        /// </remarks>
+        public AppSettings Settings => _settings;
+
+        /// <summary>
         /// Gets whether a file transfer is currently running.
         /// </summary>
         public bool IsTransferActive => _transferActive;
