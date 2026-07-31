@@ -35,6 +35,18 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private bool _suppressModified;
 
+        /// <summary>
+        /// Delays opening the table size picker so that merely sweeping the pointer across the toolbar does
+        /// not flash the popup.
+        /// </summary>
+        private readonly DispatcherTimer _tablePickerOpenTimer;
+
+        /// <summary>
+        /// Delays closing the table size picker so the pointer can travel from the toolbar button onto the
+        /// popup without the gap between them dismissing it.
+        /// </summary>
+        private readonly DispatcherTimer _tablePickerCloseTimer;
+
         #region Dependency Properties
 
         /// <summary>
@@ -194,6 +206,12 @@ namespace Mosaic.UI.Wpf.Controls
             this.Editor.PreviewKeyDown += this.Editor_PreviewKeyDown;
             this.Editor.TextArea.Caret.PositionChanged += this.Caret_PositionChanged;
             this.Editor.ContextMenuRequested += this.Editor_ContextMenuRequested;
+
+            _tablePickerOpenTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
+            _tablePickerOpenTimer.Tick += this.TablePickerOpenTimer_Tick;
+
+            _tablePickerCloseTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+            _tablePickerCloseTimer.Tick += this.TablePickerCloseTimer_Tick;
 
             this.UpdateDocumentTitle();
             this.UpdateStatusBar();
@@ -456,9 +474,109 @@ namespace Mosaic.UI.Wpf.Controls
 
         private void BlockQuoteButton_Click(object sender, RoutedEventArgs e) => this.ToggleLinePrefix(BlockQuoteTransform);
 
-        private async void InsertTableButton_Click(object sender, RoutedEventArgs e) => await this.ShowInsertTableDialogAsync();
+        private async void InsertTableButton_Click(object sender, RoutedEventArgs e)
+        {
+            // The hover popup and the dialog are two paths to the same thing, only one of them should be up.
+            this.CloseTableSizePopup();
+            await this.ShowInsertTableDialogAsync();
+        }
 
         private void InsertImageFromFileButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromFile();
+
+        #endregion
+
+        #region Table size picker popup
+
+        /// <summary>
+        /// Schedules the table size picker to open. Attached to both the toolbar button and the picker itself
+        /// so that moving onto either one keeps the popup alive.
+        /// </summary>
+        private void InsertTableHoverTarget_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _tablePickerCloseTimer.Stop();
+
+            if (this.TableSizePopup.IsOpen)
+            {
+                return;
+            }
+
+            _tablePickerOpenTimer.Stop();
+            _tablePickerOpenTimer.Start();
+        }
+
+        /// <summary>
+        /// Schedules the table size picker to close, cancelling a pending open if the pointer left before the
+        /// popup ever appeared.
+        /// </summary>
+        private void InsertTableHoverTarget_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _tablePickerOpenTimer.Stop();
+            _tablePickerCloseTimer.Stop();
+            _tablePickerCloseTimer.Start();
+        }
+
+        /// <summary>
+        /// Opens the popup once the pointer has rested on the toolbar button long enough.
+        /// </summary>
+        private void TablePickerOpenTimer_Tick(object? sender, EventArgs e)
+        {
+            _tablePickerOpenTimer.Stop();
+
+            // The pointer may have moved on between the tick being scheduled and it firing.
+            if (!this.InsertTableButton.IsMouseOver)
+            {
+                return;
+            }
+
+            // Reset any stale hover or committed state, but do not take focus the way OnShow() would: the
+            // popup is opened by a hover and stealing the caret out of the editor for that would be hostile.
+            this.TableSizePickerControl.Clear();
+            this.TableSizePopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Closes the popup once the pointer has been away from both the button and the picker.
+        /// </summary>
+        private void TablePickerCloseTimer_Tick(object? sender, EventArgs e)
+        {
+            _tablePickerCloseTimer.Stop();
+
+            if (this.InsertTableButton.IsMouseOver || this.TableSizePickerControl.IsMouseOver)
+            {
+                return;
+            }
+
+            this.CloseTableSizePopup();
+        }
+
+        /// <summary>
+        /// Inserts a table of the picked size and dismisses the popup.
+        /// </summary>
+        private void TableSizePicker_TableSizeSelected(object sender, TableSizeSelectedEventArgs e)
+        {
+            this.CloseTableSizePopup();
+            this.InsertTable(e.ColumnCount, e.RowCount);
+        }
+
+        /// <summary>
+        /// The picker asks its host to dismiss it after a commit or when Escape is pressed.
+        /// </summary>
+        private void TableSizePicker_RequestClose(object? sender, EventArgs e) => this.CloseTableSizePopup();
+
+        /// <summary>
+        /// Cancels any pending hover timers and closes the table size popup.
+        /// </summary>
+        private void CloseTableSizePopup()
+        {
+            _tablePickerOpenTimer.Stop();
+            _tablePickerCloseTimer.Stop();
+
+            if (this.TableSizePopup.IsOpen)
+            {
+                this.TableSizePickerControl.OnHide();
+                this.TableSizePopup.IsOpen = false;
+            }
+        }
 
         #endregion
 
