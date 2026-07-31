@@ -45,6 +45,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/DatePicker/DatePicker.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/DateSpinner/DateSpinnerSelector.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/DateSpinner/DateSpinner.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/TimeSpinner/TimeSpinner.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ModalDialog/ModalDialog.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/RadialColorPicker/RadialColorPicker.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/RadialColorPicker/RadialColorPickerBox.xaml" />

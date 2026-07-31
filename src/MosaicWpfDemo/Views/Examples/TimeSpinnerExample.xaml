@@ -1,0 +1,348 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.TimeSpinnerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Focusable="False"
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+
+        <StackPanel Margin="20" Orientation="Vertical">
+
+            <TextBlock
+                Margin="0,0,0,16"
+                TextWrapping="Wrap"
+                Text="TimeSpinner is the twelve hour sibling of DateSpinner. It picks a time of day with three coordinated wheels for hour, minute, and AM or PM, and shares the date spinner's interaction model exactly: the same mouse, touch, and keyboard handling, the same wheel physics, and the same explicit Apply and Cancel commit by default. Values outside the permitted range are visible but not selectable." />
+
+            <!--  Standard picker with two-way binding shown beside the control.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="1. Standard time picker (two-way bound)">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="SelectedTime is a nullable TimeOnly, which is the type that means a time of day with no date and no time zone attached to it. The default commit mode is Explicit, so the drop down shows Apply and Cancel." />
+
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Header="Appointment time"
+                            IsClearButtonVisible="True"
+                            SelectedTime="{Binding AppointmentTime, Mode=TwoWay}"
+                            SelectedTimeChanged="Appointment_OnSelectedTimeChanged" />
+
+                        <StackPanel Margin="20,20,0,0">
+                            <TextBlock FontWeight="Bold" Text="AppointmentTime" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding AppointmentTime, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                            <TextBlock
+                                Margin="0,6,0,0"
+                                FontFamily="Consolas"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="{Binding AppointmentChangeCount, StringFormat=SelectedTimeChanged fired {0} time(s)}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Nullable with no initial value, plus the clear button.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="2 &amp; 3. Nullable with no initial value, and the clear button">
+                <WrapPanel>
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Nothing is selected, so the fields show localized placeholders. Opening and closing the drop down without touching a wheel never assigns a time." />
+                        <mosaic:TimeSpinner Header="Optional time" SelectedTime="{Binding OptionalTime, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding OptionalTime, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="IsClearButtonVisible adds a clear affordance. It is only enabled while a time is actually selected." />
+                        <mosaic:TimeSpinner
+                            Header="Clearable time"
+                            IsClearButtonVisible="True"
+                            SelectedTime="{Binding ClearableTime, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding ClearableTime, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  The minute step, which is what most scheduling UI actually needs.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="4. Minute interval">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="MinuteInterval controls the step the minute wheel offers. A time that does not fall on the step, whether it was assigned in code or the step was changed underneath it, is snapped onto the nearest value the wheel can actually reach." />
+                    <WrapPanel>
+                        <StackPanel Width="240" Margin="0,0,24,10">
+                            <TextBlock Margin="0,0,0,6" Text="MinuteInterval=&quot;1&quot; (default)" />
+                            <mosaic:TimeSpinner Header="Every minute" SelectedTime="{Binding MeetingTime, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <StackPanel Width="240" Margin="0,0,24,10">
+                            <TextBlock Margin="0,0,0,6" Text="MinuteInterval=&quot;15&quot;" />
+                            <mosaic:TimeSpinner
+                                Header="Quarter hours"
+                                MinuteInterval="15"
+                                SelectedTime="{Binding MeetingTime, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <StackPanel Width="240" Margin="0,0,24,10">
+                            <TextBlock Margin="0,0,0,6" Text="MinuteInterval=&quot;30&quot;" />
+                            <mosaic:TimeSpinner
+                                Header="Half hours"
+                                MinuteInterval="30"
+                                SelectedTime="{Binding MeetingTime, Mode=TwoWay}" />
+                        </StackPanel>
+                    </WrapPanel>
+
+                    <TextBlock
+                        Margin="0,6,0,0"
+                        FontFamily="Consolas"
+                        Text="{Binding MeetingTime, StringFormat=All three share MeetingTime: {0:t}, TargetNullValue=(null)}" />
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Hour only, which is what hiding the minute field is for.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="5. Hour only">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="IsMinuteVisible=&quot;False&quot; turns the control into an hour picker. The minute component of the value is preserved rather than zeroed, so a time that already carried minutes keeps them. The hour and AM/PM fields are always shown, because a time missing either of them cannot be read." />
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:TimeSpinner
+                            Width="200"
+                            Header="Reminder hour"
+                            IsMinuteVisible="False"
+                            SelectedTime="{Binding ReminderTime, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="20,26,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding ReminderTime, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Restricted range. Bounds are XAML literals here, which the property level converter allows.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="6. Restricted to business hours">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="MinimumTime and MaximumTime are bound from the view model here, though they can also be written as XAML literals such as MinimumTime=&quot;08:00&quot;. Open the drop down and scroll to a boundary: the hours and minutes outside the range are dimmed and cannot be selected, and AM is unreachable entirely." />
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Header="Appointment"
+                            IsClearButtonVisible="True"
+                            MaximumTime="{Binding LatestAppointment}"
+                            MinimumTime="{Binding EarliestAppointment}"
+                            MinuteInterval="15"
+                            SelectedTime="{Binding AppointmentTime, Mode=TwoWay}" />
+                        <StackPanel Margin="20,20,0,0">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding EarliestAppointment, StringFormat=Minimum: {0:t}}" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding LatestAppointment, StringFormat=Maximum: {0:t}}" />
+                            <TextBlock
+                                Margin="0,6,0,0"
+                                FontFamily="Consolas"
+                                Text="{Binding AppointmentTime, StringFormat=Selected: {0:t}, TargetNullValue=Selected: (null)}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  The TimeSpan mirror, which is the interop path for older models.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="7. Binding a TimeSpan valued model">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Models that store a time of day as a TimeSpan, which is what EF Core historically maps a SQL time column to, can bind SelectedTimeSpan instead of SelectedTime. The two mirror each other, so bind one or the other on any given instance. The value published back is the value after snapping, not the one requested." />
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Header="Shift start"
+                            IsClearButtonVisible="True"
+                            MinuteInterval="30"
+                            SelectedTimeSpan="{Binding ShiftStart, Mode=TwoWay}" />
+                        <StackPanel Margin="20,20,0,0">
+                            <TextBlock FontWeight="Bold" Text="ShiftStart (TimeSpan?)" />
+                            <TextBlock
+                                FontFamily="Consolas"
+                                Text="{Binding ShiftStart, TargetNullValue=(null)}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Commit modes, contrasted side by side.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="8. Commit modes">
+                <WrapPanel>
+                    <StackPanel Width="300" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Explicit is the default. The temporary time only reaches SelectedTime when Apply is pressed. Cancel, Escape, and clicking away all discard it." />
+                        <mosaic:TimeSpinner
+                            CommitMode="Explicit"
+                            Header="Departure"
+                            IsClearButtonVisible="True"
+                            SelectedTime="{Binding OpenedAt, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding OpenedAt, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                    </StackPanel>
+
+                    <StackPanel Width="300" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="Immediate writes every wheel movement straight through to SelectedTime and shows no action buttons. Watch the value below update as you scroll." />
+                        <mosaic:TimeSpinner
+                            CommitMode="Immediate"
+                            Header="Live value"
+                            SelectedTime="{Binding LiveTime, Mode=TwoWay}" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            FontFamily="Consolas"
+                            Text="{Binding LiveTime, StringFormat={}{0:t}, TargetNullValue=(null)}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  Formatting of the three fields.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="9. Formatting">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="HourFormat and MinuteFormat take .NET time format strings, and MeridiemDisplayMode cases the AM and PM designators. A format string the runtime cannot honor degrades to the default rather than throwing during layout." />
+                    <WrapPanel>
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Margin="0,0,16,10"
+                            Header="Default"
+                            SelectedTime="{Binding ThemeTime, Mode=TwoWay}" />
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Margin="0,0,16,10"
+                            Header="HourFormat=&quot;hh&quot;"
+                            HourFormat="hh"
+                            SelectedTime="{Binding ThemeTime, Mode=TwoWay}" />
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Margin="0,0,16,10"
+                            Header="MeridiemDisplayMode=&quot;Lowercase&quot;"
+                            MeridiemDisplayMode="Lowercase"
+                            SelectedTime="{Binding ThemeTime, Mode=TwoWay}" />
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+
+            <!--  Form states.  -->
+            <GroupBox
+                Margin="0,0,0,20"
+                Padding="10"
+                Header="10 &amp; 11. Read only and disabled">
+                <WrapPanel>
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A read only spinner keeps its value legible and stays focusable, but the drop down will not open and the value cannot be changed or cleared." />
+                        <mosaic:TimeSpinner
+                            Header="Opened at"
+                            IsClearButtonVisible="True"
+                            IsReadOnly="True"
+                            SelectedTime="{Binding OpenedAt, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel Width="280" Margin="0,0,24,10">
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            TextWrapping="Wrap"
+                            Text="A disabled spinner is dimmed and takes no input at all." />
+                        <mosaic:TimeSpinner
+                            Header="Closed at"
+                            IsClearButtonVisible="True"
+                            IsEnabled="False"
+                            SelectedTime="{Binding OpenedAt, Mode=TwoWay}" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <!--  Light and dark themes.  -->
+            <GroupBox Padding="10" Header="12. Light and dark themes">
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        TextWrapping="Wrap"
+                        Text="Every brush in the control and its drop down is a DynamicResource against a Mosaic theme token, so switching the application theme restyles the spinner live. Use the button below, or the theme button in the title bar." />
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Padding="12,4"
+                            Click="ButtonCycleTheme_OnClick"
+                            Content="Cycle theme" />
+                        <mosaic:TimeSpinner
+                            Width="240"
+                            Margin="16,0,0,0"
+                            VerticalAlignment="Top"
+                            IsClearButtonVisible="True"
+                            SelectedTime="{Binding ThemeTime, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

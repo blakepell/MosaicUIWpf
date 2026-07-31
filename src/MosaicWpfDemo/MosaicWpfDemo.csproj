@@ -71,6 +71,7 @@
 		<None Remove="Assets\tag-48.png" />
 		<None Remove="Assets\terminal-48.png" />
 		<None Remove="Assets\text-48.png" />
+		<None Remove="Assets\time-48.png" />
 		<None Remove="Assets\timeline-week-48.png" />
 		<None Remove="Assets\toggle-48.png" />
 		<None Remove="Assets\toggle2-48.png" />
@@ -152,6 +153,7 @@
 		<Resource Include="Assets\termina3-48.png" />
 		<Resource Include="Assets\terminal-48.png" />
 		<Resource Include="Assets\text-48.png" />
+		<Resource Include="Assets\time-48.png" />
 		<Resource Include="Assets\timeline-week-48.png" />
 		<Resource Include="Assets\toggle-48.png" />
 		<Resource Include="Assets\toggle2-48.png" />
@@ -210,6 +212,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\DateSpinnerExample.xaml.cs">
 			<Link>LinkedSources\DateSpinnerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\TimeSpinnerExample.xaml">
+			<Link>LinkedSources\TimeSpinnerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\TimeSpinnerExample.xaml.cs">
+			<Link>LinkedSources\TimeSpinnerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\DebugExample.xaml">

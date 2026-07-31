@@ -7,22 +7,22 @@
 
     <!--
         Localizable captions. These are keyed by ComponentResourceKey so an application can translate every
-        DateSpinner at once by merging a dictionary that redefines the same keys, without touching each instance.
+        TimeSpinner at once by merging a dictionary that redefines the same keys, without touching each instance.
     -->
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=MonthPlaceholderText}">Month</sys:String>
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=DayPlaceholderText}">Day</sys:String>
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=YearPlaceholderText}">Year</sys:String>
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ApplyButtonText}">Apply</sys:String>
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=CancelButtonText}">Cancel</sys:String>
-    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner}, ResourceId=ClearButtonText}">Clear date</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=HourPlaceholderText}">Hour</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=MinutePlaceholderText}">Minute</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=MeridiemPlaceholderText}">AM/PM</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ApplyButtonText}">Apply</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=CancelButtonText}">Cancel</sys:String>
+    <sys:String x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ClearButtonText}">Clear time</sys:String>
 
-    <BooleanToVisibilityConverter x:Key="DateSpinnerBooleanToVisibilityConverter" />
+    <BooleanToVisibilityConverter x:Key="TimeSpinnerBooleanToVisibilityConverter" />
 
     <!--
         The drop down's action buttons are styled here rather than relying on the native Button styles, which are
         opt in, so the drop down looks correct in every host application.
     -->
-    <Style x:Key="DateSpinnerActionButtonStyle" TargetType="{x:Type Button}">
+    <Style x:Key="TimeSpinnerActionButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Padding" Value="14,5" />
         <Setter Property="MinWidth" Value="76" />
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
@@ -72,15 +72,15 @@
 
     <!--  Apply is the primary action, so it carries the accent fill.  -->
     <Style
-        x:Key="DateSpinnerPrimaryActionButtonStyle"
-        BasedOn="{StaticResource DateSpinnerActionButtonStyle}"
+        x:Key="TimeSpinnerPrimaryActionButtonStyle"
+        BasedOn="{StaticResource TimeSpinnerActionButtonStyle}"
         TargetType="{x:Type Button}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
     </Style>
 
-    <Style x:Key="DateSpinnerClearButtonStyle" TargetType="{x:Type Button}">
+    <Style x:Key="TimeSpinnerClearButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="Width" Value="22" />
         <Setter Property="Height" Value="22" />
         <Setter Property="Margin" Value="4,0,0,0" />
@@ -125,7 +125,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type controls:DateSpinner}">
+    <Style TargetType="{x:Type controls:TimeSpinner}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -133,7 +133,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
         <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
         <Setter Property="Padding" Value="10,6" />
-        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="MinWidth" Value="180" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -141,7 +141,7 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:DateSpinner}">
+                <ControlTemplate TargetType="{x:Type controls:TimeSpinner}">
                     <StackPanel>
                         <!--  Optional label above the entry surface.  -->
                         <ContentPresenter
@@ -169,17 +169,24 @@
                                 SnapsToDevicePixels="True">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="{TemplateBinding FirstFieldColumnWidth}" />
-                                        <ColumnDefinition Width="{TemplateBinding SecondFieldColumnWidth}" />
-                                        <ColumnDefinition Width="{TemplateBinding ThirdFieldColumnWidth}" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="{TemplateBinding MinuteColumnWidth}" />
+                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!--  Month field. Its column follows the culture's short date pattern.  -->
+                                    <!--  Hour field. Always first, a twelve hour clock is not written any other way.  -->
+                                    <TextBlock
+                                        x:Name="HourTextBlock"
+                                        VerticalAlignment="Center"
+                                        Text="{TemplateBinding HourText}"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                    <!--  Minute field.  -->
                                     <Grid
-                                        x:Name="MonthField"
-                                        Grid.Column="{TemplateBinding MonthFieldIndex}"
-                                        Visibility="{Binding IsMonthVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        x:Name="MinuteField"
+                                        Grid.Column="1"
+                                        Visibility="{Binding IsMinuteVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TimeSpinnerBooleanToVisibilityConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -188,21 +195,17 @@
                                             Width="1"
                                             Margin="0,1,8,1"
                                             HorizontalAlignment="Left"
-                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
-                                            Visibility="{TemplateBinding MonthSeparatorVisibility}" />
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
                                         <TextBlock
-                                            x:Name="MonthTextBlock"
+                                            x:Name="MinuteTextBlock"
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
-                                            Text="{TemplateBinding MonthText}"
+                                            Text="{TemplateBinding MinuteText}"
                                             TextTrimming="CharacterEllipsis" />
                                     </Grid>
 
-                                    <!--  Day field.  -->
-                                    <Grid
-                                        x:Name="DayField"
-                                        Grid.Column="{TemplateBinding DayFieldIndex}"
-                                        Visibility="{Binding IsDayVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                    <!--  AM/PM field.  -->
+                                    <Grid x:Name="MeridiemField" Grid.Column="2">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -211,57 +214,32 @@
                                             Width="1"
                                             Margin="0,1,8,1"
                                             HorizontalAlignment="Left"
-                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
-                                            Visibility="{TemplateBinding DaySeparatorVisibility}" />
+                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
                                         <TextBlock
-                                            x:Name="DayTextBlock"
+                                            x:Name="MeridiemTextBlock"
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
-                                            Text="{TemplateBinding DayText}"
-                                            TextTrimming="CharacterEllipsis" />
-                                    </Grid>
-
-                                    <!--  Year field.  -->
-                                    <Grid
-                                        x:Name="YearField"
-                                        Grid.Column="{TemplateBinding YearFieldIndex}"
-                                        Visibility="{Binding IsYearVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Rectangle
-                                            Width="1"
-                                            Margin="0,1,8,1"
-                                            HorizontalAlignment="Left"
-                                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
-                                            Visibility="{TemplateBinding YearSeparatorVisibility}" />
-                                        <TextBlock
-                                            x:Name="YearTextBlock"
-                                            Grid.Column="1"
-                                            VerticalAlignment="Center"
-                                            Text="{TemplateBinding YearText}"
+                                            Text="{TemplateBinding MeridiemText}"
                                             TextTrimming="CharacterEllipsis" />
                                     </Grid>
 
                                     <!--
                                         The clear button's enabled state comes from the routed command, which only
-                                        executes while a date is selected and the control is editable.
+                                        executes while a time is selected and the control is editable.
                                     -->
                                     <Button
                                         x:Name="PART_ClearButton"
                                         Grid.Column="3"
                                         VerticalAlignment="Center"
-                                        Command="{x:Static controls:DateSpinner.ClearCommand}"
-                                        Style="{StaticResource DateSpinnerClearButtonStyle}"
-                                        ToolTip="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner},
-                                                                                        ResourceId=ClearButtonText}}"
-                                        Visibility="{Binding IsClearButtonVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}">
+                                        Command="{x:Static controls:TimeSpinner.ClearCommand}"
+                                        Style="{StaticResource TimeSpinnerClearButtonStyle}"
+                                        ToolTip="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ClearButtonText}}"
+                                        Visibility="{Binding IsClearButtonVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TimeSpinnerBooleanToVisibilityConverter}}">
                                         <AutomationProperties.Name>
                                             <Binding
                                                 Mode="OneWay"
-                                                Path="ToolTip"
-                                                RelativeSource="{RelativeSource Self}" />
+                                                RelativeSource="{RelativeSource Self}"
+                                                Path="ToolTip" />
                                         </AutomationProperties.Name>
                                     </Button>
                                 </Grid>
@@ -302,40 +280,37 @@
                                     <StackPanel>
                                         <Grid Margin="4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="{TemplateBinding FirstFieldColumnWidth}" />
-                                                <ColumnDefinition Width="{TemplateBinding SecondFieldColumnWidth}" />
-                                                <ColumnDefinition Width="{TemplateBinding ThirdFieldColumnWidth}" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="{TemplateBinding MinuteColumnWidth}" />
+                                                <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
                                             <controls:DateSpinnerSelector
-                                                x:Name="PART_MonthSelector"
-                                                Grid.Column="{TemplateBinding MonthFieldIndex}"
-                                                AutomationProperties.Name="Month"
+                                                x:Name="PART_HourSelector"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Values="{Binding MonthItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Visibility="{Binding IsMonthVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                Values="{Binding HourItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                AutomationProperties.Name="Hour" />
 
                                             <controls:DateSpinnerSelector
-                                                x:Name="PART_DaySelector"
-                                                Grid.Column="{TemplateBinding DayFieldIndex}"
-                                                AutomationProperties.Name="Day"
+                                                x:Name="PART_MinuteSelector"
+                                                Grid.Column="1"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Values="{Binding DayItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Visibility="{Binding IsDayVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                Values="{Binding MinuteItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Visibility="{Binding IsMinuteVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TimeSpinnerBooleanToVisibilityConverter}}"
+                                                AutomationProperties.Name="Minute" />
 
                                             <controls:DateSpinnerSelector
-                                                x:Name="PART_YearSelector"
-                                                Grid.Column="{TemplateBinding YearFieldIndex}"
-                                                AutomationProperties.Name="Year"
+                                                x:Name="PART_MeridiemSelector"
+                                                Grid.Column="2"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Values="{Binding YearItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                Visibility="{Binding IsYearVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource DateSpinnerBooleanToVisibilityConverter}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                Values="{Binding MeridiemItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                                AutomationProperties.Name="AM or PM" />
                                         </Grid>
 
                                         <!--  Explicit commit only. Immediate mode writes every change straight through.  -->
@@ -349,17 +324,15 @@
                                                 <Button
                                                     x:Name="PART_CancelButton"
                                                     Margin="0,0,8,0"
-                                                    Command="{x:Static controls:DateSpinner.CancelCommand}"
-                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner},
-                                                                                                    ResourceId=CancelButtonText}}"
-                                                    Style="{StaticResource DateSpinnerActionButtonStyle}" />
+                                                    Command="{x:Static controls:TimeSpinner.CancelCommand}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=CancelButtonText}}"
+                                                    Style="{StaticResource TimeSpinnerActionButtonStyle}" />
                                                 <Button
                                                     x:Name="PART_ApplyButton"
-                                                    Command="{x:Static controls:DateSpinner.ApplyCommand}"
-                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:DateSpinner},
-                                                                                                    ResourceId=ApplyButtonText}}"
+                                                    Command="{x:Static controls:TimeSpinner.ApplyCommand}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ApplyButtonText}}"
                                                     IsDefault="False"
-                                                    Style="{StaticResource DateSpinnerPrimaryActionButtonStyle}" />
+                                                    Style="{StaticResource TimeSpinnerPrimaryActionButtonStyle}" />
                                             </StackPanel>
                                         </Border>
                                     </StackPanel>
@@ -382,13 +355,13 @@
                             An unset control renders its placeholders in italic as well as in the muted placeholder
                             color, so the empty state does not rely on color alone.
                         -->
-                        <Trigger Property="HasSelectedDate" Value="False">
-                            <Setter TargetName="MonthTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
-                            <Setter TargetName="DayTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
-                            <Setter TargetName="YearTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
-                            <Setter TargetName="MonthTextBlock" Property="FontStyle" Value="Italic" />
-                            <Setter TargetName="DayTextBlock" Property="FontStyle" Value="Italic" />
-                            <Setter TargetName="YearTextBlock" Property="FontStyle" Value="Italic" />
+                        <Trigger Property="HasSelectedTime" Value="False">
+                            <Setter TargetName="HourTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="MinuteTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="MeridiemTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}" />
+                            <Setter TargetName="HourTextBlock" Property="FontStyle" Value="Italic" />
+                            <Setter TargetName="MinuteTextBlock" Property="FontStyle" Value="Italic" />
+                            <Setter TargetName="MeridiemTextBlock" Property="FontStyle" Value="Italic" />
                         </Trigger>
 
                         <MultiTrigger>
@@ -422,9 +395,9 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="PART_Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
                             <Setter TargetName="PART_Root" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
-                            <Setter TargetName="MonthTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
-                            <Setter TargetName="DayTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
-                            <Setter TargetName="YearTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="HourTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="MinuteTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="MeridiemTextBlock" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
                             <Setter TargetName="HeaderPresenter" Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
