@@ -205,7 +205,7 @@
                     <Viewbox
                         Width="14"
                         Height="14"
-                        Margin="0,0,0,4">
+                        Margin="0,0,2,4">
                         <Path Data="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
                     </Viewbox>
                 </Button>
@@ -259,7 +259,7 @@
                     <Viewbox
                         Width="14"
                         Height="14"
-                        Margin="0,0,0,4">
+                        Margin="0,0,2,4">
                         <Path Data="M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
                     </Viewbox>
                 </Button>
@@ -269,7 +269,7 @@
         <!--
             The table size picker shown when the Insert Table button is hovered. A Popup takes no part in
             layout, so it is declared here rather than next to its button and anchored by PlacementTarget.
-
+            
             StaysOpen is true so that a click on the button underneath still reaches it (a popup that closes on
             outside clicks swallows that click). Closing is driven by the mouse leaving both the button and the
             picker, by a committed selection, and by the picker's RequestClose.
