@@ -133,13 +133,15 @@
 
                         <controls:InertiaScrollViewer
                             x:Name="PART_ScrollViewer"
+                            AnimationDurationMilliseconds="{Binding ScrollAnimationDuration, RelativeSource={RelativeSource TemplatedParent}}"
                             Background="Transparent"
                             CanContentScroll="True"
                             Focusable="False"
                             HorizontalScrollBarVisibility="Disabled"
-                            IsScrollAnimation="False"
+                            IsScrollAnimation="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                             PanningMode="VerticalOnly"
                             PanningRatio="1"
+                            WheelScrollDistance="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
                             VerticalScrollBarVisibility="Hidden">
                             <ItemsPresenter SnapsToDevicePixels="True" />
                         </controls:InertiaScrollViewer>

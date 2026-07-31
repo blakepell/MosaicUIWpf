@@ -181,7 +181,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public static readonly DependencyProperty ScrollAnimationDurationProperty = DependencyProperty.Register(
             nameof(ScrollAnimationDuration), typeof(int), typeof(DateSpinnerSelector),
-            new FrameworkPropertyMetadata(160));
+            new FrameworkPropertyMetadata(320));
 
         /// <summary>
         /// The length of the easing animation in milliseconds. Kept deliberately short, a value wheel should feel
@@ -678,6 +678,14 @@ namespace Mosaic.UI.Wpf.Controls
             base.OnPreviewMouseWheel(e);
 
             if (e.Handled || !this.IsEnabled)
+            {
+                return;
+            }
+
+            // Let the embedded InertiaScrollViewer receive the bubbling wheel event when animation is enabled.
+            // ScrollChanged restarts the snap timer throughout the animation, then selects the value nearest the
+            // centre band once the motion settles.
+            if (this.IsScrollAnimationEnabled)
             {
                 return;
             }
