@@ -10,6 +10,7 @@
 
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
@@ -19,6 +20,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows.Controls.Primitives;
 using System.Xml;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 // ReSharper disable CheckNamespace
 
@@ -277,6 +279,16 @@ namespace Mosaic.UI.Wpf.Controls
             this.FontSize = 12;
             this.ShowLineNumbers = true;
             this.Options.HighlightCurrentLine = true;
+
+            LineNumberMargin? lineNumberMargin = this.TextArea.LeftMargins.OfType<LineNumberMargin>().FirstOrDefault();
+
+            if (lineNumberMargin != null)
+            {
+                lineNumberMargin.SetValue(TextBlock.FontFamilyProperty, new FontFamily("Consolas"));
+                lineNumberMargin.SetValue(TextBlock.FontSizeProperty, 12.0);
+                lineNumberMargin.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
+                lineNumberMargin.SetValue(TextBlock.MarginProperty, new Thickness(4, 0, 4, 0));
+            }
 
             this.CommandBindings.Add(new CommandBinding(FormatJsonCommand, (_, _) => this.FormatJson()));
             this.CommandBindings.Add(new CommandBinding(MinifyJsonCommand, (_, _) => this.MinifyJson()));
