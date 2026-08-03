@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Json" extensions=".json" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="// comment" />
   <Color name="FieldName" foreground="#9CDCFE" exampleText="&quot;name&quot;: 1" />
   <Color name="String" foreground="#CE9178" exampleText="&quot;value&quot;" />
   <Color name="Number" foreground="#B5CEA8" exampleText="3.14" />

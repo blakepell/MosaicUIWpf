@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Ini" extensions=".ini;.cfg;.conf;.properties" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="; comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="; comment" />
   <Color name="Section" foreground="#D7BA7D" fontWeight="bold" exampleText="[section]" />
   <Color name="Key" foreground="#9CDCFE" exampleText="key" />
   <Color name="Value" foreground="#D69D85" exampleText="value" />

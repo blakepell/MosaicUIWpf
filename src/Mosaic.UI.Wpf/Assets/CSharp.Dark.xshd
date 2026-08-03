@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="C#" extensions=".cs" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="// comment" />
   <Color name="String" foreground="#D69D85" exampleText="string text = &quot;Hello, World!&quot;"/>
   <Color name="StringInterpolation" foreground="#DCDCAA" exampleText="string text = $&quot;Hello, {name}!&quot;"/>
   <Color name="Char" foreground="#D7BA7D" exampleText="char linefeed = '\n';"/>

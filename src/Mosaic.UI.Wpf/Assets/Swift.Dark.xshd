@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Swift" extensions=".swift" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="// comment" />
   <Color name="String" foreground="#D69D85" exampleText="&quot;text&quot;" />
   <Color name="Number" foreground="#B5CEA8" exampleText="42" />
   <Color name="Attribute" foreground="#DCDCAA" fontWeight="bold" exampleText="@available" />

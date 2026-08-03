@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Java" extensions=".java" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="// comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="// comment" />
   <Color name="String" foreground="#D69D85" exampleText="&quot;text&quot;" />
   <Color name="Char" foreground="#D7BA7D" exampleText="'c'" />
   <Color name="Annotation" foreground="#DCDCAA" fontWeight="bold" exampleText="@Override" />

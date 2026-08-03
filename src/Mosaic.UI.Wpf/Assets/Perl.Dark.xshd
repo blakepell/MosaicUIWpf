@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Perl" extensions=".pl;.pm;.t;.pod" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="# comment" />
-  <Color name="Pod" foreground="#57A64A" exampleText="=head1 NAME" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="# comment" />
+  <Color name="Pod" foreground="#17DF3D" exampleText="=head1 NAME" />
   <Color name="String" foreground="#D69D85" exampleText="&quot;text&quot;" />
   <Color name="Variable" foreground="#9CDCFE" exampleText="$value" />
   <Color name="Number" foreground="#B5CEA8" exampleText="42" />

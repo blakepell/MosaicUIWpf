@@ -7,7 +7,7 @@
   <Color name="Code" foreground="#D69D85" exampleText="`code`" />
   <Color name="CodeFence" foreground="#808080" exampleText="```" />
   <Color name="Link" foreground="#9CDCFE" exampleText="[text](url)" />
-  <Color name="Quote" foreground="#57A64A" exampleText="&gt; quote" />
+  <Color name="Quote" foreground="#17DF3D" exampleText="&gt; quote" />
   <Color name="ListMarker" foreground="#569CD6" fontWeight="bold" exampleText="- item" />
   <Color name="Rule" foreground="#808080" exampleText="---" />
 

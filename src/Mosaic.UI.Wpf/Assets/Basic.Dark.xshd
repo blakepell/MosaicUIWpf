@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="Classic BASIC" extensions=".bas" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
   <!-- Visual Studio Dark Theme Colors -->
-  <Color name="Comment" foreground="#57A64A" exampleText="REM comment" />
+  <Color name="Comment" foreground="#17DF3D" exampleText="REM comment" />
   <Color name="String" foreground="#D69D85" exampleText="&quot;text&quot;" />
   <Color name="Number" foreground="#B5CEA8" exampleText="10" />
   <Color name="LineNumber" foreground="#808080" exampleText="10 PRINT" />

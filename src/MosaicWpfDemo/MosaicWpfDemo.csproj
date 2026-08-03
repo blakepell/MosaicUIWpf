@@ -34,7 +34,6 @@
 		<None Remove="Assets\collage-96.png" />
 		<None Remove="Assets\color-mode-48.png" />
 		<None Remove="Assets\color-swatch-48.png" />
-		<None Remove="Assets\CSharp.Dark.xshd" />
 		<None Remove="Assets\drive-48.png" />
 		<None Remove="Assets\dropdown-field-48.png" />
 		<None Remove="Assets\edit-property-48.png" />
@@ -80,7 +79,6 @@
 		<None Remove="Assets\typing-48.png" />
 		<None Remove="Assets\vs-add-16.png" />
 		<None Remove="Assets\warning-48.png" />
-		<None Remove="Assets\Xml.Dark.xshd" />
 		<None Remove="Assets\zoom-in-48.png" />
 	</ItemGroup>
 	<ItemGroup>
@@ -166,11 +164,9 @@
 
 	<!-- Embedded Resources and Linked Embedded Resources -->
 	<ItemGroup>
-		<EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
 		<Resource Include="Assets\panel-right-48.png" />
 		<Resource Include="Assets\panel-right-96.png" />
 		<Resource Include="Assets\zoom-in-48.png" />
-		<EmbeddedResource Include="Assets\Xml.Dark.xshd" />
 
 		<EmbeddedResource Include="Views\Examples\MarkdownEditorExample.xaml">
 			<Link>LinkedSources\MarkdownEditorExample.xaml</Link>
