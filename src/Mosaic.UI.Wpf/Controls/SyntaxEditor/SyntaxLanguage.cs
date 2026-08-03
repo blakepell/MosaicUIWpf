@@ -108,7 +108,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// PHP source and template files (.php, .phtml, .php3, .php4, .php5, .phps).
         /// </summary>
-        Php
+        Php,
+
+        /// <summary>
+        /// .NET/C# exception stack traces (.stacktrace).
+        /// </summary>
+        StackTrace
     }
 
     /// <summary>
@@ -143,6 +148,7 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.VbNet => "VbNet",
                 SyntaxLanguage.Perl => "Perl",
                 SyntaxLanguage.Php => "Php",
+                SyntaxLanguage.StackTrace => "StackTrace",
                 _ => null
             };
         }
@@ -204,6 +210,7 @@ namespace Mosaic.UI.Wpf.Controls
                 ".vb" => SyntaxLanguage.VbNet,
                 ".pl" or ".pm" or ".t" or ".pod" => SyntaxLanguage.Perl,
                 ".php" or ".phtml" or ".php3" or ".php4" or ".php5" or ".phps" => SyntaxLanguage.Php,
+                ".stacktrace" => SyntaxLanguage.StackTrace,
                 ".xml" or ".xaml" or ".config" or ".csproj" or ".xsd" or ".xsl" or ".xslt"
                     or ".manifest" or ".targets" or ".props" or ".nuspec" or ".wsdl" => SyntaxLanguage.Xml,
                 _ => SyntaxLanguage.None

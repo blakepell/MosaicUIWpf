@@ -134,6 +134,8 @@
     <EmbeddedResource Include="Assets\Perl.Dark.xshd" />
     <EmbeddedResource Include="Assets\Php.Light.xshd" />
     <EmbeddedResource Include="Assets\Php.Dark.xshd" />
+    <EmbeddedResource Include="Assets\StackTrace.Light.xshd" />
+    <EmbeddedResource Include="Assets\StackTrace.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>

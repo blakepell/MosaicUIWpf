@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="StackTrace" extensions=".stacktrace" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!--
+    .NET / C# exception stack trace highlighting.
+
+    Everything is discovered structurally with regular expressions; no type or method names
+    are hard coded. The shapes recognized are:
+
+      System.NullReferenceException: Object reference not set to an instance of an object.
+       (arrow) System.InvalidOperationException: inner message
+         at Some.Name.Space.ClassName.MethodName(TypeName parameterName)
+         at Some.Name.Space.ClassName.MethodName[T](TypeName parameterName) in C:\src\File.cs:line 42
+         (end of inner exception stack trace separator)
+
+    Two AvalonEdit behaviors shape the rules below:
+
+      1. Rule patterns are compiled with RegexOptions.IgnorePatternWhitespace, so literal
+         spaces are written as \x20 and a '#' would have to be escaped.
+      2. Rules are only applied to the text BETWEEN span boundaries, and the match is run
+         against that slice. A lookahead therefore cannot see past the start of a nested
+         span. That is why the frame ruleset below is flat: the parameter list is matched
+         with plain rules rather than a '(' ... ')' span, so rules such as the method-name
+         rule can still look ahead to the '(' that identifies them.
+
+    Where two rules can match at the same offset the one declared first wins, so the rules
+    run from most specific to most general.
+  -->
+
+  <!-- Visual Studio Dark Theme Colors -->
+  <Color name="Keyword"           foreground="#569CD6" exampleText="at ... in ...:line 5" />
+  <Color name="Separator"         foreground="#808080" exampleText="End of inner exception stack trace" />
+  <Color name="Namespace"         foreground="#808080" exampleText="System.Collections.Generic" />
+  <Color name="Type"              foreground="#4EC9B0" exampleText="CacheProvider" />
+  <Color name="Method"            foreground="#DCDCAA" fontWeight="bold" exampleText="GetAsync" />
+  <Color name="ParameterName"     foreground="#9CDCFE" exampleText="cacheKey" />
+  <Color name="ParameterModifier" foreground="#C586C0" exampleText="ref, out, params" />
+  <Color name="Generated"         foreground="#808080" fontStyle="italic" exampleText="&lt;MoveNext&gt;d__12" />
+  <Color name="ExceptionType"     foreground="#F44747" fontWeight="bold" exampleText="NullReferenceException" />
+  <Color name="Message"           foreground="#D69D85" exampleText="Object reference not set to an instance of an object." />
+  <Color name="FilePath"          foreground="#D7BA7D" exampleText="C:\src\Program.cs" />
+  <Color name="Number"            foreground="#B5CEA8" exampleText="42" />
+  <Color name="Punctuation"       foreground="#D4D4D4" exampleText="a.b(c);" />
+
+  <!-- Everything on a single "at ..." frame line, from the "at" to the end of the line. -->
+  <RuleSet name="Frame">
+    <!-- " in C:\src\Program.cs:line 42" - the "in" that follows the parameter list. -->
+    <Rule color="Keyword">(?&lt;=\))[\t\x20]+in\b</Rule>
+    <Rule color="FilePath">(?&lt;=\bin[\t\x20])[^\r\n]+?(?=:line\b|$)</Rule>
+    <Rule color="Keyword">:line\b</Rule>
+    <Rule color="Number">(?&lt;=:line[\t\x20])\d+</Rule>
+
+    <!-- Compiler generated members: <MoveNext>d__12, <>c__DisplayClass3_0, <Main>b__0_0 -->
+    <Rule color="Generated">&lt;[^&gt;\r\n]*&gt;[\w]*</Rule>
+
+    <!-- An identifier immediately in front of '(' - or in front of '[T](' - is the method. -->
+    <Rule color="Method">[\w`]+(?=(?:\[[^\]\r\n]*\])?[\t\x20]*\()</Rule>
+
+    <!-- The identifier one '.' or '+' in front of the method is the declaring type. -->
+    <Rule color="Type">[\w`]+(?=[.+][\w`]+(?:\[[^\]\r\n]*\])?[\t\x20]*\()</Rule>
+
+    <!-- A parameter is "Type name": the name is what sits right before a ',' or ')'. -->
+    <Rule color="ParameterName">(?&lt;=[\t\x20&amp;\]])[\w]+(?=[\t\x20]*[,)])</Rule>
+    <Rule color="ParameterModifier">\b(?:ref|out|in|params|byref)\b(?=[\t\x20])</Rule>
+
+    <!-- Anything followed by '.' or '+' is namespace / outer-type noise. -->
+    <Rule color="Namespace">[\w`]+(?=[.+])</Rule>
+
+    <!-- Everything identifier-shaped that is left is a type: parameter types, type arguments. -->
+    <Rule color="Type">[\w`]+</Rule>
+
+    <Rule color="Punctuation">[.+,&amp;()\[\]]</Rule>
+  </RuleSet>
+
+  <RuleSet>
+    <!-- The inner exception arrow marker. -->
+    <Rule color="Keyword">-{3}&gt;</Rule>
+
+    <!-- The "End of ... stack trace" separator lines. -->
+    <Rule color="Separator">-{3,}[\t\x20]*End[\t\x20]of[^\r\n]*$</Rule>
+
+    <!-- A stack frame runs from "at" to the end of the line (no End element = end of line). -->
+    <Span ruleSet="Frame">
+      <Begin color="Keyword">(?&lt;=^[\t\x20]*)at(?=[\t\x20])</Begin>
+    </Span>
+
+    <!-- Namespace prefix of a fully qualified exception type. -->
+    <Rule color="Namespace">[\w]+(?=\.(?:[\w]+\.)*[\w]*(?:Exception|Error)\b)</Rule>
+
+    <!-- The exception type itself. -->
+    <Rule color="ExceptionType">[\w]+(?:Exception|Error)\b</Rule>
+
+    <!-- Fallback: a qualified type at the start of a line followed by ": " is an exception header. -->
+    <Rule color="ExceptionType">(?&lt;=^[\t\x20]*)(?:[\w]+\.)*[\w]+(?=:[\t\x20])</Rule>
+
+    <!-- Everything after ": " on a header line is the exception message. -->
+    <Rule color="Message">(?&lt;=:[\t\x20])[^\r\n]+$</Rule>
+
+    <Rule color="Punctuation">[.:+]</Rule>
+  </RuleSet>
+</SyntaxDefinition>
