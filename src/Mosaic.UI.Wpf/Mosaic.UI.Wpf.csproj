@@ -102,40 +102,40 @@
 
   <ItemGroup>
     <!-- Syntax highlighting definitions loaded at runtime by SyntaxEditor via GetManifestResourceStream. -->
-    <EmbeddedResource Include="Assets\Json.Light.xshd" />
-    <EmbeddedResource Include="Assets\Json.Dark.xshd" />
-    <EmbeddedResource Include="Assets\CSharp.Light.xshd" />
-    <EmbeddedResource Include="Assets\CSharp.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Json.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Json.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\CSharp.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\CSharp.Dark.xshd" />
     <EmbeddedResource Include="Assets\Xml.Light.xshd" />
-    <EmbeddedResource Include="Assets\Xml.Dark.xshd" />
-    <EmbeddedResource Include="Assets\JavaScript.Light.xshd" />
-    <EmbeddedResource Include="Assets\JavaScript.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Sql.Light.xshd" />
-    <EmbeddedResource Include="Assets\Sql.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Markdown.Light.xshd" />
-    <EmbeddedResource Include="Assets\Markdown.Dark.xshd" />
-    <EmbeddedResource Include="Assets\C.Light.xshd" />
-    <EmbeddedResource Include="Assets\C.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Lua.Light.xshd" />
-    <EmbeddedResource Include="Assets\Lua.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Python.Light.xshd" />
-    <EmbeddedResource Include="Assets\Python.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Ini.Light.xshd" />
-    <EmbeddedResource Include="Assets\Ini.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Java.Light.xshd" />
-    <EmbeddedResource Include="Assets\Java.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Swift.Light.xshd" />
-    <EmbeddedResource Include="Assets\Swift.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Basic.Light.xshd" />
-    <EmbeddedResource Include="Assets\Basic.Dark.xshd" />
-    <EmbeddedResource Include="Assets\VbNet.Light.xshd" />
-    <EmbeddedResource Include="Assets\VbNet.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Perl.Light.xshd" />
-    <EmbeddedResource Include="Assets\Perl.Dark.xshd" />
-    <EmbeddedResource Include="Assets\Php.Light.xshd" />
-    <EmbeddedResource Include="Assets\Php.Dark.xshd" />
-    <EmbeddedResource Include="Assets\StackTrace.Light.xshd" />
-    <EmbeddedResource Include="Assets\StackTrace.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Xml.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\JavaScript.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\JavaScript.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Sql.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Sql.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Markdown.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Markdown.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\C.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\C.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Lua.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Lua.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Python.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Python.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Ini.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Ini.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Java.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Java.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Swift.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Swift.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Basic.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Basic.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\VbNet.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\VbNet.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Perl.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Perl.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Php.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\Php.Dark.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\StackTrace.Light.xshd" />
+    <EmbeddedResource Include="Assets\SyntaxEditor\StackTrace.Dark.xshd" />
   </ItemGroup>
 
   <ItemGroup>

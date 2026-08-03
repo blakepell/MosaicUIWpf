@@ -55,7 +55,7 @@ namespace Mosaic.UI.Wpf.Controls
         private const string PartLineTextBlock = "PART_LineTextBlock";
         private const string PartColumnTextBlock = "PART_ColumnTextBlock";
         private const string PartCharacterTextBlock = "PART_CharacterTextBlock";
-        private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.{0}.{1}.xshd";
+        private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.SyntaxEditor.{0}.{1}.xshd";
         private static readonly Uri SearchPanelResourceUri = new("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/AvalonEdit/SearchPanel.xaml", UriKind.Absolute);
 
         // Cache parsed highlighting definitions keyed by "Base|ThemeSuffix" so repeated theme/language
