@@ -23,6 +23,8 @@
         <!--  FollowGlobalTheme is disabled here to demonstrate explicit theme wiring from the code-behind.  -->
         <controls:SyntaxEditor
             x:Name="Editor"
+            FontFamily="Consolas"
+            FontSize="14"
             Grid.Row="1"
             FollowGlobalTheme="False"
             Language="Json" />

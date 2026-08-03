@@ -233,13 +233,14 @@
                                         VerticalAlignment="Center"
                                         Command="{x:Static controls:TimeSpinner.ClearCommand}"
                                         Style="{StaticResource TimeSpinnerClearButtonStyle}"
-                                        ToolTip="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ClearButtonText}}"
+                                        ToolTip="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner},
+                                                                                        ResourceId=ClearButtonText}}"
                                         Visibility="{Binding IsClearButtonVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TimeSpinnerBooleanToVisibilityConverter}}">
                                         <AutomationProperties.Name>
                                             <Binding
                                                 Mode="OneWay"
-                                                RelativeSource="{RelativeSource Self}"
-                                                Path="ToolTip" />
+                                                Path="ToolTip"
+                                                RelativeSource="{RelativeSource Self}" />
                                         </AutomationProperties.Name>
                                     </Button>
                                 </Grid>
@@ -287,30 +288,30 @@
 
                                             <controls:DateSpinnerSelector
                                                 x:Name="PART_HourSelector"
+                                                AutomationProperties.Name="Hour"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                                 Values="{Binding HourItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
-                                                AutomationProperties.Name="Hour" />
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
 
                                             <controls:DateSpinnerSelector
                                                 x:Name="PART_MinuteSelector"
                                                 Grid.Column="1"
+                                                AutomationProperties.Name="Minute"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                                 Values="{Binding MinuteItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
                                                 Visibility="{Binding IsMinuteVisible, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TimeSpinnerBooleanToVisibilityConverter}}"
-                                                AutomationProperties.Name="Minute" />
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
 
                                             <controls:DateSpinnerSelector
                                                 x:Name="PART_MeridiemSelector"
                                                 Grid.Column="2"
+                                                AutomationProperties.Name="AM or PM"
                                                 IsScrollAnimationEnabled="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                                 Values="{Binding MeridiemItems, RelativeSource={RelativeSource TemplatedParent}}"
-                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}"
-                                                AutomationProperties.Name="AM or PM" />
+                                                VisibleItemCount="{Binding VisibleItemCount, RelativeSource={RelativeSource TemplatedParent}}" />
                                         </Grid>
 
                                         <!--  Explicit commit only. Immediate mode writes every change straight through.  -->
@@ -325,12 +326,14 @@
                                                     x:Name="PART_CancelButton"
                                                     Margin="0,0,8,0"
                                                     Command="{x:Static controls:TimeSpinner.CancelCommand}"
-                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=CancelButtonText}}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner},
+                                                                                                    ResourceId=CancelButtonText}}"
                                                     Style="{StaticResource TimeSpinnerActionButtonStyle}" />
                                                 <Button
                                                     x:Name="PART_ApplyButton"
                                                     Command="{x:Static controls:TimeSpinner.ApplyCommand}"
-                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner}, ResourceId=ApplyButtonText}}"
+                                                    Content="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type controls:TimeSpinner},
+                                                                                                    ResourceId=ApplyButtonText}}"
                                                     IsDefault="False"
                                                     Style="{StaticResource TimeSpinnerPrimaryActionButtonStyle}" />
                                             </StackPanel>

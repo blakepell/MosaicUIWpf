@@ -141,8 +141,8 @@
                             IsScrollAnimation="{Binding IsScrollAnimationEnabled, RelativeSource={RelativeSource TemplatedParent}}"
                             PanningMode="VerticalOnly"
                             PanningRatio="1"
-                            WheelScrollDistance="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                            VerticalScrollBarVisibility="Hidden">
+                            VerticalScrollBarVisibility="Hidden"
+                            WheelScrollDistance="{Binding ItemHeight, RelativeSource={RelativeSource TemplatedParent}}">
                             <ItemsPresenter SnapsToDevicePixels="True" />
                         </controls:InertiaScrollViewer>
                     </Grid>

@@ -31,7 +31,7 @@
                             everything beneath it into an intermediate bitmap, which disables ClearType and
                             softens text, so the Border that actually hosts the content must stay effect-free.
                         -->
-                        <Border CornerRadius="{TemplateBinding CornerRadius}" Background="{TemplateBinding Background}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                             <Border.Effect>
                                 <DropShadowEffect
                                     BlurRadius="32"

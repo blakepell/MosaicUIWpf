@@ -86,7 +86,7 @@
                                 Grid.Row="1"
                                 FollowGlobalTheme="True"
                                 FontFamily="Consolas"
-                                FontSize="13"
+                                FontSize="14"
                                 IsReadOnly="True"
                                 Language="Xml"
                                 ShowLineNumbers="True">
@@ -127,7 +127,7 @@
                                 Grid.Row="1"
                                 FollowGlobalTheme="True"
                                 FontFamily="Consolas"
-                                FontSize="13"
+                                FontSize="14"
                                 IsReadOnly="True"
                                 Language="CSharp"
                                 ShowLineNumbers="True">
