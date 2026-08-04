@@ -8,12 +8,15 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-namespace BbsNavigator.Models
+using BbsNavigator.Transfers;
+
+namespace BbsNavigator.Networking
 {
     /// <summary>
-    /// Stores the decrypted username and password for a BBS profile while they are in use.
+    /// Defines the transfer link a connection hands to a file transfer protocol. Disposing
+    /// the channel returns the connection to normal terminal operation.
     /// </summary>
-    /// <param name="UserName">The login username.</param>
-    /// <param name="Password">The login password.</param>
-    public sealed record BbsCredentials(string UserName, string Password);
+    public interface IBbsBinaryChannel : ITransferLink, IDisposable
+    {
+    }
 }

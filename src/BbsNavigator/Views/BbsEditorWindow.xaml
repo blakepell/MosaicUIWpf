@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="520"
-    Height="460"
+    Height="500"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -38,6 +38,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -91,20 +92,33 @@
                 Grid.Row="4"
                 Margin="0,6"
                 VerticalAlignment="Center"
+                Text="SSH port" />
+            <mosaic:NumericTextBox
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="0,4"
+                Padding="4"
+                DecimalPlaces="0"
+                Text="{Binding SshPort, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="The port the BBS listens on for SSH connections. Leave this at 0 when the BBS does not offer SSH." />
+            <TextBlock
+                Grid.Row="5"
+                Margin="0,6"
+                VerticalAlignment="Center"
                 Text="Description" />
             <TextBox
-                Grid.Row="4"
+                Grid.Row="5"
                 Grid.Column="1"
                 Margin="0,4"
                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
-                Grid.Row="5"
+                Grid.Row="6"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Text encoding" />
             <ComboBox
                 x:Name="EncodingComboBox"
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="1"
                 Margin="0,4"
                 SelectedItem="{Binding TerminalEncoding}"
@@ -116,7 +130,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="1"
                 Margin="0,8,0,0"
                 VerticalAlignment="Top">
@@ -134,7 +148,7 @@
             </StackPanel>
 
             <StackPanel
-                Grid.Row="7"
+                Grid.Row="8"
                 Grid.ColumnSpan="2"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Right"

@@ -220,6 +220,15 @@
                                                     CornerRadius="3">
                                                     <Border.ContextMenu>
                                                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                            <MenuItem
+                                                                Click="ConnectBbs_OnClick"
+                                                                Header="_Connect"
+                                                                IsEnabled="{Binding CanConnectTelnet}" />
+                                                            <MenuItem
+                                                                Click="ConnectBbsSsh_OnClick"
+                                                                Header="Connect with _SSH"
+                                                                IsEnabled="{Binding CanConnectSsh}" />
+                                                            <Separator />
                                                             <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
                                                             <Separator />
                                                             <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />

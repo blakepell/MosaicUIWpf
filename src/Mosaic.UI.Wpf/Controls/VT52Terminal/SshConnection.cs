@@ -21,6 +21,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private SshClient? _client;
         private ShellStream? _shell;
         private volatile bool _isConnected;
+        private volatile bool _intentionalDisconnect;
         private CancellationTokenSource? _readCts;
 
         /// <summary>
@@ -71,9 +72,46 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public int BufferSize { get; set; } = 1024 * 8;
 
         /// <summary>
+        /// Gets or sets the terminal type reported to the remote host.
+        /// </summary>
+        public string TerminalName { get; set; } = "xterm-256color";
+
+        /// <summary>
+        /// Gets or sets the encoding used to decode remote output and encode text that is sent.
+        /// </summary>
+        /// <remarks>
+        /// Set this before connecting. The default is <see cref="System.Text.Encoding.UTF8"/>.
+        /// </remarks>
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
+
+        /// <summary>
         /// Raised whenever the remote host outputs data.
         /// </summary>
+        /// <remarks>
+        /// The payload is decoded with <see cref="Encoding"/>. Decoding is skipped entirely when
+        /// no handler is attached, so a consumer that only wants bytes can subscribe to
+        /// <see cref="RawDataReceived"/> alone.
+        /// </remarks>
         public event EventHandler<string>? DataReceived;
+
+        /// <summary>
+        /// Raised with the undecoded bytes whenever the remote host outputs data.
+        /// </summary>
+        /// <remarks>
+        /// Use this when the consumer needs an 8-bit clean stream, such as a terminal that
+        /// applies its own decoder or a file transfer protocol that owns the byte stream.
+        /// The array is not reused, so handlers may retain it.
+        /// </remarks>
+        public event EventHandler<byte[]>? RawDataReceived;
+
+        /// <summary>
+        /// Raised when the remote host closes the session or the underlying transport fails.
+        /// </summary>
+        /// <remarks>
+        /// The argument carries the failure, or <see langword="null"/> when the peer closed the
+        /// shell cleanly. This does not fire for a local <see cref="Disconnect"/>.
+        /// </remarks>
+        public event EventHandler<Exception?>? ConnectionLost;
 
         /// <inheritdoc />
         public bool IsConnected => _isConnected && _client?.IsConnected == true && _shell != null;
@@ -85,6 +123,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 return true;
             }
+
+            // A dropped session leaves the client and shell behind; tear them down so a
+            // reconnect does not orphan the previous stream and its event handlers.
+            Cleanup();
 
             if (string.IsNullOrWhiteSpace(Host))
             {
@@ -117,6 +159,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             var connInfo = new ConnectionInfo(Host, Port, Username, methods.ToArray());
 
+            _intentionalDisconnect = false;
             _client = new SshClient(connInfo)
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(30)
@@ -124,6 +167,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             try
             {
+                _client.ErrorOccurred += OnClientError;
                 _client.Connect();
 
                 if (!_client.IsConnected)
@@ -132,7 +176,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 }
 
                 _shell = _client.CreateShellStream(
-                    terminalName: "xterm-256color",
+                    terminalName: string.IsNullOrWhiteSpace(TerminalName) ? "xterm-256color" : TerminalName,
                     columns: (uint)Columns,
                     rows: (uint)Rows,
                     width: (uint)Width,
@@ -154,6 +198,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public bool Disconnect()
         {
             _isConnected = false;
+            _intentionalDisconnect = true;
 
             try
             {
@@ -161,9 +206,14 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _shell?.Dispose();
                 _shell = null;
 
-                if (_client?.IsConnected == true)
+                if (_client != null)
                 {
-                    _client.Disconnect();
+                    _client.ErrorOccurred -= OnClientError;
+
+                    if (_client.IsConnected)
+                    {
+                        _client.Disconnect();
+                    }
                 }
 
                 _client?.Dispose();
@@ -191,7 +241,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            _shell.Write(text);
+            _shell.Write(Encoding.GetBytes(text));
             _shell.Flush();
         }
 
@@ -208,7 +258,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            var bytes = Encoding.UTF8.GetBytes(text);
+            var bytes = Encoding.GetBytes(text);
             await _shell.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
             await _shell.FlushAsync().ConfigureAwait(false);
         }
@@ -279,6 +329,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             _readCts = new CancellationTokenSource();
             _shell.DataReceived += OnShellData;
+            _shell.ErrorOccurred += OnShellError;
+            _shell.Closed += OnShellClosed;
         }
 
         private void StopReader()
@@ -286,6 +338,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             if (_shell != null)
             {
                 _shell.DataReceived -= OnShellData;
+                _shell.ErrorOccurred -= OnShellError;
+                _shell.Closed -= OnShellClosed;
             }
 
             if (_readCts != null)
@@ -310,15 +364,58 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            string text = Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
-
             try
             {
-                DataReceived?.Invoke(this, text);
+                RawDataReceived?.Invoke(this, e.Data);
+
+                EventHandler<string>? textHandler = DataReceived;
+
+                if (textHandler != null)
+                {
+                    textHandler(this, Encoding.GetString(e.Data, 0, e.Data.Length));
+                }
             }
             catch
             {
                 // Do not let consumer exceptions kill the shell stream callback.
+            }
+        }
+
+        private void OnShellError(object? sender, Renci.SshNet.Common.ExceptionEventArgs e)
+        {
+            RaiseConnectionLost(e.Exception);
+        }
+
+        private void OnShellClosed(object? sender, EventArgs e)
+        {
+            RaiseConnectionLost(null);
+        }
+
+        private void OnClientError(object? sender, Renci.SshNet.Common.ExceptionEventArgs e)
+        {
+            RaiseConnectionLost(e.Exception);
+        }
+
+        /// <summary>
+        /// Reports a dropped session once, ignoring failures that follow a local disconnect.
+        /// </summary>
+        /// <param name="exception">The failure that ended the session, or <see langword="null"/> when the peer closed it cleanly.</param>
+        private void RaiseConnectionLost(Exception? exception)
+        {
+            if (_intentionalDisconnect || !_isConnected)
+            {
+                return;
+            }
+
+            _isConnected = false;
+
+            try
+            {
+                ConnectionLost?.Invoke(this, exception);
+            }
+            catch
+            {
+                // A consumer fault must not propagate into the SSH.NET callback.
             }
         }
 
@@ -330,9 +427,19 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            var channel = _shell.GetType().GetField("_channel", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(_shell);
-            var method = channel?.GetType().GetMethod("SendWindowChangeRequest", BindingFlags.Public | BindingFlags.Instance);
-            method?.Invoke(channel, [cols, rows, width, height]);
+            Columns = (int)Math.Min(cols, int.MaxValue);
+            Rows = (int)Math.Min(rows, int.MaxValue);
+            Width = (int)Math.Min(width, int.MaxValue);
+            Height = (int)Math.Min(height, int.MaxValue);
+
+            try
+            {
+                _shell.ChangeWindowSize(cols, rows, width, height);
+            }
+            catch (Exception ex) when (ex is ObjectDisposedException or SshException or IOException)
+            {
+                // The session is going away; the connection-lost path reports it.
+            }
         }
 
         private void Cleanup()
@@ -357,9 +464,14 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             try
             {
-                if (_client?.IsConnected == true)
+                if (_client != null)
                 {
-                    _client.Disconnect();
+                    _client.ErrorOccurred -= OnClientError;
+
+                    if (_client.IsConnected)
+                    {
+                        _client.Disconnect();
+                    }
                 }
             }
             catch

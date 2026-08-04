@@ -11,6 +11,22 @@ not increase that count.
 
 Use the search box above the list to filter the directory as you type.
 
+## Connecting
+
+Double-clicking an entry — like **Connect** on its context menu, and **File → Connect** —
+opens a Telnet session on the profile's Telnet port. **Connect** is available whenever the
+profile has a host name and a Telnet port.
+
+**Connect with SSH** opens the same session over SSH instead, and is available only when
+the profile has a host name and an SSH port. SSH always needs a login: if the system has
+[saved credentials](#saved-credentials), they are unlocked and used; otherwise you are
+asked for a username and password for that session only. An SSH session tab is labeled
+`(SSH)`, and a system can have a Telnet and an SSH session open at the same time.
+
+Everything else works the same on both transports: text encodings, session capture,
+automatic reconnection, and ZMODEM/YMODEM/XMODEM file transfers. The keepalive interval in
+[Options](options.md) applies to Telnet; SSH sessions use the SSH protocol's own keepalive.
+
 Use **Sort** on the directory toolbar to build a multi-level ordering by display name,
 favorite status, last connection, or host. Each level can be ascending or descending, and
 levels are applied from top to bottom. The resulting order is stored with the profile list.
@@ -26,6 +42,7 @@ Details…**. A connection profile has these settings:
 | Display name | The name shown in the directory and on the session tab. |
 | Host name | The telnet host, e.g. `bbs.example.com`. |
 | Telnet port | Usually `23`; some boards use a custom port. |
+| SSH port | The port the board listens on for SSH. Leave it at `0` when the board does not offer SSH. |
 | Description | Free-form notes about the system. |
 | Text encoding | How received bytes are turned into text — see below. |
 | Reconnect automatically | Re-establishes the session after a dropped connection, after the delay set in [Options](options.md). |
@@ -73,8 +90,17 @@ credentials cannot be recovered.
 
 **Directory → Import BBS List…** imports systems in bulk from a CSV file in the *bblist*
 format published by the [Telnet BBS Guide](https://www.telnetbbsguide.com/). The file
-must contain `bbsName`, `TelnetAddress`, and `bbsPort` columns; rows without a valid
-address and port are skipped and counted in the summary shown after the import.
+must contain `bbsName`, `TelnetAddress`, and `bbsPort` columns; the optional `sshPort`
+column is read when present. A row that lists neither port is imported on the standard
+Telnet port `23`. Rows without a host — and rows that list only an SSH port, which the
+current build cannot dial — are skipped and counted in the summary shown after the
+import.
+
+A system already in your directory — matched on host and port — is not added twice.
+Instead, its imported fields (display name and SSH port) are refreshed when the CSV
+carries different values, and the summary reports how many entries were updated.
+Re-importing the same file is a no-op: an endpoint that appears more than once within
+one file keeps its first row, so repeated imports do not shuffle those entries.
 
 Imported systems default to CP437 encoding, which suits the vast majority of listed
 boards. You can edit any entry afterward to adjust its settings.

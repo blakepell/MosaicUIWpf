@@ -29,7 +29,7 @@ namespace BbsNavigator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Dictionary<Guid, LayoutDocument> _documents = new();
+        private readonly Dictionary<string, LayoutDocument> _documents = new();
         private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
         private bool _shutdownStarted;
@@ -292,18 +292,107 @@ namespace BbsNavigator
             }
         }
 
-        private void OpenProfile(BbsProfile profile)
+        /// <summary>
+        /// Opens (or re-activates) a session document for the profile.
+        /// </summary>
+        /// <param name="profile">The BBS to connect to.</param>
+        /// <param name="transport">The protocol the session runs over.</param>
+        /// <param name="credentials">The login used for SSH sessions; ignored for Telnet.</param>
+        private void OpenProfile(BbsProfile profile, BbsTransport transport = BbsTransport.Telnet, BbsCredentials? credentials = null)
         {
-            if (_documents.TryGetValue(profile.Id, out LayoutDocument? existing))
+            string key = GetDocumentKey(profile, transport);
+
+            if (_documents.TryGetValue(key, out LayoutDocument? existing))
             {
                 existing.IsActive = true;
                 return;
             }
 
-            var terminal = new BbsTerminalView(profile, Settings);
-            LayoutDocument document = DockingManager.Add(terminal, profile.Name, activate: true, canClose: true);
-            document.ContentId = $"bbs-{profile.Id:N}";
-            _documents[profile.Id] = document;
+            var terminal = new BbsTerminalView(profile, Settings, transport, credentials);
+            string title = transport == BbsTransport.Ssh ? $"{profile.Name} (SSH)" : profile.Name;
+            LayoutDocument document = DockingManager.Add(terminal, title, activate: true, canClose: true);
+            document.ContentId = $"bbs-{profile.Id:N}-{transport}";
+            _documents[key] = document;
+        }
+
+        /// <summary>
+        /// Builds the key that identifies one open session: a profile may have a Telnet and an
+        /// SSH document open at the same time.
+        /// </summary>
+        private static string GetDocumentKey(BbsProfile profile, BbsTransport transport)
+        {
+            return $"{profile.Id:N}-{transport}";
+        }
+
+        /// <summary>
+        /// Returns the open session documents for a profile across both transports.
+        /// </summary>
+        private List<LayoutDocument> GetDocuments(BbsProfile profile)
+        {
+            var matches = new List<LayoutDocument>();
+
+            foreach (BbsTransport transport in Enum.GetValues<BbsTransport>())
+            {
+                if (_documents.TryGetValue(GetDocumentKey(profile, transport), out LayoutDocument? document))
+                {
+                    matches.Add(document);
+                }
+            }
+
+            return matches;
+        }
+
+        private void ConnectBbs_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is { CanConnectTelnet: true } profile)
+            {
+                OpenProfile(profile);
+            }
+        }
+
+        private async void ConnectBbsSsh_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is not { CanConnectSsh: true } profile)
+            {
+                return;
+            }
+
+            BbsCredentials? credentials = await ResolveSshCredentialsAsync(profile);
+
+            if (credentials != null)
+            {
+                OpenProfile(profile, BbsTransport.Ssh, credentials);
+            }
+        }
+
+        /// <summary>
+        /// Produces the login an SSH session needs, preferring the profile's stored credentials
+        /// and falling back to a one-time prompt.
+        /// </summary>
+        /// <param name="profile">The BBS being connected to.</param>
+        /// <returns>The credentials, or <see langword="null"/> when the user cancels.</returns>
+        private async Task<BbsCredentials?> ResolveSshCredentialsAsync(BbsProfile profile)
+        {
+            if (profile.HasCredentials)
+            {
+                string? passphrase = await GetCredentialEncryptionPassphraseAsync();
+                if (passphrase == null)
+                {
+                    return null;
+                }
+
+                BbsCredentials? stored = await DecryptCredentialsAsync(profile, passphrase);
+                if (stored == null)
+                {
+                    ShowCredentialDecryptionWarning();
+                    return null;
+                }
+
+                return stored;
+            }
+
+            var dialog = new SshLoginWindow(profile) { Owner = this };
+            return dialog.ShowDialog() == true ? dialog.Credentials : null;
         }
 
         private void AddBbs_OnClick(object sender, RoutedEventArgs e)
@@ -327,19 +416,20 @@ namespace BbsNavigator
             }
 
             int importedCount = 0;
+            int updatedCount = 0;
             int skippedCount = 0;
             int duplicateCount = 0;
             var errors = new List<string>();
 
-            // Track host/port endpoints that already exist so imports never create duplicates.
-            HashSet<string> existingEndpoints = BuildExistingEndpointSet();
+            // Track host/port endpoints that already exist so imports refresh them instead of creating duplicates.
+            Dictionary<string, BbsProfile> existingEndpoints = BuildExistingEndpointSet();
 
             foreach (string fileName in fileNames)
             {
                 try
                 {
                     BbsListImportResult result = BbsListCsvImporter.Import(fileName);
-                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref duplicateCount);
+                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref updatedCount, ref duplicateCount);
                     skippedCount += result.SkippedCount;
                 }
                 catch (Exception ex)
@@ -348,7 +438,7 @@ namespace BbsNavigator
                 }
             }
 
-            string summary = BuildImportSummary(importedCount, skippedCount, duplicateCount);
+            string summary = BuildImportSummary(importedCount, updatedCount, skippedCount, duplicateCount);
             if (errors.Count > 0)
             {
                 summary += $"\n\nCould not import:\n{string.Join("\n", errors)}";
@@ -374,6 +464,7 @@ namespace BbsNavigator
         private void ImportBigList(bool interactive)
         {
             int importedCount = 0;
+            int updatedCount = 0;
             int duplicateCount = 0;
             int skippedCount = 0;
 
@@ -386,11 +477,11 @@ namespace BbsNavigator
                     throw new FileNotFoundException("The bundled BBS list resource could not be found.");
                 }
 
-                HashSet<string> existingEndpoints = BuildExistingEndpointSet();
+                Dictionary<string, BbsProfile> existingEndpoints = BuildExistingEndpointSet();
                 using (Stream stream = resource.Stream)
                 {
                     BbsListImportResult result = BbsListCsvImporter.Import(stream);
-                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref duplicateCount);
+                    AddUniqueProfiles(result.Profiles, existingEndpoints, ref importedCount, ref updatedCount, ref duplicateCount);
                     skippedCount = result.SkippedCount;
                 }
             }
@@ -407,7 +498,7 @@ namespace BbsNavigator
             if (interactive)
             {
                 Mosaic.UI.Wpf.Controls.MessageBox.Show(
-                    BuildImportSummary(importedCount, skippedCount, duplicateCount),
+                    BuildImportSummary(importedCount, updatedCount, skippedCount, duplicateCount),
                     "Import Big List",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
@@ -415,51 +506,100 @@ namespace BbsNavigator
         }
 
         /// <summary>
-        /// Builds a case-insensitive set of the host/port endpoints already present in the directory.
+        /// Builds a case-insensitive map of the host/port endpoints already present in the directory.
         /// </summary>
-        private HashSet<string> BuildExistingEndpointSet()
+        private Dictionary<string, BbsProfile> BuildExistingEndpointSet()
         {
-            return new HashSet<string>(
-                Settings.BbsProfiles.Select(GetEndpointKey),
-                StringComparer.OrdinalIgnoreCase);
+            var map = new Dictionary<string, BbsProfile>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (BbsProfile profile in Settings.BbsProfiles)
+            {
+                map[GetEndpointKey(profile)] = profile;
+            }
+
+            return map;
         }
 
         /// <summary>
-        /// Adds profiles whose host/port endpoint is not already present, counting additions and duplicates.
+        /// Adds profiles whose host/port endpoint is not already present. Profiles that already exist have
+        /// their imported fields refreshed when the incoming values differ.
         /// </summary>
         private void AddUniqueProfiles(
             IReadOnlyList<BbsProfile> profiles,
-            HashSet<string> existingEndpoints,
+            Dictionary<string, BbsProfile> existingEndpoints,
             ref int importedCount,
+            ref int updatedCount,
             ref int duplicateCount)
         {
             foreach (BbsProfile profile in profiles)
             {
-                if (!existingEndpoints.Add(GetEndpointKey(profile)))
+                string key = GetEndpointKey(profile);
+
+                if (existingEndpoints.TryGetValue(key, out BbsProfile? existing))
                 {
-                    duplicateCount++;
+                    if (UpdateImportedFields(existing, profile))
+                    {
+                        updatedCount++;
+                    }
+                    else
+                    {
+                        duplicateCount++;
+                    }
+
                     continue;
                 }
 
+                existingEndpoints.Add(key, profile);
                 Settings.BbsProfiles.Add(profile);
                 importedCount++;
             }
         }
 
         /// <summary>
+        /// Copies the fields carried by an import onto an existing profile when they differ.
+        /// </summary>
+        /// <param name="existing">The profile already present in the directory.</param>
+        /// <param name="imported">The profile produced by the import.</param>
+        /// <returns><see langword="true"/> when at least one field changed; otherwise, <see langword="false"/>.</returns>
+        private static bool UpdateImportedFields(BbsProfile existing, BbsProfile imported)
+        {
+            bool changed = false;
+
+            if (!string.Equals(existing.Name, imported.Name, StringComparison.Ordinal) &&
+                !string.IsNullOrWhiteSpace(imported.Name))
+            {
+                existing.Name = imported.Name;
+                changed = true;
+            }
+
+            if (existing.SshPort != imported.SshPort)
+            {
+                existing.SshPort = imported.SshPort;
+                changed = true;
+            }
+
+            return changed;
+        }
+
+        /// <summary>
         /// Formats the standard import result summary message.
         /// </summary>
-        private static string BuildImportSummary(int importedCount, int skippedCount, int duplicateCount)
+        private static string BuildImportSummary(int importedCount, int updatedCount, int skippedCount, int duplicateCount)
         {
             string summary = $"Imported {importedCount:N0} BBS profile{(importedCount == 1 ? string.Empty : "s")}.";
+            if (updatedCount > 0)
+            {
+                summary += $"\nUpdated {updatedCount:N0} existing profile{(updatedCount == 1 ? string.Empty : "s")} with changed values.";
+            }
+
             if (skippedCount > 0)
             {
-                summary += $"\nSkipped {skippedCount:N0} row{(skippedCount == 1 ? string.Empty : "s")} without a valid TelnetAddress and bbsPort.";
+                summary += $"\nSkipped {skippedCount:N0} row{(skippedCount == 1 ? string.Empty : "s")} without a usable Telnet endpoint.";
             }
 
             if (duplicateCount > 0)
             {
-                summary += $"\nSkipped {duplicateCount:N0} duplicate{(duplicateCount == 1 ? string.Empty : "s")} that already exist in the directory.";
+                summary += $"\nSkipped {duplicateCount:N0} unchanged duplicate{(duplicateCount == 1 ? string.Empty : "s")} that already exist in the directory.";
             }
 
             return summary;
@@ -501,26 +641,35 @@ namespace BbsNavigator
                 return;
             }
 
-            bool endpointChanged = !string.Equals(profile.Host, editor.Profile.Host, StringComparison.OrdinalIgnoreCase) ||
-                                   profile.Port != editor.Profile.Port;
+            bool hostChanged = !string.Equals(profile.Host, editor.Profile.Host, StringComparison.OrdinalIgnoreCase);
+            bool telnetEndpointChanged = hostChanged || profile.Port != editor.Profile.Port;
+            bool sshEndpointChanged = hostChanged || profile.SshPort != editor.Profile.SshPort;
             profile.Name = editor.Profile.Name;
             profile.Host = editor.Profile.Host;
             profile.Port = editor.Profile.Port;
+            profile.SshPort = editor.Profile.SshPort;
             profile.Description = editor.Profile.Description;
             profile.AutoReconnect = editor.Profile.AutoReconnect;
             profile.LocalEcho = editor.Profile.LocalEcho;
             profile.BackspaceSendsDelete = editor.Profile.BackspaceSendsDelete;
             profile.TerminalEncoding = editor.Profile.TerminalEncoding;
 
-            if (_documents.TryGetValue(profile.Id, out LayoutDocument? document))
+            foreach (LayoutDocument document in GetDocuments(profile))
             {
-                if (endpointChanged)
+                if (document.Content is not BbsTerminalView terminal)
+                {
+                    continue;
+                }
+
+                bool isSsh = terminal.Transport == BbsTransport.Ssh;
+
+                if (isSsh ? sshEndpointChanged : telnetEndpointChanged)
                 {
                     document.Close();
                 }
                 else
                 {
-                    document.Title = profile.Name;
+                    document.Title = isSsh ? $"{profile.Name} (SSH)" : profile.Name;
                 }
             }
         }
@@ -545,7 +694,7 @@ namespace BbsNavigator
                 return;
             }
 
-            if (_documents.TryGetValue(profile.Id, out LayoutDocument? document))
+            foreach (LayoutDocument document in GetDocuments(profile))
             {
                 document.Close();
             }
@@ -710,7 +859,7 @@ namespace BbsNavigator
             Mosaic.UI.Wpf.Controls.MessageBox.Show(
                 "BBS Navigator\n\n" +
                 "A Mosaic UI terminal client for classic bulletin board systems.\n\n" +
-                "• Telnet with CP437, UTF-8, and Latin-1 text encodings\n" +
+                "• Telnet and SSH with CP437, UTF-8, and Latin-1 text encodings\n" +
                 "• ZMODEM, YMODEM, and XMODEM file transfers (auto-detects ZMODEM downloads)\n" +
                 "• Session capture, keepalives, and automatic reconnection\n\n" +
                 "Tip: hold Ctrl and scroll the mouse wheel to zoom the terminal font.",
@@ -789,7 +938,7 @@ namespace BbsNavigator
                 return;
             }
 
-            _documents.Remove(terminal.Profile.Id);
+            _documents.Remove(GetDocumentKey(terminal.Profile, terminal.Transport));
             await terminal.DisposeAsync();
         }
 

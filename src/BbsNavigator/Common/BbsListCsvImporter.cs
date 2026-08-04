@@ -21,6 +21,12 @@ namespace BbsNavigator.Common
     internal static class BbsListCsvImporter
     {
         /// <summary>
+        /// The port assumed for a row that does not list a Telnet or an SSH port.
+        /// </summary>
+        private const int DefaultTelnetPort = 23;
+
+
+        /// <summary>
         /// Reads importable Telnet profiles from a bblist CSV file.
         /// </summary>
         /// <param name="fileName">The CSV file to read.</param>
@@ -65,7 +71,9 @@ namespace BbsNavigator.Common
             int nameIndex = GetRequiredColumn(columns, "bbsName");
             int hostIndex = GetRequiredColumn(columns, "TelnetAddress");
             int portIndex = GetRequiredColumn(columns, "bbsPort");
+            int sshPortIndex = GetOptionalColumn(columns, "sshPort");
             var profiles = new List<BbsProfile>();
+            var seenEndpoints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             int skippedCount = 0;
 
             while (!parser.EndOfData)
@@ -82,22 +90,46 @@ namespace BbsNavigator.Common
                 }
 
                 string host = GetField(fields, hostIndex);
-                string portText = GetField(fields, portIndex);
-                if (string.IsNullOrWhiteSpace(host) ||
-                    !int.TryParse(portText, NumberStyles.None, CultureInfo.InvariantCulture, out int port) ||
-                    port is < 1 or > 65535)
+                if (string.IsNullOrWhiteSpace(host))
                 {
                     skippedCount++;
                     continue;
                 }
 
+                // The sshPort column is optional and frequently blank; a missing or invalid value means the BBS has no SSH endpoint.
+                bool hasSshPort = TryGetPort(fields, sshPortIndex, out int sshPort);
+                if (!TryGetPort(fields, portIndex, out int port))
+                {
+                    // A row that lists neither port is assumed to be a plain Telnet board on the well-known port.
+                    // A row that lists only an SSH port is deliberately not given a Telnet port it never advertised.
+                    if (hasSshPort)
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    port = DefaultTelnetPort;
+                }
+
                 string name = GetField(fields, nameIndex);
-                profiles.Add(new BbsProfile
+                var profile = new BbsProfile
                 {
                     Name = string.IsNullOrWhiteSpace(name) ? host : name,
                     Host = host,
-                    Port = port
-                });
+                    Port = port,
+                    SshPort = sshPort
+                };
+
+                // The bblist format repeats a handful of endpoints under different names. Keeping the first
+                // occurrence makes a repeated import of the same file idempotent instead of flip-flopping
+                // those profiles between the duplicate rows' values.
+                if (!seenEndpoints.Add($"{host}:{port}"))
+                {
+                    skippedCount++;
+                    continue;
+                }
+
+                profiles.Add(profile);
             }
 
             return new BbsListImportResult(profiles, skippedCount);
@@ -113,9 +145,38 @@ namespace BbsNavigator.Common
             throw new InvalidDataException($"Required column '{name}' was not found.");
         }
 
+        /// <summary>
+        /// Reads a column as a valid TCP port number.
+        /// </summary>
+        /// <param name="fields">The fields of the current row.</param>
+        /// <param name="index">The column index to read, or -1 when the column is absent.</param>
+        /// <param name="port">When this method returns, contains the port, or zero when none was present.</param>
+        /// <returns><see langword="true"/> when the column held a port between 1 and 65535; otherwise, <see langword="false"/>.</returns>
+        private static bool TryGetPort(string[]? fields, int index, out int port)
+        {
+            string text = GetField(fields, index);
+
+            if (int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out port) &&
+                port is >= 1 and <= 65535)
+            {
+                return true;
+            }
+
+            port = 0;
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the index of an optional column, or -1 when the column is not present.
+        /// </summary>
+        private static int GetOptionalColumn(IReadOnlyDictionary<string, int> columns, string name)
+        {
+            return columns.TryGetValue(name, out int index) ? index : -1;
+        }
+
         private static string GetField(string[]? fields, int index)
         {
-            return fields != null && index < fields.Length ? fields[index].Trim() : string.Empty;
+            return fields != null && index >= 0 && index < fields.Length ? fields[index].Trim() : string.Empty;
         }
     }
 

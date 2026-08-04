@@ -40,7 +40,8 @@ namespace BbsNavigator.Views
             RegexOptions.Compiled);
 
         private readonly AppSettings _settings;
-        private readonly BbsTelnetConnection _connection;
+        private readonly IBbsConnection _connection;
+        private readonly string _endpoint;
         private readonly CancellationTokenSource _lifetimeCancellation = new();
         private readonly CancellationToken _lifetimeToken;
         private readonly SemaphoreSlim _connectionGate = new(1, 1);
@@ -64,17 +65,44 @@ namespace BbsNavigator.Views
         /// </summary>
         /// <param name="profile">The saved BBS profile to connect to.</param>
         /// <param name="settings">The application settings that supply terminal and transfer options.</param>
-        public BbsTerminalView(BbsProfile profile, AppSettings settings)
+        /// <param name="transport">The protocol the session runs over. Telnet is the default for a BBS.</param>
+        /// <param name="credentials">The login used for SSH sessions; ignored for Telnet.</param>
+        /// <exception cref="ArgumentException">An SSH session was requested without credentials.</exception>
+        public BbsTerminalView(
+            BbsProfile profile,
+            AppSettings settings,
+            BbsTransport transport = BbsTransport.Telnet,
+            BbsCredentials? credentials = null)
         {
             InitializeComponent();
             _lifetimeToken = _lifetimeCancellation.Token;
             Profile = profile;
             _settings = settings;
-            _connection = new BbsTelnetConnection(profile.Host, profile.Port)
+            Transport = transport;
+
+            if (transport == BbsTransport.Ssh)
             {
-                Encoding = profile.TerminalEncoding.ToEncoding(),
-                KeepAliveInterval = TimeSpan.FromSeconds(Math.Max(0, settings.KeepAliveSeconds))
-            };
+                if (credentials == null)
+                {
+                    throw new ArgumentException("An SSH session requires a username and password.", nameof(credentials));
+                }
+
+                _endpoint = $"{profile.SshEndpoint} (SSH)";
+                _connection = new BbsSshConnection(profile.Host, profile.SshPort, credentials.UserName, credentials.Password)
+                {
+                    Encoding = profile.TerminalEncoding.ToEncoding()
+                };
+            }
+            else
+            {
+                _endpoint = profile.Endpoint;
+                _connection = new BbsTelnetConnection(profile.Host, profile.Port)
+                {
+                    Encoding = profile.TerminalEncoding.ToEncoding(),
+                    KeepAliveInterval = TimeSpan.FromSeconds(Math.Max(0, settings.KeepAliveSeconds))
+                };
+            }
+
             _connection.ConnectionLost += Connection_OnConnectionLost;
             Terminal.Connection = _connection;
             _connection.DataReceived += Connection_OnDataReceived;
@@ -99,13 +127,18 @@ namespace BbsNavigator.Views
             _statsTimer.Tick += StatsTimer_OnTick;
             _statsTimer.Start();
 
-            UpdateStatus(BbsConnectionState.Disconnected, $"Ready to connect to {profile.Endpoint}");
+            UpdateStatus(BbsConnectionState.Disconnected, $"Ready to connect to {_endpoint}");
         }
 
         /// <summary>
         /// Gets the saved profile represented by this document.
         /// </summary>
         public BbsProfile Profile { get; }
+
+        /// <summary>
+        /// Gets the protocol this session runs over.
+        /// </summary>
+        public BbsTransport Transport { get; }
 
         /// <summary>
         /// Gets the application settings that supply the terminal font options bound in XAML.
@@ -154,13 +187,13 @@ namespace BbsNavigator.Views
                 _manualDisconnect = false;
                 UpdateStatus(
                     reconnecting ? BbsConnectionState.Reconnecting : BbsConnectionState.Connecting,
-                    reconnecting ? $"Reconnecting to {Profile.Endpoint}…" : $"Connecting to {Profile.Endpoint}…");
+                    reconnecting ? $"Reconnecting to {_endpoint}…" : $"Connecting to {_endpoint}…");
 
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeToken);
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(_settings.ConnectTimeoutSeconds, 1, 300)));
 
                 await _connection.ConnectAsync(timeoutCts.Token);
-                UpdateStatus(BbsConnectionState.Connected, $"Connected to {Profile.Endpoint}");
+                UpdateStatus(BbsConnectionState.Connected, $"Connected to {_endpoint}");
                 Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
                 Profile.ConnectionCount++;
@@ -170,7 +203,7 @@ namespace BbsNavigator.Views
             }
             catch (OperationCanceledException)
             {
-                UpdateStatus(BbsConnectionState.Faulted, $"The connection attempt to {Profile.Endpoint} timed out.");
+                UpdateStatus(BbsConnectionState.Faulted, $"The connection attempt to {_endpoint} timed out.");
                 ScheduleReconnect();
             }
             catch (ObjectDisposedException) when (_disposed)
@@ -200,9 +233,13 @@ namespace BbsNavigator.Views
                 System.Net.Sockets.SocketException { SocketErrorCode: System.Net.Sockets.SocketError.HostNotFound } =>
                     $"The host name '{Profile.Host}' could not be resolved.",
                 System.Net.Sockets.SocketException { SocketErrorCode: System.Net.Sockets.SocketError.ConnectionRefused } =>
-                    $"{Profile.Endpoint} refused the connection.",
+                    $"{_endpoint} refused the connection.",
                 System.Net.Sockets.SocketException { SocketErrorCode: System.Net.Sockets.SocketError.TimedOut } =>
-                    $"The connection attempt to {Profile.Endpoint} timed out.",
+                    $"The connection attempt to {_endpoint} timed out.",
+                Renci.SshNet.Common.SshAuthenticationException =>
+                    $"{Profile.Host} rejected the SSH login. Check the credentials saved for this BBS.",
+                Renci.SshNet.Common.SshConnectionException =>
+                    $"The SSH session with {_endpoint} could not be established: {ex.Message}",
                 _ => ex.Message
             };
         }
@@ -216,7 +253,7 @@ namespace BbsNavigator.Views
                 BeginStoryboard(fadeIn);
             }
 
-            UpdateStatus(BbsConnectionState.Connecting, $"Connecting to {Profile.Endpoint}…");
+            UpdateStatus(BbsConnectionState.Connecting, $"Connecting to {_endpoint}…");
             await Dispatcher.Yield(DispatcherPriority.Background);
             await ConnectAsync();
         }
@@ -346,7 +383,7 @@ namespace BbsNavigator.Views
 
                 if (!_disposed)
                 {
-                    UpdateStatus(BbsConnectionState.Disconnected, $"Disconnected from {Profile.Endpoint}");
+                    UpdateStatus(BbsConnectionState.Disconnected, $"Disconnected from {_endpoint}");
                 }
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
@@ -690,7 +727,7 @@ namespace BbsNavigator.Views
 
             try
             {
-                using TelnetBinaryChannel channel = _connection.EnterBinaryMode();
+                using IBbsBinaryChannel channel = _connection.EnterBinaryMode();
                 CancellationToken token = _transferCts.Token;
 
                 TransferResult result = await Task.Run(() => direction == TransferDirection.Download

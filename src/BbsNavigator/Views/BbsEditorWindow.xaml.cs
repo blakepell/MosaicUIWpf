@@ -30,6 +30,7 @@ namespace BbsNavigator.Views
                 Name = profile?.Name ?? "New BBS",
                 Host = profile?.Host ?? string.Empty,
                 Port = profile?.Port ?? 23,
+                SshPort = profile?.SshPort ?? 0,
                 Description = profile?.Description ?? string.Empty,
                 AutoReconnect = profile?.AutoReconnect ?? true,
                 LocalEcho = profile?.LocalEcho ?? false,
@@ -62,6 +63,17 @@ namespace BbsNavigator.Views
             {
                 Mosaic.UI.Wpf.Controls.MessageBox.Show(
                     "The port must be between 1 and 65535.",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            // Zero means the BBS does not offer SSH, so it is the only value permitted outside the port range.
+            if (Profile.SshPort is < 0 or > 65535)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    "The SSH port must be between 1 and 65535, or 0 when the BBS does not offer SSH.",
                     "BBS Navigator",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);

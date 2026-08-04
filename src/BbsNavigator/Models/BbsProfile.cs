@@ -51,6 +51,16 @@ namespace BbsNavigator.Models
         private int _port = 23;
 
         /// <summary>
+        /// Gets or sets the BBS SSH port.
+        /// </summary>
+        /// <value>The network port used to establish an SSH connection, or zero when the BBS does not offer SSH.</value>
+        [property: Category("Connection")]
+        [property: DisplayName("SSH port")]
+        [property: Description("The port the BBS listens on for SSH connections. Zero indicates the BBS does not offer SSH.")]
+        [ObservableProperty]
+        private int _sshPort;
+
+        /// <summary>
         /// Gets or sets the date and time of the most recent successful connection.
         /// </summary>
         /// <value>The local connection time, or <see langword="null"/> when the profile has not connected.</value>
@@ -151,14 +161,42 @@ namespace BbsNavigator.Models
         [JsonIgnore]
         public string Endpoint => $"{Host}:{Port}";
 
+        /// <summary>
+        /// Gets the host and SSH port in display form.
+        /// </summary>
+        [JsonIgnore]
+        public string SshEndpoint => $"{Host}:{SshPort}";
+
+        /// <summary>
+        /// Gets a value that indicates whether the profile has an endpoint to connect to over Telnet.
+        /// </summary>
+        [JsonIgnore]
+        public bool CanConnectTelnet => !string.IsNullOrWhiteSpace(Host) && Port is > 0 and <= 65535;
+
+        /// <summary>
+        /// Gets a value that indicates whether the profile has an endpoint to connect to over SSH.
+        /// </summary>
+        [JsonIgnore]
+        public bool CanConnectSsh => !string.IsNullOrWhiteSpace(Host) && SshPort is > 0 and <= 65535;
+
         partial void OnHostChanged(string value)
         {
             OnPropertyChanged(nameof(Endpoint));
+            OnPropertyChanged(nameof(SshEndpoint));
+            OnPropertyChanged(nameof(CanConnectTelnet));
+            OnPropertyChanged(nameof(CanConnectSsh));
         }
 
         partial void OnPortChanged(int value)
         {
             OnPropertyChanged(nameof(Endpoint));
+            OnPropertyChanged(nameof(CanConnectTelnet));
+        }
+
+        partial void OnSshPortChanged(int value)
+        {
+            OnPropertyChanged(nameof(SshEndpoint));
+            OnPropertyChanged(nameof(CanConnectSsh));
         }
 
         partial void OnEncryptedCredentialsChanged(string? value)

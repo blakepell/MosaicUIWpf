@@ -11,20 +11,20 @@
 namespace BbsNavigator.Networking
 {
     /// <summary>
-    /// Routes the raw (de-escaped) Telnet payload stream to a file transfer protocol while
-    /// terminal text delivery is suspended. Dispose the channel to return the connection to
-    /// normal terminal operation.
+    /// Routes the SSH shell payload stream to a file transfer protocol while terminal text
+    /// delivery is suspended. The SSH channel is already 8-bit clean, so bytes are written
+    /// through unchanged.
     /// </summary>
-    public sealed class TelnetBinaryChannel : QueuedBinaryChannel
+    public sealed class SshBinaryChannel : QueuedBinaryChannel
     {
-        private readonly BbsTelnetConnection _connection;
+        private readonly BbsSshConnection _connection;
 
         /// <summary>
         /// Initializes the channel for the specified connection. Use
-        /// <see cref="BbsTelnetConnection.EnterBinaryMode"/> rather than constructing this directly.
+        /// <see cref="BbsSshConnection.EnterBinaryMode"/> rather than constructing this directly.
         /// </summary>
         /// <param name="connection">The owning connection.</param>
-        internal TelnetBinaryChannel(BbsTelnetConnection connection)
+        internal SshBinaryChannel(BbsSshConnection connection)
         {
             _connection = connection;
         }

@@ -19,7 +19,7 @@ namespace BbsNavigator.Networking
     /// <summary>
     /// Provides an asynchronous, allocation-conscious Telnet connection for a BBS terminal.
     /// </summary>
-    public sealed class BbsTelnetConnection : ITerminalConnection, IAsyncDisposable
+    public sealed class BbsTelnetConnection : IBbsConnection
     {
         private const byte Iac = 255;
         private const byte Dont = 254;
@@ -607,7 +607,7 @@ namespace BbsNavigator.Networking
         /// </summary>
         /// <returns>The transfer channel that now owns the byte stream.</returns>
         /// <exception cref="InvalidOperationException">Not connected, or a transfer is already active.</exception>
-        public TelnetBinaryChannel EnterBinaryMode()
+        public IBbsBinaryChannel EnterBinaryMode()
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
 
