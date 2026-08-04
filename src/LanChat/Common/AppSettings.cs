@@ -81,7 +81,7 @@ namespace LanChat.Common
         [property: Category("UI")]
         [property: DisplayName("Chat Accent Brush")]
         [property: Description("The color your chat bubbles should display in.")]
-        [property: JsonConverter(typeof(SolidColorBrushJsonSerializer))]
+        [property: JsonConverter(typeof(SolidColorBrushSerializer))]
         [ObservableProperty]
         [property: Browsable(true)]
         private SolidColorBrush _chatAccentBrush = ColorPaletteCache.GetBrush(Colors.CornflowerBlue);

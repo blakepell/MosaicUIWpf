@@ -17,12 +17,12 @@ namespace Mosaic.UI.Wpf.Json
     /// <see cref="JsonConverter"/> for a WPF <see cref="SolidColorBrush"/>.
     /// </summary>
     /// <remarks>
-    /// [JsonConverter(typeof(SolidColorBrushJsonConverter))]
+    /// [JsonConverter(typeof(SolidColorBrushConverter))]
     /// </remarks>
-    public class SolidColorBrushJsonSerializer : JsonConverter<SolidColorBrush>
+    public class SolidColorBrushSerializer : JsonConverter<SolidColorBrush>
     {
         /// <inheritdoc/>
-        public override SolidColorBrush Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SolidColorBrush? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var colorString = reader.GetString();
 

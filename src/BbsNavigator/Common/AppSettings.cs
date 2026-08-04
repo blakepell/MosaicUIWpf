@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;
+using Mosaic.UI.Wpf.Json;
 
 namespace BbsNavigator.Common
 {
@@ -75,7 +76,7 @@ namespace BbsNavigator.Common
         [property: Category("Terminal")]
         [property: DisplayName("Terminal Font")]
         [property: Description("The default terminal font family.")]
-        [property: JsonConverter(typeof(Mosaic.UI.Wpf.Controls.FontFamilyJsonSerializer))]
+        [property: JsonConverter(typeof(FontFamilySerializer))]
         [ObservableProperty]
         private FontFamily _fontFamily = new("Cascadia Mono");
 

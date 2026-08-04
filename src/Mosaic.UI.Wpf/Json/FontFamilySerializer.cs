@@ -12,7 +12,7 @@ using System.Text.Json;
 
 // ReSharper disable CheckNamespace
 
-namespace Mosaic.UI.Wpf.Controls
+namespace Mosaic.UI.Wpf.Json
 {
     /// <summary>
     /// <see cref="JsonConverter"/> for a WPF <see cref="FontFamily"/>.
@@ -20,7 +20,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// <remarks>
     /// [JsonConverter(typeof(FontFamilyJsonConverter))]
     /// </remarks>
-    public class FontFamilyJsonSerializer : JsonConverter<FontFamily>
+    public class FontFamilySerializer : JsonConverter<FontFamily>
     {
         /// <inheritdoc/>
         public override FontFamily? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
