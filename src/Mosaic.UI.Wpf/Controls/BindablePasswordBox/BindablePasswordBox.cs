@@ -113,6 +113,20 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Redirects keyboard focus from the wrapper control to the hosted password box.
+        /// </summary>
+        /// <param name="e">The event data for the keyboard focus change.</param>
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnGotKeyboardFocus(e);
+
+            if (ReferenceEquals(e.NewFocus, this))
+            {
+                _passwordBox?.Focus();
+            }
+        }
+
+        /// <summary>
         /// Handles the <see cref="FrameworkElement.Unloaded"/> event for the BindablePasswordBox.
         /// </summary>
         /// <remarks>This method detaches the event handler for the <see
