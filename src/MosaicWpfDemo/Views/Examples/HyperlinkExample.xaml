@@ -8,6 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     FontSize="15"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     mc:Ignorable="d">
     <b:Interaction.Behaviors>
         <behaviors:FrameworkElementZoomFontSizeOnMouseWheelBehavior MaxFontSize="48.0" />
