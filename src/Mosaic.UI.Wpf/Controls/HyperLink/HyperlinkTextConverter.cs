@@ -18,9 +18,15 @@ namespace Mosaic.UI.Wpf.Controls
     /// Provides a value converter that extracts display text from a <see cref="Hyperlink"/> object for use in data
     /// binding scenarios.
     /// </summary>
-    /// <remarks>This converter is typically used to display the text or URI of a <see cref="Hyperlink"/> in
-    /// UI elements.  If the <see cref="Hyperlink.Text"/> property is not set, the converter will fall back to the <see
-    /// cref="Hyperlink.NavigateUri"/> property. If neither is available, an empty string is returned.</remarks>
+    /// <remarks>
+    /// <para>This converter is typically used to display the text or URI of a <see cref="Hyperlink"/> in UI elements.
+    /// If the <see cref="Hyperlink.Text"/> property is not set, the converter will fall back to the
+    /// <see cref="Hyperlink.NavigateUri"/> property. If neither is available, an empty string is returned.</para>
+    /// <para>Be aware that a binding whose source is the <see cref="Hyperlink"/> object itself only re-evaluates when
+    /// that object reference changes, so it will not pick up later changes to <see cref="Hyperlink.Text"/> or
+    /// <see cref="Hyperlink.NavigateUri"/>.  Bind to <see cref="Hyperlink.DisplayText"/> instead, which is a dependency
+    /// property that raises change notifications.  The default control template does this.</para>
+    /// </remarks>
     public class HyperlinkTextConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
@@ -39,7 +45,7 @@ namespace Mosaic.UI.Wpf.Controls
         {
             if (value is Hyperlink link)
             {
-                return link.Text ?? link?.NavigateUri.ToString() ?? "";
+                return link.DisplayText;
             }
 
             return "";

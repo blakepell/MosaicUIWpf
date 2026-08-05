@@ -178,6 +178,42 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(ChangeVisitedLinkColorProperty, value);
         }
 
+        private static readonly DependencyPropertyKey DisplayTextPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(DisplayText), typeof(string), typeof(Hyperlink), new FrameworkPropertyMetadata(string.Empty));
+
+        /// <summary>
+        /// Identifies the <see cref="DisplayText"/> read-only dependency property.
+        /// </summary>
+        public static readonly DependencyProperty DisplayTextProperty = DisplayTextPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the text that the control template renders.  This is <see cref="Text"/> when it is set, otherwise it
+        /// falls back to <see cref="NavigateUri"/>.
+        /// </summary>
+        /// <remarks>
+        /// This is recalculated whenever <see cref="Text"/> or <see cref="NavigateUri"/> changes, which is what allows
+        /// the rendered text to stay correct when the control is reused (for example a recycled row in a virtualized
+        /// list) or when it is bound to a view model property that updates after the first render.
+        /// </remarks>
+        public string DisplayText => (string)GetValue(DisplayTextProperty);
+
+        private static readonly DependencyPropertyKey AutoToolTipPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(AutoToolTip), typeof(object), typeof(Hyperlink), new FrameworkPropertyMetadata(default(object)));
+
+        /// <summary>
+        /// Identifies the <see cref="AutoToolTip"/> read-only dependency property.
+        /// </summary>
+        public static readonly DependencyProperty AutoToolTipProperty = AutoToolTipPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the tooltip content that the control template renders.
+        /// </summary>
+        /// <remarks>
+        /// This is recalculated whenever <see cref="ToolTip"/>, <see cref="NavigateUri"/>, <see cref="Command"/>, or
+        /// <see cref="EnableAutoToolTip"/> changes so that a reused or re-bound control never shows a stale tooltip.
+        /// </remarks>
+        public object? AutoToolTip => GetValue(AutoToolTipProperty);
+
         /// <summary>
         /// Static initialization of the <see cref="Hyperlink"/> class.
         /// </summary>
@@ -187,27 +223,111 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Recomputes the derived <see cref="DisplayText"/> and <see cref="AutoToolTip"/> values when any of the
+        /// properties they are built from changes.
+        /// </summary>
+        /// <param name="e">The property change details.</param>
+        /// <remarks>
+        /// The template cannot bind directly to the <see cref="Hyperlink"/> instance and run a converter over it,
+        /// because such a binding only re-evaluates when the source object reference changes, never when a property on
+        /// that object changes.  Projecting the values onto dependency properties here gives the template a source that
+        /// raises change notifications.
+        /// </remarks>
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == TextProperty || e.Property == NavigateUrlProperty)
+            {
+                this.UpdateDisplayText();
+            }
+
+            if (e.Property == ToolTipProperty || e.Property == NavigateUrlProperty || e.Property == CommandProperty || e.Property == EnableAutoToolTipProperty)
+            {
+                this.UpdateAutoToolTip();
+            }
+        }
+
+        /// <summary>
+        /// Recalculates <see cref="DisplayText"/> from the current <see cref="Text"/> and <see cref="NavigateUri"/>.
+        /// </summary>
+        private void UpdateDisplayText()
+        {
+            SetValue(DisplayTextPropertyKey, this.Text ?? this.NavigateUri ?? string.Empty);
+        }
+
+        /// <summary>
+        /// Recalculates <see cref="AutoToolTip"/> from the current tooltip, URI, and command state.
+        /// </summary>
+        private void UpdateAutoToolTip()
+        {
+            SetValue(AutoToolTipPropertyKey, this.ResolveAutoToolTip());
+        }
+
+        /// <summary>
+        /// Determines the tooltip content that should be shown for the link.
+        /// </summary>
+        /// <returns>
+        /// The explicitly assigned <see cref="ToolTip"/> if one is set, otherwise the <see cref="NavigateUri"/> so the
+        /// user can see where the link goes, otherwise a generic message when the link only executes a
+        /// <see cref="Command"/>.  Returns <see langword="null"/> when there is nothing to show or when
+        /// <see cref="EnableAutoToolTip"/> is <see langword="false"/>.
+        /// </returns>
+        private object? ResolveAutoToolTip()
+        {
+            if (!this.EnableAutoToolTip)
+            {
+                return null;
+            }
+
+            if (this.ToolTip != null)
+            {
+                return this.ToolTip;
+            }
+
+            // Otherwise, if the NavigateUri is set, return it.  This is useful if a link displays text, but is going
+            // to navigate to a URI, to let the user know where it's going.
+            if (!string.IsNullOrWhiteSpace(this.NavigateUri))
+            {
+                return this.NavigateUri;
+            }
+
+            // Let the user know that this link will execute code if it has a command set.
+            if (this.Command != null)
+            {
+                return "This link will execute code defined by the application.";
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Hyperlink"/> class.
         /// </summary>
         public Hyperlink()
         {
             // Set default Foreground to the dynamic resource for HyperLinkBrushKey
-            if (Application.Current.TryFindResource(MosaicTheme.HyperLinkBrush) != null)
+            if (Application.Current?.TryFindResource(MosaicTheme.HyperLinkBrush) != null)
             {
                 SetResourceReference(ForegroundProperty, MosaicTheme.HyperLinkBrush);
             }
-            
-            if (Application.Current.TryFindResource(MosaicTheme.HyperLinkHoverBrush) != null)
+
+            if (Application.Current?.TryFindResource(MosaicTheme.HyperLinkHoverBrush) != null)
             {
                 SetResourceReference(HoverBrushProperty, MosaicTheme.HyperLinkHoverBrush);
             }
         }
 
         /// <summary>
+        /// Backing field for <see cref="OnClick"/> so the same command instance is handed out on every get.
+        /// </summary>
+        private RelayCommand? _onClick;
+
+        /// <summary>
         /// Code to execute when the link is clicked.  By default, this will shell Windows Explorer
         /// with the NavigationUri specified.
         /// </summary>
-        public RelayCommand OnClick => new(() =>
+        public RelayCommand OnClick => _onClick ??= new RelayCommand(() =>
         {
             this.HasVisited = true;
 

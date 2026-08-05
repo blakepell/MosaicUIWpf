@@ -20,12 +20,17 @@ namespace Mosaic.UI.Wpf.Controls
     /// based on their properties.
     /// </summary>
     /// <remarks>The conversion logic determines the tooltip content based on the properties of the <see
-    /// cref="Hyperlink"/>: <list type="bullet"> <item> If the <see cref="Hyperlink.ToolTip"/> property is set, its
+    /// cref="Hyperlink"/>: <list type="bullet"> <item> If the <see cref="FrameworkElement.ToolTip"/> property is set, its
     /// value is returned. </item> <item> If the <see cref="Hyperlink.NavigateUri"/> property is set, its string
     /// representation is returned to indicate the destination URI. </item> <item> If the <see
     /// cref="Hyperlink.Command"/> property is set, a default message is returned to inform the user that the hyperlink
     /// will execute application-defined code. </item> </list> If none of these properties are set, the converter
-    /// returns <see langword="null"/>.</remarks>
+    /// returns <see langword="null"/>.
+    /// <para>Be aware that a binding whose source is the <see cref="Hyperlink"/> object itself only re-evaluates when
+    /// that object reference changes, so it will not pick up later changes to the properties the tooltip is derived
+    /// from.  Bind to <see cref="Hyperlink.AutoToolTip"/> instead, which is a dependency property that raises change
+    /// notifications.  The default control template does this.</para>
+    /// </remarks>
     public class HyperlinkToolTipConverter : MarkupExtension, IValueConverter
     {
         /// <summary>
@@ -42,38 +47,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <inheritdoc cref="Convert"/>
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            var link = value as Hyperlink;
-
-            if (link == null)
-            {
-                return null;
-            }
-
-            if (link.EnableAutoToolTip == false)
-            {
-                return null;
-            }
-
-            if (link.ToolTip != null)
-            {
-                return link.ToolTip;
-            }
-
-            // Otherwise, if the NavigateUri is set, return its string representation.  This is useful
-            // if a link displays text, but is going to navigate to a URI to let the user know where it's
-            // going.
-            if (link.NavigateUri?.ToString() != null)
-            {
-                return link.NavigateUri?.ToString();
-            }
-
-            // Let the user know that this link will execute code if it has a command set.
-            if (link.Command != null)
-            {
-                return "This link will execute code defined by the application.";
-            }
-
-            return null;
+            return value is Hyperlink link ? link.AutoToolTip : null;
         }
 
         /// <inheritdoc cref="Convert"/>
