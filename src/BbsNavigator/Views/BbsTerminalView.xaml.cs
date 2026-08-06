@@ -53,6 +53,8 @@ namespace BbsNavigator.Views
         private volatile bool _disposed;
         private bool _manualDisconnect;
         private int _reconnectScheduled;
+        private int _reconnectAttemptCount;
+        private CancellationTokenSource? _reconnectCancellation;
         private int _scrollToEndQueued;
         private volatile bool _transferActive;
         private CancellationTokenSource? _transferCts;
@@ -193,6 +195,7 @@ namespace BbsNavigator.Views
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(_settings.ConnectTimeoutSeconds, 1, 300)));
 
                 await _connection.ConnectAsync(timeoutCts.Token);
+                _reconnectAttemptCount = 0;
                 UpdateStatus(BbsConnectionState.Connected, $"Connected to {_endpoint}");
                 Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
@@ -305,10 +308,29 @@ namespace BbsNavigator.Views
             }, DispatcherPriority.Render);
         }
 
+        /// <summary>
+        /// Queues an automatic reconnection attempt when the profile allows it and the session has
+        /// not already exhausted <see cref="AppSettings.ReconnectAttempts"/>.
+        /// </summary>
         private void ScheduleReconnect()
         {
             if (!Profile.AutoReconnect || _manualDisconnect || _disposed)
             {
+                return;
+            }
+
+            int maxAttempts = Math.Max(0, _settings.ReconnectAttempts);
+
+            if (maxAttempts == 0)
+            {
+                return;
+            }
+
+            if (_reconnectAttemptCount >= maxAttempts)
+            {
+                UpdateStatus(
+                    BbsConnectionState.Faulted,
+                    $"Could not reconnect to {_endpoint} after {maxAttempts} {(maxAttempts == 1 ? "attempt" : "attempts")}. Click Reconnect to try again.");
                 return;
             }
 
@@ -323,11 +345,26 @@ namespace BbsNavigator.Views
         private async Task ReconnectAfterDelayAsync()
         {
             int delaySeconds = Math.Max(1, _settings.ReconnectDelaySeconds);
+            int maxAttempts = Math.Max(0, _settings.ReconnectAttempts);
+            int attempt = _reconnectAttemptCount + 1;
+
+            var cancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeToken);
+            Interlocked.Exchange(ref _reconnectCancellation, cancellation)?.Dispose();
 
             try
             {
-                UpdateStatus(BbsConnectionState.Reconnecting, $"Reconnecting in {delaySeconds} seconds…");
-                await Task.Delay(TimeSpan.FromSeconds(delaySeconds), _lifetimeToken);
+                UpdateStatus(
+                    BbsConnectionState.Reconnecting,
+                    $"Reconnecting in {delaySeconds} seconds… (attempt {attempt} of {maxAttempts})");
+
+                await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellation.Token);
+
+                if (_manualDisconnect || _disposed)
+                {
+                    return;
+                }
+
+                _reconnectAttemptCount = attempt;
                 await ConnectAsync(reconnecting: true);
             }
             catch (OperationCanceledException)
@@ -335,6 +372,8 @@ namespace BbsNavigator.Views
             }
             finally
             {
+                Interlocked.CompareExchange(ref _reconnectCancellation, null, cancellation);
+                cancellation.Dispose();
                 Interlocked.Exchange(ref _reconnectScheduled, 0);
 
                 if (!_connection.IsConnected && !_manualDisconnect && !_disposed)
@@ -344,8 +383,27 @@ namespace BbsNavigator.Views
             }
         }
 
+        /// <summary>
+        /// Cancels any reconnection attempt that is waiting out the reconnect delay.
+        /// </summary>
+        private void CancelPendingReconnect()
+        {
+            try
+            {
+                Interlocked.Exchange(ref _reconnectCancellation, null)?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+
+            Interlocked.Exchange(ref _reconnectScheduled, 0);
+        }
+
         private async void Reconnect_OnClick(object sender, RoutedEventArgs e)
         {
+            // A reconnect the user asked for starts the attempt budget over.
+            CancelPendingReconnect();
+            _reconnectAttemptCount = 0;
             await ConnectAsync(reconnecting: true);
         }
 
@@ -366,6 +424,11 @@ namespace BbsNavigator.Views
 
             _transferCts?.Cancel();
 
+            // Stop reconnecting before waiting on the gate: an in-flight attempt can hold it for the
+            // full connect timeout, and the waiting delay would otherwise fire once it is released.
+            _manualDisconnect = true;
+            CancelPendingReconnect();
+
             bool gateEntered = false;
             try
             {
@@ -378,7 +441,7 @@ namespace BbsNavigator.Views
                 }
 
                 _manualDisconnect = true;
-                Interlocked.Exchange(ref _reconnectScheduled, 0);
+                _reconnectAttemptCount = 0;
                 await _connection.DisconnectAsync();
 
                 if (!_disposed)

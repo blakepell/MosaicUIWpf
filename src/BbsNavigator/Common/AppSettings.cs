@@ -134,6 +134,19 @@ namespace BbsNavigator.Common
         private int _reconnectDelaySeconds = 5;
 
         /// <summary>
+        /// Gets or sets the number of consecutive automatic reconnection attempts a session may make.
+        /// </summary>
+        /// <value>
+        /// The maximum number of consecutive reconnect attempts, or zero to disable automatic reconnection.
+        /// The counter resets each time the session connects successfully.
+        /// </value>
+        [property: Category("Connections")]
+        [property: DisplayName("Reconnect Attempts")]
+        [property: Description("How many times a connection will try to reconnect before giving up. The count resets after a successful connection. Zero disables automatic reconnection.")]
+        [ObservableProperty]
+        private int _reconnectAttempts = 5;
+
+        /// <summary>
         /// Gets or sets the maximum duration of a connection attempt.
         /// </summary>
         /// <value>The connection timeout, in seconds.</value>
