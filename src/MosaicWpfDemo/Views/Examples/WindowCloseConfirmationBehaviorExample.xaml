@@ -1,0 +1,54 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.WindowCloseConfirmationBehaviorExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="12">
+        <StackPanel
+            Width="440"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <TextBlock
+                Margin="0,0,0,8"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="Window Close Confirmation Behavior" />
+
+            <TextBlock
+                Margin="0,0,0,16"
+                Text="Open the example dialog, then use its Close button or title-bar close button to trigger confirmation."
+                TextWrapping="Wrap" />
+
+            <TextBlock
+                Margin="0,0,0,4"
+                FontWeight="SemiBold"
+                Text="Confirmation message" />
+            <TextBox
+                x:Name="ConfirmationMessageTextBox"
+                Margin="0,0,0,12"
+                Padding="8"
+                Text="Are you sure you want to close this example dialog?" />
+
+            <CheckBox
+                x:Name="ConfirmationEnabledCheckBox"
+                Margin="0,0,0,16"
+                Content="Enable close confirmation"
+                IsChecked="True" />
+
+            <Button
+                Padding="12,8"
+                HorizontalAlignment="Left"
+                Click="OpenDialogButton_Click"
+                Content="Open example dialog" />
+
+            <TextBlock
+                x:Name="ResultTextBlock"
+                Margin="0,12,0,0"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</UserControl>

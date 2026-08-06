@@ -1534,6 +1534,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Window Close Confirmation Behavior  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/warning-48.png"
+                    Text="Window Close Confirmation">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Window Close Confirmation" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.WindowCloseConfirmationBehaviorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.WindowCloseConfirmationBehaviorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type behaviors:WindowCloseConfirmationBehavior}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:WindowCloseConfirmationBehaviorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/warning-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  DataGrid Behaviors  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

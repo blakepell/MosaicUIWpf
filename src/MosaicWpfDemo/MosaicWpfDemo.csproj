@@ -280,6 +280,13 @@
 			<Link>LinkedSources\OpenWindowBehaviorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\WindowCloseConfirmationBehaviorExample.xaml">
+			<Link>LinkedSources\WindowCloseConfirmationBehaviorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\WindowCloseConfirmationBehaviorExample.xaml.cs">
+			<Link>LinkedSources\WindowCloseConfirmationBehaviorExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\AsteriskTextBlockExample.xaml">
 			<Link>LinkedSources\AsteriskTextBlockExample.xaml</Link>
 		</EmbeddedResource>
