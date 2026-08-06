@@ -522,6 +522,13 @@
 			<Link>LinkedSources\SettingsItemExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\InfoBubbleExample.xaml">
+			<Link>LinkedSources\InfoBubbleExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\InfoBubbleExample.xaml.cs">
+			<Link>LinkedSources\InfoBubbleExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\InfoCardExample.xaml">
 			<Link>LinkedSources\InfoCardExample.xaml</Link>
 		</EmbeddedResource>
