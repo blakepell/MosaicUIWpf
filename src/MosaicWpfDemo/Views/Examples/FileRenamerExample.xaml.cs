@@ -393,6 +393,7 @@ namespace MosaicWpfDemo.Views.Examples
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Field1Label));
                 OnPropertyChanged(nameof(Field2Label));
+                OnPropertyChanged(nameof(Field2ToolTip));
                 OnPropertyChanged(nameof(IsSecondFieldVisible));
             }
         }
@@ -427,7 +428,17 @@ namespace MosaicWpfDemo.Views.Examples
         };
 
         /// <summary>Label for the second input field (only meaningful when <see cref="IsSecondFieldVisible"/> is true).</summary>
-        public string Field2Label => "Replacement Text";
+        public string Field2Label => this.OperationType == RenameOperationType.RegexReplacement
+            ? "Replacement Text (%1, %{name})"
+            : "Replacement Text";
+
+        /// <summary>
+        /// Tooltip for the second input field, documenting the capture-group syntax for regex replacements.
+        /// </summary>
+        public string Field2ToolTip => this.OperationType == RenameOperationType.RegexReplacement
+            ? "Insert a captured group with %1, %2, ... (by position) or %{name} / %name (by name). "
+              + "%0 is the entire match and %% produces a literal percent sign. All other text is literal."
+            : "The text that replaces each match. Leave empty to remove the matched text.";
 
         /// <summary>
         /// Whether the second input field is shown. Only the two replacement operations use a second field.
@@ -447,16 +458,27 @@ namespace MosaicWpfDemo.Views.Examples
                 return $"\"{this.Field1Label}\" is required.";
             }
 
-            // Surface invalid regular expressions during validation rather than mid-rename.
+            // Surface invalid regular expressions (and bad group references) during validation rather than mid-rename.
             if (this.OperationType == RenameOperationType.RegexReplacement)
             {
+                Regex regex;
+
                 try
                 {
-                    _ = new Regex(this.Field1Value);
+                    regex = new Regex(this.Field1Value);
                 }
                 catch (ArgumentException ex)
                 {
                     return $"invalid regular expression ({ex.Message}).";
+                }
+
+                try
+                {
+                    _ = FileRenamer.BuildRegexReplacement(this.Field2Value, regex);
+                }
+                catch (RenameException ex)
+                {
+                    return ex.Message;
                 }
             }
 
@@ -535,8 +557,11 @@ namespace MosaicWpfDemo.Views.Examples
                             break;
 
                         case RenameOperationType.RegexReplacement:
-                            name = Regex.Replace(name, op.Field1Value, op.Field2Value);
+                        {
+                            var regex = new Regex(op.Field1Value);
+                            name = regex.Replace(name, BuildRegexReplacement(op.Field2Value, regex));
                             break;
+                        }
 
                         case RenameOperationType.AppendText:
                             name += op.Field1Value;
@@ -551,6 +576,11 @@ namespace MosaicWpfDemo.Views.Examples
                             break;
                     }
                 }
+                catch (RenameException)
+                {
+                    // Already a friendly, fully-formed message (for example an unknown group reference).
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     // Surface any failure (invalid regex, replacement errors, etc.) as a friendly RenameException
@@ -560,6 +590,128 @@ namespace MosaicWpfDemo.Views.Examples
             }
 
             return name + extension;
+        }
+
+        /// <summary>
+        /// Translates the user's replacement text into a .NET <see cref="Regex"/> substitution pattern, mapping
+        /// percent-style capture-group references onto the framework's <c>$</c> syntax.
+        /// </summary>
+        /// <remarks>
+        /// Supported tokens:
+        /// <list type="bullet">
+        ///   <item><description><c>%1</c>, <c>%2</c>, ... - the capture group at that position (<c>%0</c> is the entire match).</description></item>
+        ///   <item><description><c>%{name}</c> or <c>%name</c> - the named capture group (the braced form is required when the
+        ///   name butts up against following text, e.g. <c>%{year}archive</c>).</description></item>
+        ///   <item><description><c>%%</c> - a literal percent sign.</description></item>
+        /// </list>
+        /// Everything else is literal, including <c>$</c>, which is escaped so it is never mistaken for a
+        /// substitution by the regex engine.
+        /// </remarks>
+        /// <param name="replacement">The raw replacement text the user typed.</param>
+        /// <param name="regex">The compiled pattern, used to verify that every referenced group actually exists.</param>
+        /// <exception cref="RenameException">A referenced capture group does not exist in the pattern.</exception>
+        public static string BuildRegexReplacement(string? replacement, Regex regex)
+        {
+            if (string.IsNullOrEmpty(replacement))
+            {
+                return string.Empty;
+            }
+
+            var sb = new StringBuilder(replacement.Length);
+
+            for (int i = 0; i < replacement.Length; i++)
+            {
+                char c = replacement[i];
+
+                // The user's text is literal apart from '%' tokens, so a '$' has to be escaped ("$$") or the
+                // regex engine would treat it as a substitution of its own.
+                if (c == '$')
+                {
+                    sb.Append("$$");
+                    continue;
+                }
+
+                if (c != '%' || i == replacement.Length - 1)
+                {
+                    sb.Append(c);
+                    continue;
+                }
+
+                char next = replacement[i + 1];
+
+                // "%%" escapes a literal percent sign.
+                if (next == '%')
+                {
+                    sb.Append('%');
+                    i++;
+                    continue;
+                }
+
+                // "%{name}" - the braced form, which can be followed immediately by more text.
+                if (next == '{')
+                {
+                    int close = replacement.IndexOf('}', i + 2);
+
+                    if (close > i + 2)
+                    {
+                        string braced = replacement.Substring(i + 2, close - i - 2);
+                        AppendGroupReference(sb, braced, regex, replacement);
+                        i = close;
+                        continue;
+                    }
+
+                    // Unterminated "%{" - treat the percent sign as literal text.
+                    sb.Append(c);
+                    continue;
+                }
+
+                // "%1" (digits) or "%name" (identifier). Scan the longest run of the appropriate character class.
+                int end = i + 1;
+
+                if (char.IsDigit(next))
+                {
+                    while (end < replacement.Length && char.IsDigit(replacement[end]))
+                    {
+                        end++;
+                    }
+                }
+                else if (char.IsLetter(next) || next == '_')
+                {
+                    while (end < replacement.Length && (char.IsLetterOrDigit(replacement[end]) || replacement[end] == '_'))
+                    {
+                        end++;
+                    }
+                }
+
+                if (end == i + 1)
+                {
+                    // A '%' followed by something that can't start a group name is just a percent sign.
+                    sb.Append(c);
+                    continue;
+                }
+
+                AppendGroupReference(sb, replacement.Substring(i + 1, end - i - 1), regex, replacement);
+                i = end - 1;
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Emits a validated <c>${group}</c> substitution for the supplied token.
+        /// </summary>
+        private static void AppendGroupReference(StringBuilder sb, string token, Regex regex, string replacement)
+        {
+            // Numbered groups are matched by number, named groups by name. Regex.GroupNumberFromName covers both,
+            // returning -1 when the group does not exist in the pattern.
+            if (regex.GroupNumberFromName(token) < 0)
+            {
+                throw new RenameException(
+                    $"the replacement text \"{replacement}\" references capture group \"{token}\", which the pattern does not define. "
+                    + $"Available groups: {string.Join(", ", regex.GetGroupNames())}.");
+            }
+
+            sb.Append("${").Append(token).Append('}');
         }
 
         /// <summary>

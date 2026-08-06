@@ -162,7 +162,8 @@
                                                 FontSize="11"
                                                 Opacity="0.7"
                                                 Text="{Binding Field2Label}" />
-                                            <TextBox Text="{Binding Field2Value, UpdateSourceTrigger=PropertyChanged}" />
+                                            <!--  For RegEx replacements the text may reference capture groups: %1 by position, %{name} by name.  -->
+                                            <TextBox Text="{Binding Field2Value, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Field2ToolTip}" />
                                         </StackPanel>
 
                                         <!--  Remove this operation  -->
