@@ -255,6 +255,9 @@
                                 <RowDefinition Height="Auto" />
                                 <!--  Search bar  -->
                                 <RowDefinition Height="*" />
+                                <!--  Properties (scrolls)  -->
+                                <RowDefinition Height="Auto" />
+                                <!--  Description panel (anchored to the bottom)  -->
                             </Grid.RowDefinitions>
 
                             <!--  Search box (optional)  -->
@@ -316,9 +319,21 @@
                                                 <Border
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
-                                                    Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+                                                    local:PropertyGrid.SelectOnClick="True"
                                                     BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
-                                                    BorderThickness="0,0,0,1">
+                                                    BorderThickness="0,0,0,1"
+                                                    Focusable="True"
+                                                    FocusVisualStyle="{x:Null}">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
                                                     <StackPanel
                                                         Margin="6,0,0,0"
                                                         VerticalAlignment="Center"
@@ -326,9 +341,19 @@
                                                         ToolTip="{Binding Description}">
                                                         <TextBlock
                                                             VerticalAlignment="Center"
-                                                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
                                                             Text="{Binding DisplayName}"
-                                                            TextTrimming="CharacterEllipsis" />
+                                                            TextTrimming="CharacterEllipsis">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
                                                         <local:AdaptiveImage
                                                             Width="12"
                                                             Height="12"
@@ -378,6 +403,30 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </ScrollViewer>
+
+                            <!--  Name / description of the selected property, anchored to the bottom  -->
+                            <Border
+                                x:Name="PART_DescriptionPanel"
+                                Grid.Row="2"
+                                Padding="6,4,6,6"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                BorderThickness="0,1,0,1"
+                                DataContext="{Binding SelectedProperty, RelativeSource={RelativeSource TemplatedParent}}"
+                                Visibility="{Binding ShowDescriptionPanel, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVis}}">
+                                <StackPanel MinHeight="44">
+                                    <TextBlock
+                                        FontWeight="Bold"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                        Text="{Binding DisplayName}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Margin="0,2,0,0"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                        Text="{Binding Description}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
                         </Grid>
                     </Border>
                 </ControlTemplate>

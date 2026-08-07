@@ -73,6 +73,12 @@ namespace Mosaic.UI.Wpf.Controls
         [ObservableProperty]
         private IEnumerable? _enumValues;
 
+        /// <summary>
+        /// Gets or sets whether this property is the selected property in the owning <see cref="PropertyGrid"/>.
+        /// </summary>
+        [ObservableProperty]
+        private bool _isSelected;
+
         [ObservableProperty]
         private object? _value;
 

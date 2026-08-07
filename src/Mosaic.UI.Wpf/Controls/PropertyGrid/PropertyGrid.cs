@@ -1,4 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿/*
+ * Mosaic UI for WPF
+ *
+ * @project lead      : Blake Pell
+ * @website           : https://www.blakepell.com
+ * @website           : https://www.apexgate.net
+ * @copyright         : Copyright (c), 2023-2026 All rights reserved.
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using Mosaic.UI.Wpf.Common;
+using System.Collections.ObjectModel;
 using System.Windows.Data;
 
 namespace Mosaic.UI.Wpf.Controls
@@ -6,6 +17,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// <summary>
     /// A control that displays the properties of an object in a grid format.
     /// </summary>
+    [DefaultProperty(nameof(Object))]
     public class PropertyGrid : Control
     {
         static PropertyGrid()
@@ -76,6 +88,175 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(RevertInvalidValuesProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the SelectedProperty dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SelectedPropertyProperty =
+            DependencyProperty.Register(nameof(SelectedProperty), typeof(PropertyItem), typeof(PropertyGrid),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedPropertyChanged));
+
+        /// <summary>
+        /// Gets or sets the currently selected <see cref="PropertyItem"/>.  The selected property is what
+        /// drives the name/description panel anchored at the bottom of the grid.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The currently selected property in the grid.")]
+        public PropertyItem? SelectedProperty
+        {
+            get => (PropertyItem?)GetValue(SelectedPropertyProperty);
+            set => SetValue(SelectedPropertyProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the ShowDescriptionPanel dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowDescriptionPanelProperty =
+            DependencyProperty.Register(nameof(ShowDescriptionPanel), typeof(bool), typeof(PropertyGrid),
+                new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets whether the description panel anchored to the bottom of the grid is displayed.  The
+        /// panel shows the display name and the <see cref="DescriptionAttribute"/> text (when one exists) of
+        /// the selected property.  Defaults to true.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Shows the name and description of the selected property anchored to the bottom of the grid.")]
+        public bool ShowDescriptionPanel
+        {
+            get => (bool)GetValue(ShowDescriptionPanelProperty);
+            set => SetValue(ShowDescriptionPanelProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the SelectedPropertyChanged routed event.
+        /// </summary>
+        public static readonly RoutedEvent SelectedPropertyChangedEvent =
+            EventManager.RegisterRoutedEvent(nameof(SelectedPropertyChanged), RoutingStrategy.Bubble,
+                typeof(RoutedPropertyChangedEventHandler<PropertyItem?>), typeof(PropertyGrid));
+
+        /// <summary>
+        /// Occurs when the selected property changes.
+        /// </summary>
+        public event RoutedPropertyChangedEventHandler<PropertyItem?> SelectedPropertyChanged
+        {
+            add => AddHandler(SelectedPropertyChangedEvent, value);
+            remove => RemoveHandler(SelectedPropertyChangedEvent, value);
+        }
+
+        #endregion
+
+        #region Selection
+
+        /// <summary>
+        /// Identifies the SelectOnClick attached property.  When set to true on an element inside the
+        /// property grid's item template, clicking (or focusing) that element selects the
+        /// <see cref="PropertyItem"/> it is bound to.
+        /// </summary>
+        public static readonly DependencyProperty SelectOnClickProperty =
+            DependencyProperty.RegisterAttached("SelectOnClick", typeof(bool), typeof(PropertyGrid),
+                new PropertyMetadata(false, OnSelectOnClickChanged));
+
+        /// <summary>
+        /// Sets the value of the SelectOnClick attached property.
+        /// </summary>
+        public static void SetSelectOnClick(DependencyObject element, bool value) => element.SetValue(SelectOnClickProperty, value);
+
+        /// <summary>
+        /// Gets the value of the SelectOnClick attached property.
+        /// </summary>
+        public static bool GetSelectOnClick(DependencyObject element) => (bool)element.GetValue(SelectOnClickProperty);
+
+        /// <summary>
+        /// Wires (or unwires) the input handlers used to select a property when its name is clicked.
+        /// </summary>
+        private static void OnSelectOnClickChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is not FrameworkElement element)
+            {
+                return;
+            }
+
+            element.PreviewMouseLeftButtonDown -= OnSelectOnClickMouseDown;
+            element.GotKeyboardFocus -= OnSelectOnClickGotFocus;
+
+            if (e.NewValue is true)
+            {
+                element.PreviewMouseLeftButtonDown += OnSelectOnClickMouseDown;
+                element.GotKeyboardFocus += OnSelectOnClickGotFocus;
+            }
+        }
+
+        /// <summary>
+        /// Selects the clicked property and moves keyboard focus to it.
+        /// </summary>
+        private static void OnSelectOnClickMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not FrameworkElement element)
+            {
+                return;
+            }
+
+            SelectFrom(element);
+
+            if (element.Focusable)
+            {
+                element.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Keeps the selection in sync when the name cell receives keyboard focus (tab / arrow navigation).
+        /// </summary>
+        private static void OnSelectOnClickGotFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (sender is FrameworkElement element)
+            {
+                SelectFrom(element);
+            }
+        }
+
+        /// <summary>
+        /// Resolves the owning <see cref="PropertyGrid"/> and the bound <see cref="PropertyItem"/> and applies
+        /// the selection.
+        /// </summary>
+        private static void SelectFrom(FrameworkElement element)
+        {
+            if (element.DataContext is not PropertyItem item)
+            {
+                return;
+            }
+
+            var grid = ControlsHelper.FindParent<PropertyGrid>(element);
+            if (grid != null)
+            {
+                grid.SelectedProperty = item;
+            }
+        }
+
+        /// <summary>
+        /// Called when the SelectedProperty property changes.  Keeps <see cref="PropertyItem.IsSelected"/> in
+        /// sync so the template can highlight the name cell.
+        /// </summary>
+        private static void OnSelectedPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pg = (PropertyGrid)d;
+
+            if (e.OldValue is PropertyItem oldItem)
+            {
+                oldItem.IsSelected = false;
+            }
+
+            if (e.NewValue is PropertyItem newItem)
+            {
+                newItem.IsSelected = true;
+            }
+
+            pg.RaiseEvent(new RoutedPropertyChangedEventArgs<PropertyItem?>(
+                e.OldValue as PropertyItem,
+                e.NewValue as PropertyItem,
+                SelectedPropertyChangedEvent));
+        }
+
         #endregion
 
         #region Dependency Property Change
@@ -121,6 +302,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void UpdateProperties()
         {
+            // The items backing the selection are about to be discarded.
+            SelectedProperty = null;
+
             // Cleanup any events that were wired up.
             foreach (var propertyItem in Properties)
             {
