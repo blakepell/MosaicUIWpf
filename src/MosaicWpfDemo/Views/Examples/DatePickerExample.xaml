@@ -26,8 +26,8 @@
                 <StackPanel>
                     <TextBlock
                         Margin="0,0,0,10"
-                        TextWrapping="Wrap"
-                        Text="Select a date from the Mosaic DatePicker popup. The selected value is shown below using a two-way binding." />
+                        Text="Select a date from the Mosaic DatePicker popup. The selected value is shown below using a two-way binding."
+                        TextWrapping="Wrap" />
 
                     <mosaic:DatePicker
                         Width="180"
@@ -50,8 +50,8 @@
                         <TextBlock FontWeight="Bold" Text="Today" />
                         <TextBlock
                             Margin="0,2,0,6"
-                            TextWrapping="Wrap"
-                            Text="Starts with today's date selected and keeps the calendar popup open after selection." />
+                            Text="Starts with today's date selected and keeps the calendar popup open after selection."
+                            TextWrapping="Wrap" />
                         <mosaic:DatePicker
                             Width="180"
                             HorizontalAlignment="Left"
@@ -63,8 +63,8 @@
                         <TextBlock FontWeight="Bold" Text="Project due date" />
                         <TextBlock
                             Margin="0,2,0,6"
-                            TextWrapping="Wrap"
-                            Text="Uses KeepPopupOpen=False so the popup closes once a day is chosen." />
+                            Text="Uses KeepPopupOpen=False so the popup closes once a day is chosen."
+                            TextWrapping="Wrap" />
                         <mosaic:DatePicker
                             Width="180"
                             HorizontalAlignment="Left"
@@ -75,13 +75,42 @@
             </GroupBox>
 
             <GroupBox
+                Margin="0,0,0,20"
                 Padding="10"
-                Header="Bound Values">
+                Header="Popup Border">
+                <WrapPanel>
+                    <StackPanel Width="240" Margin="0,0,20,10">
+                        <TextBlock FontWeight="Bold" Text="Border shown (default)" />
+                        <TextBlock
+                            Margin="0,2,0,6"
+                            Text="ShowBorderOnPopup=True draws a muted theme border around the calendar so it separates from the content underneath."
+                            TextWrapping="Wrap" />
+                        <mosaic:DatePicker
+                            Width="180"
+                            HorizontalAlignment="Left"
+                            ShowBorderOnPopup="True" />
+                    </StackPanel>
+
+                    <StackPanel Width="240" Margin="0,0,20,10">
+                        <TextBlock FontWeight="Bold" Text="Borderless" />
+                        <TextBlock
+                            Margin="0,2,0,6"
+                            Text="ShowBorderOnPopup=False renders the popup without a border."
+                            TextWrapping="Wrap" />
+                        <mosaic:DatePicker
+                            Width="180"
+                            HorizontalAlignment="Left"
+                            ShowBorderOnPopup="False" />
+                    </StackPanel>
+                </WrapPanel>
+            </GroupBox>
+
+            <GroupBox Padding="10" Header="Bound Values">
                 <StackPanel>
                     <TextBlock
                         Margin="0,0,0,10"
-                        TextWrapping="Wrap"
-                        Text="The DatePicker exposes SelectedDate as a nullable DateTime dependency property, making it suitable for two-way bindings." />
+                        Text="The DatePicker exposes SelectedDate as a nullable DateTime dependency property, making it suitable for two-way bindings."
+                        TextWrapping="Wrap" />
 
                     <Grid MaxWidth="520" HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>

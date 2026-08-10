@@ -24,6 +24,7 @@
     <Style TargetType="{x:Type controls:DatePicker}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="Height" Value="30" />
         <Setter Property="Template">
@@ -42,8 +43,11 @@
                                 StaysOpen="False"
                                 VerticalOffset="2">
                                 <Border
+                                    x:Name="PopupBorder"
                                     Padding="10"
                                     Background="{TemplateBinding Background}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                    BorderThickness="0"
                                     CornerRadius="4">
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -84,6 +88,11 @@
                             </Popup>
                         </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ShowBorderOnPopup" Value="True">
+                            <Setter TargetName="PopupBorder" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

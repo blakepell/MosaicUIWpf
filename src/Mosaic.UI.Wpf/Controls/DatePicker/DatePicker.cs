@@ -41,6 +41,26 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="ShowBorderOnPopup"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowBorderOnPopupProperty =
+            DependencyProperty.Register(nameof(ShowBorderOnPopup), typeof(bool), typeof(DatePicker), new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the calendar popup draws a muted border to visually separate
+        /// it from the content it overlays.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> to draw a border around the popup; otherwise, <see langword="false"/>. The default is <see langword="true"/>.
+        /// </value>
+        [Category("Appearance")]
+        [Description("Draws a muted border around the calendar popup so it is distinguishable from the content it overlays.")]
+        public bool ShowBorderOnPopup
+        {
+            get => (bool)GetValue(ShowBorderOnPopupProperty); set => SetValue(ShowBorderOnPopupProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="CurrentMonth"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty CurrentMonthProperty =
