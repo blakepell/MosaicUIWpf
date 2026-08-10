@@ -4,6 +4,10 @@
     xmlns:local="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Geometrys.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Style TargetType="{x:Type local:ContentPanel}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundBrush}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
@@ -25,9 +29,7 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <Border
@@ -38,7 +40,80 @@
                                 TextElement.Foreground="{TemplateBinding HeaderForeground}"
                                 Visibility="{TemplateBinding HeaderVisibility}">
                                 <DockPanel LastChildFill="True">
+                                    <ToggleButton
+                                        x:Name="PART_ChevronButton"
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left"
+                                        Focusable="True"
+                                        IsChecked="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                        Visibility="Collapsed">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                <Border
+                                                    x:Name="ChevronBorder"
+                                                    Padding="3"
+                                                    Background="Transparent"
+                                                    CornerRadius="3">
+                                                    <Path
+                                                        x:Name="ChevronPath"
+                                                        Width="10"
+                                                        Height="10"
+                                                        Data="{StaticResource ChevronDownGeometry}"
+                                                        Fill="{Binding HeaderForeground, RelativeSource={RelativeSource AncestorType={x:Type local:ContentPanel}}}"
+                                                        RenderTransformOrigin="0.5,0.5"
+                                                        Stretch="Uniform">
+                                                        <Path.RenderTransform>
+                                                            <RotateTransform x:Name="ChevronRotateTransform" Angle="0" />
+                                                        </Path.RenderTransform>
+                                                    </Path>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ChevronBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                                        <Setter TargetName="ChevronBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsChecked" Value="False">
+                                                        <Trigger.EnterActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                        Storyboard.TargetName="ChevronRotateTransform"
+                                                                        Storyboard.TargetProperty="Angle"
+                                                                        To="-90"
+                                                                        Duration="0:0:0.18">
+                                                                        <DoubleAnimation.EasingFunction>
+                                                                            <QuadraticEase EasingMode="EaseOut" />
+                                                                        </DoubleAnimation.EasingFunction>
+                                                                    </DoubleAnimation>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.EnterActions>
+                                                        <Trigger.ExitActions>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation
+                                                                        Storyboard.TargetName="ChevronRotateTransform"
+                                                                        Storyboard.TargetProperty="Angle"
+                                                                        To="0"
+                                                                        Duration="0:0:0.18">
+                                                                        <DoubleAnimation.EasingFunction>
+                                                                            <QuadraticEase EasingMode="EaseOut" />
+                                                                        </DoubleAnimation.EasingFunction>
+                                                                    </DoubleAnimation>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </Trigger.ExitActions>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+
                                     <TextBlock
+                                        VerticalAlignment="Center"
                                         FontFamily="{TemplateBinding FontFamily}"
                                         FontSize="14"
                                         FontWeight="SemiBold"
@@ -48,34 +123,48 @@
                                 </DockPanel>
                             </Border>
 
-                            <Border
-                                x:Name="PART_HeaderSeparator"
+                            <Grid
+                                x:Name="PART_CollapseArea"
                                 Grid.Row="1"
-                                Height="1"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
-                                Opacity="0.45"
-                                Visibility="{TemplateBinding SeparatorVisibility}" />
+                                ClipToBounds="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                            <Border
-                                Grid.Row="2"
-                                Padding="10"
-                                Background="{TemplateBinding Background}"
-                                TextElement.Foreground="{TemplateBinding Foreground}">
-                                <ContentPresenter x:Name="PART_Content" TextElement.Foreground="{TemplateBinding Foreground}" />
-                            </Border>
+                                <Border
+                                    x:Name="PART_HeaderSeparator"
+                                    Grid.Row="0"
+                                    Height="1"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                    Opacity="0.45"
+                                    Visibility="{TemplateBinding SeparatorVisibility}" />
 
-                            <Border
-                                Grid.Row="3"
-                                Padding="10"
-                                Background="{TemplateBinding FooterBackground}"
-                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
-                                BorderThickness="0,1,0,0"
-                                TextElement.Foreground="{TemplateBinding FooterForeground}">
-                                <ContentPresenter Content="{TemplateBinding FooterContent}" TextElement.Foreground="{TemplateBinding FooterForeground}" />
-                            </Border>
+                                <Border
+                                    Grid.Row="1"
+                                    Padding="10"
+                                    Background="{TemplateBinding Background}"
+                                    TextElement.Foreground="{TemplateBinding Foreground}">
+                                    <ContentPresenter x:Name="PART_Content" TextElement.Foreground="{TemplateBinding Foreground}" />
+                                </Border>
+
+                                <Border
+                                    Grid.Row="2"
+                                    Padding="10"
+                                    Background="{TemplateBinding FooterBackground}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                                    BorderThickness="0,1,0,0"
+                                    TextElement.Foreground="{TemplateBinding FooterForeground}">
+                                    <ContentPresenter Content="{TemplateBinding FooterContent}" TextElement.Foreground="{TemplateBinding FooterForeground}" />
+                                </Border>
+                            </Grid>
                         </Grid>
                     </local:ClipBorder>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="ShowChevron" Value="True">
+                            <Setter TargetName="PART_ChevronButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
                         <Trigger Property="HeaderVisibility" Value="Collapsed">
                             <Setter TargetName="PART_Header" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_HeaderSeparator" Property="Visibility" Value="Collapsed" />

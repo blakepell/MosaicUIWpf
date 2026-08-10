@@ -57,6 +57,51 @@
                     <TextBlock Text="Custom footer background and foreground." />
                 </mosaic:ContentPanel.FooterContent>
             </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                ShowChevron="True"
+                Title="Collapsible Panel">
+                <mosaic:ContentPanel.HeaderContent>
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Foreground="{Binding HeaderForeground, RelativeSource={RelativeSource AncestorType={x:Type mosaic:ContentPanel}}}"
+                        Text="Click the chevron" />
+                </mosaic:ContentPanel.HeaderContent>
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap">
+                        Set ShowChevron="True" to place a chevron on the left hand side of the header. Clicking it toggles IsOpen, which animates the
+                        content and footer areas open and closed while the chevron rotates. When the panel is closed only the header remains visible.
+                    </TextBlock>
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap">
+                        IsOpen binds two-way by default, so it can be driven from a view model or from other controls.
+                    </TextBlock>
+                </StackPanel>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="The footer collapses along with the content." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                IsOpen="{Binding IsChecked, ElementName=OpenToggle, Mode=TwoWay}"
+                ShowChevron="True"
+                Title="Starts Closed">
+                <TextBlock TextWrapping="Wrap">
+                    This panel starts collapsed because IsOpen is bound to the unchecked checkbox below. The checkbox and the chevron stay in sync
+                    because IsOpen binds two-way. AnimationDuration controls how quickly the panel opens and closes.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="Bound to the checkbox below." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <CheckBox
+                x:Name="OpenToggle"
+                Margin="0,12,0,0"
+                Content="IsOpen"
+                IsChecked="False" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>
