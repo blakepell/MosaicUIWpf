@@ -450,6 +450,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  ColumnChart  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/bar-chart-48.png"
+                    Text="ColumnChart">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="ColumnChart" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ColumnChartExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ColumnChartExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ColumnChart}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ColumnChartExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/bar-chart-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Document Container  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

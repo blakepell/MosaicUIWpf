@@ -23,6 +23,7 @@
 		<None Remove="Assets\avatar-48.png" />
 		<None Remove="Assets\avatar.jpg" />
 		<None Remove="Assets\badge-48.png" />
+		<None Remove="Assets\bar-chart-48.png" />
 		<None Remove="Assets\black-and-white-48.png" />
 		<None Remove="Assets\bug-48.png" />
 		<None Remove="Assets\button-48.png" />
@@ -101,6 +102,7 @@
 		<Resource Include="Assets\avatar-48.png" />
 		<Resource Include="Assets\avatar.jpg" />
 		<Resource Include="Assets\badge-48.png" />
+		<Resource Include="Assets\bar-chart-48.png" />
 		<Resource Include="Assets\black-and-white-48.png" />
 		<Resource Include="Assets\bug-48.png" />
 		<Resource Include="Assets\button-48.png" />
@@ -376,6 +378,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\BadgeExample.xaml.cs">
 			<Link>LinkedSources\BadgeExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ColumnChartExample.xaml">
+			<Link>LinkedSources\ColumnChartExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ColumnChartExample.xaml.cs">
+			<Link>LinkedSources\ColumnChartExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\ItemsAutoScrollBehaviorExample.xaml">

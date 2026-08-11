@@ -1,0 +1,78 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ColumnChartExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Orientation="Vertical">
+
+            <TextBlock
+                Margin="0,0,0,10"
+                Text="The chart is bound to an ObservableCollection of ColumnChartItem. Adding, removing, or editing an item repaints the chart automatically, and the colors follow the current Mosaic theme."
+                TextWrapping="Wrap" />
+
+            <!--  The chart binds straight to the collection on the code behind, no refresh call needed.  -->
+            <Border
+                Height="380"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <controls:ColumnChart
+                    x:Name="Chart"
+                    ColumnClicked="Chart_ColumnClicked"
+                    InnerPadding="60,20,20,40"
+                    IntervalCount="5"
+                    Items="{Binding ChartItems, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+            </Border>
+
+            <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                <controls:AccentButton Click="RandomizeValues_Click" Content="Randomize Values" />
+                <controls:AccentButton
+                    Margin="5,0,0,0"
+                    AccentButtonType="Gray"
+                    Click="AddColumn_Click"
+                    Content="Add Column" />
+                <controls:AccentButton
+                    Margin="5,0,0,0"
+                    AccentButtonType="FluentRed"
+                    Click="RemoveColumn_Click"
+                    Content="Remove Column" />
+            </StackPanel>
+
+            <!--  Clicking a column raises ColumnClicked with the ColumnChartItem on the event args.  -->
+            <TextBlock
+                x:Name="ClickResult"
+                Margin="0,10,0,0"
+                Text="Click a column to see the ColumnClicked event fire."
+                TextWrapping="Wrap" />
+
+            <!--  A second chart showing per column brushes and a custom axis color.  -->
+            <TextBlock
+                Margin="0,20,0,10"
+                Text="Each ColumnChartItem can carry its own ColumnBrush. Items that leave it null fall back to the chart's ColumnBrush, which defaults to the theme accent."
+                TextWrapping="Wrap" />
+
+            <Border
+                Height="300"
+                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <controls:ColumnChart
+                    x:Name="StatusChart"
+                    InnerPadding="60,20,20,40"
+                    IntervalCount="4"
+                    Items="{Binding StatusItems, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>
