@@ -57,6 +57,7 @@
 		<None Remove="Assets\password-48.png" />
 		<None Remove="Assets\penny-heads.png" />
 		<None Remove="Assets\penny-tails.png" />
+		<None Remove="Assets\pie-chart-48.png" />
 		<None Remove="Assets\play-pause-stop-48.png" />
 		<None Remove="Assets\progress-48.png" />
 		<None Remove="Assets\search-48.png" />
@@ -138,6 +139,7 @@
 		<Resource Include="Assets\password-lock-48.png" />
 		<Resource Include="Assets\penny-heads.png" />
 		<Resource Include="Assets\penny-tails.png" />
+		<Resource Include="Assets\pie-chart-48.png" />
 		<Resource Include="Assets\play-pause-stop-48.png" />
 		<Resource Include="Assets\progress-48.png" />
 		<Resource Include="Assets\search-48.png" />
@@ -385,6 +387,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\ColumnChartExample.xaml.cs">
 			<Link>LinkedSources\ColumnChartExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\PieChartExample.xaml">
+			<Link>LinkedSources\PieChartExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\PieChartExample.xaml.cs">
+			<Link>LinkedSources\PieChartExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\ItemsAutoScrollBehaviorExample.xaml">
