@@ -554,6 +554,13 @@
 			<Link>LinkedSources\InfoCardExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\IPv4TextBoxExample.xaml">
+			<Link>LinkedSources\IPv4TextBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\IPv4TextBoxExample.xaml.cs">
+			<Link>LinkedSources\IPv4TextBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\GravatarImageExample.xaml">
 			<Link>LinkedSources\GravatarImageExample.xaml</Link>
 		</EmbeddedResource>

@@ -720,6 +720,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  IPv4 TextBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/numbers-input-48.png"
+                    Text="IPv4 TextBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="IPv4 TextBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.IPv4TextBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.IPv4TextBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:IPv4TextBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:IPv4TextBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/numbers-input-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Labeled Separator  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

@@ -1,0 +1,128 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style x:Key="Mosaic.IPv4TextBox.SegmentStyle" TargetType="{x:Type controls:NumericTextBox}">
+        <Setter Property="MinValue" Value="0" />
+        <Setter Property="MaxValue" Value="255" />
+        <Setter Property="MaxLength" Value="3" />
+        <Setter Property="MinWidth" Value="28" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type controls:IPv4TextBox}}}" />
+        <Setter Property="CaretBrush" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type controls:IPv4TextBox}}}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{x:Static ApplicationCommands.Paste}"
+                        Header="_Paste"
+                        InputGestureText="Ctrl+V" />
+                    <MenuItem
+                        Command="{x:Static ApplicationCommands.Copy}"
+                        Header="Copy _Selection"
+                        InputGestureText="Ctrl+C" />
+                    <Separator />
+                    <MenuItem
+                        Command="{x:Static controls:IPv4TextBox.CopyAddressCommand}"
+                        Header="Copy _IP Address" />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:NumericTextBox}">
+                    <ScrollViewer
+                        x:Name="PART_ContentHost"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        Focusable="False"
+                        HorizontalScrollBarVisibility="Hidden"
+                        VerticalScrollBarVisibility="Hidden" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{x:Type controls:IPv4TextBox}" TargetType="{x:Type controls:IPv4TextBox}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="6,2" />
+        <Setter Property="MinWidth" Value="156" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:IPv4TextBox}">
+                    <Border
+                        x:Name="PART_Border"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <controls:NumericTextBox x:Name="PART_Segment1" Grid.Column="0" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
+                            <controls:NumericTextBox x:Name="PART_Segment2" Grid.Column="2" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
+                            <controls:NumericTextBox x:Name="PART_Segment3" Grid.Column="4" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
+                            <controls:NumericTextBox x:Name="PART_Segment4" Grid.Column="6" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                                <Condition Property="IsEnabled" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_Border" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBackgroundBrush}}" />
+                            <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledBorderBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter Property="Opacity" Value="0.7" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
