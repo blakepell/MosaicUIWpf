@@ -182,6 +182,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [SmallPanel](./docs/SmallPanel.md) | Represents a custom panel that arranges its child elements in a single layer and ensures that each child is measured and arranged within the available space. |
 | [SplitButton](./docs/SplitButton.md) | Represents a split button with a primary action surface and a separate drop-down surface that opens a context menu. |
 | [SplitPanel](./docs/SplitPanel.md) | A two-pane container whose panes are separated by a draggable GridSplitter. The proportion of space allocated to the first pane is controlled by the two-way SplitterPosition property (0.0–1.0). Supports both vertical (top/bottom) and horizontal (side-by-side) orientation. |
+| [SqliteQueryControl](./docs/SqliteQueryControl.md) | A SQLite query workbench: a database explorer tree, a SQL editor with schema-aware auto-completion, and a results grid, wired to a transport style run/cancel tool bar. The explorer's context menu generates SQL and is extensible through a routed event. |
 | [StopwatchDisplay](./docs/StopwatchDisplay.md) | Represents a stopwatch control that provides functionality to display a stopwatch timer as UI element. |
 | [StringListEditor](./docs/StringListEditor.md) | A StringListEditor component. |
 | [SymbolRating](./docs/SymbolRating.md) | A symbol rating component. |
