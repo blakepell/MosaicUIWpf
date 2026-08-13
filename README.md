@@ -137,6 +137,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [CheckBoxList](./docs/CheckBoxList.md) | A ListBox variant that defaults to multiple selection and displays a checkbox beside each item. |
 | [ClipBorder](./docs/ClipBorder.md) | Border which allows clipping to its border. Useful especially when you need to clip to round corners. |
 | [ColorPicker](./docs/ColorPicker.md) | A color picker UserControl that allows users to select colors from presets or enter hex values. |
+| [ColumnChart](./docs/ColumnChart.md) | A responsive column chart backed by observable items, with theme-aware axes and columns plus click events and command support. |
 | [ContentPanel](./docs/ContentPanel.md) | A content panel with optional header and footer areas, configurable separators, corner radius, and header/footer brushes. |
 | [CopyTextBox](./docs/CopyTextBox.md) | A text box with an attached copy button that places its text onto the clipboard, with optional toast notification of success or failure. |
 | [DatePicker](./docs/DatePicker.md) | Represents a date picker control that displays a popup calendar for date selection. |
@@ -157,8 +158,10 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [HexColorTextBox](./docs/HexColorTextBox.md) | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |
 | [Hyperlink](./docs/Hyperlink.md) | Represents a hyperlink control that displays text and provides navigation functionality. |
 | [InertiaScrollViewer](./docs/InertiaScrollViewer.md) | Represents a scroll viewer that supports inertia-based scrolling animations. |
+| [InfoBubble](./docs/InfoBubble.md) | A content wrapper that overlays a count, capped value, status dot, or custom notification indicator in any of eight positions. |
 | [InfoCard](./docs/InfoCard.md) | An info card with a highlight color on the left hand side. |
 | [InputWaveformVisualizer](./docs/InputWaveformVisualizer.md) | Displays a waveform captured from a selectable Windows audio input device using WASAPI shared-mode capture so other applications can use the device concurrently. |
+| [IPv4TextBox](./docs/IPv4TextBox.md) | A themed four-segment IPv4 address editor with strict validation, two-way aggregate text binding, complete-address paste/copy, and keyboard navigation. |
 | [LabeledSeparator](./docs/LabeledSeparator.md) | A labeled separator. |
 | [LoopbackWaveformVisualizer](./docs/LoopbackWaveformVisualizer.md) | Displays a waveform captured from the default Windows audio render device using WASAPI loopback capture. Follows changes to the default console render device automatically. |
 | [MarkdownEditor](./docs/MarkdownEditor.md) | A self-contained markdown editor built on the Mosaic SyntaxEditor (AvalonEdit). Provides a formatting toolbar, list/heading helpers, markdown-aware key handling, an extended context menu, and document modification tracking. |
@@ -166,8 +169,11 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [MessageBox](./docs/MessageBox.md) | A themed, drop-in replacement for System.Windows.MessageBox. Mirrors the full set of Show overloads and reuses the standard WPF dialog enums. Switch with a single using alias. Honors the active Mosaic light/dark/high-contrast theme. |
 | [ModalDialog](./docs/ModalDialog.md) | A lookless modal dialog that displays arbitrary content centered in a host element's adorner layer. While open, the host is dimmed and optionally blurred, focus is cycled inside the dialog, and ShowAsync completes with the value passed to Close. |
 | [NumericTextBox](./docs/NumericTextBox.md) | TextBox that only allows digits, minus sign and a decimal point. |
+| [PieChart](./docs/PieChart.md) | An observable pie chart with an automatic palette, configurable legend placement, and click events and command support for slices. |
 | [ProgressRing](./docs/ProgressRing.md) | A progress ring component to indicate that a long running process is occurring. |
 | [PropertyGrid](./docs/PropertyGrid.md) | A control that displays the properties of an object in a grid format. |
+| [RadialColorPicker](./docs/RadialColorPicker.md) | A full HSV wheel color editor with synchronized color, brush, hex, RGBA channel, and optional alpha values. |
+| [RadialColorPickerBox](./docs/RadialColorPickerBox.md) | A compact swatch and hex field with a drop-down RadialColorPicker for property panels and forms. |
 | [RadialProgressBar](./docs/RadialProgressBar.md) | Represents a ProgressBar that renders its value as a circular arc, pie, or a ring of discrete shapes. |
 | [RelativePanel](./docs/RelativePanel.md) | Defines an area within which you can position and align child objects in relation to each other or the parent panel. |
 | [ScalingTextBlock](./docs/ScalingTextBlock.md) | A TextBlock that attempts to scale the font size so all text fits within the available space. MinFontSize and MaxFontSize serve as the lower and upper boundaries. |
@@ -191,6 +197,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [TabControl](./docs/TabControl.md) | Represents a tab control that allows users to switch between multiple tabs. |
 | [TableSizePicker](./docs/TableSizePicker.md) | A grid of cells used to pick a table size the way the Microsoft Word Insert Table button does. Hovering previews a region anchored at the upper left cell, clicking commits it and raises TableSizeSelected followed by RequestClose so a hosting popup, ribbon dropdown or context menu can close itself. Fully keyboard accessible. |
 | [TagBox](./docs/TagBox.md) | A specialized input control that turns typed text into removable, vibrantly-colored tags. Enter commits the current text as a tag, each tag has an ✕ button, and Backspace removes the last tag. Tags are surfaced through a bindable Tags collection. |
+| [TimeSpinner](./docs/TimeSpinner.md) | A nullable time-of-day picker with coordinated hour, minute, and AM/PM wheels, range and interval constraints, explicit or immediate commit, and TimeOnly/TimeSpan binding. |
 | [ToggleButton](./docs/ToggleButton.md) | Represents a button control that can switch between two states: checked and unchecked. This implementation looks like a theme styled switch. |
 | [ToggleSwitch](./docs/ToggleSwitch.md) | Represents a toggle switch control that allows users to switch between two states, such as "On" and "Off". |
 | [Toast / ToastManager](./docs/ToastManager.md) | Displays transient ToastMessage notification cards in a host element's adorner layer. Toasts support success, info, warning and error severities, timed or persistent dismissal, and quadrant-based positioning. |
