@@ -1,0 +1,305 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <BooleanToVisibilityConverter x:Key="Mosaic.SqliteQueryControl.BooleanToVisibility" />
+
+    <Style x:Key="Mosaic.SqliteQueryControl.ToolBarButton" TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style x:Key="Mosaic.SqliteQueryControl.ToolBarImage" TargetType="{x:Type Image}">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Stretch" Value="Uniform" />
+    </Style>
+
+    <Style x:Key="Mosaic.SqliteQueryControl.NodeImage" TargetType="{x:Type Image}">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Margin" Value="0,0,6,0" />
+        <Setter Property="Stretch" Value="Uniform" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="Mosaic.SqliteQueryControl.NodeText" TargetType="{x:Type TextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+    </Style>
+
+    <Style x:Key="Mosaic.SqliteQueryControl.NodeDetailText" TargetType="{x:Type TextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="6,0,0,0" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+    </Style>
+
+    <Style x:Key="{x:Type controls:SqliteQueryControl}" TargetType="{x:Type controls:SqliteQueryControl}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:SqliteQueryControl}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Border.Resources>
+                            <ResourceDictionary>
+                                <!--
+                                    The native control styles are only merged application wide when
+                                    ThemeManager.Native is enabled. Merging them here instead scopes
+                                    them to this template, so the grid and tree are themed correctly
+                                    regardless of that global opt in and without the library ever
+                                    touching Application.Current.Resources.
+                                -->
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ScrollBar.xaml" />
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ScrollViewer.xaml" />
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/DataGrid.xaml" />
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/TreeView.xaml" />
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/ToolBar.xaml" />
+                                    <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Themes/Native/Menu.xaml" />
+                                </ResourceDictionary.MergedDictionaries>
+
+                                <!--  A query results grid wants tighter rows than the default chrome.  -->
+                                <sys:Double x:Key="{x:Static themes:MosaicTheme.DataGridColumnHeaderHeight}">32</sys:Double>
+
+                                <!--
+                                    Both tool bars hold a fixed handful of buttons and cannot overflow,
+                                    so the native template's overflow chevron is only ever a disabled
+                                    stub hanging off the header band. The tool bar template resolves
+                                    this key with a DynamicResource, so overriding it here reaches it.
+                                -->
+                                <Style x:Key="ToolBarHorizontalOverflowButtonStyle" TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </Style>
+                            </ResourceDictionary>
+                        </Border.Resources>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" MinWidth="160" />
+                                <ColumnDefinition Width="4" />
+                                <ColumnDefinition Width="7*" MinWidth="240" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="40*" MinHeight="80" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="50*" MinHeight="80" />
+                            </Grid.RowDefinitions>
+
+                            <!--
+                                A ToolBarTray only ever grants a ToolBar its desired width, so a tool
+                                bar holding one or two buttons paints a short island rather than a
+                                header. Painting the band on a Border that spans every column, and
+                                leaving the trays and tool bars transparent on top of it, gives a
+                                single strip across the full width of the control while the buttons
+                                still line up over the pane they act on.
+                            -->
+                            <Border
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Background="{DynamicResource ToolBarHorizontalBackground}" />
+
+                            <!--  Database explorer tool bar  -->
+                            <ToolBarTray
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Background="Transparent"
+                                IsLocked="True">
+                                <ToolBar Background="Transparent">
+                                    <Button
+                                        x:Name="PART_RefreshButton"
+                                        Command="{Binding RefreshSchemaCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarButton}"
+                                        ToolTip="Refresh Schema">
+                                        <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/refresh2-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
+                                    </Button>
+                                </ToolBar>
+                            </ToolBarTray>
+
+                            <!--  Query tool bar and status  -->
+                            <DockPanel Grid.Row="0" Grid.Column="2">
+                                <StackPanel
+                                    Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Right"
+                                    Orientation="Horizontal">
+                                    <controls:ProgressRing
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0"
+                                        IsActive="{TemplateBinding IsQueryExecuting}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="{TemplateBinding StatusText}" />
+                                </StackPanel>
+
+                                <!--  Declared last so it fills whatever the status block leaves.  -->
+                                <ToolBarTray Background="Transparent" IsLocked="True">
+                                    <ToolBar Background="Transparent">
+                                        <controls:ExecutionControl
+                                            x:Name="PART_ExecutionControl"
+                                            PlayCommand="{Binding ExecuteQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            PlayToolTip="Execute Query (F5)"
+                                            ShowPauseButton="False"
+                                            StopCommand="{Binding CancelQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            StopToolTip="Cancel Query" />
+                                    </ToolBar>
+                                </ToolBarTray>
+                            </DockPanel>
+
+                            <!--  Database explorer  -->
+                            <TreeView
+                                x:Name="PART_SchemaTree"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                BorderThickness="0,1,1,1"
+                                DataContext="{Binding Schema, RelativeSource={RelativeSource TemplatedParent}}">
+                                <TreeViewItem IsExpanded="True" Tag="Database">
+                                    <TreeViewItem.Header>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/database-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                            <TextBlock
+                                                Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}"
+                                                Text="{Binding DatabaseName, TargetNullValue='(no database)'}"
+                                                ToolTip="{Binding ConnectionString}" />
+                                        </StackPanel>
+                                    </TreeViewItem.Header>
+
+                                    <TreeViewItem
+                                        IsExpanded="True"
+                                        ItemsSource="{Binding Tables}"
+                                        Tag="Tables">
+                                        <TreeViewItem.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/folder-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="Tables" />
+                                            </StackPanel>
+                                        </TreeViewItem.Header>
+                                        <TreeViewItem.ItemTemplate>
+                                            <HierarchicalDataTemplate DataType="{x:Type controls:SqliteTable}" ItemsSource="{Binding Fields}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/table-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                    <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <HierarchicalDataTemplate.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type controls:SqliteField}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/text-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                            <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
+                                                            <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeDetailText}" Text="{Binding Type, StringFormat='({0})'}" />
+                                                            <TextBlock
+                                                                Style="{StaticResource Mosaic.SqliteQueryControl.NodeDetailText}"
+                                                                Text="PK"
+                                                                ToolTip="Primary Key"
+                                                                Visibility="{Binding PrimaryKey, Converter={StaticResource Mosaic.SqliteQueryControl.BooleanToVisibility}}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </HierarchicalDataTemplate.ItemTemplate>
+                                            </HierarchicalDataTemplate>
+                                        </TreeViewItem.ItemTemplate>
+                                    </TreeViewItem>
+
+                                    <TreeViewItem ItemsSource="{Binding Views}" Tag="Views">
+                                        <TreeViewItem.Header>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/folder-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="Views" />
+                                            </StackPanel>
+                                        </TreeViewItem.Header>
+                                        <TreeViewItem.ItemTemplate>
+                                            <HierarchicalDataTemplate DataType="{x:Type controls:SqliteView}" ItemsSource="{Binding Fields}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/table-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                    <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <HierarchicalDataTemplate.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type controls:SqliteField}">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/text-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
+                                                            <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
+                                                            <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeDetailText}" Text="{Binding Type, StringFormat='({0})'}" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </HierarchicalDataTemplate.ItemTemplate>
+                                            </HierarchicalDataTemplate>
+                                        </TreeViewItem.ItemTemplate>
+                                    </TreeViewItem>
+                                </TreeViewItem>
+                            </TreeView>
+
+                            <GridSplitter
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Width="4"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                ResizeBehavior="PreviousAndNext"
+                                ResizeDirection="Columns" />
+
+                            <!--  SQL editor  -->
+                            <controls:SyntaxEditor
+                                x:Name="PART_SqlEditor"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                BorderThickness="1,1,0,1"
+                                HorizontalScrollBarVisibility="Auto"
+                                Language="Sqlite"
+                                ShowLineNumbers="True"
+                                VerticalScrollBarVisibility="Auto"
+                                WordWrap="False" />
+
+                            <GridSplitter
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Height="4"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                ResizeBehavior="PreviousAndNext"
+                                ResizeDirection="Rows" />
+
+                            <!--  Results  -->
+                            <DataGrid
+                                x:Name="PART_Results"
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                AutoGenerateColumns="True"
+                                BorderThickness="0,1,0,0"
+                                CanUserAddRows="False"
+                                CanUserDeleteRows="False"
+                                EnableRowVirtualization="True"
+                                IsReadOnly="True"
+                                SelectionMode="Extended"
+                                SelectionUnit="CellOrRowHeader"
+                                VirtualizingPanel.IsVirtualizing="True"
+                                VirtualizingPanel.VirtualizationMode="Recycling" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="SQLite" extensions=".sql;.sqlite" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <!-- Visual Studio Dark Theme Colors - matches Sql.Dark.xshd -->
+  <Color name="Comment" foreground="#17DF3D" exampleText="-- comment" />
+  <Color name="String" foreground="#D69D85" exampleText="WHERE name = 'value'" />
+  <Color name="Identifier" foreground="#4EC9B0" exampleText="[Table Name]" />
+  <Color name="Number" foreground="#B5CEA8" exampleText="123.45" />
+  <Color name="Keyword" fontWeight="bold" foreground="#569CD6" exampleText="SELECT * FROM t" />
+  <Color name="DataType" foreground="#4EC9B0" exampleText="id INTEGER" />
+  <Color name="Function" foreground="#DCDCAA" exampleText="COUNT(*)" />
+  <Color name="Variable" foreground="#9CDCFE" exampleText="@parameter" />
+  <Color name="TaskMarker" fontWeight="bold" foreground="#F7630C" exampleText="-- TODO: fix" />
+  <Color name="Punctuation" foreground="#D4D4D4" exampleText="a, b, c" />
+
+  <RuleSet name="CommentMarkerSet">
+    <Keywords color="TaskMarker">
+      <Word>TODO</Word>
+      <Word>FIXME</Word>
+      <Word>HACK</Word>
+      <Word>UNDONE</Word>
+    </Keywords>
+  </RuleSet>
+
+  <RuleSet ignoreCase="true">
+    <Span color="Comment" ruleSet="CommentMarkerSet" multiline="true">
+      <Begin>/\*</Begin>
+      <End>\*/</End>
+    </Span>
+    <Span color="Comment" ruleSet="CommentMarkerSet">
+      <Begin>--</Begin>
+    </Span>
+
+    <Span color="String" multiline="true">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <!-- doubled single quote is an escaped quote -->
+        <Span begin="''" end="" />
+      </RuleSet>
+    </Span>
+
+    <!-- SQLite accepts bracketed, double quoted and backtick quoted identifiers. -->
+    <Span color="Identifier">
+      <Begin>\[</Begin>
+      <End>]</End>
+    </Span>
+    <Span color="Identifier">
+      <Begin>"</Begin>
+      <End>"</End>
+    </Span>
+    <Span color="Identifier">
+      <Begin>`</Begin>
+      <End>`</End>
+    </Span>
+
+    <!-- Bound parameters: @name, :name, $name and ?NNN -->
+    <Rule color="Variable">
+      [@:$][\w\d_]+|\?\d*
+    </Rule>
+
+    <Keywords color="Keyword">
+      <Word>ABORT</Word>
+      <Word>ACTION</Word>
+      <Word>ADD</Word>
+      <Word>AFTER</Word>
+      <Word>ALL</Word>
+      <Word>ALTER</Word>
+      <Word>ALWAYS</Word>
+      <Word>ANALYZE</Word>
+      <Word>AND</Word>
+      <Word>AS</Word>
+      <Word>ASC</Word>
+      <Word>ATTACH</Word>
+      <Word>AUTOINCREMENT</Word>
+      <Word>BEFORE</Word>
+      <Word>BEGIN</Word>
+      <Word>BETWEEN</Word>
+      <Word>BY</Word>
+      <Word>CASCADE</Word>
+      <Word>CASE</Word>
+      <Word>CAST</Word>
+      <Word>CHECK</Word>
+      <Word>COLLATE</Word>
+      <Word>COLUMN</Word>
+      <Word>COMMIT</Word>
+      <Word>CONFLICT</Word>
+      <Word>CONSTRAINT</Word>
+      <Word>CREATE</Word>
+      <Word>CROSS</Word>
+      <Word>CURRENT</Word>
+      <Word>CURRENT_DATE</Word>
+      <Word>CURRENT_TIME</Word>
+      <Word>CURRENT_TIMESTAMP</Word>
+      <Word>DATABASE</Word>
+      <Word>DEFAULT</Word>
+      <Word>DEFERRABLE</Word>
+      <Word>DEFERRED</Word>
+      <Word>DELETE</Word>
+      <Word>DESC</Word>
+      <Word>DETACH</Word>
+      <Word>DISTINCT</Word>
+      <Word>DO</Word>
+      <Word>DROP</Word>
+      <Word>EACH</Word>
+      <Word>ELSE</Word>
+      <Word>END</Word>
+      <Word>ESCAPE</Word>
+      <Word>EXCEPT</Word>
+      <Word>EXCLUDE</Word>
+      <Word>EXCLUSIVE</Word>
+      <Word>EXISTS</Word>
+      <Word>EXPLAIN</Word>
+      <Word>FAIL</Word>
+      <Word>FILTER</Word>
+      <Word>FIRST</Word>
+      <Word>FOLLOWING</Word>
+      <Word>FOR</Word>
+      <Word>FOREIGN</Word>
+      <Word>FROM</Word>
+      <Word>FULL</Word>
+      <Word>GENERATED</Word>
+      <Word>GROUP</Word>
+      <Word>GROUPS</Word>
+      <Word>HAVING</Word>
+      <Word>IF</Word>
+      <Word>IGNORE</Word>
+      <Word>IMMEDIATE</Word>
+      <Word>IN</Word>
+      <Word>INDEX</Word>
+      <Word>INDEXED</Word>
+      <Word>INITIALLY</Word>
+      <Word>INNER</Word>
+      <Word>INSERT</Word>
+      <Word>INSTEAD</Word>
+      <Word>INTERSECT</Word>
+      <Word>INTO</Word>
+      <Word>IS</Word>
+      <Word>ISNULL</Word>
+      <Word>JOIN</Word>
+      <Word>KEY</Word>
+      <Word>LAST</Word>
+      <Word>LEFT</Word>
+      <Word>LIKE</Word>
+      <Word>LIMIT</Word>
+      <Word>MATCH</Word>
+      <Word>NATURAL</Word>
+      <Word>NO</Word>
+      <Word>NOT</Word>
+      <Word>NOTHING</Word>
+      <Word>NOTNULL</Word>
+      <Word>NULL</Word>
+      <Word>NULLS</Word>
+      <Word>OF</Word>
+      <Word>OFFSET</Word>
+      <Word>ON</Word>
+      <Word>OR</Word>
+      <Word>ORDER</Word>
+      <Word>OTHERS</Word>
+      <Word>OUTER</Word>
+      <Word>OVER</Word>
+      <Word>PARTITION</Word>
+      <Word>PLAN</Word>
+      <Word>PRAGMA</Word>
+      <Word>PRECEDING</Word>
+      <Word>PRIMARY</Word>
+      <Word>QUERY</Word>
+      <Word>RAISE</Word>
+      <Word>RANGE</Word>
+      <Word>RECURSIVE</Word>
+      <Word>REFERENCES</Word>
+      <Word>REGEXP</Word>
+      <Word>REINDEX</Word>
+      <Word>RELEASE</Word>
+      <Word>RENAME</Word>
+      <Word>RESTRICT</Word>
+      <Word>RETURNING</Word>
+      <Word>RIGHT</Word>
+      <Word>ROLLBACK</Word>
+      <Word>ROW</Word>
+      <Word>ROWS</Word>
+      <Word>SAVEPOINT</Word>
+      <Word>SELECT</Word>
+      <Word>SET</Word>
+      <Word>TABLE</Word>
+      <Word>TEMP</Word>
+      <Word>TEMPORARY</Word>
+      <Word>THEN</Word>
+      <Word>TIES</Word>
+      <Word>TO</Word>
+      <Word>TRANSACTION</Word>
+      <Word>TRIGGER</Word>
+      <Word>UNBOUNDED</Word>
+      <Word>UNION</Word>
+      <Word>UNIQUE</Word>
+      <Word>UPDATE</Word>
+      <Word>USING</Word>
+      <Word>VACUUM</Word>
+      <Word>VALUES</Word>
+      <Word>VIEW</Word>
+      <Word>VIRTUAL</Word>
+      <Word>WHEN</Word>
+      <Word>WHERE</Word>
+      <Word>WINDOW</Word>
+      <Word>WITH</Word>
+      <Word>WITHOUT</Word>
+    </Keywords>
+
+    <!-- SQLite storage classes and the common type affinity names. -->
+    <Keywords color="DataType">
+      <Word>BLOB</Word>
+      <Word>BOOLEAN</Word>
+      <Word>CLOB</Word>
+      <Word>DECIMAL</Word>
+      <Word>DOUBLE</Word>
+      <Word>FLOAT</Word>
+      <Word>INT</Word>
+      <Word>INT2</Word>
+      <Word>INT8</Word>
+      <Word>INTEGER</Word>
+      <Word>MEDIUMINT</Word>
+      <Word>NCHAR</Word>
+      <Word>NUMERIC</Word>
+      <Word>NVARCHAR</Word>
+      <Word>REAL</Word>
+      <Word>SMALLINT</Word>
+      <Word>TEXT</Word>
+      <Word>TINYINT</Word>
+      <Word>VARCHAR</Word>
+    </Keywords>
+
+    <Keywords color="Function">
+      <Word>ABS</Word>
+      <Word>AVG</Word>
+      <Word>CHAR</Word>
+      <Word>COALESCE</Word>
+      <Word>COUNT</Word>
+      <Word>CUME_DIST</Word>
+      <Word>DATE</Word>
+      <Word>DATETIME</Word>
+      <Word>DENSE_RANK</Word>
+      <Word>GLOB</Word>
+      <Word>GROUP_CONCAT</Word>
+      <Word>HEX</Word>
+      <Word>IFNULL</Word>
+      <Word>IIF</Word>
+      <Word>INSTR</Word>
+      <Word>JSON</Word>
+      <Word>JSON_ARRAY</Word>
+      <Word>JSON_ARRAY_LENGTH</Word>
+      <Word>JSON_EACH</Word>
+      <Word>JSON_EXTRACT</Word>
+      <Word>JSON_GROUP_ARRAY</Word>
+      <Word>JSON_GROUP_OBJECT</Word>
+      <Word>JSON_INSERT</Word>
+      <Word>JSON_OBJECT</Word>
+      <Word>JSON_PATCH</Word>
+      <Word>JSON_QUOTE</Word>
+      <Word>JSON_REMOVE</Word>
+      <Word>JSON_REPLACE</Word>
+      <Word>JSON_SET</Word>
+      <Word>JSON_TREE</Word>
+      <Word>JSON_TYPE</Word>
+      <Word>JSON_VALID</Word>
+      <Word>JULIANDAY</Word>
+      <Word>LAG</Word>
+      <Word>LAST_INSERT_ROWID</Word>
+      <Word>LAST_VALUE</Word>
+      <Word>LEAD</Word>
+      <Word>LENGTH</Word>
+      <Word>LIKELIHOOD</Word>
+      <Word>LIKELY</Word>
+      <Word>LOAD_EXTENSION</Word>
+      <Word>LOWER</Word>
+      <Word>LTRIM</Word>
+      <Word>MAX</Word>
+      <Word>MIN</Word>
+      <Word>NTH_VALUE</Word>
+      <Word>NTILE</Word>
+      <Word>NULLIF</Word>
+      <Word>PERCENT_RANK</Word>
+      <Word>PRINTF</Word>
+      <Word>QUOTE</Word>
+      <Word>RANDOM</Word>
+      <Word>RANDOMBLOB</Word>
+      <Word>RANK</Word>
+      <Word>REPLACE</Word>
+      <Word>ROUND</Word>
+      <Word>ROW_NUMBER</Word>
+      <Word>RTRIM</Word>
+      <Word>SIGN</Word>
+      <Word>SOUNDEX</Word>
+      <Word>SQLITE_COMPILEOPTION_GET</Word>
+      <Word>SQLITE_COMPILEOPTION_USED</Word>
+      <Word>SQLITE_OFFSET</Word>
+      <Word>SQLITE_SOURCE_ID</Word>
+      <Word>SQLITE_VERSION</Word>
+      <Word>STRFTIME</Word>
+      <Word>SUBSTR</Word>
+      <Word>SUM</Word>
+      <Word>TIME</Word>
+      <Word>TOTAL</Word>
+      <Word>TOTAL_CHANGES</Word>
+      <Word>TRIM</Word>
+      <Word>TYPEOF</Word>
+      <Word>UNICODE</Word>
+      <Word>UNLIKELY</Word>
+      <Word>UPPER</Word>
+      <Word>ZEROBLOB</Word>
+    </Keywords>
+
+    <!-- Digits -->
+    <Rule color="Number">
+      \b0[xX][0-9a-fA-F]+
+      |
+      (	\b\d+(\.[0-9]+)?
+      |	\.[0-9]+
+      )
+      ([eE][+-]?[0-9]+)?
+    </Rule>
+
+    <Rule color="Punctuation">
+      [?,.;()\[\]{}+\-/%*&lt;&gt;^~!|&amp;=]+
+    </Rule>
+  </RuleSet>
+</SyntaxDefinition>

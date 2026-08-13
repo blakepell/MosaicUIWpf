@@ -35,6 +35,7 @@
 		<None Remove="Assets\collage-96.png" />
 		<None Remove="Assets\color-mode-48.png" />
 		<None Remove="Assets\color-swatch-48.png" />
+		<None Remove="Assets\database-48.png" />
 		<None Remove="Assets\drive-48.png" />
 		<None Remove="Assets\dropdown-field-48.png" />
 		<None Remove="Assets\edit-property-48.png" />
@@ -118,6 +119,7 @@
 		<Resource Include="Assets\color-mode-48.png" />
 		<Resource Include="Assets\color-swatch-48.png" />
 		<Resource Include="Assets\dashboard-48.png" />
+		<Resource Include="Assets\database-48.png" />
 		<Resource Include="Assets\drive-48.png" />
 		<Resource Include="Assets\dropdown-field-48.png" />
 		<Resource Include="Assets\edit-property-48.png" />
@@ -184,6 +186,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\MarkdownViewerExample.xaml.cs">
 			<Link>LinkedSources\MarkdownViewerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\SqliteQueryControlExample.xaml">
+			<Link>LinkedSources\SqliteQueryControlExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\SqliteQueryControlExample.xaml.cs">
+			<Link>LinkedSources\SqliteQueryControlExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\SyntaxEditorExample.xaml">

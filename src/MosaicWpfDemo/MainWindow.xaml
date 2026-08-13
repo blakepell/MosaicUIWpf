@@ -1314,6 +1314,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  SqliteQueryControl Control  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/database-48.png"
+                    Text="SqliteQueryControl">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="SqliteQueryControl" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.SqliteQueryControlExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.SqliteQueryControlExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:SqliteQueryControl}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:SqliteQueryControlExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/database-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  SyntaxEditor Control  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

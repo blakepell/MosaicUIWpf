@@ -30,7 +30,7 @@ namespace Mosaic.UI.Wpf.Tests
         /// <returns>The parsed highlighting definition.</returns>
         private static IHighlightingDefinition Load(string theme)
         {
-            string resourceName = $"Mosaic.UI.Wpf.Assets.StackTrace.{theme}.xshd";
+            string resourceName = $"Mosaic.UI.Wpf.Assets.SyntaxEditor.StackTrace.{theme}.xshd";
             using var stream = typeof(Mosaic.UI.Wpf.Controls.SyntaxEditor).Assembly.GetManifestResourceStream(resourceName);
             Assert.NotNull(stream);
 

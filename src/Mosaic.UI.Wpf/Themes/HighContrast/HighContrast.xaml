@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <ResourceDictionary.MergedDictionaries>
@@ -71,6 +72,9 @@
 
     <Thickness x:Key="{x:Static themes:MosaicTheme.ButtonBorderThickness}">0.8</Thickness>
     <CornerRadius x:Key="{x:Static themes:MosaicTheme.ButtonCornerRadius}">0</CornerRadius>
+
+    <!--  DataGrid density. Override in a local resource scope for a tighter grid.  -->
+    <sys:Double x:Key="{x:Static themes:MosaicTheme.DataGridColumnHeaderHeight}">38</sys:Double>
 
     <!--  Native control resource overrides  -->
     <Color x:Key="Button.Static.BackgroundColor">#FF000000</Color>

@@ -237,6 +237,13 @@
         /// </summary>
         public static ComponentResourceKey RoundedWindowTemplate { get; } = new(typeof(MosaicTheme), "RoundedWindowTemplate");
 
+        /// <summary>
+        /// Gets the resource key for the height of a <see cref="System.Windows.Controls.DataGrid"/>
+        /// column header. Override it in a local resource scope to tighten grid density without
+        /// re-templating the grid.
+        /// </summary>
+        public static ComponentResourceKey DataGridColumnHeaderHeight { get; } = new(typeof(MosaicTheme), "DataGridColumnHeaderHeight");
+
         // Typography
         public static ComponentResourceKey FontFamily { get; } = new(typeof(MosaicTheme), "FontFamily");
         public static ComponentResourceKey MonospaceFontFamily { get; } = new(typeof(MosaicTheme), "MonospaceFontFamily");

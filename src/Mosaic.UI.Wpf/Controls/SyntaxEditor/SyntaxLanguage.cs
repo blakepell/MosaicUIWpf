@@ -113,7 +113,13 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// .NET/C# exception stack traces (.stacktrace).
         /// </summary>
-        StackTrace
+        StackTrace,
+
+        /// <summary>
+        /// The SQLite SQL dialect (.sqlite, .db). Differs from <see cref="Sql"/> by highlighting
+        /// SQLite specific keywords (<c>PRAGMA</c>, <c>AUTOINCREMENT</c>, ...) and built-in functions.
+        /// </summary>
+        Sqlite
     }
 
     /// <summary>
@@ -137,6 +143,7 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Xml => "Xml",
                 SyntaxLanguage.JavaScript => "JavaScript",
                 SyntaxLanguage.Sql => "Sql",
+                SyntaxLanguage.Sqlite => "Sqlite",
                 SyntaxLanguage.Markdown => "Markdown",
                 SyntaxLanguage.C => "C",
                 SyntaxLanguage.Lua => "Lua",
@@ -165,7 +172,7 @@ namespace Mosaic.UI.Wpf.Controls
                 SyntaxLanguage.Json or SyntaxLanguage.CSharp or SyntaxLanguage.JavaScript or SyntaxLanguage.C
                     or SyntaxLanguage.Java or SyntaxLanguage.Swift or SyntaxLanguage.Php => new SyntaxCommentDefinition("//"),
                 SyntaxLanguage.Python or SyntaxLanguage.Perl => new SyntaxCommentDefinition("#"),
-                SyntaxLanguage.Lua or SyntaxLanguage.Sql => new SyntaxCommentDefinition("--"),
+                SyntaxLanguage.Lua or SyntaxLanguage.Sql or SyntaxLanguage.Sqlite => new SyntaxCommentDefinition("--"),
                 SyntaxLanguage.Ini => new SyntaxCommentDefinition(";"),
                 SyntaxLanguage.Basic => new SyntaxCommentDefinition("REM"),
                 SyntaxLanguage.VbNet => new SyntaxCommentDefinition("'"),
@@ -199,6 +206,7 @@ namespace Mosaic.UI.Wpf.Controls
                 ".cs" => SyntaxLanguage.CSharp,
                 ".js" or ".mjs" or ".cjs" or ".jsx" => SyntaxLanguage.JavaScript,
                 ".sql" => SyntaxLanguage.Sql,
+                ".sqlite" or ".sqlite3" or ".db" => SyntaxLanguage.Sqlite,
                 ".md" or ".markdown" => SyntaxLanguage.Markdown,
                 ".c" or ".h" => SyntaxLanguage.C,
                 ".lua" => SyntaxLanguage.Lua,
