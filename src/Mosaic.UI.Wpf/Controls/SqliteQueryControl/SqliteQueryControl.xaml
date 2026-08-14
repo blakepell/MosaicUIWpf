@@ -5,14 +5,24 @@
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
+    <!--
+        The schema tool bar sits beside an ExecutionControl on the same header
+        band, so it borrows that control's button chrome to keep the hover,
+        pressed and disabled states identical across the strip.
+    -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ExecutionControl/ExecutionControl.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <BooleanToVisibilityConverter x:Key="Mosaic.SqliteQueryControl.BooleanToVisibility" />
 
-    <Style x:Key="Mosaic.SqliteQueryControl.ToolBarButton" TargetType="{x:Type Button}">
+    <Style
+        x:Key="Mosaic.SqliteQueryControl.ToolBarButton"
+        BasedOn="{StaticResource MosaicExecutionButtonStyle}"
+        TargetType="{x:Type Button}">
         <Setter Property="Width" Value="26" />
         <Setter Property="Height" Value="26" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4" />
     </Style>
 
     <Style x:Key="Mosaic.SqliteQueryControl.ToolBarImage" TargetType="{x:Type Image}">
@@ -148,7 +158,8 @@
                                         x:Name="PART_RefreshButton"
                                         Command="{Binding RefreshSchemaCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                         Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarButton}"
-                                        ToolTip="Refresh Schema">
+                                        ToolTip="Refresh Schema"
+                                        ToolTipService.ShowOnDisabled="True">
                                         <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/refresh2-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
                                     </Button>
                                 </ToolBar>
