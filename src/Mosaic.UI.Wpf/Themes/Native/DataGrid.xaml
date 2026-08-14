@@ -323,7 +323,7 @@
     <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
-        <Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="BorderThickness" Value="0,0,.9,.9" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="Padding" Value="6,2" />

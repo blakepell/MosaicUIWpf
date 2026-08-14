@@ -87,6 +87,26 @@
                                 <Style x:Key="ToolBarHorizontalOverflowButtonStyle" TargetType="{x:Type ToggleButton}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </Style>
+
+                                <!--
+                                    Both the native and the stock WPF TreeViewItem styles keep setters
+                                    that bind HorizontalContentAlignment, VerticalContentAlignment and
+                                    Padding to an ancestor ItemsControl. A generated container resolves
+                                    its style before it is parented, so that lookup finds no ancestor and
+                                    logs a binding error for every schema node the tree generates. An
+                                    implicit style cannot help - the unparented container never sees this
+                                    scope - so the style is applied as ItemContainerStyle instead, which
+                                    the generator hands straight to the container. Pinning the three
+                                    values to what the TreeView would have supplied drops the lookup.
+                                -->
+                                <Style
+                                    x:Key="Mosaic.SqliteQueryControl.TreeViewItem"
+                                    BasedOn="{StaticResource DefaultTreeViewItem}"
+                                    TargetType="{x:Type TreeViewItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Padding" Value="2" />
+                                </Style>
                             </ResourceDictionary>
                         </Border.Resources>
 
@@ -173,7 +193,8 @@
                                 Grid.Column="0"
                                 BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                                 BorderThickness="0,1,1,1"
-                                DataContext="{Binding Schema, RelativeSource={RelativeSource TemplatedParent}}">
+                                DataContext="{Binding Schema, RelativeSource={RelativeSource TemplatedParent}}"
+                                ItemContainerStyle="{StaticResource Mosaic.SqliteQueryControl.TreeViewItem}">
                                 <TreeViewItem IsExpanded="True" Tag="Database">
                                     <TreeViewItem.Header>
                                         <StackPanel Orientation="Horizontal">
@@ -187,6 +208,7 @@
 
                                     <TreeViewItem
                                         IsExpanded="True"
+                                        ItemContainerStyle="{StaticResource Mosaic.SqliteQueryControl.TreeViewItem}"
                                         ItemsSource="{Binding Tables}"
                                         Tag="Tables">
                                         <TreeViewItem.Header>
@@ -196,7 +218,10 @@
                                             </StackPanel>
                                         </TreeViewItem.Header>
                                         <TreeViewItem.ItemTemplate>
-                                            <HierarchicalDataTemplate DataType="{x:Type controls:SqliteTable}" ItemsSource="{Binding Fields}">
+                                            <HierarchicalDataTemplate
+                                                DataType="{x:Type controls:SqliteTable}"
+                                                ItemContainerStyle="{StaticResource Mosaic.SqliteQueryControl.TreeViewItem}"
+                                                ItemsSource="{Binding Fields}">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/table-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
                                                     <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
@@ -219,7 +244,10 @@
                                         </TreeViewItem.ItemTemplate>
                                     </TreeViewItem>
 
-                                    <TreeViewItem ItemsSource="{Binding Views}" Tag="Views">
+                                    <TreeViewItem
+                                        ItemContainerStyle="{StaticResource Mosaic.SqliteQueryControl.TreeViewItem}"
+                                        ItemsSource="{Binding Views}"
+                                        Tag="Views">
                                         <TreeViewItem.Header>
                                             <StackPanel Orientation="Horizontal">
                                                 <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/folder-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
@@ -227,7 +255,10 @@
                                             </StackPanel>
                                         </TreeViewItem.Header>
                                         <TreeViewItem.ItemTemplate>
-                                            <HierarchicalDataTemplate DataType="{x:Type controls:SqliteView}" ItemsSource="{Binding Fields}">
+                                            <HierarchicalDataTemplate
+                                                DataType="{x:Type controls:SqliteView}"
+                                                ItemContainerStyle="{StaticResource Mosaic.SqliteQueryControl.TreeViewItem}"
+                                                ItemsSource="{Binding Fields}">
                                                 <StackPanel Orientation="Horizontal">
                                                     <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/table-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.NodeImage}" />
                                                     <TextBlock Style="{StaticResource Mosaic.SqliteQueryControl.NodeText}" Text="{Binding Name}" />
