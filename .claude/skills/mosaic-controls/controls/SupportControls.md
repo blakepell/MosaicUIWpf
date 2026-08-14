@@ -18,6 +18,21 @@ These are public WPF controls used mainly by Mosaic native style dictionaries an
 |---|---|
 | `AnimateScroll(double toValue, Action onCompleted = null)` | Animates vertical scroll offset to `toValue` over 800 ms. |
 
+### ScrollViewerBehavior (attached helper)
+
+**Namespace:** `Mosaic.UI.Wpf.Controls` (note: not `Mosaic.UI.Wpf.Behaviors`)  
+**Source:** `src/Mosaic.UI.Wpf/Controls/ScrollViewer/ScrollViewerBehavior.cs`
+
+A static class exposing one attached property that lets a `WDScrollViewer`'s vertical offset be set, bound, or animated from XAML (`ScrollViewer.VerticalOffset` itself is read-only).
+
+| Attached property | Type | Default | Description |
+|---|---|---|---|
+| `VerticalOffset` | `double` | `0.0` | Scrolls the target `WDScrollViewer` to this offset when it changes. Has no effect on other element types. |
+
+```xml
+<mosaic:WDScrollViewer mosaic:ScrollViewerBehavior.VerticalOffset="{Binding Offset}" />
+```
+
 ## SliderRepeatButton
 
 **Base class:** `RepeatButton`  

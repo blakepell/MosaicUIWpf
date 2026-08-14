@@ -34,6 +34,7 @@ The `Mosaic.UI.Wpf.Behaviors` CLR namespace is also mapped to the canonical Mosa
 | `BlinkingBehavior` | `Behavior<FrameworkElement>` | `FrameworkElement` | Blink (animate opacity) an element |
 | `FrameworkElementZoomFontSizeOnMouseWheelBehavior` | `Behavior<FrameworkElement>` | `FrameworkElement` | Ctrl+MouseWheel font zoom |
 | `BrushModifier` | Attached helper | `Control` / `Border` / `Panel` | Lighten/darken background brush by HSL % |
+| `ImageMouseWheelZoomBehavior` | `Behavior<Image>` | `Image` | Mouse-wheel zoom around the cursor via a scale transform |
 | `TextBoxCopyBehavior` | `Behavior<Button>` | `Button` | Copy a target `TextBox` to clipboard on click |
 | `TextBoxClearTextOnEscapeBehavior` | `Behavior<TextBoxBase>` | `TextBoxBase` | Clear text on Escape |
 | `BlockCaretBehavior` | `Behavior<TextBox>` | `TextBox` | Terminal-style block caret |
@@ -47,7 +48,9 @@ The `Mosaic.UI.Wpf.Behaviors` CLR namespace is also mapped to the canonical Mosa
 | `OpenContextMenuBehavior` | `Behavior<ButtonBase>` | `ButtonBase` | Open the button's `ContextMenu` on click |
 | `OpenWindowBehavior` | `Behavior<FrameworkElement>` | `ButtonBase` / `MenuItem` | Open a window of a given type on click |
 | `CloseWindowOnEscapeBehavior` | `Behavior<Window>` | `Window` | Close the window on Escape |
+| `WindowCloseConfirmationBehavior` | `Behavior<Window>` | `Window` | Confirm before the window closes |
 | `WindowChromeBehavior` | Attached helper | `Window` | Custom borderless chrome + rounded corners |
+| `ScrollViewerBehavior` | Attached helper (in `Mosaic.UI.Wpf.Controls`) | `WDScrollViewer` | Bindable/animatable vertical scroll offset — see [SupportControls.md](SupportControls.md) |
 | `AvalonTextEditorBindingBehavior` | `Behavior<TextEditor>` | AvalonEdit `TextEditor` | Bindable text/selection/caret — see [AvalonEditBehaviors.md](AvalonEditBehaviors.md) |
 | `AvalonEditPropertiesBehavior` | `Behavior<TextEditor>` | AvalonEdit `TextEditor` | Caret brush + hyperlinks — see [AvalonEditBehaviors.md](AvalonEditBehaviors.md) |
 | `AvalonEditVtTerminalBehavior` | `Behavior<TextEditor>` | AvalonEdit `TextEditor` | Retro VT/CRT skin — see [AvalonEditBehaviors.md](AvalonEditBehaviors.md) |
@@ -122,6 +125,29 @@ Lightens or darkens an element's background `SolidColorBrush` by an HSL-lightnes
 <Border behaviors:BrushModifier.AdjustBackgroundPercentage="-0.2"
         Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
 ```
+
+### ImageMouseWheelZoomBehavior
+
+Adds mouse-wheel zooming to an `Image` by applying a render `ScaleTransform`, zooming around the current mouse position. The original transform is restored on detach.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `MinZoom` | `double` | `1.0` | Minimum zoom scale. |
+| `MaxZoom` | `double` | `32.0` | Maximum zoom scale. |
+| `ZoomFactor` | `double` | `1.2` | Multiplier applied per wheel step. |
+| `RequireCtrl` | `bool` | — | Whether Ctrl must be held to zoom. |
+| `ResetOnSourceChanged` | `bool` | — | Reset the zoom when the image `Source` changes. |
+| `ZoomTarget` | `FrameworkElement?` | `null` | Element the transform is applied to; `null` scales the image itself. Set this to a wrapping container when the image should scale inside it. |
+
+```xml
+<Image Source="{Binding Screenshot}">
+    <i:Interaction.Behaviors>
+        <behaviors:ImageMouseWheelZoomBehavior MaxZoom="8" RequireCtrl="True" />
+    </i:Interaction.Behaviors>
+</Image>
+```
+
+Demo: `src/MosaicWpfDemo/Views/Examples/ImageMouseWheelZoomBehaviorExample.xaml`.
 
 ---
 
@@ -355,6 +381,27 @@ No properties.
     </i:Interaction.Behaviors>
 </Window>
 ```
+
+### WindowCloseConfirmationBehavior
+
+Hooks the window's `Closing` event and prompts the user with a Mosaic message box. Cancelling the prompt cancels the close.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Message` | `string` | `"Are you sure you want to close this window?"` | The confirmation message. |
+| `IsEnabled` | `bool` | `true` | Whether the confirmation is active. Bind this to skip the prompt when there are no unsaved changes. |
+
+```xml
+<Window ...>
+    <i:Interaction.Behaviors>
+        <behaviors:WindowCloseConfirmationBehavior
+            Message="Discard unsaved changes and exit?"
+            IsEnabled="{Binding IsDirty}" />
+    </i:Interaction.Behaviors>
+</Window>
+```
+
+Demo: `src/MosaicWpfDemo/Views/Examples/WindowCloseConfirmationBehaviorExample.xaml`.
 
 ### WindowChromeBehavior (attached helper)
 
