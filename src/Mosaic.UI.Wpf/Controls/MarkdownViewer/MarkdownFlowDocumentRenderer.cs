@@ -623,7 +623,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private static void AddHyperlink(InlineCollection target, string? url, IEnumerable<Markdig.Syntax.Inlines.Inline> labelInlines, Uri? baseUri)
         {
-            var hyperlink = new WpfHyperlink();
+            var hyperlink = new WpfHyperlink
+            {
+                Cursor = Cursors.Hand
+            };
             hyperlink.SetResourceReference(TextElement.ForegroundProperty, MosaicTheme.HyperLinkBrush);
 
             foreach (var labelInline in labelInlines)
