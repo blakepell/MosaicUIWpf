@@ -90,6 +90,12 @@
                     ImageSource="/Assets/get-started-48.png"
                     Text="Getting started" />
 
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ThemeSettingsView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/theme2-48.png"
+                    Text="Theme Settings" />
+
                 <mosaic:SideMenuHeader Text="DEBUG" />
 
                 <!--  Debug  -->
