@@ -142,14 +142,24 @@
                                                 SelectedValuePath="Type" />
                                         </StackPanel>
 
-                                        <!--  Primary input field (label changes with operation type)  -->
-                                        <StackPanel Grid.Column="1" Margin="0,0,8,0">
+                                        <!--  Primary input field (hidden for operations that need no value)  -->
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="0,0,8,0"
+                                            Visibility="{Binding IsFirstFieldVisible, Converter={StaticResource BoolToVisibility}}">
                                             <TextBlock
                                                 Margin="0,0,0,3"
                                                 FontSize="11"
                                                 Opacity="0.7"
                                                 Text="{Binding Field1Label}" />
-                                            <TextBox Text="{Binding Field1Value, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Grid>
+                                                <TextBox Text="{Binding Field1Value, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsTextFieldVisible, Converter={StaticResource BoolToVisibility}}" />
+                                                <controls:NumericTextBox
+                                                    Padding="2"
+                                                    DecimalPlaces="0"
+                                                    Text="{Binding Field1Value, UpdateSourceTrigger=PropertyChanged}"
+                                                    Visibility="{Binding IsNumericFieldVisible, Converter={StaticResource BoolToVisibility}}" />
+                                            </Grid>
                                         </StackPanel>
 
                                         <!--  Secondary input field (only visible for replacement operations)  -->

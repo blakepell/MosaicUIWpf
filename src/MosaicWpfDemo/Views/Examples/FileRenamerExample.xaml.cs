@@ -296,7 +296,13 @@ namespace MosaicWpfDemo.Views.Examples
         PrependText,
 
         /// <summary>Change the file extension only.</summary>
-        ChangeExtension
+        ChangeExtension,
+
+        /// <summary>Trim whitespace around the file name and extension.</summary>
+        TrimWhitespace,
+
+        /// <summary>Truncate the file name to a maximum length without counting the extension.</summary>
+        TruncateAtLength
     }
 
     /// <summary>
@@ -321,6 +327,8 @@ namespace MosaicWpfDemo.Views.Examples
             new RenameOperationOption(RenameOperationType.AppendText, "Append Text"),
             new RenameOperationOption(RenameOperationType.PrependText, "Prepend Text"),
             new RenameOperationOption(RenameOperationType.ChangeExtension, "Change Extension"),
+            new RenameOperationOption(RenameOperationType.TrimWhitespace, "Trim Whitespace"),
+            new RenameOperationOption(RenameOperationType.TruncateAtLength, "Truncate at Length"),
         };
     }
 
@@ -390,10 +398,19 @@ namespace MosaicWpfDemo.Views.Examples
                 }
 
                 _operationType = value;
+
+                if (value == RenameOperationType.TruncateAtLength)
+                {
+                    this.Field1Value = "256";
+                }
+
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(Field1Label));
                 OnPropertyChanged(nameof(Field2Label));
                 OnPropertyChanged(nameof(Field2ToolTip));
+                OnPropertyChanged(nameof(IsFirstFieldVisible));
+                OnPropertyChanged(nameof(IsTextFieldVisible));
+                OnPropertyChanged(nameof(IsNumericFieldVisible));
                 OnPropertyChanged(nameof(IsSecondFieldVisible));
             }
         }
@@ -424,8 +441,19 @@ namespace MosaicWpfDemo.Views.Examples
             RenameOperationType.AppendText => "Text to Append",
             RenameOperationType.PrependText => "Text to Prepend",
             RenameOperationType.ChangeExtension => "New Extension",
+            RenameOperationType.TruncateAtLength => "Maximum Length",
             _ => "Value"
         };
+
+        /// <summary>Whether the operation requires a primary input field.</summary>
+        public bool IsFirstFieldVisible => this.OperationType != RenameOperationType.TrimWhitespace;
+
+        /// <summary>Whether the primary input should accept free-form text.</summary>
+        public bool IsTextFieldVisible =>
+            this.OperationType is not RenameOperationType.TrimWhitespace and not RenameOperationType.TruncateAtLength;
+
+        /// <summary>Whether the primary input should accept a whole number.</summary>
+        public bool IsNumericFieldVisible => this.OperationType == RenameOperationType.TruncateAtLength;
 
         /// <summary>Label for the second input field (only meaningful when <see cref="IsSecondFieldVisible"/> is true).</summary>
         public string Field2Label => this.OperationType == RenameOperationType.RegexReplacement
@@ -452,10 +480,16 @@ namespace MosaicWpfDemo.Views.Examples
         /// <returns>An error message if invalid; otherwise <c>null</c>.</returns>
         public string? Validate()
         {
-            // Field1 (primary input) is required for every operation. The replacement text is allowed to be empty.
-            if (string.IsNullOrEmpty(this.Field1Value))
+            // Trim Whitespace has no input. All other operations require the primary field.
+            if (this.OperationType != RenameOperationType.TrimWhitespace && string.IsNullOrEmpty(this.Field1Value))
             {
                 return $"\"{this.Field1Label}\" is required.";
+            }
+
+            if (this.OperationType == RenameOperationType.TruncateAtLength
+                && (!int.TryParse(this.Field1Value, out int maximumLength) || maximumLength <= 0))
+            {
+                return "\"Maximum Length\" must be a positive whole number.";
             }
 
             // Surface invalid regular expressions (and bad group references) during validation rather than mid-rename.
@@ -543,7 +577,7 @@ namespace MosaicWpfDemo.Views.Examples
                 // Treat an empty primary field as a no-op. This keeps the live preview working while the user is
                 // still filling in a freshly added operation, and avoids exceptions such as String.Replace
                 // throwing on an empty search string. Required fields are still enforced by Validate() on execute.
-                if (string.IsNullOrEmpty(op.Field1Value))
+                if (op.OperationType != RenameOperationType.TrimWhitespace && string.IsNullOrEmpty(op.Field1Value))
                 {
                     continue;
                 }
@@ -573,6 +607,24 @@ namespace MosaicWpfDemo.Views.Examples
 
                         case RenameOperationType.ChangeExtension:
                             extension = NormalizeExtension(op.Field1Value);
+                            break;
+
+                        case RenameOperationType.TrimWhitespace:
+                            name = name.Trim();
+                            extension = extension.Trim();
+                            break;
+
+                        case RenameOperationType.TruncateAtLength:
+                            if (!int.TryParse(op.Field1Value, out int maximumLength) || maximumLength <= 0)
+                            {
+                                throw new RenameException("\"Maximum Length\" must be a positive whole number.");
+                            }
+
+                            if (name.Length > maximumLength)
+                            {
+                                name = name[..maximumLength];
+                            }
+
                             break;
                     }
                 }
