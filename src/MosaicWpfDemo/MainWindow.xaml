@@ -84,6 +84,12 @@
                     ImageSource="pack://application:,,,/Assets/collage-48.png"
                     Text="About" />
 
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:GettingStartedView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/get-started-48.png"
+                    Text="Getting started" />
+
                 <mosaic:SideMenuHeader Text="DEBUG" />
 
                 <!--  Debug  -->

@@ -1,0 +1,89 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.GettingStartedView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:MosaicWpfDemo.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="700"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="StepTitleStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,18,0,6" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style x:Key="CodeEditorStyle" TargetType="mosaic:SyntaxEditor">
+            <Setter Property="Margin" Value="0,8,0,0" />
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Language" Value="Xml" />
+            <Setter Property="ShowLineNumbers" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer
+        HorizontalScrollBarVisibility="Disabled"
+        VerticalScrollBarVisibility="Auto">
+        <Border Margin="19,9" Padding="7">
+            <StackPanel>
+                <controls:Header ImageSource="/Assets/get-started-48.png" Text="Getting started" />
+
+                <TextBlock
+                    Margin="0,6,0,0"
+                    Text="Add Mosaic UI for WPF to a project, configure its theme resources, and then start using Mosaic controls in your XAML."
+                    TextWrapping="Wrap" />
+
+                <TextBlock Style="{StaticResource StepTitleStyle}" Text="1. Install the NuGet package" />
+                <TextBlock Text="Install MosaicUIWpf with the .NET CLI:" TextWrapping="Wrap" />
+                <Border
+                    Margin="0,8,0,6"
+                    Padding="12,9"
+                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1">
+                    <TextBlock FontFamily="Consolas" Text="dotnet add package MosaicUIWpf" />
+                </Border>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,5,0" VerticalAlignment="Center" Text="Package details:" />
+                    <mosaic:Hyperlink
+                        NavigateUri="https://www.nuget.org/packages/MosaicUIWpf"
+                        Text="https://www.nuget.org/packages/MosaicUIWpf" />
+                </StackPanel>
+
+                <TextBlock Style="{StaticResource StepTitleStyle}" Text="2. Configure App.xaml" />
+                <TextBlock
+                    Text="Use MosaicApp as the application base and merge ThemeManager into the application resources. Choose Light, Dark, or HighContrast for Theme; Native and SystemColors are optional."
+                    TextWrapping="Wrap" />
+                <mosaic:SyntaxEditor
+                    x:Name="AppXamlEditor"
+                    Height="375"
+                    Style="{StaticResource CodeEditorStyle}" />
+
+                <TextBlock Style="{StaticResource StepTitleStyle}" Text="3. Configure MainWindow.xaml" />
+                <TextBlock
+                    Text="Apply WindowChromeBehavior, use the Mosaic theme brushes, and place WindowTitleBar at the top of the window."
+                    TextWrapping="Wrap" />
+                <mosaic:SyntaxEditor
+                    x:Name="MainWindowXamlEditor"
+                    Height="590"
+                    Style="{StaticResource CodeEditorStyle}" />
+
+                <TextBlock Style="{StaticResource StepTitleStyle}" Text="4. Use Mosaic controls" />
+                <TextBlock
+                    Text="Declare the canonical Mosaic namespace in any XAML file, then add controls with the mosaic prefix."
+                    TextWrapping="Wrap" />
+                <mosaic:SyntaxEditor
+                    x:Name="NamespaceXamlEditor"
+                    Height="80"
+                    Margin="0,8,0,12"
+                    Style="{StaticResource CodeEditorStyle}" />
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</UserControl>

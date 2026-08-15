@@ -147,6 +147,7 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -409,6 +410,20 @@
                         FontSize="12"
                         NavigateUri="https://github.com/gix/PresentationTheme.Aero"
                         Text="https://github.com/gix/PresentationTheme.Aero" />
+
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="WPF-Chart-Controls" />
+                    <controls:Hyperlink
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/JMHeartley/WPF-Chart-Controls"
+                        Text="https://github.com/JMHeartley/WPF-Chart-Controls" />
                 </Grid>
 
             </StackPanel>

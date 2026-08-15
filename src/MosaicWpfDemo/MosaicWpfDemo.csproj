@@ -45,6 +45,7 @@
 		<None Remove="Assets\folder-rename-48.png" />
 		<None Remove="Assets\folder2-open-48.png" />
 		<None Remove="Assets\font-48.png" />
+		<None Remove="Assets\get-started-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
 		<None Remove="Assets\labeled-separator-96.png" />
@@ -129,6 +130,7 @@
 		<Resource Include="Assets\folder-rename-48.png" />
 		<Resource Include="Assets\folder2-open-48.png" />
 		<Resource Include="Assets\font-48.png" />
+		<Resource Include="Assets\get-started-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
 		<Resource Include="Assets\labeled-separator-96.png" />
