@@ -144,6 +144,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         // Modes
         private bool _originMode = false; // DECOM - cursor relative to scroll region
+        private bool _ansiMode = true; // DECANM - ANSI/VT100 mode; false enables legacy VT52 escapes
         private bool _autowrapPending = false; // Deferred autowrap
         private bool _autoWrap = true; // DECAWM - automatic wrap at right margin
         private bool _applicationCursorKeys = false; // DECCKM - cursor keys send SS3 sequences
@@ -929,6 +930,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _scrollTop = 1;
                 _scrollBottom = Rows;
                 _originMode = false;
+                _ansiMode = true;
                 _autowrapPending = false;
                 _autoWrap = true;
                 _applicationCursorKeys = false;
@@ -1132,7 +1134,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         }
 
         // ======================
-        // Core VT52 processing
+        // Core terminal processing
         // ======================
         private void ProcessChar(char ch)
         {
@@ -1305,20 +1307,29 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private void HandleEsc(char ch)
         {
+            if (!_ansiMode)
+            {
+                HandleVt52Esc(ch);
+                return;
+            }
+
             switch (ch)
             {
-                case 'A': CursorUp(); break; // up
-                case 'B': CursorDown(); break; // down
-                case 'C': CursorRight(); break; // right
-                case 'D': CursorLeft(); break; // left (also VT100 index down)
-                case 'H': CursorHome(); break; // home
-                case 'I': ReverseLineFeed(); break; // reverse index
-                case 'J': EraseToEndOfScreen(); break; // erase to end of screen
-                case 'K': EraseToEndOfLine(); break; // erase to end of line
-                case 'Y':
-                    _state = ParseState.EscYRow;
-                    return; // direct cursor address (row/col + 0x20)
-                case 'Z': SendIdentify(); break; // identify
+                case 'D': // IND - Index
+                    LineFeed();
+                    break;
+                case 'H': // HTS - Horizontal Tabulation Set
+                    if (_curCol >= 0 && _curCol < _tabStops.Length)
+                    {
+                        _tabStops[_curCol] = true;
+                    }
+                    break;
+                case 'Z': // DECID - Identify Terminal (equivalent to primary DA)
+                    SendPrimaryDeviceAttributes();
+                    break;
+                case '<': // DECANM - Enter ANSI mode (already active)
+                    _ansiMode = true;
+                    break;
                 case '[': // CSI Introducer
                     _csiParams.Clear();
                     _csiCurrentParam = 0;
@@ -1364,7 +1375,41 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     return; // Don't reset to Normal - wait for designator byte
                 default: break; // unknown ESC: ignore
             }
-            // Always set state to Normal after handling ESC except for Y, [, ], and SCS
+            // Always set state to Normal after handling ESC except for [, ], and SCS.
+            _state = ParseState.Normal;
+        }
+
+        /// <summary>
+        /// Handles legacy VT52 escapes after the host explicitly selects VT52 mode with
+        /// DECRST 2. ESC &lt; returns the terminal to its default ANSI mode.
+        /// </summary>
+        private void HandleVt52Esc(char ch)
+        {
+            switch (ch)
+            {
+                case 'A': CursorUp(); break;
+                case 'B': CursorDown(); break;
+                case 'C': CursorRight(); break;
+                case 'D': CursorLeft(); break;
+                case 'H': CursorHome(); break;
+                case 'I': ReverseLineFeed(); break;
+                case 'J': EraseToEndOfScreen(); break;
+                case 'K': EraseToEndOfLine(); break;
+                case 'Y':
+                    _state = ParseState.EscYRow;
+                    return;
+                case 'Z': SendIdentify(); break;
+                case '<':
+                    _ansiMode = true;
+                    break;
+                case '=':
+                    _applicationKeypad = true;
+                    break;
+                case '>':
+                    _applicationKeypad = false;
+                    break;
+            }
+
             _state = ParseState.Normal;
         }
 
@@ -1576,8 +1621,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     }
                     break;
                 case 'c': // DA - Device Attributes
-                    // Report as VT220 with no extra options.
-                    TransmitToHost(Encoding.ASCII.GetBytes("\x1B[?62;1;6c"));
+                    SendPrimaryDeviceAttributes();
                     break;
                 case 'S': // SU - Scroll Up
                     for (int i = 0; i < Math.Max(1, p0); i++) ScrollUpRegion();
@@ -1646,6 +1690,9 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 case 1: // DECCKM - Cursor Keys Mode (application vs normal)
                     _applicationCursorKeys = set;
+                    break;
+                case 2: // DECANM - ANSI/VT100 mode; reset selects VT52 compatibility mode
+                    _ansiMode = set;
                     break;
                 case 6: // DECOM - Origin Mode
                     _originMode = set;
@@ -2270,6 +2317,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             // DEC VT52 identity response: ESC / Z
             TransmitToHost([0x1B, (byte)'/', (byte)'Z']);
+        }
+
+        private void SendPrimaryDeviceAttributes()
+        {
+            // Report as VT220 with no extra options.
+            TransmitToHost(Encoding.ASCII.GetBytes("\x1B[?62;1;6c"));
         }
 
         private void FillRect(int row, int col, int height, int width, char ch)
