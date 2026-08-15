@@ -74,6 +74,7 @@ namespace BbsNavigator.Common
                     BbsSortField.DisplayName => StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name),
                     BbsSortField.Favorite => x.Favorite.CompareTo(y.Favorite),
                     BbsSortField.LastConnected => Nullable.Compare(x.LastConnected, y.LastConnected),
+                    BbsSortField.ConnectionCount => x.ConnectionCount.CompareTo(y.ConnectionCount),
                     BbsSortField.Host => StringComparer.OrdinalIgnoreCase.Compare(x.Host, y.Host),
                     _ => 0
                 };

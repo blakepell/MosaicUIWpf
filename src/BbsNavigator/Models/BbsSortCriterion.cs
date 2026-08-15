@@ -35,6 +35,12 @@ namespace BbsNavigator.Models
         LastConnected,
 
         /// <summary>
+        /// Sort by the number of successful connections.
+        /// </summary>
+        [Description("Connection Count")]
+        ConnectionCount,
+
+        /// <summary>
         /// Sort by host name.
         /// </summary>
         Host

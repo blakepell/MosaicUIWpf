@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace BbsNavigator
 {
@@ -53,6 +54,16 @@ namespace BbsNavigator
         }
 
         private BbsProfile? SelectedProfile => BbsTree.SelectedItem as BbsProfile;
+
+        private void MainWindow_OnActivated(object? sender, EventArgs e)
+        {
+            if (ActiveTerminal is not { } terminal)
+            {
+                return;
+            }
+
+            Dispatcher.BeginInvoke(terminal.FocusTerminal, DispatcherPriority.Input);
+        }
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {

@@ -152,6 +152,15 @@ namespace BbsNavigator.Views
         public AppSettings Settings => _settings;
 
         /// <summary>
+        /// Moves keyboard focus to the terminal so it is ready to receive input.
+        /// </summary>
+        public void FocusTerminal()
+        {
+            Terminal.Focus();
+            Keyboard.Focus(Terminal);
+        }
+
+        /// <summary>
         /// Gets whether a file transfer is currently running.
         /// </summary>
         public bool IsTransferActive => _transferActive;

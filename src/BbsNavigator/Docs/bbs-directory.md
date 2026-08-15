@@ -28,8 +28,9 @@ automatic reconnection, and ZMODEM/YMODEM/XMODEM file transfers. The keepalive i
 [Options](options.md) applies to Telnet; SSH sessions use the SSH protocol's own keepalive.
 
 Use **Sort** on the directory toolbar to build a multi-level ordering by display name,
-favorite status, last connection, or host. Each level can be ascending or descending, and
-levels are applied from top to bottom. The resulting order is stored with the profile list.
+favorite status, last connection, connection count, or host. Each level can be ascending
+or descending, and levels are applied from top to bottom. The resulting order is stored
+with the profile list.
 
 ## Adding and editing systems
 

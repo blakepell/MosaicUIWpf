@@ -24,6 +24,7 @@
     mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
     BorderThickness="0"
+    Activated="MainWindow_OnActivated"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
     SnapsToDevicePixels="True"
