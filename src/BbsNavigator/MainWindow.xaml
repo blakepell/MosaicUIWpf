@@ -3,7 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ad="https://github.com/blakepell/MosaicUIWpf"
+    xmlns:common="clr-namespace:BbsNavigator.Common"
     xmlns:converters="clr-namespace:BbsNavigator.Converters"
+    xmlns:dd="urn:gong-wpf-dragdrop"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:models="clr-namespace:BbsNavigator.Models"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
@@ -207,6 +209,9 @@
                                         x:Name="BbsTree"
                                         Grid.Row="2"
                                         BorderThickness="0"
+                                        dd:DragDrop.IsDragSource="True"
+                                        dd:DragDrop.IsDropTarget="True"
+                                        dd:DragDrop.DropHandler="{x:Static common:BbsDirectoryDropHandler.Instance}"
                                         ItemsSource="{Binding BbsProfiles}"
                                         MouseDoubleClick="BbsTree_OnMouseDoubleClick"
                                         ScrollViewer.CanContentScroll="True"
@@ -240,7 +245,13 @@
                                                                 IsEnabled="{Binding EncryptedCredentials, Converter={x:Static converters:HasCredentialsConverter.Instance}}" />
                                                         </ContextMenu>
                                                     </Border.ContextMenu>
-                                                    <Grid ToolTip="{Binding LastConnected, Converter={x:Static converters:LastConnectedConverter.Instance}}">
+                                                    <Grid>
+                                                        <Grid.ToolTip>
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding LastConnected, Converter={x:Static converters:LastConnectedConverter.Instance}}" />
+                                                                <TextBlock Text="{Binding ConnectionCount, StringFormat='Successful Connections: {0:N0}'}" />
+                                                            </StackPanel>
+                                                        </Grid.ToolTip>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="28" />
                                                             <ColumnDefinition Width="*" />
