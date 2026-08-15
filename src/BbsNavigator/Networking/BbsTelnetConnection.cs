@@ -107,6 +107,11 @@ namespace BbsNavigator.Networking
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         /// <summary>
+        /// Gets or sets the name returned for Telnet terminal-type negotiation.
+        /// </summary>
+        public string TerminalType { get; set; } = "ANSI";
+
+        /// <summary>
         /// Gets or sets the idle interval after which a Telnet NOP is sent to keep NAT and
         /// firewall state alive. <see cref="TimeSpan.Zero"/> disables keepalives. Set this
         /// before connecting.
@@ -496,7 +501,9 @@ namespace BbsNavigator.Networking
                 return 0;
             }
 
-            ReadOnlySpan<byte> terminalType = "xterm-256color"u8;
+            byte[] terminalTypeBytes = System.Text.Encoding.ASCII.GetBytes(
+                string.IsNullOrWhiteSpace(TerminalType) ? "ANSI" : TerminalType.Trim());
+            ReadOnlySpan<byte> terminalType = terminalTypeBytes.AsSpan(0, Math.Min(64, terminalTypeBytes.Length));
             destination[0] = Iac;
             destination[1] = Sb;
             destination[2] = OptionTerminalType;

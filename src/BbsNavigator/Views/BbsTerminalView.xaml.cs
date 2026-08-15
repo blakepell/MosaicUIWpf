@@ -39,9 +39,14 @@ namespace BbsNavigator.Views
             @"\x1B(\[[0-9;?]*[@-~]|\][^\x07\x1B]*(\x07|\x1B\\)?|[@-Z\\-_])",
             RegexOptions.Compiled);
 
+        private static readonly Regex _loginTokens = new(
+            @"\{(USERNAME|PASSWORD|ENTER)\}",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         private readonly AppSettings _settings;
         private readonly IBbsConnection _connection;
         private readonly string _endpoint;
+        private readonly Func<Task<BbsCredentials?>>? _credentialProvider;
         private readonly CancellationTokenSource _lifetimeCancellation = new();
         private readonly CancellationToken _lifetimeToken;
         private readonly SemaphoreSlim _connectionGate = new(1, 1);
@@ -61,6 +66,8 @@ namespace BbsNavigator.Views
         private DispatcherTimer? _transferUiTimer;
         private StreamWriter? _captureWriter;
         private string _zmodemDetectTail = string.Empty;
+        private BbsCredentials? _credentials;
+        private bool _scrollbackLocked;
 
         /// <summary>
         /// Initializes a terminal document for the specified profile.
@@ -68,19 +75,23 @@ namespace BbsNavigator.Views
         /// <param name="profile">The saved BBS profile to connect to.</param>
         /// <param name="settings">The application settings that supply terminal and transfer options.</param>
         /// <param name="transport">The protocol the session runs over. Telnet is the default for a BBS.</param>
-        /// <param name="credentials">The login used for SSH sessions; ignored for Telnet.</param>
+        /// <param name="credentials">Credentials already resolved for this session.</param>
+        /// <param name="credentialProvider">Obtains saved credentials when a Telnet login action needs them.</param>
         /// <exception cref="ArgumentException">An SSH session was requested without credentials.</exception>
         public BbsTerminalView(
             BbsProfile profile,
             AppSettings settings,
             BbsTransport transport = BbsTransport.Telnet,
-            BbsCredentials? credentials = null)
+            BbsCredentials? credentials = null,
+            Func<Task<BbsCredentials?>>? credentialProvider = null)
         {
             InitializeComponent();
             _lifetimeToken = _lifetimeCancellation.Token;
             Profile = profile;
             _settings = settings;
             Transport = transport;
+            _credentials = credentials;
+            _credentialProvider = credentialProvider;
 
             if (transport == BbsTransport.Ssh)
             {
@@ -101,8 +112,25 @@ namespace BbsNavigator.Views
                 _connection = new BbsTelnetConnection(profile.Host, profile.Port)
                 {
                     Encoding = profile.TerminalEncoding.ToEncoding(),
-                    KeepAliveInterval = TimeSpan.FromSeconds(Math.Max(0, settings.KeepAliveSeconds))
+                    KeepAliveInterval = TimeSpan.FromSeconds(Math.Max(0, settings.KeepAliveSeconds)),
+                    TerminalType = string.IsNullOrWhiteSpace(profile.TerminalType)
+                        ? profile.TerminalEmulation.ToTerminalType()
+                        : profile.TerminalType.Trim()
                 };
+            }
+
+            Terminal.EmulationMode = profile.TerminalEmulation.ToTerminalMode();
+            Terminal.DoorwayMode = profile.DoorwayMode;
+            Terminal.PasteCharacterDelay = settings.PastePacingMilliseconds;
+            Terminal.MaxScrollbackLines = settings.MaxScrollbackLines;
+            Terminal.AutoResizeTerminal = profile.TerminalDisplayMode == BbsTerminalDisplayMode.Responsive;
+            if (!Terminal.AutoResizeTerminal)
+            {
+                Terminal.FontFamily = new System.Windows.Media.FontFamily(
+                    new Uri("pack://application:,,,/BbsNavigator;component/"),
+                    "./Assets/#PxPlus IBM VGA8");
+                Terminal.FontWeight = FontWeights.Normal;
+                Terminal.Resize(25, 80);
             }
 
             _connection.ConnectionLost += Connection_OnConnectionLost;
@@ -121,6 +149,7 @@ namespace BbsNavigator.Views
                 BbsEncoding.Latin1 => "Latin-1",
                 _ => "UTF-8"
             };
+            DoorwayToggle.IsChecked = profile.DoorwayMode;
 
             _statsTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
@@ -158,6 +187,113 @@ namespace BbsNavigator.Views
         {
             Terminal.Focus();
             Keyboard.Focus(Terminal);
+        }
+
+        /// <summary>Gets whether incoming output is prevented from jumping to the live bottom.</summary>
+        public bool IsScrollbackLocked => _scrollbackLocked;
+
+        /// <summary>Gets whether DoorWay extended-key mode is active.</summary>
+        public bool IsDoorwayMode => Terminal.DoorwayMode;
+
+        /// <summary>Toggles DOS DoorWay extended-key mode for the active session.</summary>
+        public void ToggleDoorwayMode()
+        {
+            DoorwayToggle.IsChecked = DoorwayToggle.IsChecked != true;
+        }
+
+        /// <summary>Toggles whether the current scrollback position is held as new output arrives.</summary>
+        public void ToggleScrollbackLock()
+        {
+            ScrollLockToggle.IsChecked = ScrollLockToggle.IsChecked != true;
+        }
+
+        /// <summary>Opens incremental search across the current screen and retained scrollback.</summary>
+        public void SearchTerminal()
+        {
+            _scrollbackLocked = true;
+            ScrollLockToggle.IsChecked = true;
+            Terminal.OpenSearch();
+        }
+
+        /// <summary>Sends the profile's saved username without exposing it on the application UI.</summary>
+        public async Task SendUserNameAsync()
+        {
+            BbsCredentials? credentials = await GetCredentialsAsync();
+            if (credentials != null)
+            {
+                await Terminal.SendTextAsync(credentials.UserName);
+                ShowTransientStatus("Saved username sent.");
+            }
+        }
+
+        /// <summary>Sends the profile's saved password without placing it on the clipboard.</summary>
+        public async Task SendPasswordAsync()
+        {
+            BbsCredentials? credentials = await GetCredentialsAsync();
+            if (credentials != null)
+            {
+                await Terminal.SendTextAsync(credentials.Password);
+                ShowTransientStatus("Saved password sent.");
+            }
+        }
+
+        /// <summary>Sends the tokenized login macro using the saved credentials.</summary>
+        public Task SendLoginAsync() => SendLoginAsync(showStatus: true);
+
+        private async Task SendLoginAsync(bool showStatus)
+        {
+            BbsCredentials? credentials = await GetCredentialsAsync();
+            if (credentials == null)
+            {
+                if (showStatus)
+                {
+                    ShowTransientStatus("No saved credentials are available for the login macro.");
+                }
+
+                return;
+            }
+
+            string text = _loginTokens.Replace(Profile.LoginMacro ?? string.Empty, match =>
+                    match.Groups[1].Value.ToUpperInvariant() switch
+                    {
+                        "USERNAME" => credentials.UserName,
+                        "PASSWORD" => credentials.Password,
+                        _ => "\r"
+                    })
+                .Replace("\r\n", "\r")
+                .Replace("\n", "\r");
+
+            if (text.Length == 0)
+            {
+                if (showStatus)
+                {
+                    ShowTransientStatus("The login macro is empty.");
+                }
+
+                return;
+            }
+
+            await Terminal.SendTextAsync(text);
+            if (showStatus)
+            {
+                ShowTransientStatus("Login macro sent.");
+            }
+        }
+
+        private async Task<BbsCredentials?> GetCredentialsAsync()
+        {
+            if (_credentials != null)
+            {
+                return _credentials;
+            }
+
+            if (_credentialProvider == null)
+            {
+                return null;
+            }
+
+            _credentials = await _credentialProvider();
+            return _credentials;
         }
 
         /// <summary>
@@ -209,6 +345,11 @@ namespace BbsNavigator.Views
                 Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
                 Profile.ConnectionCount++;
+
+                if (Transport == BbsTransport.Telnet && Profile.AutoLogin)
+                {
+                    await SendLoginAsync(showStatus: true);
+                }
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
             {
@@ -305,7 +446,7 @@ namespace BbsNavigator.Views
             {
                 try
                 {
-                    if (!_disposed)
+                    if (!_disposed && !_scrollbackLocked)
                     {
                         Terminal.ScrollToEnd();
                     }
@@ -555,6 +696,11 @@ namespace BbsNavigator.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == 0)
             {
+                if (e.Delta > 0)
+                {
+                    ScrollLockToggle.IsChecked = true;
+                }
+
                 return;
             }
 
@@ -562,6 +708,34 @@ namespace BbsNavigator.Views
             Terminal.FontSize = newSize;
             _settings.FontSize = newSize;
             e.Handled = true;
+        }
+
+        private void DoorwayToggle_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Terminal.DoorwayMode = true;
+            Profile.DoorwayMode = true;
+            DoorwayText.Text = "DoorWay On";
+            ShowTransientStatus("DoorWay mode is on; DOS extended keys are sent to the BBS.");
+        }
+
+        private void DoorwayToggle_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Terminal.DoorwayMode = false;
+            Profile.DoorwayMode = false;
+            DoorwayText.Text = "DoorWay Off";
+        }
+
+        private void ScrollLockToggle_OnChecked(object sender, RoutedEventArgs e)
+        {
+            _scrollbackLocked = true;
+            ScrollLockText.Text = "Scroll Locked";
+        }
+
+        private void ScrollLockToggle_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            _scrollbackLocked = false;
+            ScrollLockText.Text = "Live Output";
+            Terminal.ScrollToEnd();
         }
 
         #endregion

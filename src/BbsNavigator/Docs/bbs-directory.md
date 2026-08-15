@@ -46,9 +46,15 @@ Details…**. A connection profile has these settings:
 | SSH port | The port the board listens on for SSH. Leave it at `0` when the board does not offer SSH. |
 | Description | Free-form notes about the system. |
 | Text encoding | How received bytes are turned into text — see below. |
+| Terminal emulation | How escape sequences are interpreted: ANSI-BBS, VT100, xterm-256color, VT52, or plain TTY. |
+| Display mode | Fixed classic 80 × 25 with the bundled IBM VGA8 font, or a responsive grid that follows the window. |
+| Telnet TTYPE | Optional terminal name reported to the BBS. Leave blank to use the selected emulation's normal value. |
 | Reconnect automatically | Re-establishes the session after a dropped connection, after the delay set in [Options](options.md). |
 | Show typed characters locally | Local echo. Enable for MUDs and boards that do not echo your keystrokes back; leave off if you see doubled characters. |
 | Send DEL (0x7F) for Backspace | Most classic boards expect Ctrl-H/BS (0x08), so leave this off unless Backspace misbehaves on a particular system. |
+| Start sessions in DoorWay mode | Sends DOS scan codes for extended keys used by some door games. Usually leave this off. |
+| Login macro | Tokenized text that can send the encrypted username and password. See [Saved login and quick-send commands](terminal.md#saved-login-and-quick-send-commands). |
+| Log in automatically | Sends the login macro after every successful Telnet connection. |
 
 ### Text encodings
 
@@ -84,8 +90,8 @@ same app-wide passphrase to decrypt them there. If you forget the passphrase, th
 credentials cannot be recovered.
 
 > Credential encryption protects the saved values at rest. Classic Telnet is not an
-> encrypted network protocol, and BBS Navigator does not automatically type or transmit
-> stored credentials.
+> encrypted network protocol. If automatic login or a Terminal quick-send command is used,
+> the decrypted text travels across the network without SSH-style encryption.
 
 ## Importing a BBS list
 

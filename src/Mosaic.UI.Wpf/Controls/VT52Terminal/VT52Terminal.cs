@@ -10,6 +10,7 @@
 
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Search;
 using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
 
 namespace Mosaic.UI.Wpf.Controls.VT52Terminal
@@ -176,6 +177,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private char _scsTarget = '('; // which G set the next designator byte applies to
         private char _lastGraphicChar = '\0'; // last printed glyph, used by REP (CSI b)
         private BlockCaretRenderer? _caretRenderer;
+        private SearchPanel? _searchPanel;
 
         private CharSet ActiveCharset => _shiftOut ? _g1Charset : _g0Charset;
 
@@ -255,6 +257,28 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             typeof(VT52Terminal),
             new PropertyMetadata(1000, OnMaxScrollbackLinesChanged));
 
+        /// <summary>Identifies the <see cref="AutoResizeTerminal"/> dependency property.</summary>
+        public static readonly DependencyProperty AutoResizeTerminalProperty = DependencyProperty.Register(
+            nameof(AutoResizeTerminal), typeof(bool), typeof(VT52Terminal), new PropertyMetadata(true));
+
+        /// <summary>Identifies the <see cref="DoorwayMode"/> dependency property.</summary>
+        public static readonly DependencyProperty DoorwayModeProperty = DependencyProperty.Register(
+            nameof(DoorwayMode), typeof(bool), typeof(VT52Terminal), new PropertyMetadata(false));
+
+        /// <summary>Identifies the <see cref="PasteCharacterDelay"/> dependency property.</summary>
+        public static readonly DependencyProperty PasteCharacterDelayProperty = DependencyProperty.Register(
+            nameof(PasteCharacterDelay),
+            typeof(int),
+            typeof(VT52Terminal),
+            new PropertyMetadata(0, null, static (_, value) => Math.Clamp((int)value, 0, 1000)));
+
+        /// <summary>Identifies the <see cref="EmulationMode"/> dependency property.</summary>
+        public static readonly DependencyProperty EmulationModeProperty = DependencyProperty.Register(
+            nameof(EmulationMode),
+            typeof(TerminalEmulationMode),
+            typeof(VT52Terminal),
+            new PropertyMetadata(TerminalEmulationMode.Ansi, OnEmulationModeChanged));
+
         /// <summary>
         /// Gets or sets the terminal connection used for remote input and output.
         /// </summary>
@@ -323,6 +347,49 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             get => (int)GetValue(MaxScrollbackLinesProperty);
             set => SetValue(MaxScrollbackLinesProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets whether the buffer follows the rendered control size. Disable this
+        /// for fixed text modes such as ANSI-BBS 80 by 25.
+        /// </summary>
+        public bool AutoResizeTerminal
+        {
+            get => (bool)GetValue(AutoResizeTerminalProperty);
+            set => SetValue(AutoResizeTerminalProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets whether DOS DoorWay extended codes are sent for function,
+        /// navigation, and Alt-modified keys.
+        /// </summary>
+        public bool DoorwayMode
+        {
+            get => (bool)GetValue(DoorwayModeProperty);
+            set => SetValue(DoorwayModeProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the delay, in milliseconds, inserted between pasted characters.
+        /// Zero sends clipboard text without pacing.
+        /// </summary>
+        public int PasteCharacterDelay
+        {
+            get => (int)GetValue(PasteCharacterDelayProperty);
+            set => SetValue(PasteCharacterDelayProperty, value);
+        }
+
+        /// <summary>Gets or sets the terminal parsing mode.</summary>
+        public TerminalEmulationMode EmulationMode
+        {
+            get => (TerminalEmulationMode)GetValue(EmulationModeProperty);
+            set => SetValue(EmulationModeProperty, value);
+        }
+
+        private static void OnEmulationModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var terminal = (VT52Terminal)d;
+            terminal.Reset(terminal.Rows > 0 ? terminal.Rows : 24, terminal.Columns > 0 ? terminal.Columns : 80);
         }
 
         private static void OnMaxScrollbackLinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -623,6 +690,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
+            if (DoorwayMode && TryGetDoorwaySequence(e, out byte[]? doorwaySequence))
+            {
+                e.Handled = SendToConnection(doorwaySequence!);
+                return;
+            }
+
             string? sequence = GetKeySequence(e);
 
             if (sequence == null && TryGetControlKeySequence(e, out sequence))
@@ -772,6 +845,80 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             return sequence != null;
         }
 
+        /// <summary>
+        /// Converts DOS extended keys to the DoorWay wire form: NUL followed by the
+        /// corresponding IBM PC keyboard scan code.
+        /// </summary>
+        private static bool TryGetDoorwaySequence(KeyEventArgs e, out byte[]? sequence)
+        {
+            sequence = null;
+            Key key = NormalizeKey(e);
+            bool alt = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+
+            int scanCode = key switch
+            {
+                Key.Escape => 1,
+                >= Key.D1 and <= Key.D9 => (int)key - (int)Key.D1 + 2,
+                Key.D0 => 11,
+                Key.Back => 14,
+                Key.Tab => 15,
+                Key.Q => 16,
+                Key.W => 17,
+                Key.E => 18,
+                Key.R => 19,
+                Key.T => 20,
+                Key.Y => 21,
+                Key.U => 22,
+                Key.I => 23,
+                Key.O => 24,
+                Key.P => 25,
+                Key.A => 30,
+                Key.S => 31,
+                Key.D => 32,
+                Key.F => 33,
+                Key.G => 34,
+                Key.H => 35,
+                Key.J => 36,
+                Key.K => 37,
+                Key.L => 38,
+                Key.Z => 44,
+                Key.X => 45,
+                Key.C => 46,
+                Key.V => 47,
+                Key.B => 48,
+                Key.N => 49,
+                Key.M => 50,
+                Key.Enter or Key.Return => 28,
+                Key.Space => 57,
+                >= Key.F1 and <= Key.F10 => (int)key - (int)Key.F1 + 59,
+                Key.F11 => 133,
+                Key.F12 => 134,
+                Key.Home => 71,
+                Key.Up => 72,
+                Key.PageUp => 73,
+                Key.Left => 75,
+                Key.Right => 77,
+                Key.End => 79,
+                Key.Down => 80,
+                Key.PageDown => 81,
+                Key.Insert => 82,
+                Key.Delete => 83,
+                _ => 0
+            };
+
+            bool extendedKey = key is >= Key.F1 and <= Key.F12 or
+                Key.Home or Key.Up or Key.PageUp or Key.Left or Key.Right or
+                Key.End or Key.Down or Key.PageDown or Key.Insert or Key.Delete;
+
+            if (scanCode == 0 || (!alt && !extendedKey))
+            {
+                return false;
+            }
+
+            sequence = [0, (byte)scanCode];
+            return true;
+        }
+
         private static string? GetLocalEchoText(Key key)
         {
             return key switch
@@ -794,6 +941,59 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             _ = SendToConnectionAsync(connection, text, localEchoText);
             return true;
+        }
+
+        private bool SendToConnection(byte[] data)
+        {
+            var connection = Connection;
+            if (connection?.IsConnected != true || data.Length == 0)
+            {
+                return false;
+            }
+
+            _ = SendToConnectionAsync(connection, data);
+            return true;
+        }
+
+        /// <summary>
+        /// Sends text to the connected host, optionally inserting a delay between characters.
+        /// </summary>
+        /// <param name="text">The text to send.</param>
+        /// <param name="characterDelayMilliseconds">
+        /// The delay between characters, or <see langword="null"/> to use <see cref="PasteCharacterDelay"/>.
+        /// </param>
+        /// <param name="cancellationToken">Cancels a paced send.</param>
+        public async Task SendTextAsync(
+            string text,
+            int? characterDelayMilliseconds = null,
+            CancellationToken cancellationToken = default)
+        {
+            if (Connection is not { IsConnected: true } connection || string.IsNullOrEmpty(text))
+            {
+                return;
+            }
+
+            int delay = Math.Clamp(characterDelayMilliseconds ?? PasteCharacterDelay, 0, 1000);
+            await _sendGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                if (delay == 0)
+                {
+                    await connection.SendAsync(text).ConfigureAwait(false);
+                    return;
+                }
+
+                foreach (Rune character in text.EnumerateRunes())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await connection.SendAsync(character.ToString()).ConfigureAwait(false);
+                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                }
+            }
+            finally
+            {
+                _sendGate.Release();
+            }
         }
 
         private async Task SendToConnectionAsync(ITerminalConnection connection, string text, string? localEchoText)
@@ -862,7 +1062,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private void ApplyCurrentTerminalSize(ITerminalConnection connection, bool sendWindowChange)
         {
-            var (rows, cols, pxW, pxH) = GetTerminalDimensions();
+            var measured = GetTerminalDimensions();
+            int rows = AutoResizeTerminal ? measured.Rows : Rows;
+            int cols = AutoResizeTerminal ? measured.Columns : Columns;
+            int pxW = measured.PixelWidth;
+            int pxH = measured.PixelHeight;
 
             connection.Rows = rows;
             connection.Columns = cols;
@@ -930,7 +1134,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 _scrollTop = 1;
                 _scrollBottom = Rows;
                 _originMode = false;
-                _ansiMode = true;
+                _ansiMode = EmulationMode != TerminalEmulationMode.Vt52;
                 _autowrapPending = false;
                 _autoWrap = true;
                 _applicationCursorKeys = false;
@@ -1059,6 +1263,16 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
+            if (!AutoResizeTerminal)
+            {
+                if (Connection != null)
+                {
+                    ApplyCurrentTerminalSize(Connection, sendWindowChange: Connection.IsConnected);
+                }
+
+                return;
+            }
+
             var tv = TextArea.TextView;
             double charW = tv.WideSpaceWidth;
             double lineH = tv.DefaultLineHeight;
@@ -1138,6 +1352,20 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         // ======================
         private void ProcessChar(char ch)
         {
+            if (EmulationMode == TerminalEmulationMode.Tty)
+            {
+                if (ch <= 0x1F)
+                {
+                    HandleC0(ch);
+                }
+                else
+                {
+                    Printable(ch);
+                }
+
+                return;
+            }
+
             switch (_state)
             {
                 case ParseState.Normal:
@@ -2783,7 +3011,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             e.CanExecute = Clipboard.ContainsText() && this.Connection is { IsConnected: true };
         }
 
-        private void OnPasteTextExecuted(object sender, ExecutedRoutedEventArgs e)
+        private async void OnPasteTextExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             if (this.Connection is not { IsConnected: true })
             {
@@ -2806,11 +3034,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
                 if (_bracketedPaste)
                 {
-                    this.Connection.Send("\x1b[200~" + text + "\x1b[201~");
+                    await SendTextAsync("\x1b[200~" + text + "\x1b[201~");
                 }
                 else
                 {
-                    this.Connection.Send(text);
+                    await SendTextAsync(text);
                 }
             }
             catch
@@ -2822,6 +3050,14 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private void OnClearTerminalExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             Reset(Rows, Columns);
+        }
+
+        /// <summary>
+        /// Opens AvalonEdit's incremental search panel for the visible terminal document and scrollback.
+        /// </summary>
+        public void OpenSearch()
+        {
+            (_searchPanel ??= SearchPanel.Install(this)).Open();
         }
 
         #endregion

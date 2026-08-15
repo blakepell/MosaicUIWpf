@@ -108,5 +108,50 @@ namespace Mosaic.UI.Wpf.Tests
                 Assert.Equal("ABX       ", lines[0]);
             });
         }
+
+        [Fact]
+        public void Vt52_Emulation_Starts_With_Vt52_Escape_Semantics()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { EmulationMode = TerminalEmulationMode.Vt52 };
+                terminal.Reset(2, 3);
+
+                terminal.Add("A\u001BDB");
+
+                string[] lines = ScreenLines(terminal);
+                Assert.Equal("B  ", lines[0]);
+            });
+        }
+
+        [Fact]
+        public void Tty_Emulation_Does_Not_Interpret_Ansi_Sequences()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { EmulationMode = TerminalEmulationMode.Tty };
+                terminal.Reset(2, 12);
+
+                terminal.Add("A\u001B[31mB");
+
+                string[] lines = ScreenLines(terminal);
+                Assert.Equal("A[31mB      ", lines[0]);
+            });
+        }
+
+        [Fact]
+        public void Fixed_Size_Mode_Preserves_Explicit_Grid()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { AutoResizeTerminal = false };
+                terminal.Resize(25, 80);
+
+                terminal.OnSizeChanged();
+
+                Assert.Equal(25, terminal.Rows);
+                Assert.Equal(80, terminal.Columns);
+            });
+        }
     }
 }

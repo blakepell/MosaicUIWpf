@@ -101,6 +101,22 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private double _fontSize = 15.0;
 
+        /// <summary>Gets or sets the maximum number of terminal scrollback lines retained.</summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Scrollback Lines")]
+        [property: Description("How many lines that have scrolled off the screen remain available for review and search.")]
+        [ObservableProperty]
+        private int _maxScrollbackLines = 5000;
+
+        /// <summary>
+        /// Gets or sets the pause inserted between characters pasted or sent by a login macro.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Paste Pacing (milliseconds)")]
+        [property: Description("Waits this many milliseconds between pasted characters so older BBS software is not overwhelmed. Zero sends text immediately.")]
+        [ObservableProperty]
+        private int _pastePacingMilliseconds = 5;
+
         private double _userGuideFontSize = 12.0;
 
         /// <summary>

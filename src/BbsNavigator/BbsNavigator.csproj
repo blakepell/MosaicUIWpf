@@ -13,6 +13,7 @@
     <None Remove="Assets\bbslist.csv" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\minus-48.png" />
+    <None Remove="Assets\PxPlus_IBM_VGA8.ttf" />
     <None Remove="Assets\sort-48.png" />
     <None Remove="Assets\terminal-gray-48.png" />
     <None Remove="Assets\terminal-48.png" />
@@ -28,6 +29,7 @@
     <Resource Include="Assets\bbslist.csv" />
     <Resource Include="Assets\edit-property-48.png" />
     <Resource Include="Assets\minus-48.png" />
+    <Resource Include="Assets\PxPlus_IBM_VGA8.ttf" />
     <Resource Include="Assets\sort-48.png" />
     <Resource Include="Assets\terminal-gray-48.png" />
     <Resource Include="Assets\terminal-48.png" />
@@ -35,5 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\app.ico" />
+    <None Update="Assets\Fonts-LICENSE.md" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

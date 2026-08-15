@@ -35,9 +35,17 @@ namespace BbsNavigator.Views
                 AutoReconnect = profile?.AutoReconnect ?? true,
                 LocalEcho = profile?.LocalEcho ?? false,
                 BackspaceSendsDelete = profile?.BackspaceSendsDelete ?? false,
-                TerminalEncoding = profile?.TerminalEncoding ?? BbsEncoding.Cp437
+                TerminalEncoding = profile?.TerminalEncoding ?? BbsEncoding.Cp437,
+                TerminalEmulation = profile?.TerminalEmulation ?? BbsTerminalEmulation.AnsiBbs,
+                TerminalDisplayMode = profile?.TerminalDisplayMode ?? BbsTerminalDisplayMode.Classic80X25,
+                TerminalType = profile?.TerminalType ?? string.Empty,
+                DoorwayMode = profile?.DoorwayMode ?? false,
+                AutoLogin = profile?.AutoLogin ?? false,
+                LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}"
             };
             EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
+            EmulationComboBox.ItemsSource = Enum.GetValues<BbsTerminalEmulation>();
+            DisplayModeComboBox.ItemsSource = Enum.GetValues<BbsTerminalDisplayMode>();
             DataContext = Profile;
             Loaded += (_, _) => NameTextBox.SelectAll();
         }

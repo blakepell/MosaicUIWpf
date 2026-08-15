@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="520"
-    Height="500"
+    Height="700"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -38,6 +38,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -129,8 +133,75 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <StackPanel
+
+            <TextBlock
                 Grid.Row="7"
+                Margin="0,6"
+                VerticalAlignment="Center"
+                Text="Emulation" />
+            <ComboBox
+                x:Name="EmulationComboBox"
+                Grid.Row="7"
+                Grid.Column="1"
+                Margin="0,4"
+                SelectedItem="{Binding TerminalEmulation}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock
+                Grid.Row="8"
+                Margin="0,6"
+                VerticalAlignment="Center"
+                Text="Display mode" />
+            <ComboBox
+                x:Name="DisplayModeComboBox"
+                Grid.Row="8"
+                Grid.Column="1"
+                Margin="0,4"
+                SelectedItem="{Binding TerminalDisplayMode}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock
+                Grid.Row="9"
+                Margin="0,6"
+                VerticalAlignment="Center"
+                Text="Telnet TTYPE" />
+            <TextBox
+                Grid.Row="9"
+                Grid.Column="1"
+                Margin="0,4"
+                Text="{Binding TerminalType, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="Optional terminal name reported during Telnet negotiation. Leave blank to use the emulation's normal value." />
+
+            <TextBlock
+                Grid.Row="10"
+                Margin="0,6"
+                VerticalAlignment="Top"
+                Text="Login macro" />
+            <StackPanel Grid.Row="10" Grid.Column="1" Margin="0,4">
+                <TextBox
+                    AcceptsReturn="True"
+                    MinHeight="50"
+                    Text="{Binding LoginMacro, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap"
+                    ToolTip="Use {USERNAME}, {PASSWORD}, and {ENTER}. The saved password remains encrypted." />
+                <CheckBox
+                    Margin="0,5,0,0"
+                    Content="Send this macro automatically after Telnet connects"
+                    IsChecked="{Binding AutoLogin}" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Row="11"
                 Grid.Column="1"
                 Margin="0,8,0,0"
                 VerticalAlignment="Top">
@@ -145,10 +216,15 @@
                     Content="Send DEL (0x7F) for Backspace"
                     IsChecked="{Binding BackspaceSendsDelete}"
                     ToolTip="Most classic BBSs expect Ctrl-H/BS (0x08). Enable this for systems that expect DEL (0x7F)." />
+                <CheckBox
+                    Margin="0,4,0,0"
+                    Content="Start sessions in DoorWay mode"
+                    IsChecked="{Binding DoorwayMode}"
+                    ToolTip="Enable when a DOS door needs Alt, function, or navigation keys as IBM PC scan codes." />
             </StackPanel>
 
             <StackPanel
-                Grid.Row="8"
+                Grid.Row="12"
                 Grid.ColumnSpan="2"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Right"

@@ -35,6 +35,11 @@ namespace BbsNavigator
         private LayoutDocument? _userGuideDocument;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
+        private bool _isFullScreen;
+        private bool _directoryWasVisible;
+        private WindowState _restoreWindowState;
+        private WindowStyle _restoreWindowStyle;
+        private ResizeMode _restoreResizeMode;
         private AppSettings Settings { get; }
 
         /// <summary>
@@ -63,6 +68,15 @@ namespace BbsNavigator
             }
 
             Dispatcher.BeginInvoke(terminal.FocusTerminal, DispatcherPriority.Input);
+        }
+
+        private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                ToggleFullScreen();
+                e.Handled = true;
+            }
         }
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -319,7 +333,8 @@ namespace BbsNavigator
                 return;
             }
 
-            var terminal = new BbsTerminalView(profile, Settings, transport, credentials);
+            Func<Task<BbsCredentials?>> credentialProvider = () => ResolveSavedCredentialsAsync(profile);
+            var terminal = new BbsTerminalView(profile, Settings, transport, credentials, credentialProvider);
             string title = transport == BbsTransport.Ssh ? $"{profile.Name} (SSH)" : profile.Name;
             LayoutDocument document = DockingManager.Add(terminal, title, activate: true, canClose: true);
             document.ContentId = $"bbs-{profile.Id:N}-{transport}";
@@ -404,6 +419,29 @@ namespace BbsNavigator
 
             var dialog = new SshLoginWindow(profile) { Owner = this };
             return dialog.ShowDialog() == true ? dialog.Credentials : null;
+        }
+
+        /// <summary>Unlocks and decrypts credentials for terminal login actions.</summary>
+        private async Task<BbsCredentials?> ResolveSavedCredentialsAsync(BbsProfile profile)
+        {
+            if (!profile.HasCredentials)
+            {
+                return null;
+            }
+
+            string? passphrase = await GetCredentialEncryptionPassphraseAsync();
+            if (passphrase == null)
+            {
+                return null;
+            }
+
+            BbsCredentials? credentials = await DecryptCredentialsAsync(profile, passphrase);
+            if (credentials == null)
+            {
+                ShowCredentialDecryptionWarning();
+            }
+
+            return credentials;
         }
 
         private void AddBbs_OnClick(object sender, RoutedEventArgs e)
@@ -655,6 +693,11 @@ namespace BbsNavigator
             bool hostChanged = !string.Equals(profile.Host, editor.Profile.Host, StringComparison.OrdinalIgnoreCase);
             bool telnetEndpointChanged = hostChanged || profile.Port != editor.Profile.Port;
             bool sshEndpointChanged = hostChanged || profile.SshPort != editor.Profile.SshPort;
+            bool terminalConfigurationChanged =
+                profile.TerminalEncoding != editor.Profile.TerminalEncoding ||
+                profile.TerminalEmulation != editor.Profile.TerminalEmulation ||
+                profile.TerminalDisplayMode != editor.Profile.TerminalDisplayMode ||
+                !string.Equals(profile.TerminalType, editor.Profile.TerminalType, StringComparison.OrdinalIgnoreCase);
             profile.Name = editor.Profile.Name;
             profile.Host = editor.Profile.Host;
             profile.Port = editor.Profile.Port;
@@ -664,6 +707,12 @@ namespace BbsNavigator
             profile.LocalEcho = editor.Profile.LocalEcho;
             profile.BackspaceSendsDelete = editor.Profile.BackspaceSendsDelete;
             profile.TerminalEncoding = editor.Profile.TerminalEncoding;
+            profile.TerminalEmulation = editor.Profile.TerminalEmulation;
+            profile.TerminalDisplayMode = editor.Profile.TerminalDisplayMode;
+            profile.TerminalType = editor.Profile.TerminalType.Trim();
+            profile.DoorwayMode = editor.Profile.DoorwayMode;
+            profile.AutoLogin = editor.Profile.AutoLogin;
+            profile.LoginMacro = editor.Profile.LoginMacro;
 
             foreach (LayoutDocument document in GetDocuments(profile))
             {
@@ -674,7 +723,7 @@ namespace BbsNavigator
 
                 bool isSsh = terminal.Transport == BbsTransport.Ssh;
 
-                if (isSsh ? sshEndpointChanged : telnetEndpointChanged)
+                if (terminalConfigurationChanged || (isSsh ? sshEndpointChanged : telnetEndpointChanged))
                 {
                     document.Close();
                 }
@@ -790,6 +839,127 @@ namespace BbsNavigator
             {
                 ShowNoActiveSessionMessage();
             }
+        }
+
+        private void ToggleDoorway_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                terminal.ToggleDoorwayMode();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void ToggleScrollbackLock_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                terminal.ToggleScrollbackLock();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void SearchTerminal_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                terminal.SearchTerminal();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private async void SendLogin_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                await terminal.SendLoginAsync();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private async void SendUserName_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                await terminal.SendUserNameAsync();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private async void SendPassword_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                await terminal.SendPasswordAsync();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void ToggleFullScreen_OnClick(object sender, RoutedEventArgs e) => ToggleFullScreen();
+
+        private void ToggleFullScreen()
+        {
+            if (!_isFullScreen && ActiveTerminal == null)
+            {
+                ShowNoActiveSessionMessage();
+                return;
+            }
+
+            if (!_isFullScreen)
+            {
+                _restoreWindowState = WindowState;
+                _restoreWindowStyle = WindowStyle;
+                _restoreResizeMode = ResizeMode;
+                _directoryWasVisible = BbsDirectoryAnchorable.IsVisible;
+                if (_directoryWasVisible)
+                {
+                    BbsDirectoryAnchorable.Hide();
+                }
+
+                TitleBarRow.Height = new GridLength(0);
+                MenuRow.Height = new GridLength(0);
+                WorkspaceBorder.Margin = new Thickness(0);
+                WindowStyle = WindowStyle.None;
+                ResizeMode = ResizeMode.NoResize;
+                WindowState = WindowState.Maximized;
+                _isFullScreen = true;
+            }
+            else
+            {
+                WindowState = WindowState.Normal;
+                WindowStyle = _restoreWindowStyle;
+                ResizeMode = _restoreResizeMode;
+                TitleBarRow.Height = new GridLength(36);
+                MenuRow.Height = new GridLength(28);
+                WorkspaceBorder.Margin = new Thickness(4, 0, 4, 4);
+                if (_directoryWasVisible)
+                {
+                    BbsDirectoryAnchorable.Show();
+                }
+
+                WindowState = _restoreWindowState;
+                _isFullScreen = false;
+            }
+
+            ActiveTerminal?.FocusTerminal();
         }
 
         private void OpenDownloadFolder_OnClick(object sender, RoutedEventArgs e)

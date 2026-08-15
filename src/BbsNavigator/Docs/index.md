@@ -21,6 +21,10 @@ have used since the dial-up era.
 | Add a board | **Directory → Add BBS…** or `Ctrl+N` |
 | Save or view login details | Right-click a board in the BBS Directory |
 | Download files | Start the download on the BBS, then **Transfer → Download Files…** |
+| Full-screen terminal | Press `Alt+Enter`; press it again to restore the normal window. |
+| Review old output | Scroll up to lock the history, then use **Terminal → Search Screen and Scrollback…** if needed. |
+| Use a DOS door's Alt/function keys | Turn on **DoorWay** in the session status bar. |
+| Send a saved login | Choose **Terminal → Send Login Macro**. |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
 | Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |
 | Choose a theme | **Setup → Theme → Light, Dark, or Blue** |

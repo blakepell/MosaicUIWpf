@@ -299,6 +299,29 @@
                     </StackPanel>
                 </ToggleButton>
 
+                <StackPanel
+                    Grid.Column="4"
+                    Margin="6,0,0,0"
+                    Orientation="Horizontal">
+                    <ToggleButton
+                        x:Name="DoorwayToggle"
+                        Padding="7,2"
+                        Checked="DoorwayToggle_OnChecked"
+                        ToolTip="Send DOS scan codes for Alt, function, and navigation keys"
+                        Unchecked="DoorwayToggle_OnUnchecked">
+                        <TextBlock x:Name="DoorwayText" FontSize="11" Text="DoorWay Off" />
+                    </ToggleButton>
+                    <ToggleButton
+                        x:Name="ScrollLockToggle"
+                        Margin="5,0,0,0"
+                        Padding="7,2"
+                        Checked="ScrollLockToggle_OnChecked"
+                        ToolTip="Keep your current scrollback position while new output arrives"
+                        Unchecked="ScrollLockToggle_OnUnchecked">
+                        <TextBlock x:Name="ScrollLockText" FontSize="11" Text="Live Output" />
+                    </ToggleButton>
+                </StackPanel>
+
                 <TextBlock
                     x:Name="EncodingText"
                     Grid.Column="5"

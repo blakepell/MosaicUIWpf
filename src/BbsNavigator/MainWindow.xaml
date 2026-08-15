@@ -27,17 +27,19 @@
     Activated="MainWindow_OnActivated"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
+    PreviewKeyDown="MainWindow_OnPreviewKeyDown"
     SnapsToDevicePixels="True"
     UseLayoutRounding="True"
     WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="36" />
-            <RowDefinition Height="28" />
+            <RowDefinition x:Name="TitleBarRow" Height="36" />
+            <RowDefinition x:Name="MenuRow" Height="28" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <mosaic:WindowTitleBar
+            x:Name="AppTitleBar"
             Grid.Row="0"
             IconSource="pack://application:,,,/BbsNavigator;component/Assets/app.png"
             ShowIcon="True"
@@ -55,6 +57,7 @@
         </mosaic:WindowTitleBar>
 
         <Menu
+            x:Name="AppMenu"
             Grid.Row="1"
             Margin="4,0,4,0"
             Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
@@ -76,6 +79,20 @@
                 <Separator />
                 <MenuItem Click="ToggleCapture_OnClick" Header="Toggle Session _Capture" />
                 <MenuItem Click="OpenDownloadFolder_OnClick" Header="_Open Download Folder" />
+            </MenuItem>
+            <MenuItem Header="_Terminal">
+                <MenuItem Click="ToggleDoorway_OnClick" Header="Toggle _DoorWay Mode" />
+                <MenuItem Click="ToggleScrollbackLock_OnClick" Header="Toggle Scrollback _Lock" />
+                <MenuItem Click="SearchTerminal_OnClick" Header="_Search Screen and Scrollback…" />
+                <Separator />
+                <MenuItem Click="SendLogin_OnClick" Header="Send Login _Macro" />
+                <MenuItem Click="SendUserName_OnClick" Header="Send Saved _Username" />
+                <MenuItem Click="SendPassword_OnClick" Header="Send Saved _Password" />
+                <Separator />
+                <MenuItem
+                    Click="ToggleFullScreen_OnClick"
+                    Header="_Full Screen"
+                    InputGestureText="Alt+Enter" />
             </MenuItem>
             <MenuItem Header="_Directory">
                 <MenuItem
@@ -119,6 +136,7 @@
         </Menu>
 
         <Border
+            x:Name="WorkspaceBorder"
             Grid.Row="2"
             Margin="4,0,4,4"
             BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
@@ -131,6 +149,7 @@
                     <ad:LayoutPanel Orientation="Horizontal">
                         <ad:LayoutAnchorablePane DockMinWidth="230" DockWidth="315">
                             <ad:LayoutAnchorable
+                                x:Name="BbsDirectoryAnchorable"
                                 Title="BBS Directory"
                                 CanAutoHide="True"
                                 CanClose="False"

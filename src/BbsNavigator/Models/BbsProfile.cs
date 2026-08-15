@@ -133,6 +133,50 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private BbsEncoding _terminalEncoding = BbsEncoding.Cp437;
 
+        /// <summary>Gets or sets the terminal emulation used for this BBS.</summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Terminal emulation")]
+        [property: Description("How escape sequences and special keys are interpreted.")]
+        [ObservableProperty]
+        private BbsTerminalEmulation _terminalEmulation = BbsTerminalEmulation.AnsiBbs;
+
+        /// <summary>Gets or sets the terminal grid mode used for this BBS.</summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Display mode")]
+        [property: Description("Classic mode uses an IBM VGA font on a fixed 80 by 25 grid; responsive mode follows the window size.")]
+        [ObservableProperty]
+        private BbsTerminalDisplayMode _terminalDisplayMode = BbsTerminalDisplayMode.Classic80X25;
+
+        /// <summary>
+        /// Gets or sets an optional Telnet TTYPE override. A blank value uses the default
+        /// associated with <see cref="TerminalEmulation"/>.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Telnet terminal type")]
+        [property: Description("Optional terminal name reported to the BBS. Leave blank to use the emulation's normal value.")]
+        [ObservableProperty]
+        private string _terminalType = string.Empty;
+
+        /// <summary>Gets or sets whether DoorWay extended-key mode starts enabled.</summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Start in DoorWay mode")]
+        [property: Description("Sends DOS scan codes for Alt, function, and navigation keys used by some BBS doors.")]
+        [ObservableProperty]
+        private bool _doorwayMode;
+
+        /// <summary>Gets or sets whether the saved login macro runs after a Telnet connection opens.</summary>
+        [property: Category("Login")]
+        [property: DisplayName("Log in automatically")]
+        [ObservableProperty]
+        private bool _autoLogin;
+
+        /// <summary>Gets or sets the tokenized login text sent by automatic and manual login.</summary>
+        [property: Category("Login")]
+        [property: DisplayName("Login macro")]
+        [property: Description("Text sent for login. Use {USERNAME}, {PASSWORD}, and {ENTER}; the password itself remains encrypted.")]
+        [ObservableProperty]
+        private string _loginMacro = "{USERNAME}{ENTER}{PASSWORD}{ENTER}";
+
         /// <summary>
         /// Gets or sets the current connection state.
         /// </summary>
