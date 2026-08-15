@@ -20,9 +20,11 @@ after the delay configured in [Options](options.md).
 
 Each BBS profile chooses one of two display modes:
 
-- **Classic ANSI 80 × 25** keeps the screen at the dimensions used by most DOS BBSes and
-  renders it with the bundled PxPlus IBM VGA8 font. This keeps ANSI art, boxes, and menus
-  aligned as their artists intended, even when the application window changes size.
+- **Classic ANSI 80 × 25** keeps the screen at the dimensions used by most DOS BBSes.
+  Its **Use bundled CP437 font** profile option selects PxPlus IBM VGA8 so ANSI art, boxes,
+  and menus resemble their original DOS presentation. Turn that option off to keep the
+  80 × 25 grid while using the font selected in **Options** (Cascadia Mono by default).
+  The CP437 font option is off by default.
 - **Responsive to window** changes the row and column count to use the available space.
   This is useful for modern shells, MUDs, and BBS software that adapts to Telnet window
   size reports.

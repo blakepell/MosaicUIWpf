@@ -218,6 +218,11 @@
                     ToolTip="Most classic BBSs expect Ctrl-H/BS (0x08). Enable this for systems that expect DEL (0x7F)." />
                 <CheckBox
                     Margin="0,4,0,0"
+                    Content="Use bundled CP437 font in classic 80 × 25 mode"
+                    IsChecked="{Binding UseCp437Font}"
+                    ToolTip="Turn this off to use the terminal font selected in Options, which is Cascadia Mono by default." />
+                <CheckBox
+                    Margin="0,4,0,0"
                     Content="Start sessions in DoorWay mode"
                     IsChecked="{Binding DoorwayMode}"
                     ToolTip="Enable when a DOS door needs Alt, function, or navigation keys as IBM PC scan codes." />

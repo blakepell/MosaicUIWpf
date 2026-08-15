@@ -47,7 +47,8 @@ Details…**. A connection profile has these settings:
 | Description | Free-form notes about the system. |
 | Text encoding | How received bytes are turned into text — see below. |
 | Terminal emulation | How escape sequences are interpreted: ANSI-BBS, VT100, xterm-256color, VT52, or plain TTY. |
-| Display mode | Fixed classic 80 × 25 with the bundled IBM VGA8 font, or a responsive grid that follows the window. |
+| Display mode | Fixed classic 80 × 25, or a responsive grid that follows the window. |
+| Use bundled CP437 font | In classic mode, use IBM VGA8 for a DOS-like presentation. It is off by default so the terminal uses the font selected in Options. |
 | Telnet TTYPE | Optional terminal name reported to the BBS. Leave blank to use the selected emulation's normal value. |
 | Reconnect automatically | Re-establishes the session after a dropped connection, after the delay set in [Options](options.md). |
 | Show typed characters locally | Local echo. Enable for MUDs and boards that do not echo your keystrokes back; leave off if you see doubled characters. |

@@ -81,6 +81,12 @@ namespace BbsNavigator
             _deferredProfiles = settings.BbsProfiles.ToArray();
             settings.BbsProfiles = new ObservableCollection<BbsProfile>();
 
+            //foreach (var settingsBbsProfile in _deferredProfiles)
+            //{
+            //    settingsBbsProfile.UseCp437Font = false;
+            //    settingsBbsProfile.TerminalDisplayMode = BbsTerminalDisplayMode.Responsive;
+            //}
+
             var viewModel = AppServices.GetRequiredService<AppViewModel>();
             viewModel.AppSettings = settings;
             AppServices.GetRequiredService<ThemeManager>().Theme = settings.Theme;

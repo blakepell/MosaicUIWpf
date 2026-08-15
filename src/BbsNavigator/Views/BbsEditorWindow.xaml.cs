@@ -38,6 +38,7 @@ namespace BbsNavigator.Views
                 TerminalEncoding = profile?.TerminalEncoding ?? BbsEncoding.Cp437,
                 TerminalEmulation = profile?.TerminalEmulation ?? BbsTerminalEmulation.AnsiBbs,
                 TerminalDisplayMode = profile?.TerminalDisplayMode ?? BbsTerminalDisplayMode.Classic80X25,
+                UseCp437Font = profile?.UseCp437Font ?? false,
                 TerminalType = profile?.TerminalType ?? string.Empty,
                 DoorwayMode = profile?.DoorwayMode ?? false,
                 AutoLogin = profile?.AutoLogin ?? false,

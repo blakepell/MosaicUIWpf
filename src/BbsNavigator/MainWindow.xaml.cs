@@ -697,6 +697,7 @@ namespace BbsNavigator
                 profile.TerminalEncoding != editor.Profile.TerminalEncoding ||
                 profile.TerminalEmulation != editor.Profile.TerminalEmulation ||
                 profile.TerminalDisplayMode != editor.Profile.TerminalDisplayMode ||
+                profile.UseCp437Font != editor.Profile.UseCp437Font ||
                 !string.Equals(profile.TerminalType, editor.Profile.TerminalType, StringComparison.OrdinalIgnoreCase);
             profile.Name = editor.Profile.Name;
             profile.Host = editor.Profile.Host;
@@ -709,6 +710,7 @@ namespace BbsNavigator
             profile.TerminalEncoding = editor.Profile.TerminalEncoding;
             profile.TerminalEmulation = editor.Profile.TerminalEmulation;
             profile.TerminalDisplayMode = editor.Profile.TerminalDisplayMode;
+            profile.UseCp437Font = editor.Profile.UseCp437Font;
             profile.TerminalType = editor.Profile.TerminalType.Trim();
             profile.DoorwayMode = editor.Profile.DoorwayMode;
             profile.AutoLogin = editor.Profile.AutoLogin;

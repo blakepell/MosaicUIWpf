@@ -126,10 +126,14 @@ namespace BbsNavigator.Views
             Terminal.AutoResizeTerminal = profile.TerminalDisplayMode == BbsTerminalDisplayMode.Responsive;
             if (!Terminal.AutoResizeTerminal)
             {
-                Terminal.FontFamily = new System.Windows.Media.FontFamily(
-                    new Uri("pack://application:,,,/BbsNavigator;component/"),
-                    "./Assets/#PxPlus IBM VGA8");
-                Terminal.FontWeight = FontWeights.Normal;
+                if (profile.UseCp437Font)
+                {
+                    Terminal.FontFamily = new System.Windows.Media.FontFamily(
+                        new Uri("pack://application:,,,/BbsNavigator;component/"),
+                        "./Assets/#PxPlus IBM VGA8");
+                    Terminal.FontWeight = FontWeights.Normal;
+                }
+
                 Terminal.Resize(25, 80);
             }
 

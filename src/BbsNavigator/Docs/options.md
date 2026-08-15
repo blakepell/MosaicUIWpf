@@ -16,7 +16,7 @@ Navigator closes.
 
 | Setting | Meaning |
 | ------- | ------- |
-| Terminal Font | The font used by responsive terminal sessions. Classic 80 × 25 sessions use the bundled IBM VGA8 font. |
+| Terminal Font | The normal terminal font. Classic 80 × 25 profiles can either override it with the bundled IBM VGA8 font or continue using this selection. |
 | Terminal Font Weight | The font weight used by responsive terminal sessions. |
 | Terminal Font Size | The default font size for new session tabs. Zooming a terminal with `Ctrl` + mouse wheel updates this value. |
 | Scrollback Lines | How many lines that have moved off the top remain available for review and search. The default is 5,000. |

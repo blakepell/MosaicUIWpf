@@ -147,6 +147,13 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private BbsTerminalDisplayMode _terminalDisplayMode = BbsTerminalDisplayMode.Classic80X25;
 
+        /// <summary>Gets or sets whether classic display mode uses the bundled CP437 font.</summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Use CP437 font")]
+        [property: Description("Use the bundled IBM VGA-style font in classic 80 by 25 mode. When disabled, the terminal font selected in Options is used.")]
+        [ObservableProperty]
+        private bool _useCp437Font;
+
         /// <summary>
         /// Gets or sets an optional Telnet TTYPE override. A blank value uses the default
         /// associated with <see cref="TerminalEmulation"/>.
