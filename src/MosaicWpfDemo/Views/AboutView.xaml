@@ -212,6 +212,21 @@
                         NavigateUri="https://github.com/xoofx/markdig"
                         Text="https://github.com/xoofx/markdig" />
 
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="SpreadCheetah" />
+
+                    <controls:Hyperlink
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/sveinungf/spreadcheetah"
+                        Text="https://github.com/sveinungf/spreadcheetah" />
+
                 </Grid>
 
                 <TextBlock
