@@ -289,7 +289,11 @@ namespace Mosaic.UI.Wpf.Data.Excel
         /// <param name="workSheetName"></param>
         public async Task AddSheetAsync(DataTable dt, string workSheetName)
         {
-            await AddSheetAsync(dt.CreateDataReader(), workSheetName);
+            // The reader is created here, so it is disposed here; the IDataReader overload does
+            // not own the readers it is handed.
+            using var dr = dt.CreateDataReader();
+
+            await AddSheetAsync(dr, workSheetName);
         }
 
         /// <summary>
@@ -342,17 +346,21 @@ namespace Mosaic.UI.Wpf.Data.Excel
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            // If it's an internally created stream then dispose of it, otherwise it's the
-            // caller's responsibility.
-            if (!this.OutsideStream)
-            {
-                _stream?.DisposeAsync();
-            }
-
+            // The spreadsheet has to be finished and disposed before the stream is closed:
+            // FinishAsync is what writes the ZIP central directory and the workbook parts, and
+            // it needs a live stream to write them to.
             if (_spreadsheet != null)
             {
                 await _spreadsheet.FinishAsync();
                 await _spreadsheet.DisposeAsync();
+                _spreadsheet = null;
+            }
+
+            // If it's an internally created stream then dispose of it, otherwise it's the
+            // caller's responsibility.
+            if (!this.OutsideStream)
+            {
+                await _stream.DisposeAsync();
             }
         }
     }

@@ -10,6 +10,7 @@
 
 using CommunityToolkit.Mvvm.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Mosaic.UI.Wpf.Data.Excel;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
@@ -41,6 +42,7 @@ namespace Mosaic.UI.Wpf.Controls
     [TemplatePart(Name = PartResults, Type = typeof(DataGrid))]
     [TemplatePart(Name = PartExecutionControl, Type = typeof(ExecutionControl))]
     [TemplatePart(Name = PartRefreshButton, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = PartExportToExcelButton, Type = typeof(ButtonBase))]
     [DefaultEvent(nameof(SchemaContextMenuRequested))]
     [DefaultProperty(nameof(DatabaseFilePath))]
     public class SqliteQueryControl : Control, IDisposable
@@ -50,6 +52,7 @@ namespace Mosaic.UI.Wpf.Controls
         private const string PartResults = "PART_Results";
         private const string PartExecutionControl = "PART_ExecutionControl";
         private const string PartRefreshButton = "PART_RefreshButton";
+        private const string PartExportToExcelButton = "PART_ExportToExcelButton";
 
         /// <summary>
         /// Words that, when followed by white space, indicate the user is about to name a table or view.
@@ -80,6 +83,7 @@ namespace Mosaic.UI.Wpf.Controls
         private SyntaxEditor? _sqlEditor;
         private DataGrid? _results;
         private ButtonBase? _refreshButton;
+        private ButtonBase? _exportToExcelButton;
         private ContextMenu? _schemaContextMenu;
         private SyntaxCompletionController? _completion;
         private CancellationTokenSource? _queryCancellation;
@@ -317,6 +321,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public IAsyncRelayCommand RefreshSchemaCommand { get; }
 
+        /// <summary>
+        /// Exports the data set to Excel.
+        /// </summary>
+        public IAsyncRelayCommand ExportToExcelCommand { get; }
+
         #endregion
 
         static SqliteQueryControl()
@@ -332,7 +341,7 @@ namespace Mosaic.UI.Wpf.Controls
             this.ExecuteQueryCommand = new AsyncRelayCommand(this.ExecuteEditorQueryAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.CancelQueryCommand = new RelayCommand(this.CancelQuery, () => this.IsQueryExecuting);
             this.RefreshSchemaCommand = new AsyncRelayCommand(this.RefreshSchemaAsync, () => !string.IsNullOrWhiteSpace(this.ConnectionString));
-
+            this.ExportToExcelCommand = new AsyncRelayCommand(this.ExportToExcelAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.Unloaded += this.OnUnloaded;
         }
 
@@ -353,6 +362,7 @@ namespace Mosaic.UI.Wpf.Controls
             _sqlEditor = this.GetTemplateChild(PartSqlEditor) as SyntaxEditor;
             _results = this.GetTemplateChild(PartResults) as DataGrid;
             _refreshButton = this.GetTemplateChild(PartRefreshButton) as ButtonBase;
+            _exportToExcelButton = this.GetTemplateChild(PartExportToExcelButton) as ButtonBase;
 
             if (_schemaTree != null)
             {
@@ -440,6 +450,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             control.ExecuteQueryCommand.NotifyCanExecuteChanged();
             control.RefreshSchemaCommand.NotifyCanExecuteChanged();
+            control.ExportToExcelCommand.NotifyCanExecuteChanged();
 
             if (!string.IsNullOrWhiteSpace(e.NewValue as string))
             {
@@ -589,6 +600,47 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Creates an Excel Spreadsheet from the active queries dataset.
+        /// </summary>
+        public async Task ExportToExcelAsync()
+        {
+            try
+            {
+                var file = $"{Guid.NewGuid().ToString()}.xlsx";
+                var path = Path.Join(Path.GetTempPath(), file);
+
+                await ExecuteEditorQueryAsync();
+
+                this.IsQueryExecuting = true;
+
+                if (_dataTable != null)
+                {
+                    await using var excel = new ExcelWriter(path);
+                    await excel.AddSheetAsync(_dataTable, "Sheet1");
+                }
+
+                // Use the fully qualified path so Explorer receives an unambiguous location.
+                if (!File.Exists(path))
+                {
+                    return;
+                }
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = Path.GetFullPath(path),
+                    UseShellExecute = true,
+                    Verb = "open"
+                };
+
+                Process.Start(psi);
+            }
+            finally
+            {
+                this.IsQueryExecuting = false;
+            }
+        }
+
+        /// <summary>
         /// Reloads the database schema into the explorer.
         /// </summary>
         /// <returns>A task that completes once the schema has loaded.</returns>
@@ -725,6 +777,7 @@ namespace Mosaic.UI.Wpf.Controls
             this.IsQueryExecuting = executing;
             this.ExecuteQueryCommand.NotifyCanExecuteChanged();
             this.CancelQueryCommand.NotifyCanExecuteChanged();
+            this.ExportToExcelCommand.NotifyCanExecuteChanged();
         }
 
         /// <summary>

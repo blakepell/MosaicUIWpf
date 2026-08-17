@@ -195,6 +195,15 @@
                                             ShowPauseButton="False"
                                             StopCommand="{Binding CancelQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                             StopToolTip="Cancel Query" />
+                                        <Separator />
+                                        <Button
+                                            x:Name="PART_ExportToExcelButton"
+                                            Command="{Binding ExportToExcelCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarButton}"
+                                            ToolTip="Export to Excel"
+                                            ToolTipService.ShowOnDisabled="True">
+                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/excel-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
+                                        </Button>
                                     </ToolBar>
                                 </ToolBarTray>
                             </DockPanel>

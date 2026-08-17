@@ -28,6 +28,7 @@
   <ItemGroup>
     <None Remove="Assets\database-48.png" />
     <None Remove="Assets\document-32.png" />
+    <None Remove="Assets\excel-48.png" />
     <None Remove="Assets\folder-48.png" />
     <None Remove="Assets\folder-open-48.png" />
     <None Remove="Assets\Images\error-48.png" />
@@ -151,6 +152,7 @@
   <ItemGroup>
     <Resource Include="Assets\database-48.png" />
     <Resource Include="Assets\document-32.png" />
+    <Resource Include="Assets\excel-48.png" />
     <Resource Include="Assets\folder-48.png" />
     <Resource Include="Assets\folder-open-48.png" />
     <Resource Include="Assets\Images\error-48.png" />
