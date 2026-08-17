@@ -157,10 +157,12 @@
                                     <Button
                                         x:Name="PART_RefreshButton"
                                         Command="{Binding RefreshSchemaCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                        Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarButton}"
                                         ToolTip="Refresh Schema"
                                         ToolTipService.ShowOnDisabled="True">
-                                        <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/refresh2-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/refresh2-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
+                                            <TextBlock Margin="4,0,0,0" Text="Refresh Schema" />
+                                        </StackPanel>
                                     </Button>
                                 </ToolBar>
                             </ToolBarTray>
