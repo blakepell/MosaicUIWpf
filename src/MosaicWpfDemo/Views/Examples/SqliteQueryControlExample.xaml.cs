@@ -124,26 +124,40 @@ namespace MosaicWpfDemo.Views.Examples
                      INNER JOIN Artist a ON a.ArtistId = al.ArtistId;
 
                 INSERT INTO Artist (Name, Country, FormedYear) VALUES
-                    ('Aphex Twin', 'UK', 1988),
-                    ('Boards of Canada', 'UK', 1986),
-                    ('Tycho', 'US', 2001),
-                    ('Explosions in the Sky', 'US', 1999),
-                    ('Godspeed You! Black Emperor', 'CA', 1994);
-
+                    ('The Beatles', 'UK', 1960),
+                    ('Margot & the Nuclear So and So''s', 'US', 2004),
+                    ('Jesse Welles', 'US', 2012),
+                    ('Phantom Planet', 'US', 1994),
+                    ('Rogue Wave', 'US', 2002);
+                
                 INSERT INTO Album (ArtistId, Title, ReleaseYear, TrackCount, Rating) VALUES
-                    (1, 'Selected Ambient Works 85-92', 1992, 13, 4.8),
-                    (1, 'Richard D. James Album', 1996, 15, 4.5),
-                    (1, 'Syro', 2014, 12, 4.2),
-                    (2, 'Music Has the Right to Children', 1998, 17, 4.9),
-                    (2, 'Geogaddi', 2002, 23, 4.6),
-                    (2, 'Tomorrow''s Harvest', 2013, 17, 4.3),
-                    (3, 'Dive', 2011, 10, 4.4),
-                    (3, 'Awake', 2014, 8, 4.3),
-                    (3, 'Epoch', 2016, 11, 4.1),
-                    (4, 'The Earth Is Not a Cold Dead Place', 2003, 5, 4.7),
-                    (4, 'All of a Sudden I Miss Everyone', 2007, 6, 4.2),
-                    (5, 'F# A# Infinity', 1997, 3, 4.6),
-                    (5, 'Lift Your Skinny Fists Like Antennas to Heaven', 2000, 4, 4.9);
+                    -- The Beatles
+                    (1, 'Please Please Me', 1963, 14, 4.5),
+                    (1, 'Rubber Soul', 1965, 14, 4.8),
+                    (1, 'Revolver', 1966, 14, 4.9),
+                    (1, 'Sgt. Pepper''s Lonely Hearts Club Band', 1967, 13, 4.9),
+                    (1, 'Abbey Road', 1969, 17, 5.0),
+                
+                    -- Margot & the Nuclear So and So's
+                    (2, 'The Dust of Retreat', 2005, 12, 4.7),
+                    (2, 'Animal!', 2008, 12, 4.4),
+                    (2, 'Not Animal', 2008, 12, 4.6),
+                
+                    -- Jesse Welles
+                    (3, 'Hells Welles', 2024, 21, 4.7),
+                    (3, 'Patchwork', 2024, 12, 4.6),
+                    (3, 'Middle', 2025, 12, 4.5),
+                    (3, 'Masks Off', 2026, 12, 5.0),
+                
+                    -- Phantom Planet
+                    (4, 'The Guest', 2002, 12, 4.6),
+                    (4, 'Phantom Planet', 2004, 11, 4.4),
+                    (4, 'Raise the Dead', 2008, 12, 4.2),
+                
+                    -- Rogue Wave
+                    (5, 'Out of the Shadow', 2003, 12, 4.5),
+                    (5, 'Descended Like Vultures', 2005, 11, 4.7),
+                    (5, 'Asleep at Heaven''s Gate', 2007, 12, 4.4);
                 """;
 
             command.ExecuteNonQuery();
