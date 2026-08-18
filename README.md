@@ -156,6 +156,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [FontWeightComboBox](./docs/FontWeightComboBox.md) | A ComboBox that lists the standard font weights (Thin through ExtraBlack), rendering each entry in the weight it names and exposing the selection as either a FontWeight or a weight name. |
 | [GravatarImage](./docs/GravatarImage.md) | Displays a Gravatar Image for a specified email address. |
 | [HexColorTextBox](./docs/HexColorTextBox.md) | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |
+| [HorizontalListBox](./docs/HorizontalListBox.md) | A ListBox variant that lays its items out horizontally as a row of cells which toggle on and off when clicked, with selection conveyed by the cell fill color rather than a checkbox. |
 | [Hyperlink](./docs/Hyperlink.md) | Represents a hyperlink control that displays text and provides navigation functionality. |
 | [InertiaScrollViewer](./docs/InertiaScrollViewer.md) | Represents a scroll viewer that supports inertia-based scrolling animations. |
 | [InfoBubble](./docs/InfoBubble.md) | A content wrapper that overlays a count, capped value, status dot, or custom notification indicator in any of eight positions. |

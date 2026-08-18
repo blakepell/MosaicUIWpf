@@ -16,6 +16,7 @@
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Files/Files.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FlipPanel/FlipPanel.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/FavoriteCheckBox/FavoriteCheckBox.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HorizontalListBox/HorizontalListBox.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/HyperLink/Hyperlink.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/InfoBubble/InfoBubble.xaml" />
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/InfoCard/InfoCard.xaml" />

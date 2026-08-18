@@ -36,6 +36,7 @@
 		<None Remove="Assets\color-mode-48.png" />
 		<None Remove="Assets\color-swatch-48.png" />
 		<None Remove="Assets\database-48.png" />
+		<None Remove="Assets\dotted-list-48.png" />
 		<None Remove="Assets\drive-48.png" />
 		<None Remove="Assets\dropdown-field-48.png" />
 		<None Remove="Assets\edit-property-48.png" />
@@ -122,6 +123,7 @@
 		<Resource Include="Assets\color-swatch-48.png" />
 		<Resource Include="Assets\dashboard-48.png" />
 		<Resource Include="Assets\database-48.png" />
+		<Resource Include="Assets\dotted-list-48.png" />
 		<Resource Include="Assets\drive-48.png" />
 		<Resource Include="Assets\dropdown-field-48.png" />
 		<Resource Include="Assets\edit-property-48.png" />
@@ -537,6 +539,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\FilesExample.xaml.cs">
 			<Link>LinkedSources\FilesExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\HorizontalListBoxExample.xaml">
+			<Link>LinkedSources\HorizontalListBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\HorizontalListBoxExample.xaml.cs">
+			<Link>LinkedSources\HorizontalListBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\HyperlinkExample.xaml">

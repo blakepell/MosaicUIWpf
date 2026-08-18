@@ -660,6 +660,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  HorizontalListBox  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/dotted-list-48.png"
+                    Text="HorizontalListBox">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="HorizontalListBox" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.HorizontalListBoxExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.HorizontalListBoxExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:HorizontalListBox}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:HorizontalListBoxExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/dotted-list-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Hyperlink  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
