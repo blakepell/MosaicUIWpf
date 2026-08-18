@@ -12,6 +12,8 @@ using CommunityToolkit.Mvvm.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using Mosaic.UI.Wpf.Data.Excel;
 using System.Data;
+using System.Globalization;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
@@ -42,7 +44,7 @@ namespace Mosaic.UI.Wpf.Controls
     [TemplatePart(Name = PartResults, Type = typeof(DataGrid))]
     [TemplatePart(Name = PartExecutionControl, Type = typeof(ExecutionControl))]
     [TemplatePart(Name = PartRefreshButton, Type = typeof(ButtonBase))]
-    [TemplatePart(Name = PartExportToExcelButton, Type = typeof(ButtonBase))]
+    [TemplatePart(Name = PartSaveButton, Type = typeof(ButtonBase))]
     [DefaultEvent(nameof(SchemaContextMenuRequested))]
     [DefaultProperty(nameof(DatabaseFilePath))]
     public class SqliteQueryControl : Control, IDisposable
@@ -52,7 +54,7 @@ namespace Mosaic.UI.Wpf.Controls
         private const string PartResults = "PART_Results";
         private const string PartExecutionControl = "PART_ExecutionControl";
         private const string PartRefreshButton = "PART_RefreshButton";
-        private const string PartExportToExcelButton = "PART_ExportToExcelButton";
+        private const string PartSaveButton = "PART_SaveButton";
 
         /// <summary>
         /// Words that, when followed by white space, indicate the user is about to name a table or view.
@@ -83,7 +85,7 @@ namespace Mosaic.UI.Wpf.Controls
         private SyntaxEditor? _sqlEditor;
         private DataGrid? _results;
         private ButtonBase? _refreshButton;
-        private ButtonBase? _exportToExcelButton;
+        private ButtonBase? _saveButton;
         private ContextMenu? _schemaContextMenu;
         private SyntaxCompletionController? _completion;
         private CancellationTokenSource? _queryCancellation;
@@ -260,6 +262,25 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(RowLimitProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="ShowExportOptions"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowExportOptionsProperty = DependencyProperty.Register(
+            nameof(ShowExportOptions), typeof(bool), typeof(SqliteQueryControl),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the save and export menu is visible.
+        /// Defaults to <see langword="true"/>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the save and export menu is visible.")]
+        public bool ShowExportOptions
+        {
+            get => (bool)this.GetValue(ShowExportOptionsProperty);
+            set => this.SetValue(ShowExportOptionsProperty, value);
+        }
+
         #endregion
 
         #region Routed Events
@@ -326,6 +347,21 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public IAsyncRelayCommand ExportToExcelCommand { get; }
 
+        /// <summary>
+        /// Saves the data set as JSON.
+        /// </summary>
+        public IAsyncRelayCommand SaveAsJsonCommand { get; }
+
+        /// <summary>
+        /// Saves the data set as a Markdown table.
+        /// </summary>
+        public IAsyncRelayCommand SaveAsMarkdownCommand { get; }
+
+        /// <summary>
+        /// Saves the data set as comma-separated values.
+        /// </summary>
+        public IAsyncRelayCommand SaveAsCsvCommand { get; }
+
         #endregion
 
         static SqliteQueryControl()
@@ -342,6 +378,9 @@ namespace Mosaic.UI.Wpf.Controls
             this.CancelQueryCommand = new RelayCommand(this.CancelQuery, () => this.IsQueryExecuting);
             this.RefreshSchemaCommand = new AsyncRelayCommand(this.RefreshSchemaAsync, () => !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.ExportToExcelCommand = new AsyncRelayCommand(this.ExportToExcelAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
+            this.SaveAsJsonCommand = new AsyncRelayCommand(this.SaveAsJsonAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
+            this.SaveAsMarkdownCommand = new AsyncRelayCommand(this.SaveAsMarkdownAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
+            this.SaveAsCsvCommand = new AsyncRelayCommand(this.SaveAsCsvAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.Unloaded += this.OnUnloaded;
         }
 
@@ -362,7 +401,7 @@ namespace Mosaic.UI.Wpf.Controls
             _sqlEditor = this.GetTemplateChild(PartSqlEditor) as SyntaxEditor;
             _results = this.GetTemplateChild(PartResults) as DataGrid;
             _refreshButton = this.GetTemplateChild(PartRefreshButton) as ButtonBase;
-            _exportToExcelButton = this.GetTemplateChild(PartExportToExcelButton) as ButtonBase;
+            _saveButton = this.GetTemplateChild(PartSaveButton) as ButtonBase;
 
             if (_schemaTree != null)
             {
@@ -432,6 +471,7 @@ namespace Mosaic.UI.Wpf.Controls
             _completion = null;
             _schemaContextMenu = null;
             _refreshButton = null;
+            _saveButton = null;
         }
 
         #region Property change handlers
@@ -450,7 +490,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             control.ExecuteQueryCommand.NotifyCanExecuteChanged();
             control.RefreshSchemaCommand.NotifyCanExecuteChanged();
-            control.ExportToExcelCommand.NotifyCanExecuteChanged();
+            control.NotifyExportCommandsCanExecuteChanged();
 
             if (!string.IsNullOrWhiteSpace(e.NewValue as string))
             {
@@ -600,44 +640,187 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Creates an Excel Spreadsheet from the active queries dataset.
+        /// Prompts for a destination and creates an Excel workbook from the current query results.
         /// </summary>
         public async Task ExportToExcelAsync()
         {
-            try
-            {
-                var file = $"{Guid.NewGuid().ToString()}.xlsx";
-                var path = Path.Join(Path.GetTempPath(), file);
-
-                await ExecuteEditorQueryAsync();
-
-                this.IsQueryExecuting = true;
-
-                if (_dataTable != null)
+            await this.SaveResultsAsync(
+                "Export Results to Excel",
+                "Excel Workbook (*.xlsx)|*.xlsx",
+                async (dataTable, path) =>
                 {
                     await using var excel = new ExcelWriter(path);
-                    await excel.AddSheetAsync(_dataTable, "Sheet1");
-                }
+                    await excel.AddSheetAsync(dataTable, "Sheet1");
+                });
+        }
 
-                // Use the fully qualified path so Explorer receives an unambiguous location.
-                if (!File.Exists(path))
-                {
-                    return;
-                }
+        /// <summary>
+        /// Prompts for a destination and saves the current query results as JSON.
+        /// </summary>
+        public async Task SaveAsJsonAsync()
+        {
+            await this.SaveResultsAsync(
+                "Save Results as JSON",
+                "JSON Files (*.json)|*.json",
+                SaveJsonAsync);
+        }
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = Path.GetFullPath(path),
-                    UseShellExecute = true,
-                    Verb = "open"
-                };
+        /// <summary>
+        /// Prompts for a destination and saves the current query results as a Markdown table.
+        /// </summary>
+        public async Task SaveAsMarkdownAsync()
+        {
+            await this.SaveResultsAsync(
+                "Save Results as Markdown",
+                "Markdown Files (*.md)|*.md|Markdown Files (*.markdown)|*.markdown",
+                SaveMarkdownAsync);
+        }
 
-                Process.Start(psi);
+        /// <summary>
+        /// Prompts for a destination and saves the current query results as comma-separated values.
+        /// </summary>
+        public async Task SaveAsCsvAsync()
+        {
+            await this.SaveResultsAsync(
+                "Save Results as CSV",
+                "CSV Files (*.csv)|*.csv",
+                SaveCsvAsync);
+        }
+
+        /// <summary>
+        /// Prompts for a destination, refreshes the current result set, and writes it with the
+        /// supplied exporter.
+        /// </summary>
+        /// <param name="title">The Save dialog title.</param>
+        /// <param name="filter">The Save dialog file type filter.</param>
+        /// <param name="saveAsync">The format-specific writer.</param>
+        private async Task SaveResultsAsync(string title, string filter, Func<DataTable, string, Task> saveAsync)
+        {
+            string? path = WpfUtilities.SaveFileRequest(title, filter);
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return;
+            }
+
+            await this.ExecuteEditorQueryAsync();
+
+            if (_dataTable == null || _dataTable.Columns.Count == 0)
+            {
+                this.StatusText = "No tabular results are available to save.";
+                return;
+            }
+
+            this.SetExecuting(true);
+            this.StatusText = "Saving results…";
+
+            try
+            {
+                await saveAsync(_dataTable, path);
+                this.StatusText = $"Results saved to {path}.";
+            }
+            catch (Exception ex)
+            {
+                this.StatusText = $"Save failed: {ex.Message}";
             }
             finally
             {
-                this.IsQueryExecuting = false;
+                this.SetExecuting(false);
             }
+        }
+
+        /// <summary>
+        /// Writes a data table as an indented JSON array of row objects.
+        /// </summary>
+        /// <param name="dataTable">The result set.</param>
+        /// <param name="path">The destination file.</param>
+        private static async Task SaveJsonAsync(DataTable dataTable, string path)
+        {
+            var rows = dataTable.Rows.Cast<DataRow>()
+                .Select(row => dataTable.Columns.Cast<DataColumn>().ToDictionary(
+                    column => column.ColumnName,
+                    column => row.IsNull(column) ? null : row[column]))
+                .ToList();
+
+            await using var stream = File.Create(path);
+            await JsonSerializer.SerializeAsync(stream, rows, new JsonSerializerOptions { WriteIndented = true });
+        }
+
+        /// <summary>
+        /// Writes a data table as a GitHub-flavored Markdown table.
+        /// </summary>
+        /// <param name="dataTable">The result set.</param>
+        /// <param name="path">The destination file.</param>
+        private static async Task SaveMarkdownAsync(DataTable dataTable, string path)
+        {
+            await using var writer = new StreamWriter(path, false, new UTF8Encoding(false));
+            var columns = dataTable.Columns.Cast<DataColumn>().ToList();
+
+            await writer.WriteLineAsync($"| {string.Join(" | ", columns.Select(column => EscapeMarkdownCell(column.ColumnName)))} |");
+            await writer.WriteLineAsync($"| {string.Join(" | ", columns.Select(_ => "---"))} |");
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                await writer.WriteLineAsync($"| {string.Join(" | ", columns.Select(column => EscapeMarkdownCell(FormatCell(row[column]))))} |");
+            }
+        }
+
+        /// <summary>
+        /// Writes a data table using RFC 4180-style CSV escaping.
+        /// </summary>
+        /// <param name="dataTable">The result set.</param>
+        /// <param name="path">The destination file.</param>
+        private static async Task SaveCsvAsync(DataTable dataTable, string path)
+        {
+            await using var writer = new StreamWriter(path, false, new UTF8Encoding(false));
+            var columns = dataTable.Columns.Cast<DataColumn>().ToList();
+
+            await writer.WriteLineAsync(string.Join(",", columns.Select(column => EscapeCsvCell(column.ColumnName))));
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                await writer.WriteLineAsync(string.Join(",", columns.Select(column => EscapeCsvCell(FormatCell(row[column])))));
+            }
+        }
+
+        /// <summary>
+        /// Formats a database value for text exports using invariant culture.
+        /// </summary>
+        /// <param name="value">The value to format.</param>
+        /// <returns>The formatted value, or an empty string for a database null.</returns>
+        private static string FormatCell(object value)
+        {
+            return value == DBNull.Value ? string.Empty : Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Escapes a cell for comma-separated output.
+        /// </summary>
+        /// <param name="value">The unescaped cell.</param>
+        /// <returns>The escaped cell.</returns>
+        private static string EscapeCsvCell(string value)
+        {
+            if (value.IndexOfAny([',', '"', '\r', '\n']) < 0)
+            {
+                return value;
+            }
+
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        }
+
+        /// <summary>
+        /// Escapes table delimiters and line breaks in a Markdown cell.
+        /// </summary>
+        /// <param name="value">The unescaped cell.</param>
+        /// <returns>The escaped cell.</returns>
+        private static string EscapeMarkdownCell(string value)
+        {
+            return value
+                .Replace("\\", "\\\\")
+                .Replace("|", "\\|")
+                .Replace("\r\n", "<br>")
+                .Replace("\r", "<br>")
+                .Replace("\n", "<br>");
         }
 
         /// <summary>
@@ -777,7 +960,18 @@ namespace Mosaic.UI.Wpf.Controls
             this.IsQueryExecuting = executing;
             this.ExecuteQueryCommand.NotifyCanExecuteChanged();
             this.CancelQueryCommand.NotifyCanExecuteChanged();
+            this.NotifyExportCommandsCanExecuteChanged();
+        }
+
+        /// <summary>
+        /// Re-evaluates every save and export command.
+        /// </summary>
+        private void NotifyExportCommandsCanExecuteChanged()
+        {
             this.ExportToExcelCommand.NotifyCanExecuteChanged();
+            this.SaveAsJsonCommand.NotifyCanExecuteChanged();
+            this.SaveAsMarkdownCommand.NotifyCanExecuteChanged();
+            this.SaveAsCsvCommand.NotifyCanExecuteChanged();
         }
 
         /// <summary>

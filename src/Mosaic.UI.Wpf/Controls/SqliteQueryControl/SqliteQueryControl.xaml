@@ -1,7 +1,9 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors"
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
@@ -195,14 +197,25 @@
                                             ShowPauseButton="False"
                                             StopCommand="{Binding CancelQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                             StopToolTip="Cancel Query" />
-                                        <Separator />
+                                        <Separator Visibility="{Binding ShowExportOptions, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.SqliteQueryControl.BooleanToVisibility}}" />
                                         <Button
-                                            x:Name="PART_ExportToExcelButton"
-                                            Command="{Binding ExportToExcelCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            x:Name="PART_SaveButton"
+                                            DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                             Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarButton}"
-                                            ToolTip="Export to Excel"
-                                            ToolTipService.ShowOnDisabled="True">
-                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/excel-48.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
+                                            ToolTip="Save or export results"
+                                            Visibility="{Binding ShowExportOptions, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.SqliteQueryControl.BooleanToVisibility}}">
+                                            <Button.ContextMenu>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                    <MenuItem Command="{Binding ExportToExcelCommand}" Header="Save as Excel" />
+                                                    <MenuItem Command="{Binding SaveAsJsonCommand}" Header="Save as JSON" />
+                                                    <MenuItem Command="{Binding SaveAsMarkdownCommand}" Header="Save as Markdown" />
+                                                    <MenuItem Command="{Binding SaveAsCsvCommand}" Header="Save as CSV" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                            <i:Interaction.Behaviors>
+                                                <behaviors:OpenContextMenuBehavior Placement="Right" />
+                                            </i:Interaction.Behaviors>
+                                            <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/save-32.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
                                         </Button>
                                     </ToolBar>
                                 </ToolBarTray>

@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <AssemblyVersion>2026.8.13.1</AssemblyVersion>
-    <FileVersion>2026.8.13.1</FileVersion>
-    <PackageVersion>2026.8.13.1</PackageVersion>
+    <AssemblyVersion>2026.8.18.1</AssemblyVersion>
+    <FileVersion>2026.8.18.1</FileVersion>
+    <PackageVersion>2026.8.18.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -42,6 +42,7 @@
     <None Remove="Assets\Images\stop-30.png" />
     <None Remove="Assets\Images\warning-48.png" />
     <None Remove="Assets\refresh2-48.png" />
+    <None Remove="Assets\save-32.png" />
     <None Remove="Assets\termina3-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\vs-close-16.png" />
@@ -166,6 +167,7 @@
     <Resource Include="Assets\Images\stop-30.png" />
     <Resource Include="Assets\Images\warning-48.png" />
     <Resource Include="Assets\refresh2-48.png" />
+    <Resource Include="Assets\save-32.png" />
     <Resource Include="Assets\table-48.png" />
     <Resource Include="Assets\text-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
