@@ -125,7 +125,7 @@
                         IsCheckable="True" />
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="_Help">
+            <MenuItem x:Name="HelpMenuItem" Header="_Help">
                 <MenuItem
                     Click="UserGuide_OnClick"
                     Header="_User Guide"

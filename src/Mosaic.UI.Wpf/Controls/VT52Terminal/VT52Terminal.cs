@@ -2939,6 +2939,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private void UpdateCaret(int curRow, int curCol, bool forceScrollTop, bool stickToBottom)
         {
+            // Cell attributes are stored outside the AvalonEdit document. Redraw even when the
+            // character snapshot is unchanged so clears and color-only updates cannot reuse stale visuals.
+            TextArea.TextView.Redraw();
+
             int offset = VisibleScrollbackCount;
             int targetLine = Math.Max(1, Math.Min(offset + curRow + 1, Document.LineCount));
             var line = Document.GetLineByNumber(targetLine);

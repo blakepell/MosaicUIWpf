@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -56,6 +57,22 @@ namespace BbsNavigator
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, AddBbs_OnClick));
             InputBindings.Add(new KeyBinding(ApplicationCommands.New, Key.N, ModifierKeys.Control));
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Help, UserGuide_OnClick));
+#if DEBUG
+            var debugMenu = new MenuItem()
+            {
+                Header = "_Debug"
+            };
+
+            debugMenu.Click += (sender, args) =>
+            {
+                foreach (var profile in Settings.BbsProfiles)
+                {
+                    profile.TerminalDisplayMode = BbsTerminalDisplayMode.Responsive;
+                }
+            };
+
+            HelpMenuItem.Items.Insert(1, debugMenu);
+#endif
         }
 
         private BbsProfile? SelectedProfile => BbsTree.SelectedItem as BbsProfile;

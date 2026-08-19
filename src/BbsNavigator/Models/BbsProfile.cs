@@ -145,7 +145,7 @@ namespace BbsNavigator.Models
         [property: DisplayName("Display mode")]
         [property: Description("Classic mode uses an IBM VGA font on a fixed 80 by 25 grid; responsive mode follows the window size.")]
         [ObservableProperty]
-        private BbsTerminalDisplayMode _terminalDisplayMode = BbsTerminalDisplayMode.Classic80X25;
+        private BbsTerminalDisplayMode _terminalDisplayMode = BbsTerminalDisplayMode.Responsive;
 
         /// <summary>Gets or sets whether classic display mode uses the bundled CP437 font.</summary>
         [property: Category("Terminal")]
