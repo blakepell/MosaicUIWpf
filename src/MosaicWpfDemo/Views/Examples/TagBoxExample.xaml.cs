@@ -25,6 +25,35 @@ namespace MosaicWpfDemo.Views.Examples
         };
 
         /// <summary>
+        /// The tags bound to the auto-complete enabled <see cref="TagBox"/>.
+        /// </summary>
+        public ObservableCollection<string> AutoCompleteTags { get; } = new()
+        {
+            "WPF"
+        };
+
+        /// <summary>
+        /// The pool of candidate tags offered by the auto-complete drop-down. Because it is an
+        /// <see cref="ObservableCollection{T}"/>, adding to it at runtime immediately affects the suggestions.
+        /// </summary>
+        public ObservableCollection<string> SuggestedTags { get; } = new()
+        {
+            "WPF", "WinForms", "WinUI", "MAUI", "Avalonia", "Blazor",
+            "C#", "F#", "VB.NET", "TypeScript", "SQL",
+            "Mosaic", "MVVM", "XAML", "Styles", "Templates", "Theming",
+            "SQLite", "Serialization", "Sockets", "Async", "Performance"
+        };
+
+        /// <summary>
+        /// The filter modes offered by the demo's matching-mode selector.
+        /// </summary>
+        public AutoCompleteBoxFilterMode[] FilterModes { get; } =
+        {
+            AutoCompleteBoxFilterMode.Contains,
+            AutoCompleteBoxFilterMode.StartsWith
+        };
+
+        /// <summary>
         /// A running log of the TagChanging / TagChanged events for demonstration purposes.
         /// </summary>
         public ObservableCollection<string> EventLog { get; } = new();

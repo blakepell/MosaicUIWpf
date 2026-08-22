@@ -44,6 +44,52 @@
                 Text="Tip: try adding a tag named &quot;blocked&quot; — TagChanging vetoes it." />
         </StackPanel>
 
+        <!--  Auto-complete enabled tag editor  -->
+        <TextBlock
+            Margin="0,24,0,0"
+            FontWeight="Bold"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            Text="With auto-complete suggestions" />
+
+        <TextBlock
+            MaxWidth="560"
+            Margin="0,4,0,0"
+            HorizontalAlignment="Left"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            Text="Setting SuggestionsSource turns the same control into an auto-complete editor. Start typing (try &quot;s&quot;) and a drop-down of matching tags appears. Tab (or a mouse click) accepts the selected suggestion as a tag; with nothing typed, Tab just moves to the next control. Down/Up change the selection, and Enter commits the selected suggestion once you've arrowed to one — otherwise it commits exactly what you typed, so free-form tags always work. Esc throws away the text you haven't turned into a tag yet and leaves your existing tags alone."
+            TextWrapping="Wrap" />
+
+        <controls:TagBox
+            x:Name="AutoCompleteTagBox"
+            Width="560"
+            Margin="0,14,0,0"
+            HorizontalAlignment="Left"
+            SuggestionDelay="0:0:0.1"
+            SuggestionFilterMode="Contains"
+            SuggestionsSource="{Binding SuggestedTags}"
+            TagCornerRadius="3"
+            Tags="{Binding AutoCompleteTags}"
+            Watermark="Start typing to see suggestions..." />
+
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="Hide tags already added"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding ExcludeExistingTagsFromSuggestions, ElementName=AutoCompleteTagBox}" />
+            <TextBlock
+                Margin="24,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Matching:" />
+            <ComboBox
+                Width="120"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding FilterModes}"
+                SelectedItem="{Binding SuggestionFilterMode, ElementName=AutoCompleteTagBox}" />
+        </StackPanel>
+
         <!--  Event log demonstrating TagChanging / TagChanged  -->
         <TextBlock
             Margin="0,18,0,0"

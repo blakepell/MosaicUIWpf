@@ -4,6 +4,42 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
+    <Style x:Key="TagBoxSuggestionItemStyle" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border
+                        x:Name="Root"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="{x:Type controls:TagBox}" TargetType="{x:Type controls:TagBox}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
@@ -23,40 +59,72 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:TagBox}">
-                    <Border
-                        x:Name="PART_Border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <Grid Margin="{TemplateBinding Padding}">
-                            <!--  Chips followed by the input box. Chips are inserted by the control before PART_TextBox.  -->
-                            <WrapPanel x:Name="PART_TagPanel" Orientation="Horizontal">
-                                <TextBox
-                                    x:Name="PART_TextBox"
-                                    MinWidth="70"
-                                    Margin="2,0,0,0"
-                                    Padding="0"
+                    <Grid SnapsToDevicePixels="True">
+                        <Border
+                            x:Name="PART_Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <!--  Chips followed by the input box. Chips are inserted by the control before PART_TextBox.  -->
+                                <WrapPanel x:Name="PART_TagPanel" Orientation="Horizontal">
+                                    <TextBox
+                                        x:Name="PART_TextBox"
+                                        MinWidth="70"
+                                        Margin="2,0,0,0"
+                                        Padding="0"
+                                        VerticalAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        CaretBrush="{TemplateBinding Foreground}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Foreground="{TemplateBinding Foreground}" />
+                                </WrapPanel>
+
+                                <!--  Watermark / placeholder  -->
+                                <TextBlock
+                                    x:Name="Watermark"
+                                    Margin="4,0,0,0"
                                     VerticalAlignment="Center"
-                                    VerticalContentAlignment="Center"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}"
+                                    IsHitTestVisible="False"
+                                    Text="{TemplateBinding Watermark}" />
+                            </Grid>
+                        </Border>
+
+                        <!--  Auto-complete suggestions. Only shown when a SuggestionsSource has matches.  -->
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsSuggestionListOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=PART_Border}"
+                            PopupAnimation="Slide"
+                            StaysOpen="True">
+                            <Border
+                                MinWidth="{Binding ActualWidth, ElementName=PART_Border}"
+                                Padding="2"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                BorderThickness="1"
+                                SnapsToDevicePixels="True">
+                                <ListBox
+                                    x:Name="PART_SuggestionList"
+                                    MaxHeight="{Binding SuggestionListMaxHeight, RelativeSource={RelativeSource TemplatedParent}}"
                                     Background="Transparent"
                                     BorderThickness="0"
-                                    CaretBrush="{TemplateBinding Foreground}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Foreground="{TemplateBinding Foreground}" />
-                            </WrapPanel>
-
-                            <!--  Watermark / placeholder  -->
-                            <TextBlock
-                                x:Name="Watermark"
-                                Margin="4,0,0,0"
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.PlaceholderTextBrush}}"
-                                IsHitTestVisible="False"
-                                Text="{TemplateBinding Watermark}" />
-                        </Grid>
-                    </Border>
+                                    Focusable="False"
+                                    ItemContainerStyle="{StaticResource TagBoxSuggestionItemStyle}"
+                                    ItemsSource="{Binding FilteredSuggestions, RelativeSource={RelativeSource TemplatedParent}}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            </Border>
+                        </Popup>
+                    </Grid>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="ShowWatermark" Value="False">
