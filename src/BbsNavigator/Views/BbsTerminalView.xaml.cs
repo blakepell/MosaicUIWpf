@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using Mosaic.UI.Wpf.Themes;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,6 +61,7 @@ namespace BbsNavigator.Views
         private int _reconnectScheduled;
         private int _reconnectAttemptCount;
         private CancellationTokenSource? _reconnectCancellation;
+        private CancellationTokenSource? _connectionCancellation;
         private int _scrollToEndQueued;
         private volatile bool _transferActive;
         private CancellationTokenSource? _transferCts;
@@ -144,6 +146,8 @@ namespace BbsNavigator.Views
             DataContext = profile;
             Loaded += BbsTerminalView_OnLoaded;
             Terminal.PreviewMouseWheel += Terminal_OnPreviewMouseWheel;
+            Terminal.PreviewMouseLeftButtonUp += Terminal_OnPreviewMouseLeftButtonUp;
+            Terminal.TextArea.SelectionChanged += TerminalSelection_OnChanged;
 
             ProtocolComboBox.ItemsSource = Enum.GetValues<TransferProtocol>();
             ProtocolComboBox.SelectedItem = settings.DefaultTransferProtocol;
@@ -341,6 +345,7 @@ namespace BbsNavigator.Views
                     reconnecting ? $"Reconnecting to {_endpoint}…" : $"Connecting to {_endpoint}…");
 
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(_lifetimeToken);
+                Interlocked.Exchange(ref _connectionCancellation, timeoutCts)?.Dispose();
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(_settings.ConnectTimeoutSeconds, 1, 300)));
 
                 await _connection.ConnectAsync(timeoutCts.Token);
@@ -358,6 +363,9 @@ namespace BbsNavigator.Views
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
             {
             }
+            catch (OperationCanceledException) when (_manualDisconnect)
+            {
+            }
             catch (OperationCanceledException)
             {
                 UpdateStatus(BbsConnectionState.Faulted, $"The connection attempt to {_endpoint} timed out.");
@@ -373,6 +381,8 @@ namespace BbsNavigator.Views
             }
             finally
             {
+                Interlocked.Exchange(ref _connectionCancellation, null);
+
                 if (gateEntered)
                 {
                     _connectionGate.Release();
@@ -493,6 +503,7 @@ namespace BbsNavigator.Views
                 return;
             }
 
+            UpdateReconnectCancelButton();
             _ = ReconnectAfterDelayAsync();
         }
 
@@ -529,6 +540,7 @@ namespace BbsNavigator.Views
                 Interlocked.CompareExchange(ref _reconnectCancellation, null, cancellation);
                 cancellation.Dispose();
                 Interlocked.Exchange(ref _reconnectScheduled, 0);
+                UpdateReconnectCancelButton();
 
                 if (!_connection.IsConnected && !_manualDisconnect && !_disposed)
                 {
@@ -538,7 +550,7 @@ namespace BbsNavigator.Views
         }
 
         /// <summary>
-        /// Cancels any reconnection attempt that is waiting out the reconnect delay.
+        /// Cancels the active automatic reconnect cycle, including its pending delay.
         /// </summary>
         private void CancelPendingReconnect()
         {
@@ -551,6 +563,14 @@ namespace BbsNavigator.Views
             }
 
             Interlocked.Exchange(ref _reconnectScheduled, 0);
+            UpdateReconnectCancelButton();
+        }
+
+        private void UpdateReconnectCancelButton()
+        {
+            CancelReconnectButton.Visibility = Volatile.Read(ref _reconnectScheduled) != 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void Reconnect_OnClick(object sender, RoutedEventArgs e)
@@ -566,10 +586,15 @@ namespace BbsNavigator.Views
             await DisconnectAsync();
         }
 
+        private async void CancelReconnect_OnClick(object sender, RoutedEventArgs e)
+        {
+            await DisconnectAsync($"Reconnection to {_endpoint} canceled.");
+        }
+
         /// <summary>
         /// Closes the connection at the user's request, canceling any active transfer.
         /// </summary>
-        private async Task DisconnectAsync()
+        private async Task DisconnectAsync(string? statusMessage = null)
         {
             if (_disposed)
             {
@@ -582,6 +607,13 @@ namespace BbsNavigator.Views
             // full connect timeout, and the waiting delay would otherwise fire once it is released.
             _manualDisconnect = true;
             CancelPendingReconnect();
+            try
+            {
+                Volatile.Read(ref _connectionCancellation)?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
 
             bool gateEntered = false;
             try
@@ -600,7 +632,9 @@ namespace BbsNavigator.Views
 
                 if (!_disposed)
                 {
-                    UpdateStatus(BbsConnectionState.Disconnected, $"Disconnected from {_endpoint}");
+                    UpdateStatus(
+                        BbsConnectionState.Disconnected,
+                        statusMessage ?? $"Disconnected from {_endpoint}");
                 }
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
@@ -712,6 +746,42 @@ namespace BbsNavigator.Views
             Terminal.FontSize = newSize;
             _settings.FontSize = newSize;
             e.Handled = true;
+        }
+
+        private void TerminalSelection_OnChanged(object? sender, EventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Released)
+            {
+                CopyTerminalSelectionToClipboard();
+            }
+        }
+
+        private void Terminal_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            CopyTerminalSelectionToClipboard();
+        }
+
+        private void CopyTerminalSelectionToClipboard()
+        {
+            if (!_settings.CopySelectedTextToClipboard)
+            {
+                return;
+            }
+
+            string selectedText = Terminal.TextArea.Selection.GetText();
+            if (string.IsNullOrEmpty(selectedText))
+            {
+                return;
+            }
+
+            try
+            {
+                Clipboard.SetText(selectedText);
+            }
+            catch (COMException)
+            {
+                // Another process can temporarily hold the clipboard open.
+            }
         }
 
         private void DoorwayToggle_OnChecked(object sender, RoutedEventArgs e)
@@ -1182,6 +1252,8 @@ namespace BbsNavigator.Views
             StopCapture();
             _connection.ConnectionLost -= Connection_OnConnectionLost;
             _connection.DataReceived -= Connection_OnDataReceived;
+            Terminal.PreviewMouseLeftButtonUp -= Terminal_OnPreviewMouseLeftButtonUp;
+            Terminal.TextArea.SelectionChanged -= TerminalSelection_OnChanged;
             Terminal.Connection = null;
 
             await _connectionGate.WaitAsync();

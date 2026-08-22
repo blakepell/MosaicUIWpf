@@ -21,6 +21,7 @@ Navigator closes.
 | Terminal Font Size | The default font size for new session tabs. Zooming a terminal with `Ctrl` + mouse wheel updates this value. |
 | Scrollback Lines | How many lines that have moved off the top remain available for review and search. The default is 5,000. |
 | Paste Pacing (milliseconds) | The wait between pasted characters and login-macro characters. Older BBS software can lose text when a whole paste arrives instantly. The default is 5 ms; `0` disables pacing. |
+| Copy Selected Text Automatically | Copies selected terminal text directly to the clipboard. This is disabled by default. |
 
 ## Connections
 

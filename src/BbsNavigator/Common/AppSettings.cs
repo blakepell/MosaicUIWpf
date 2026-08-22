@@ -117,6 +117,19 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private int _pastePacingMilliseconds = 5;
 
+        /// <summary>
+        /// Gets or sets a value that indicates whether selecting terminal text copies it to the clipboard.
+        /// </summary>
+        /// <value>
+        /// <see langword="true" /> if selected terminal text is copied automatically; otherwise,
+        /// <see langword="false" />. The default is <see langword="false" />.
+        /// </value>
+        [property: Category("Terminal")]
+        [property: DisplayName("Copy Selected Text Automatically")]
+        [property: Description("Copies terminal text to the clipboard as soon as it is selected.")]
+        [ObservableProperty]
+        private bool _copySelectedTextToClipboard = false;
+
         private double _userGuideFontSize = 12.0;
 
         /// <summary>
