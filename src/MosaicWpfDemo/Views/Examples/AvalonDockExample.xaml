@@ -73,6 +73,15 @@
                                             Unchecked="WordWrapToggle_OnUnchecked" />
                                     </ad:LayoutSyntaxEditor.AdditionalToolBarItems>
                                 </ad:LayoutSyntaxEditor>
+                                <ad:LayoutDocument
+                                    CanClose="False"
+                                    ContentId="readme"
+                                    Title="Read Only">
+                                    <TextBlock
+                                        Margin="12"
+                                        Text="This document cannot be closed, so its tab hides the close button and pads the title instead."
+                                        TextWrapping="Wrap" />
+                                </ad:LayoutDocument>
                             </ad:LayoutDocumentPane>
                         </ad:LayoutDocumentPaneGroup>
 

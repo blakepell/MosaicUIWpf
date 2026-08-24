@@ -14,7 +14,7 @@
         <TextBlock
             Margin="0,0,0,12"
             FontWeight="SemiBold"
-            Text="Both controls share the same bound favorite state." />
+            Text="The star and heart share the same bound favorite state. The pin tracks its own state and swaps in a Segoe MDL2 glyph." />
 
         <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
             <controls:FavoriteCheckBox
@@ -25,7 +25,7 @@
             <TextBlock VerticalAlignment="Center" Text="Star favorite" />
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
             <controls:FavoriteCheckBox
                 Margin="0,0,8,0"
                 CheckedBrush="Red"
@@ -34,6 +34,18 @@
                 Symbol="&#x2665;"
                 SymbolSize="24" />
             <TextBlock VerticalAlignment="Center" Text="Heart favorite" />
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <controls:FavoriteCheckBox
+                Margin="0,0,8,0"
+                CheckedBrush="#FF3B78FF"
+                HoverBrush="#FF7FA8FF"
+                IsChecked="{Binding IsPinned, Mode=TwoWay}"
+                Symbol="&#xE718;"
+                SymbolFont="Segoe MDL2 Assets"
+                SymbolSize="22" />
+            <TextBlock VerticalAlignment="Center" Text="Pinned item" />
         </StackPanel>
     </StackPanel>
 </UserControl>

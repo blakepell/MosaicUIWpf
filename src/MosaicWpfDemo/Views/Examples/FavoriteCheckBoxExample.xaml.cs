@@ -16,6 +16,7 @@ namespace MosaicWpfDemo.Views.Examples
     public partial class FavoriteCheckBoxExample : INotifyPropertyChanged
     {
         private bool _isFavorite = true;
+        private bool _isPinned;
 
         public FavoriteCheckBoxExample()
         {
@@ -36,6 +37,21 @@ namespace MosaicWpfDemo.Views.Examples
                 }
 
                 _isFavorite = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsPinned
+        {
+            get => _isPinned;
+            set
+            {
+                if (_isPinned == value)
+                {
+                    return;
+                }
+
+                _isPinned = value;
                 OnPropertyChanged();
             }
         }

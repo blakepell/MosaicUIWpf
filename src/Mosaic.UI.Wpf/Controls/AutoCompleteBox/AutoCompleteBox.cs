@@ -137,6 +137,26 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="SuppressAutoCompleteOnEnter"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SuppressAutoCompleteOnEnterProperty = DependencyProperty.Register(
+            nameof(SuppressAutoCompleteOnEnter), typeof(bool), typeof(AutoCompleteBox),
+            new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether pressing Enter ends the auto complete interaction. When enabled a
+        /// debounced lookup that has been scheduled is cancelled and the suggestion drop down is dismissed, which lets
+        /// the control double as a search box where Enter submits the typed text.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Indicates whether pressing Enter cancels the pending lookup debounce and hides the suggestion drop down.")]
+        public bool SuppressAutoCompleteOnEnter
+        {
+            get => (bool)GetValue(SuppressAutoCompleteOnEnterProperty);
+            set => SetValue(SuppressAutoCompleteOnEnterProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="MaxSuggestionCount"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty MaxSuggestionCountProperty = DependencyProperty.Register(
@@ -680,6 +700,15 @@ namespace Mosaic.UI.Wpf.Controls
                     {
                         e.Handled = e.Key == Key.Enter;
                     }
+
+                    if (e.Key == Key.Enter && SuppressAutoCompleteOnEnter)
+                    {
+                        // Search box behavior: Enter finishes the interaction so a debounce that is already
+                        // in flight never fires and any visible suggestions are dismissed.
+                        CancelScheduledLookup();
+                        CloseDropDown();
+                    }
+
                     break;
                 case Key.Escape:
                     RestoreCommittedText();
@@ -784,6 +813,15 @@ namespace Mosaic.UI.Wpf.Controls
             CancelPendingLookup();
             CloseDropDown();
             DetachItemsSourceCollectionChanged();
+        }
+
+        /// <summary>
+        /// Stops a debounced lookup that was scheduled but has not run yet and cancels any in flight provider call.
+        /// </summary>
+        private void CancelScheduledLookup()
+        {
+            _lookupTimer.Stop();
+            CancelPendingLookup();
         }
 
         private void ScheduleLookup()

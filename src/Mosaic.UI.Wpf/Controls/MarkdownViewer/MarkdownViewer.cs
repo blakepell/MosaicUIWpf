@@ -259,6 +259,11 @@ namespace Mosaic.UI.Wpf.Controls
                 // hit-testing the click position for a hyperlink instead.
                 _richTextBox.PreviewMouseLeftButtonDown -= OnRichTextBoxPreviewMouseLeftButtonDown;
                 _richTextBox.PreviewMouseLeftButtonDown += OnRichTextBoxPreviewMouseLeftButtonDown;
+
+                // The text editor also wins the cursor negotiation and forces an I-beam over the
+                // whole document, so the hand cursor over a link is applied here for the same reason.
+                _richTextBox.QueryCursor -= OnRichTextBoxQueryCursor;
+                _richTextBox.QueryCursor += OnRichTextBoxQueryCursor;
             }
 
             RenderMarkdown(Markdown);
@@ -359,6 +364,28 @@ namespace Mosaic.UI.Wpf.Controls
 
             e.Handled = true;
             NavigateTo(hyperlink.NavigateUri);
+        }
+
+        /// <summary>
+        /// Shows the hand cursor while the pointer is over a hyperlink, overriding the I-beam the
+        /// <see cref="RichTextBox"/> text editor would otherwise show across the whole document.
+        /// </summary>
+        private void OnRichTextBoxQueryCursor(object sender, QueryCursorEventArgs e)
+        {
+            if (_richTextBox == null)
+            {
+                return;
+            }
+
+            var position = _richTextBox.GetPositionFromPoint(e.GetPosition(_richTextBox), false);
+
+            if (position == null || FindHyperlink(position.Parent) == null)
+            {
+                return;
+            }
+
+            e.Cursor = Cursors.Hand;
+            e.Handled = true;
         }
 
         /// <summary>
@@ -678,8 +705,13 @@ namespace Mosaic.UI.Wpf.Controls
             try
             {
                 // A loaded Source document's location takes precedence; otherwise fall back to the
-                // configured storage folder so relative images/links in directly-supplied Markdown resolve.
-                document = MarkdownFlowDocumentRenderer.Render(markdown, _resolvedSource ?? _storageFolderUri);
+                // configured storage folder so relative images/links in directly-supplied Markdown
+                // resolve. Images additionally fall back to the storage folder when they are not
+                // found next to the source document.
+                document = MarkdownFlowDocumentRenderer.Render(
+                    markdown,
+                    _resolvedSource ?? _storageFolderUri,
+                    _storageFolderUri);
             }
             catch (Exception ex)
             {

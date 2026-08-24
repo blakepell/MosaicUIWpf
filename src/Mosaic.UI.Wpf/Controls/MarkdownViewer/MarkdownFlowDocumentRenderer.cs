@@ -43,13 +43,25 @@ namespace Mosaic.UI.Wpf.Controls
             .Build();
 
         /// <summary>
+        /// The base URIs a render pass resolves relative link and image targets against.
+        /// </summary>
+        /// <param name="BaseUri">
+        /// The primary base URI, typically the location of the document being displayed.
+        /// </param>
+        /// <param name="ImageBaseUri">
+        /// An additional base URI tried when a relative image does not resolve against
+        /// <paramref name="BaseUri"/>, typically the viewer's storage folder.
+        /// </param>
+        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri);
+
+        /// <summary>
         /// Renders the supplied Markdown text into a <see cref="FlowDocument"/>.
         /// </summary>
         /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
         /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
         public static FlowDocument Render(string? markdown)
         {
-            return Render(markdown, null);
+            return Render(markdown, null, null);
         }
 
         /// <summary>
@@ -65,6 +77,34 @@ namespace Mosaic.UI.Wpf.Controls
         /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
         public static FlowDocument Render(string? markdown, Uri? baseUri)
         {
+            return Render(markdown, baseUri, null);
+        }
+
+        /// <summary>
+        /// Renders the supplied Markdown text into a <see cref="FlowDocument"/>, resolving relative
+        /// link and image URLs against <paramref name="baseUri"/> and falling back to
+        /// <paramref name="imageBaseUri"/> for images that do not resolve there.
+        /// </summary>
+        /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
+        /// <param name="baseUri">
+        /// The absolute URI relative links and images are resolved against, or <c>null</c> to leave
+        /// relative links unresolved.
+        /// </param>
+        /// <param name="imageBaseUri">
+        /// An additional absolute base URI (typically a storage folder) tried when a relative image
+        /// does not resolve against <paramref name="baseUri"/>, or <c>null</c> for none.
+        /// </param>
+        /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
+        public static FlowDocument Render(string? markdown, Uri? baseUri, Uri? imageBaseUri)
+        {
+            return Render(markdown, new RenderContext(baseUri, imageBaseUri));
+        }
+
+        /// <summary>
+        /// Renders the supplied Markdown text using an already-built resolution context.
+        /// </summary>
+        private static FlowDocument Render(string? markdown, RenderContext context)
+        {
             var document = new FlowDocument
             {
                 PagePadding = new Thickness(0)
@@ -74,7 +114,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (var block in parsed)
             {
-                var rendered = RenderBlock((MarkdigBlock)block, baseUri);
+                var rendered = RenderBlock((MarkdigBlock)block, context);
 
                 if (rendered != null)
                 {
@@ -89,22 +129,22 @@ namespace Mosaic.UI.Wpf.Controls
         /// Renders a single Markdig <see cref="Block"/> into the equivalent <see cref="Block"/> element.
         /// </summary>
         /// <param name="block">The block to render.</param>
-        /// <param name="baseUri">The base URI relative links are resolved against, if any.</param>
+        /// <param name="context">The base URIs relative links and images are resolved against, if any.</param>
         /// <returns>The rendered block, or <c>null</c> when the block type is unsupported.</returns>
-        private static WpfBlock? RenderBlock(MarkdigBlock block, Uri? baseUri)
+        private static WpfBlock? RenderBlock(MarkdigBlock block, RenderContext context)
         {
             switch (block)
             {
                 case HeadingBlock heading:
-                    return RenderHeading(heading, baseUri);
+                    return RenderHeading(heading, context);
                 case ParagraphBlock paragraph:
-                    return RenderParagraph(paragraph, baseUri);
+                    return RenderParagraph(paragraph, context);
                 case ListBlock list:
-                    return RenderList(list, baseUri);
+                    return RenderList(list, context);
                 case QuoteBlock quote:
-                    return RenderQuote(quote, baseUri);
+                    return RenderQuote(quote, context);
                 case MarkdigTable table:
-                    return RenderTable(table, baseUri);
+                    return RenderTable(table, context);
                 case CodeBlock code:
                     return RenderCodeBlock(code);
                 case ThematicBreakBlock:
@@ -119,7 +159,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders a heading block, scaling the font size by heading level.
         /// </summary>
-        private static WpfBlock RenderHeading(HeadingBlock heading, Uri? baseUri)
+        private static WpfBlock RenderHeading(HeadingBlock heading, RenderContext context)
         {
             var paragraph = new Paragraph
             {
@@ -128,7 +168,7 @@ namespace Mosaic.UI.Wpf.Controls
                 Margin = new Thickness(0, heading.Level <= 2 ? 12 : 8, 0, 4)
             };
 
-            AddInlines(paragraph.Inlines, heading.Inline, baseUri);
+            AddInlines(paragraph.Inlines, heading.Inline, context);
             return paragraph;
         }
 
@@ -151,17 +191,17 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders a paragraph block.
         /// </summary>
-        private static WpfBlock RenderParagraph(ParagraphBlock paragraph, Uri? baseUri)
+        private static WpfBlock RenderParagraph(ParagraphBlock paragraph, RenderContext context)
         {
             var result = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
-            AddInlines(result.Inlines, paragraph.Inline, baseUri);
+            AddInlines(result.Inlines, paragraph.Inline, context);
             return result;
         }
 
         /// <summary>
         /// Renders a bulleted or numbered list, including nested lists.
         /// </summary>
-        private static WpfBlock RenderList(ListBlock listBlock, Uri? baseUri)
+        private static WpfBlock RenderList(ListBlock listBlock, RenderContext context)
         {
             var list = new List
             {
@@ -185,7 +225,7 @@ namespace Mosaic.UI.Wpf.Controls
 
                 foreach (var child in itemBlock)
                 {
-                    var rendered = RenderBlock(child, baseUri);
+                    var rendered = RenderBlock(child, context);
 
                     if (rendered != null)
                     {
@@ -208,7 +248,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders a block quote as a bordered, indented <see cref="Section"/>.
         /// </summary>
-        private static WpfBlock RenderQuote(QuoteBlock quote, Uri? baseUri)
+        private static WpfBlock RenderQuote(QuoteBlock quote, RenderContext context)
         {
             var section = new Section
             {
@@ -222,7 +262,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (var child in quote)
             {
-                var rendered = RenderBlock(child, baseUri);
+                var rendered = RenderBlock(child, context);
 
                 if (rendered != null)
                 {
@@ -256,7 +296,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders a pipe table into a WPF <see cref="System.Windows.Documents.Table"/>.
         /// </summary>
-        private static WpfBlock RenderTable(MarkdigTable table, Uri? baseUri)
+        private static WpfBlock RenderTable(MarkdigTable table, RenderContext context)
         {
             var wpfTable = new System.Windows.Documents.Table
             {
@@ -289,7 +329,7 @@ namespace Mosaic.UI.Wpf.Controls
                     {
                         if (cellBlock is ParagraphBlock cellParagraph)
                         {
-                            AddInlines(paragraph.Inlines, cellParagraph.Inline, baseUri);
+                            AddInlines(paragraph.Inlines, cellParagraph.Inline, context);
                         }
                     }
 
@@ -395,8 +435,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         /// <param name="target">The destination inline collection.</param>
         /// <param name="container">The source inline container; may be <c>null</c>.</param>
-        /// <param name="baseUri">The base URI relative links are resolved against, if any.</param>
-        private static void AddInlines(InlineCollection target, ContainerInline? container, Uri? baseUri)
+        /// <param name="context">The base URIs relative links and images are resolved against, if any.</param>
+        private static void AddInlines(InlineCollection target, ContainerInline? container, RenderContext context)
         {
             if (container == null)
             {
@@ -405,14 +445,14 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (var inline in container)
             {
-                AddInline(target, inline, baseUri);
+                AddInline(target, inline, context);
             }
         }
 
         /// <summary>
         /// Renders a single Markdig <see cref="Inline"/> into the supplied WPF inline collection.
         /// </summary>
-        private static void AddInline(InlineCollection target, Markdig.Syntax.Inlines.Inline inline, Uri? baseUri)
+        private static void AddInline(InlineCollection target, Markdig.Syntax.Inlines.Inline inline, RenderContext context)
         {
             switch (inline)
             {
@@ -438,7 +478,7 @@ namespace Mosaic.UI.Wpf.Controls
                         span.FontStyle = FontStyles.Italic;
                     }
 
-                    AddInlines(span.Inlines, emphasis, baseUri);
+                    AddInlines(span.Inlines, emphasis, context);
                     target.Add(span);
                     break;
 
@@ -450,11 +490,11 @@ namespace Mosaic.UI.Wpf.Controls
                     break;
 
                 case LinkInline link:
-                    AddLink(target, link, baseUri);
+                    AddLink(target, link, context);
                     break;
 
                 case AutolinkInline autolink:
-                    AddHyperlink(target, autolink.Url, new[] { (Markdig.Syntax.Inlines.Inline)new LiteralInline(autolink.Url) }, baseUri);
+                    AddHyperlink(target, autolink.Url, new[] { (Markdig.Syntax.Inlines.Inline)new LiteralInline(autolink.Url) }, context);
                     break;
 
                 case LineBreakInline lineBreak:
@@ -463,7 +503,7 @@ namespace Mosaic.UI.Wpf.Controls
                     break;
 
                 case ContainerInline containerInline:
-                    AddInlines(target, containerInline, baseUri);
+                    AddInlines(target, containerInline, context);
                     break;
             }
         }
@@ -478,15 +518,15 @@ namespace Mosaic.UI.Wpf.Controls
         /// Renders a link inline, dispatching image links to <see cref="AddImage"/> and ordinary
         /// links to <see cref="AddHyperlink"/>.
         /// </summary>
-        private static void AddLink(InlineCollection target, LinkInline link, Uri? baseUri)
+        private static void AddLink(InlineCollection target, LinkInline link, RenderContext context)
         {
             if (link.IsImage)
             {
-                AddImage(target, link, baseUri);
+                AddImage(target, link, context);
                 return;
             }
 
-            AddHyperlink(target, link.Url, link, baseUri);
+            AddHyperlink(target, link.Url, link, context);
         }
 
         /// <summary>
@@ -494,13 +534,13 @@ namespace Mosaic.UI.Wpf.Controls
         /// On failure the image is rendered as its alt text in italics so a broken or unsupported
         /// source never crashes the viewer.
         /// </summary>
-        private static void AddImage(InlineCollection target, LinkInline link, Uri? baseUri)
+        private static void AddImage(InlineCollection target, LinkInline link, RenderContext context)
         {
             string altText = GetAltText(link);
 
             try
             {
-                var source = LoadImage(link.Url, baseUri);
+                var source = LoadImage(link.Url, context);
 
                 if (source != null)
                 {
@@ -536,9 +576,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// Loads an image from a <c>data:</c> base64 URI or an absolute URL (remote or local).
         /// </summary>
         /// <param name="url">The image source.</param>
-        /// <param name="baseUri">The base URI a relative image source is resolved against, if any.</param>
+        /// <param name="context">The base URIs a relative image source is resolved against, if any.</param>
         /// <returns>A frozen <see cref="BitmapImage"/>, or <c>null</c> when the source is unsupported.</returns>
-        private static BitmapImage? LoadImage(string? url, Uri? baseUri)
+        private static BitmapImage? LoadImage(string? url, RenderContext context)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -550,12 +590,38 @@ namespace Mosaic.UI.Wpf.Controls
                 return LoadDataUriImage(url);
             }
 
-            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
-                !(baseUri != null && Uri.TryCreate(baseUri, url, out uri)))
+            if (Uri.TryCreate(url, UriKind.Absolute, out var absolute))
             {
-                return null;
+                return LoadImage(absolute);
             }
 
+            // A relative source resolves against the document's own location first and then against
+            // the configured storage folder, so `attachment/foo.png` works in both arrangements.
+            foreach (var candidateBase in new[] { context.BaseUri, context.ImageBaseUri })
+            {
+                if (candidateBase == null || !Uri.TryCreate(candidateBase, url, out var resolved))
+                {
+                    continue;
+                }
+
+                // Only a missing local file is worth falling through for; anything else (a corrupt
+                // image, a failed download) is a genuine error the caller should surface.
+                if (resolved.IsFile && !File.Exists(resolved.LocalPath))
+                {
+                    continue;
+                }
+
+                return LoadImage(resolved);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Loads and freezes a bitmap from an absolute URI.
+        /// </summary>
+        private static BitmapImage LoadImage(Uri uri)
+        {
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -617,11 +683,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Builds a navigable <see cref="Hyperlink"/> from the supplied label inlines and URL. The
         /// actual navigation is handled by the hosting control via the bubbling
-        /// <see cref="Hyperlink.RequestNavigateEvent"/>. Relative URLs are resolved against
-        /// <paramref name="baseUri"/> when one is available; otherwise they are kept as relative
-        /// URIs so the hosting control can decide how to resolve them.
+        /// <see cref="Hyperlink.RequestNavigateEvent"/>. Relative URLs are resolved against the
+        /// context's base URI when one is available; otherwise they are kept as relative URIs so the
+        /// hosting control can decide how to resolve them.
         /// </summary>
-        private static void AddHyperlink(InlineCollection target, string? url, IEnumerable<Markdig.Syntax.Inlines.Inline> labelInlines, Uri? baseUri)
+        private static void AddHyperlink(InlineCollection target, string? url, IEnumerable<Markdig.Syntax.Inlines.Inline> labelInlines, RenderContext context)
         {
             var hyperlink = new WpfHyperlink
             {
@@ -631,7 +697,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             foreach (var labelInline in labelInlines)
             {
-                AddInline(hyperlink.Inlines, labelInline, baseUri);
+                AddInline(hyperlink.Inlines, labelInline, context);
             }
 
             if (hyperlink.Inlines.Count == 0 && !string.IsNullOrEmpty(url))
@@ -645,7 +711,7 @@ namespace Mosaic.UI.Wpf.Controls
                 hyperlink.ToolTip = url;
             }
             else if (!string.IsNullOrEmpty(url) && !url.StartsWith("#", StringComparison.Ordinal) &&
-                     baseUri != null && Uri.TryCreate(baseUri, url, out var resolved))
+                     context.BaseUri != null && Uri.TryCreate(context.BaseUri, url, out var resolved))
             {
                 hyperlink.NavigateUri = resolved;
                 hyperlink.ToolTip = url;

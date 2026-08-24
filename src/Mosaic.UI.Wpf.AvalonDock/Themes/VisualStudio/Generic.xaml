@@ -1365,6 +1365,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.ColumnSpan="2" Background="Transparent" />
                                 <ContentPresenter
+                                    x:Name="DocumentHeaderContent"
                                     Grid.Column="0"
                                     Margin="6,0,4,1"
                                     VerticalAlignment="Bottom"
@@ -1428,6 +1429,8 @@
                                 <Condition Binding="{Binding Path=CanHide}" Value="false" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="DocumentCloseButton" Property="Visibility" Value="Collapsed" />
+                            <!--  The collapsed close button takes its trailing space with it, so give the title its own right padding.  -->
+                            <Setter TargetName="DocumentHeaderContent" Property="Margin" Value="6,0,10,1" />
                         </MultiDataTrigger>
 
                         <!--  Document Well : Tab : Button / Selected, inactive  -->
