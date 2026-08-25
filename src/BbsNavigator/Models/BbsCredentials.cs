@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -15,5 +15,23 @@ namespace BbsNavigator.Models
     /// </summary>
     /// <param name="UserName">The login username.</param>
     /// <param name="Password">The login password.</param>
-    public sealed record BbsCredentials(string UserName, string Password);
+    public sealed record BbsCredentials(string UserName, string Password)
+    {
+        /// <summary>
+        /// Gets the private key file used to authenticate an SSH session.
+        /// </summary>
+        /// <value>
+        /// The full path of an OpenSSH or PEM private key, or <see langword="null"/> when the
+        /// session authenticates with <see cref="Password"/> alone.
+        /// </value>
+        public string? KeyFile { get; init; }
+
+        /// <summary>
+        /// Gets the passphrase that decrypts <see cref="KeyFile"/>.
+        /// </summary>
+        /// <value>
+        /// The private key passphrase, or <see langword="null"/> when the key is not encrypted.
+        /// </value>
+        public string? KeyPassphrase { get; init; }
+    }
 }

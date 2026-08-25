@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -101,14 +101,9 @@ namespace BbsNavigator.Common
                 if (!TryGetPort(fields, portIndex, out int port))
                 {
                     // A row that lists neither port is assumed to be a plain Telnet board on the well-known port.
-                    // A row that lists only an SSH port is deliberately not given a Telnet port it never advertised.
-                    if (hasSshPort)
-                    {
-                        skippedCount++;
-                        continue;
-                    }
-
-                    port = DefaultTelnetPort;
+                    // A row that lists only an SSH port keeps a Telnet port of zero rather than being given
+                    // one it never advertised; the profile then connects over SSH alone.
+                    port = hasSshPort ? 0 : DefaultTelnetPort;
                 }
 
                 string name = GetField(fields, nameIndex);
@@ -123,7 +118,7 @@ namespace BbsNavigator.Common
                 // The bblist format repeats a handful of endpoints under different names. Keeping the first
                 // occurrence makes a repeated import of the same file idempotent instead of flip-flopping
                 // those profiles between the duplicate rows' values.
-                if (!seenEndpoints.Add($"{host}:{port}"))
+                if (!seenEndpoints.Add(port > 0 ? $"{host}:{port}" : $"{host}:ssh{sshPort}"))
                 {
                     skippedCount++;
                     continue;

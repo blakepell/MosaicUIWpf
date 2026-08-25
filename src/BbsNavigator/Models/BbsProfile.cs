@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -45,8 +45,10 @@ namespace BbsNavigator.Models
         /// <summary>
         /// Gets or sets the BBS Telnet port.
         /// </summary>
-        /// <value>The network port used to establish the Telnet connection.</value>
+        /// <value>The network port used to establish the Telnet connection, or zero when the BBS does not offer Telnet.</value>
         [property: Category("Connection")]
+        [property: DisplayName("Telnet port")]
+        [property: Description("The port the BBS listens on for Telnet connections. Zero indicates the BBS does not offer Telnet.")]
         [ObservableProperty]
         private int _port = 23;
 
@@ -59,6 +61,19 @@ namespace BbsNavigator.Models
         [property: Description("The port the BBS listens on for SSH connections. Zero indicates the BBS does not offer SSH.")]
         [ObservableProperty]
         private int _sshPort;
+
+        /// <summary>
+        /// Gets or sets the path to the private key file used to authenticate SSH sessions.
+        /// </summary>
+        /// <value>
+        /// The full path of an OpenSSH or PEM private key, or an empty string when SSH sessions
+        /// authenticate with a password.
+        /// </value>
+        [property: Category("Connection")]
+        [property: DisplayName("SSH certificate")]
+        [property: Description("Optional private key file used to authenticate SSH sessions. Leave blank to authenticate with a password.")]
+        [ObservableProperty]
+        private string _sshKeyFile = string.Empty;
 
         /// <summary>
         /// Gets or sets the date and time of the most recent successful connection.
@@ -230,24 +245,53 @@ namespace BbsNavigator.Models
         [JsonIgnore]
         public bool CanConnectSsh => !string.IsNullOrWhiteSpace(Host) && SshPort is > 0 and <= 65535;
 
+        /// <summary>
+        /// Gets a value that indicates whether the profile offers both Telnet and SSH.
+        /// </summary>
+        [JsonIgnore]
+        public bool CanConnectTelnetAndSsh => CanConnectTelnet && CanConnectSsh;
+
+        /// <summary>
+        /// Gets a value that indicates whether SSH sessions authenticate with a private key file.
+        /// </summary>
+        [JsonIgnore]
+        public bool HasSshKeyFile => !string.IsNullOrWhiteSpace(SshKeyFile);
+
+        /// <summary>
+        /// Gets the port shown in the BBS directory. A board that offers only SSH shows its SSH port.
+        /// </summary>
+        [JsonIgnore]
+        public int DirectoryPort => CanConnectTelnet || !CanConnectSsh ? Port : SshPort;
+
         partial void OnHostChanged(string value)
         {
             OnPropertyChanged(nameof(Endpoint));
             OnPropertyChanged(nameof(SshEndpoint));
             OnPropertyChanged(nameof(CanConnectTelnet));
             OnPropertyChanged(nameof(CanConnectSsh));
+            OnPropertyChanged(nameof(CanConnectTelnetAndSsh));
+            OnPropertyChanged(nameof(DirectoryPort));
         }
 
         partial void OnPortChanged(int value)
         {
             OnPropertyChanged(nameof(Endpoint));
             OnPropertyChanged(nameof(CanConnectTelnet));
+            OnPropertyChanged(nameof(CanConnectTelnetAndSsh));
+            OnPropertyChanged(nameof(DirectoryPort));
         }
 
         partial void OnSshPortChanged(int value)
         {
             OnPropertyChanged(nameof(SshEndpoint));
             OnPropertyChanged(nameof(CanConnectSsh));
+            OnPropertyChanged(nameof(CanConnectTelnetAndSsh));
+            OnPropertyChanged(nameof(DirectoryPort));
+        }
+
+        partial void OnSshKeyFileChanged(string value)
+        {
+            OnPropertyChanged(nameof(HasSshKeyFile));
         }
 
         partial void OnEncryptedCredentialsChanged(string? value)

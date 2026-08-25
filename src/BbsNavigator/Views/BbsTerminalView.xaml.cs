@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -102,8 +102,19 @@ namespace BbsNavigator.Views
                     throw new ArgumentException("An SSH session requires a username and password.", nameof(credentials));
                 }
 
+                if (string.IsNullOrEmpty(credentials.Password) && string.IsNullOrWhiteSpace(credentials.KeyFile))
+                {
+                    throw new ArgumentException("An SSH session requires a password or a private key file.", nameof(credentials));
+                }
+
                 _endpoint = $"{profile.SshEndpoint} (SSH)";
-                _connection = new BbsSshConnection(profile.Host, profile.SshPort, credentials.UserName, credentials.Password)
+                _connection = new BbsSshConnection(
+                    profile.Host,
+                    profile.SshPort,
+                    credentials.UserName,
+                    credentials.Password,
+                    credentials.KeyFile,
+                    credentials.KeyPassphrase)
                 {
                     Encoding = profile.TerminalEncoding.ToEncoding()
                 };

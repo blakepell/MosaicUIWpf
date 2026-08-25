@@ -15,7 +15,8 @@ Use the search box above the list to filter the directory as you type.
 
 Double-clicking an entry — like **Connect** on its context menu, and **File → Connect** —
 opens a Telnet session on the profile's Telnet port. **Connect** is available whenever the
-profile has a host name and a Telnet port.
+profile has a host name and a Telnet port. A system that offers SSH only — its Telnet port
+is `0` — opens over SSH on a double-click instead.
 
 **Connect with SSH** opens the same session over SSH instead, and is available only when
 the profile has a host name and an SSH port. SSH always needs a login: if the system has
@@ -23,9 +24,26 @@ the profile has a host name and an SSH port. SSH always needs a login: if the sy
 asked for a username and password for that session only. An SSH session tab is labeled
 `(SSH)`, and a system can have a Telnet and an SSH session open at the same time.
 
+A system that offers **both** Telnet and SSH shows its host and port badge in blue rather
+than green, so dual-transport boards stand out in the list. A board that offers SSH only
+shows its SSH port on that badge.
+
 Everything else works the same on both transports: text encodings, session capture,
 automatic reconnection, and ZMODEM/YMODEM/XMODEM file transfers. The keepalive interval in
 [Options](options.md) applies to Telnet; SSH sessions use the SSH protocol's own keepalive.
+
+### SSH certificates
+
+An SSH session can authenticate with a private key instead of — or in addition to — a
+password. Set **SSH certificate** in the system's details to the path of an OpenSSH or PEM
+private key; the path is saved with the profile, and the key itself is never copied into
+BBS Navigator. The SSH login prompt shows the same field, so a certificate can also be
+chosen while connecting, and the choice is written back to the profile.
+
+When a certificate is chosen, the password becomes optional: public key authentication is
+offered first and the password, if one is present, is used as a fallback. If the key is
+protected by a passphrase, you are asked for it at connect time. The key passphrase is
+used for that session only and is never saved.
 
 Use **Sort** on the directory toolbar to build a multi-level ordering by display name,
 favorite status, last connection, connection count, or host. Each level can be ascending
@@ -42,8 +60,9 @@ Details…**. A connection profile has these settings:
 | ------- | ------- |
 | Display name | The name shown in the directory and on the session tab. |
 | Host name | The telnet host, e.g. `bbs.example.com`. |
-| Telnet port | Usually `23`; some boards use a custom port. |
+| Telnet port | Usually `23`; some boards use a custom port. Set it to `0` when the board offers SSH only. |
 | SSH port | The port the board listens on for SSH. Leave it at `0` when the board does not offer SSH. |
+| SSH certificate | Optional private key file used to authenticate SSH sessions. Leave it blank to authenticate with a password. |
 | Description | Free-form notes about the system. |
 | Text encoding | How received bytes are turned into text — see below. |
 | Terminal emulation | How escape sequences are interpreted: ANSI-BBS, VT100, xterm-256color, VT52, or plain TTY. |
@@ -100,9 +119,9 @@ credentials cannot be recovered.
 format published by the [Telnet BBS Guide](https://www.telnetbbsguide.com/). The file
 must contain `bbsName`, `TelnetAddress`, and `bbsPort` columns; the optional `sshPort`
 column is read when present. A row that lists neither port is imported on the standard
-Telnet port `23`. Rows without a host — and rows that list only an SSH port, which the
-current build cannot dial — are skipped and counted in the summary shown after the
-import.
+Telnet port `23`. A row that lists only an SSH port is imported with a Telnet port of `0`,
+so it connects over SSH alone. Rows without a host are skipped and counted in the summary
+shown after the import.
 
 A system already in your directory — matched on host and port — is not added twice.
 Instead, its imported fields (display name and SSH port) are refreshed when the CSV

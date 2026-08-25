@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -36,8 +36,19 @@ namespace BbsNavigator.Networking
         /// <param name="host">The SSH host name or IP address.</param>
         /// <param name="port">The SSH port.</param>
         /// <param name="userName">The SSH username.</param>
-        /// <param name="password">The SSH password.</param>
-        public BbsSshConnection(string host, int port, string userName, string password)
+        /// <param name="password">The SSH password. Pass an empty string to authenticate with <paramref name="keyFile"/> alone.</param>
+        /// <param name="keyFile">
+        /// The path of a private key file used for public key authentication, or <see langword="null"/>
+        /// when the session authenticates with a password.
+        /// </param>
+        /// <param name="keyPassphrase">The passphrase that decrypts <paramref name="keyFile"/>, when it is encrypted.</param>
+        public BbsSshConnection(
+            string host,
+            int port,
+            string userName,
+            string password,
+            string? keyFile = null,
+            string? keyPassphrase = null)
         {
             Host = host;
             Port = port;
@@ -47,7 +58,11 @@ namespace BbsNavigator.Networking
                 Host = host,
                 Port = port,
                 Username = userName,
-                Password = password
+                Password = password,
+                // SshConnection offers public key authentication first and falls back to the
+                // password, so a profile may carry a key, a password, or both.
+                KeyFile = string.IsNullOrWhiteSpace(keyFile) ? null : keyFile,
+                KeyPassphrase = string.IsNullOrEmpty(keyPassphrase) ? null : keyPassphrase
             };
 
             _ssh.RawDataReceived += Ssh_OnRawDataReceived;

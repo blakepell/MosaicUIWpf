@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -169,12 +169,31 @@ namespace BbsNavigator
             BlueThemeMenuItem.IsChecked = theme == MosaicThemeMode.Blue;
         }
 
-        private void BbsTree_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void BbsTree_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedProfile != null)
+            if (SelectedProfile is { } profile)
             {
-                OpenProfile(SelectedProfile);
                 e.Handled = true;
+                await ConnectAsync(profile);
+            }
+        }
+
+        /// <summary>
+        /// Opens a session using the profile's preferred transport: Telnet when the profile
+        /// publishes a Telnet port, and SSH for a board that offers SSH alone.
+        /// </summary>
+        /// <param name="profile">The BBS being connected to.</param>
+        private async Task ConnectAsync(BbsProfile profile)
+        {
+            if (profile.CanConnectTelnet)
+            {
+                OpenProfile(profile);
+                return;
+            }
+
+            if (profile.CanConnectSsh)
+            {
+                await ConnectSshAsync(profile);
             }
         }
 
@@ -316,11 +335,11 @@ namespace BbsNavigator
             return (sender as FrameworkElement)?.DataContext as BbsProfile;
         }
 
-        private void ConnectSelected_OnClick(object sender, RoutedEventArgs e)
+        private async void ConnectSelected_OnClick(object sender, RoutedEventArgs e)
         {
-            if (SelectedProfile != null)
+            if (SelectedProfile is { } profile)
             {
-                OpenProfile(SelectedProfile);
+                await ConnectAsync(profile);
             }
         }
 
@@ -400,6 +419,15 @@ namespace BbsNavigator
                 return;
             }
 
+            await ConnectSshAsync(profile);
+        }
+
+        /// <summary>
+        /// Resolves a login and opens an SSH session for the profile.
+        /// </summary>
+        /// <param name="profile">The BBS being connected to.</param>
+        private async Task ConnectSshAsync(BbsProfile profile)
+        {
             BbsCredentials? credentials = await ResolveSshCredentialsAsync(profile);
 
             if (credentials != null)
@@ -431,11 +459,74 @@ namespace BbsNavigator
                     return null;
                 }
 
-                return stored;
+                return ApplyProfileCertificate(profile, stored);
             }
 
             var dialog = new SshLoginWindow(profile) { Owner = this };
-            return dialog.ShowDialog() == true ? dialog.Credentials : null;
+
+            if (dialog.ShowDialog() != true)
+            {
+                return null;
+            }
+
+            // The certificate belongs to the BBS rather than the session, so a change made in
+            // the login dialog is written back to the profile.
+            string keyFile = dialog.KeyFile.Trim();
+
+            if (!string.Equals(profile.SshKeyFile, keyFile, StringComparison.OrdinalIgnoreCase))
+            {
+                profile.SshKeyFile = keyFile;
+            }
+
+            return dialog.Credentials;
+        }
+
+        /// <summary>
+        /// Attaches the profile's certificate to a stored login, prompting for the key
+        /// passphrase when the key is encrypted.
+        /// </summary>
+        /// <param name="profile">The BBS being connected to.</param>
+        /// <param name="credentials">The decrypted login.</param>
+        /// <returns>
+        /// The login to connect with, or <see langword="null"/> when the user cancels the
+        /// certificate passphrase prompt.
+        /// </returns>
+        private BbsCredentials? ApplyProfileCertificate(BbsProfile profile, BbsCredentials credentials)
+        {
+            if (!profile.HasSshKeyFile)
+            {
+                return credentials;
+            }
+
+            string keyFile = profile.SshKeyFile.Trim();
+
+            if (!File.Exists(keyFile))
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The SSH certificate for ‘{profile.Name}’ could not be found:" +
+                    Environment.NewLine + Environment.NewLine + keyFile + Environment.NewLine + Environment.NewLine +
+                    "Edit the BBS details to choose another certificate.",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return null;
+            }
+
+            string? keyPassphrase = credentials.KeyPassphrase;
+
+            if (string.IsNullOrEmpty(keyPassphrase) && SshKeyFileInspector.IsEncrypted(keyFile))
+            {
+                var passphraseWindow = new SshKeyPassphraseWindow(keyFile) { Owner = this };
+
+                if (passphraseWindow.ShowDialog() != true)
+                {
+                    return null;
+                }
+
+                keyPassphrase = passphraseWindow.Passphrase;
+            }
+
+            return credentials with { KeyFile = keyFile, KeyPassphrase = keyPassphrase };
         }
 
         /// <summary>Unlocks and decrypts credentials for terminal login actions.</summary>
@@ -720,6 +811,7 @@ namespace BbsNavigator
             profile.Host = editor.Profile.Host;
             profile.Port = editor.Profile.Port;
             profile.SshPort = editor.Profile.SshPort;
+            profile.SshKeyFile = editor.Profile.SshKeyFile;
             profile.Description = editor.Profile.Description;
             profile.AutoReconnect = editor.Profile.AutoReconnect;
             profile.LocalEcho = editor.Profile.LocalEcho;

@@ -5,8 +5,8 @@
     xmlns:converters="clr-namespace:BbsNavigator.Converters"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
-    Width="520"
-    Height="700"
+    Width="560"
+    Height="760"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -34,10 +34,11 @@
 
         <Grid Grid.Row="1" Margin="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="125" />
+                <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -91,7 +92,8 @@
                 Margin="0,4"
                 Padding="4"
                 DecimalPlaces="0"
-                Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="The port the BBS listens on for Telnet connections. Leave this at 0 when the BBS offers SSH only." />
             <TextBlock
                 Grid.Row="4"
                 Margin="0,6"
@@ -109,20 +111,53 @@
                 Grid.Row="5"
                 Margin="0,6"
                 VerticalAlignment="Center"
+                Text="SSH certificate" />
+            <Grid
+                Grid.Row="5"
+                Grid.Column="1"
+                Margin="0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="CertificateTextBox"
+                    Text="{Binding SshKeyFile, UpdateSourceTrigger=PropertyChanged}"
+                    ToolTip="Optional private key file used to authenticate SSH sessions. Leave blank to authenticate with a password." />
+                <Button
+                    Grid.Column="1"
+                    Width="32"
+                    Margin="6,0,0,0"
+                    Click="BrowseCertificate_OnClick"
+                    Content="…"
+                    ToolTip="Choose a private key file" />
+                <Button
+                    Grid.Column="2"
+                    Width="32"
+                    Margin="4,0,0,0"
+                    Click="ClearCertificate_OnClick"
+                    Content="✕"
+                    ToolTip="Clear the certificate" />
+            </Grid>
+            <TextBlock
+                Grid.Row="6"
+                Margin="0,6"
+                VerticalAlignment="Center"
                 Text="Description" />
             <TextBox
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="1"
                 Margin="0,4"
                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
-                Grid.Row="6"
+                Grid.Row="7"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Text encoding" />
             <ComboBox
                 x:Name="EncodingComboBox"
-                Grid.Row="6"
+                Grid.Row="7"
                 Grid.Column="1"
                 Margin="0,4"
                 SelectedItem="{Binding TerminalEncoding}"
@@ -135,13 +170,13 @@
             </ComboBox>
 
             <TextBlock
-                Grid.Row="7"
+                Grid.Row="8"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Emulation" />
             <ComboBox
                 x:Name="EmulationComboBox"
-                Grid.Row="7"
+                Grid.Row="8"
                 Grid.Column="1"
                 Margin="0,4"
                 SelectedItem="{Binding TerminalEmulation}">
@@ -153,13 +188,13 @@
             </ComboBox>
 
             <TextBlock
-                Grid.Row="8"
+                Grid.Row="9"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Display mode" />
             <ComboBox
                 x:Name="DisplayModeComboBox"
-                Grid.Row="8"
+                Grid.Row="9"
                 Grid.Column="1"
                 Margin="0,4"
                 SelectedItem="{Binding TerminalDisplayMode}">
@@ -171,23 +206,23 @@
             </ComboBox>
 
             <TextBlock
-                Grid.Row="9"
+                Grid.Row="10"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Telnet TTYPE" />
             <TextBox
-                Grid.Row="9"
+                Grid.Row="10"
                 Grid.Column="1"
                 Margin="0,4"
                 Text="{Binding TerminalType, UpdateSourceTrigger=PropertyChanged}"
                 ToolTip="Optional terminal name reported during Telnet negotiation. Leave blank to use the emulation's normal value." />
 
             <TextBlock
-                Grid.Row="10"
+                Grid.Row="11"
                 Margin="0,6"
                 VerticalAlignment="Top"
                 Text="Login macro" />
-            <StackPanel Grid.Row="10" Grid.Column="1" Margin="0,4">
+            <StackPanel Grid.Row="11" Grid.Column="1" Margin="0,4">
                 <TextBox
                     AcceptsReturn="True"
                     MinHeight="50"
@@ -201,7 +236,7 @@
             </StackPanel>
 
             <StackPanel
-                Grid.Row="11"
+                Grid.Row="12"
                 Grid.Column="1"
                 Margin="0,8,0,0"
                 VerticalAlignment="Top">
@@ -229,7 +264,7 @@
             </StackPanel>
 
             <StackPanel
-                Grid.Row="12"
+                Grid.Row="13"
                 Grid.ColumnSpan="2"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Right"

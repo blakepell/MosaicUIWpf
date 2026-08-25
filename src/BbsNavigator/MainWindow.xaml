@@ -304,16 +304,23 @@
                                                             Text="{Binding Name}"
                                                             TextTrimming="CharacterEllipsis" />
                                                         <mosaic:Shield
+                                                            x:Name="EndpointShield"
                                                             Grid.Row="1"
                                                             Grid.Column="1"
                                                             Margin="0,2,0,0"
                                                             Label="{Binding Host}"
                                                             ValueBackgroundBrush="Green"
                                                             ValueForegroundBrush="White"
-                                                            Value="{Binding Port}" />
+                                                            Value="{Binding DirectoryPort}" />
                                                     </Grid>
                                                 </Border>
                                                 <DataTemplate.Triggers>
+                                                    <!--  A board reachable over both transports is called out on its shield.  -->
+                                                    <DataTrigger Binding="{Binding CanConnectTelnetAndSsh}" Value="True">
+                                                        <Setter TargetName="EndpointShield" Property="ValueBackgroundBrush" Value="#FF1F5FA8" />
+                                                        <Setter TargetName="EndpointShield" Property="ValueForegroundBrush" Value="White" />
+                                                        <Setter TargetName="EndpointShield" Property="ToolTip" Value="Telnet and SSH" />
+                                                    </DataTrigger>
                                                     <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static models:BbsConnectionState.Connected}">
                                                         <Setter TargetName="ConnectionIcon" Property="Source" Value="Assets/terminal-48.png" />
                                                     </DataTrigger>
