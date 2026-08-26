@@ -223,6 +223,71 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Fact]
+        public void Opening_The_File_On_Click_Is_Opt_In()
+        {
+            RunSta(() =>
+            {
+                var card = new FileCard();
+
+                Assert.False(card.OpenFileOnClick);
+                Assert.False((bool)FileCard.OpenFileOnClickProperty.DefaultMetadata.DefaultValue);
+            });
+        }
+
+        [Fact]
+        public void Missing_File_Does_Not_Raise_An_Error_Or_Skip_The_Command()
+        {
+            RunSta(() =>
+            {
+                int commands = 0;
+                int errors = 0;
+                string path = Path.Combine(Path.GetTempPath(), $"mosaic-filecard-missing-{Guid.NewGuid():N}.txt");
+                var card = new FileCard
+                {
+                    FilePath = path,
+                    OpenFileOnClick = true,
+                    Command = new DelegateCommand(_ => commands++)
+                };
+
+                card.OnError += (_, _) => errors++;
+                card.RaiseClick();
+
+                Assert.Equal(1, commands);
+                Assert.Equal(0, errors);
+            });
+        }
+
+        [Fact]
+        public void Shell_Failure_Raises_OnError_Without_Escaping_The_Click()
+        {
+            RunSta(() =>
+            {
+                string path = CreateTempFile(1, ".exe");
+
+                try
+                {
+                    Exception? reported = null;
+                    var card = new FileCard
+                    {
+                        FilePath = path,
+                        OpenFileOnClick = true
+                    };
+
+                    card.OnError += (_, exception) => reported = exception;
+
+                    Exception? escaped = Record.Exception(card.RaiseClick);
+
+                    Assert.Null(escaped);
+                    Assert.NotNull(reported);
+                }
+                finally
+                {
+                    File.Delete(path);
+                }
+            });
+        }
+
         /// <summary>
         /// Minimal <see cref="ICommand"/> used to capture the parameter the card supplies.
         /// </summary>

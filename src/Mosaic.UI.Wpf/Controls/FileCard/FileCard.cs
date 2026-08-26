@@ -10,6 +10,7 @@
 
 // ReSharper disable CheckNamespace
 
+using System.Diagnostics;
 using System.Windows.Automation.Peers;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
@@ -227,6 +228,31 @@ namespace Mosaic.UI.Wpf.Controls
 
         #endregion
 
+        #region OpenFileOnClick
+
+        /// <summary>
+        /// Identifies the <see cref="OpenFileOnClick"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty OpenFileOnClickProperty = DependencyProperty.Register(
+            nameof(OpenFileOnClick),
+            typeof(bool),
+            typeof(FileCard),
+            new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether clicking the card opens <see cref="FilePath"/> through the
+        /// operating system shell. The default is <c>false</c>.
+        /// </summary>
+        [Category("Action")]
+        [Description("Opens the file through the operating system shell when the card is clicked.")]
+        public bool OpenFileOnClick
+        {
+            get => (bool)GetValue(OpenFileOnClickProperty);
+            set => SetValue(OpenFileOnClickProperty, value);
+        }
+
+        #endregion
+
         #region Read-only state
 
         /// <summary>
@@ -326,6 +352,18 @@ namespace Mosaic.UI.Wpf.Controls
         /// lower the card.
         /// </summary>
         public bool IsPressed => (bool)GetValue(IsPressedProperty);
+
+        #endregion
+
+        #region OnError
+
+        /// <summary>
+        /// Occurs when <see cref="OpenFileOnClick"/> is enabled and the operating system shell cannot open the
+        /// file. Missing files are ignored and do not raise this event.
+        /// </summary>
+        [Category("Action")]
+        [Description("Occurs when the operating system shell cannot open the file.")]
+        public event EventHandler<Exception>? OnError;
 
         #endregion
 
@@ -800,8 +838,9 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Raises the <see cref="Click"/> routed event and executes <see cref="Command"/> with the card's file path
-        /// (or <see cref="CommandParameter"/> when one has been supplied).
+        /// Raises the <see cref="Click"/> routed event, executes <see cref="Command"/> with the card's file path
+        /// (or <see cref="CommandParameter"/> when one has been supplied), and optionally opens the file through
+        /// the operating system shell.
         /// </summary>
         public void RaiseClick()
         {
@@ -813,6 +852,64 @@ namespace Mosaic.UI.Wpf.Controls
             if (command is not null && command.CanExecute(parameter))
             {
                 command.Execute(parameter);
+            }
+
+            this.OpenFileThroughShell();
+        }
+
+        /// <summary>
+        /// Opens <see cref="FilePath"/> through the operating system shell when enabled. A missing file is treated
+        /// as a no-op, and shell errors are reported through <see cref="OnError"/> instead of escaping this method.
+        /// </summary>
+        private void OpenFileThroughShell()
+        {
+            if (!this.OpenFileOnClick)
+            {
+                return;
+            }
+
+            try
+            {
+                string? filePath = this.FilePath;
+
+                if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                {
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception exception)
+            {
+                this.RaiseError(exception);
+            }
+        }
+
+        /// <summary>
+        /// Reports a shell error without allowing an error-handler exception to escape into the click path.
+        /// </summary>
+        private void RaiseError(Exception exception)
+        {
+            EventHandler<Exception>? handlers = this.OnError;
+            if (handlers is null)
+            {
+                return;
+            }
+
+            foreach (EventHandler<Exception> handler in handlers.GetInvocationList().Cast<EventHandler<Exception>>())
+            {
+                try
+                {
+                    handler(this, exception);
+                }
+                catch
+                {
+                    // Error handlers must not allow a shell-launch failure to escape into application code.
+                }
             }
         }
 
