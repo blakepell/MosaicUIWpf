@@ -1,0 +1,126 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.FileCardExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+
+        <!--
+            The card shows the OS icon for the file type, the file name, and the formatted size. The
+            full path is only shown as the tooltip on the file name.
+        -->
+        <TextBlock Margin="0,0,0,6" Text="Files on disk (hover to raise the card, click to fire the Click event):" />
+        <WrapPanel>
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Click="FileCard_OnClick"
+                FilePath="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Click="FileCard_OnClick"
+                FilePath="C:\Windows\System32\notepad.exe" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Click="FileCard_OnClick"
+                FilePath="C:\Windows\win.ini" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Click="FileCard_OnClick"
+                FilePath="C:\Windows\Web\Wallpaper\Windows\img0.jpg" />
+        </WrapPanel>
+
+        <!--  A path that is not on disk falls back to the error glyph and omits the size.  -->
+        <TextBlock Margin="0,20,0,6" Text="A file that does not exist (error icon, name still shown, no size):" />
+        <controls:FileCard
+            Width="260"
+            Click="FileCard_OnClick"
+            FilePath="C:\Reports\2026\quarterly-summary.xlsx" />
+
+        <!--
+            IsTintEnabled washes the card background with the dominant color of the icon. The wash is
+            always mixed into the current theme's control background, so it stays inside the Light,
+            Dark, and Blue palettes. Switch the theme to see it re-tint.
+        -->
+        <TextBlock Margin="0,20,0,6" Text="Dominant color tint:" />
+        <CheckBox
+            x:Name="TintCheckBox"
+            Margin="0,0,0,8"
+            Content="IsTintEnabled"
+            IsChecked="True" />
+        <WrapPanel>
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                FilePath="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+                IsTintEnabled="{Binding IsChecked, ElementName=TintCheckBox}" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                FilePath="C:\Windows\Web\Wallpaper\Windows\img0.jpg"
+                IsTintEnabled="{Binding IsChecked, ElementName=TintCheckBox}" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                FilePath="C:\Windows\System32\notepad.exe"
+                IsTintEnabled="{Binding IsChecked, ElementName=TintCheckBox}" />
+        </WrapPanel>
+
+        <!--  CornerRadius is a plain dependency property, so any corner shape works.  -->
+        <TextBlock Margin="0,20,0,6" Text="Corner radius:" />
+        <WrapPanel>
+            <controls:FileCard
+                Width="240"
+                Margin="0,0,8,8"
+                CornerRadius="0"
+                FilePath="C:\Windows\win.ini" />
+            <controls:FileCard
+                Width="240"
+                Margin="0,0,8,8"
+                CornerRadius="8"
+                FilePath="C:\Windows\win.ini" />
+            <controls:FileCard
+                Width="240"
+                Margin="0,0,8,8"
+                CornerRadius="22"
+                FilePath="C:\Windows\win.ini" />
+        </WrapPanel>
+
+        <!--
+            When CommandParameter is left unset the card passes its own FilePath to the Command, which
+            is the usual way to wire this up in MVVM.
+        -->
+        <TextBlock Margin="0,20,0,6" Text="Command binding (the card passes its FilePath):" />
+        <WrapPanel>
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Command="{Binding OpenFileCommand}"
+                FilePath="C:\Windows\System32\notepad.exe"
+                IconSize="40" />
+            <controls:FileCard
+                Width="260"
+                Margin="0,0,8,8"
+                Command="{Binding OpenFileCommand}"
+                FilePath="C:\Windows\System32\drivers\etc\hosts"
+                IconSize="40" />
+        </WrapPanel>
+
+        <TextBlock Margin="0,12,0,6" Text="Last activation:" />
+        <TextBox
+            Width="560"
+            HorizontalAlignment="Left"
+            IsReadOnly="True"
+            Text="{Binding LastAction, Mode=OneWay}" />
+
+    </StackPanel>
+</UserControl>

@@ -522,6 +522,12 @@
 		<EmbeddedResource Include="Views\Examples\FavoriteCheckBoxExample.xaml.cs">
 			<Link>LinkedSources\FavoriteCheckBoxExample.xaml.cs</Link>
 		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileCardExample.xaml">
+			<Link>LinkedSources\FileCardExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\FileCardExample.xaml.cs">
+			<Link>LinkedSources\FileCardExample.xaml.cs</Link>
+		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\FileDropperExample.xaml">
 			<Link>LinkedSources\FileDropperExample.xaml</Link>
 		</EmbeddedResource>

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -33,32 +33,38 @@ namespace Mosaic.UI.Wpf.Controls
         private static readonly ConcurrentDictionary<string, ImageSource?> Cache = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Gets the small shell icon for the supplied file path. The icon is resolved from the file's
+        /// Gets the shell icon for the supplied file path. The icon is resolved from the file's
         /// type association (so the file does not need to exist for most extensions) and cached by
         /// extension where the icon is not file-specific.
         /// </summary>
         /// <param name="filePath">The full path of the file.</param>
+        /// <param name="large">
+        /// When <c>true</c> the shell's large icon (typically 32x32) is requested instead of the small
+        /// (typically 16x16) icon. Large and small icons are cached independently.
+        /// </param>
         /// <returns>A frozen <see cref="ImageSource"/>, or <c>null</c> if an icon could not be resolved.</returns>
-        public static ImageSource? GetIcon(string filePath)
+        public static ImageSource? GetIcon(string filePath, bool large = false)
         {
             string extension = Path.GetExtension(filePath);
 
             if (!PerFileExtensions.Contains(extension) && !string.IsNullOrEmpty(extension))
             {
-                return Cache.GetOrAdd(extension, _ => LoadIcon(filePath, useFileAttributes: true));
+                // The size is folded into the cache key so the small and large variants of the same
+                // extension do not overwrite one another.
+                return Cache.GetOrAdd($"{(large ? "L" : "S")}{extension}", _ => LoadIcon(filePath, useFileAttributes: true, large));
             }
 
             // Per-file or extension-less: query the actual file, do not cache.
-            return LoadIcon(filePath, useFileAttributes: !PerFileExtensions.Contains(extension));
+            return LoadIcon(filePath, useFileAttributes: !PerFileExtensions.Contains(extension), large);
         }
 
         /// <summary>
-        /// Calls <c>SHGetFileInfo</c> to obtain the small icon handle for a file, converts it to a frozen
+        /// Calls <c>SHGetFileInfo</c> to obtain the icon handle for a file, converts it to a frozen
         /// <see cref="BitmapSource"/>, and destroys the native handle.
         /// </summary>
-        private static ImageSource? LoadIcon(string filePath, bool useFileAttributes)
+        private static ImageSource? LoadIcon(string filePath, bool useFileAttributes, bool large = false)
         {
-            uint flags = SHGFI_ICON | SHGFI_SMALLICON;
+            uint flags = SHGFI_ICON | (large ? SHGFI_LARGEICON : SHGFI_SMALLICON);
             uint attributes = 0;
 
             if (useFileAttributes)
@@ -97,6 +103,7 @@ namespace Mosaic.UI.Wpf.Controls
 
         private const uint SHGFI_ICON = 0x000000100;
         private const uint SHGFI_SMALLICON = 0x000000001;
+        private const uint SHGFI_LARGEICON = 0x000000000;
         private const uint SHGFI_USEFILEATTRIBUTES = 0x000000010;
         private const uint FILE_ATTRIBUTE_NORMAL = 0x00000080;
 
