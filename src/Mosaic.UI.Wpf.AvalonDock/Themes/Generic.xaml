@@ -1,5 +1,18 @@
+<!--
+    WPF theme dictionary for this assembly (see the ThemeInfo attribute in Properties/AssemblyInfo.cs).
+
+    Everything reachable from here is looked up through SystemResources.FindDictionaryResource,
+    which calls Freezable.Freeze() on the value it finds. Never merge Themes/Mosaic.xaml (or any
+    other dictionary whose Freezables use DynamicResource/Binding) into this file: those values
+    cannot be frozen and the lookup throws "This Freezable cannot be frozen".
+
+    Merge only freeze-safe dictionaries here. Themes/MosaicFallback.xaml is the static fallback
+    palette; the live, theme-following brushes come from Themes/Mosaic.xaml, which DockingManager
+    merges into its own Resources via the Theme property.
+-->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Mosaic.UI.Wpf.AvalonDock;component/Themes/Mosaic.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf.AvalonDock;component/Themes/VisualStudio/Generic.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf.AvalonDock;component/Themes/MosaicFallback.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

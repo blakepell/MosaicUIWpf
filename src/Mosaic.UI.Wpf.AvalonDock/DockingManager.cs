@@ -286,6 +286,12 @@ namespace Mosaic.UI.Wpf.AvalonDock
 #else
 		  this.SetCurrentValue( DockingManager.LayoutProperty, new LayoutRoot() { RootPanel = new LayoutPanel(new LayoutDocumentPaneGroup(new LayoutDocumentPane())) } );
 #endif
+            // Default to the Mosaic theme so the docking colors follow the active Mosaic theme out of
+            // the box. The theme dictionary in Themes/Generic.xaml can only carry frozen (static)
+            // brushes, so the live theme-following brushes have to come in through this property.
+            // A Theme set in XAML or code replaces this local value as usual.
+            Theme = new Themes.MosaicTheme();
+
             Loaded += DockingManager_Loaded;
             Unloaded += DockingManager_Unloaded;
         }

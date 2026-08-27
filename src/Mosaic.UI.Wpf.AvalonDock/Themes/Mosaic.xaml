@@ -1,3 +1,13 @@
+<!--
+    Live Mosaic palette for AvalonDock. The brushes below follow the active Mosaic theme by
+    resolving their Color through DynamicResource, which makes them unfreezable.
+
+    That is only safe because this dictionary is merged into DockingManager.Resources (via the
+    DockingManager.Theme property, see MosaicTheme) and is resolved through the normal element
+    resource tree. It must NEVER be merged into Themes/Generic.xaml - the theme-dictionary lookup
+    path freezes what it finds and would throw "This Freezable cannot be frozen".
+    Themes/MosaicFallback.xaml holds the frozen static mirror of this file for that path.
+-->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

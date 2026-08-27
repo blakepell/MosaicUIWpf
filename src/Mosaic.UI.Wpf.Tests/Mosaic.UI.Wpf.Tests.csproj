@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mosaic.UI.Wpf\Mosaic.UI.Wpf.csproj" />
+    <ProjectReference Include="..\Mosaic.UI.Wpf.AvalonDock\Mosaic.UI.Wpf.AvalonDock.csproj" />
   </ItemGroup>
 
 </Project>
