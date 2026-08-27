@@ -624,10 +624,16 @@ namespace Mosaic.UI.Wpf.Controls
                     break;
 
                 case CodeInline code:
-                    var codeRun = new Run(code.Content);
-                    codeRun.SetResourceReference(TextElement.FontFamilyProperty, MosaicTheme.MonospaceFontFamily);
-                    codeRun.SetResourceReference(TextElement.BackgroundProperty, MosaicTheme.ControlBackgroundLightBrush);
-                    target.Add(codeRun);
+                    // Keep resource references on the containing Span rather than the text Run.
+                    // TextRange.ApplyPropertyValue splits Runs when find highlights cover only part
+                    // of an inline-code fragment. WPF cannot reliably detach a DynamicResource from
+                    // a Run while performing that split and can throw from
+                    // ResourceReferenceExpression.OnDetach. The child Run inherits both values and
+                    // remains safe for transient search formatting.
+                    var codeSpan = new Span(new Run(code.Content));
+                    codeSpan.SetResourceReference(TextElement.FontFamilyProperty, MosaicTheme.MonospaceFontFamily);
+                    codeSpan.SetResourceReference(TextElement.BackgroundProperty, MosaicTheme.ControlBackgroundLightBrush);
+                    target.Add(codeSpan);
                     break;
 
                 case LinkInline link:
