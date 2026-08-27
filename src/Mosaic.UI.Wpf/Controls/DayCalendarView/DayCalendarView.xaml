@@ -1,0 +1,134 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <Style TargetType="{x:Type controls:CalendarEventPresenter}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:CalendarEventPresenter}">
+                    <Border
+                        x:Name="CardBorder"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        ClipToBounds="True"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <ContentPresenter
+                                x:Name="CustomContent"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            <StackPanel x:Name="DefaultContent" Visibility="Collapsed">
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding DisplayTitle}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Margin="0,1,0,0"
+                                    FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Opacity="0.82"
+                                    Text="{TemplateBinding DisplayTimeText}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    Margin="0,2,0,0"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Opacity="0.82"
+                                    Text="{TemplateBinding DisplayDescription}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ContentTemplate" Value="{x:Null}">
+                            <Setter TargetName="CustomContent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="DefaultContent" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}}" />
+                            <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                            <Setter TargetName="CardBorder" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="CardBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
+                            <Setter TargetName="CardBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSelectedBorderBrush}}" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.55" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:DayCalendarView}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
+        <Setter Property="EventBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
+        <Setter Property="EventBorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="EventCornerRadius" Value="0" />
+        <Setter Property="HourLineBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
+        <Setter Property="QuarterHourLineBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="CurrentTimeBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+        <Setter Property="TimeForeground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+        <Setter Property="TimeColumnBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}" />
+        <Setter Property="MinWidth" Value="280" />
+        <Setter Property="MinHeight" Value="240" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:DayCalendarView}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ScrollViewer
+                            x:Name="PART_ScrollViewer"
+                            CanContentScroll="False"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto">
+                            <controls:DayTimelinePanel
+                                x:Name="PART_TimelinePanel"
+                                Background="{TemplateBinding Background}"
+                                CurrentTimeBrush="{TemplateBinding CurrentTimeBrush}"
+                                EventSpacing="{TemplateBinding EventSpacing}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                HourHeight="{TemplateBinding HourHeight}"
+                                HourLineBrush="{TemplateBinding HourLineBrush}"
+                                QuarterHourLineBrush="{TemplateBinding QuarterHourLineBrush}"
+                                ShowQuarterHourLines="{TemplateBinding ShowQuarterHourLines}"
+                                TimeColumnWidth="{TemplateBinding TimeColumnWidth}"
+                                TimeColumnBackground="{TemplateBinding TimeColumnBackground}"
+                                TimeForeground="{TemplateBinding TimeForeground}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

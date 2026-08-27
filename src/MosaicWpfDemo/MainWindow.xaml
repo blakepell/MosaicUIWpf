@@ -426,6 +426,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  DayCalendarView  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/timeline-week-48.png"
+                    Text="DayCalendarView">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="DayCalendarView" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.DayCalendarViewExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.DayCalendarViewExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:DayCalendarView}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:DayCalendarViewExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/timeline-week-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  TimeSpinner  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

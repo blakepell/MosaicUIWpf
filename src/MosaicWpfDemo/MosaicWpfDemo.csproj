@@ -229,6 +229,13 @@
 			<Link>LinkedSources\DateSpinnerExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\DayCalendarViewExample.xaml">
+			<Link>LinkedSources\DayCalendarViewExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\DayCalendarViewExample.xaml.cs">
+			<Link>LinkedSources\DayCalendarViewExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\TimeSpinnerExample.xaml">
 			<Link>LinkedSources\TimeSpinnerExample.xaml</Link>
 		</EmbeddedResource>
