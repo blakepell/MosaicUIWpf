@@ -247,6 +247,52 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Fact]
+        public void FindBarButtonsFollowTheLiveThemeRatherThanASnapshotOfIt()
+        {
+            RunSta(() =>
+            {
+                var viewer = new MarkdownViewer { Markdown = "hello" };
+                Realize(viewer);
+
+                var panel = (FrameworkElement)viewer.Template.FindName("PART_FindPanel", viewer);
+                var buttons = Descendants<ButtonBase>(panel).ToList();
+
+                Assert.Equal(6, buttons.Count);
+
+                foreach (var button in buttons)
+                {
+                    // A style declared as BasedOn="{StaticResource {x:Type Button}}" captures
+                    // whichever theme dictionary happened to be in scope when the template was first
+                    // instantiated, and keeps it: the buttons then render in the wrong theme until
+                    // something rebuilds the template.
+                    Assert.True(
+                        button.Style?.BasedOn == null,
+                        "A find bar button snapshots the ambient button style through BasedOn.");
+                }
+            });
+        }
+
+        private static IEnumerable<T> Descendants<T>(DependencyObject root) where T : DependencyObject
+        {
+            int count = VisualTreeHelper.GetChildrenCount(root);
+
+            for (int i = 0; i < count; i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+
+                if (child is T match)
+                {
+                    yield return match;
+                }
+
+                foreach (var nested in Descendants<T>(child))
+                {
+                    yield return nested;
+                }
+            }
+        }
+
         /// <summary>
         /// Returns every run in the document that carries a find highlight.
         /// </summary>
