@@ -119,6 +119,136 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Theory]
+        [InlineData("```csharp")]
+        [InlineData("``` csharp")]
+        [InlineData("```cs")]
+        [InlineData("```C#")]
+        public void FencedCodeBlockWithNamedLanguageRendersInAHighlightedSyntaxEditor(string fence)
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    $"{fence}\npublic static void Main()\n{{\n}}\n```");
+
+                var editor = Assert.Single(FindSyntaxEditors(document));
+
+                Assert.Equal(SyntaxLanguage.CSharp, editor.Language);
+                Assert.True(editor.IsReadOnly);
+                Assert.Contains("public static void Main()", editor.Text);
+            });
+        }
+
+        [Fact]
+        public void FencedCodeBlockWithoutALanguageStillRendersInASyntaxEditor()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("```\nline one\nline two\n```");
+
+                var editor = Assert.Single(FindSyntaxEditors(document));
+
+                Assert.Equal(SyntaxLanguage.None, editor.Language);
+                Assert.Equal("line one\nline two", editor.Text);
+            });
+        }
+
+        [Fact]
+        public void SingleLineCodeBlockStaysAPlainParagraph()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("```csharp\nvar x = 1;\n```");
+
+                Assert.Empty(FindSyntaxEditors(document));
+                Assert.Single(document.Blocks.OfType<Paragraph>());
+            });
+        }
+
+        [Fact]
+        public void EmbeddedSyntaxEditorIsInteractiveInsideTheViewer()
+        {
+            RunSta(() =>
+            {
+                var viewer = new MarkdownViewer { Markdown = "```csharp\nvar a = 1;\nvar b = 2;\n```" };
+                var richTextBox = Realize(viewer);
+                richTextBox.UpdateLayout();
+
+                var editor = Assert.Single(FindSyntaxEditors(richTextBox.Document));
+
+                // Elements embedded in a rich text box are disabled unless the document is enabled, and a
+                // disabled editor cannot be selected, has no context menu, and paints its text with the
+                // theme's disabled foreground.
+                Assert.True(richTextBox.IsDocumentEnabled);
+                Assert.True(editor.IsEnabled);
+                Assert.True(editor.ShowLineNumbers);
+                Assert.NotNull(editor.ContextMenu);
+            });
+        }
+
+        [Fact]
+        public void EmbeddedSyntaxEditorStretchesToTheHeightOfItsDocument()
+        {
+            RunSta(() =>
+            {
+                double shortHeight = MeasureCodeBlockHeight(4);
+                double tallHeight = MeasureCodeBlockHeight(40);
+
+                Assert.True(shortHeight > 0, "The embedded editor measured to zero height.");
+
+                // The editor is sized by its content rather than clipped to a scrolling viewport, so ten
+                // times the lines is roughly ten times the height.
+                Assert.True(
+                    tallHeight > shortHeight * 5,
+                    $"Expected the taller block to grow with its content; measured {shortHeight} and {tallHeight}.");
+            });
+        }
+
+        [Fact]
+        public void EmbeddedSyntaxEditorRendersTallerThanTheViewerRatherThanScrollingItself()
+        {
+            RunSta(() =>
+            {
+                string code = string.Join("\n", Enumerable.Range(1, 40).Select(i => $"var x{i} = {i};"));
+                var viewer = new MarkdownViewer { Markdown = $"```csharp\n{code}\n```" };
+                var richTextBox = Realize(viewer);
+                richTextBox.UpdateLayout();
+
+                var editor = Assert.Single(FindSyntaxEditors(richTextBox.Document));
+
+                // The viewer is laid out 400 device-independent pixels tall; the code block is longer
+                // than that, so an editor that scrolled internally would stop at the viewport height.
+                Assert.True(
+                    editor.ActualHeight > richTextBox.ActualHeight,
+                    $"Expected the editor to render its whole document; it was {editor.ActualHeight} tall inside a {richTextBox.ActualHeight} tall viewer.");
+            });
+        }
+
+        /// <summary>
+        /// Renders a fenced code block of the requested line count and measures the embedded editor with
+        /// unbounded height, mirroring how the hosting rich text box lays the document out.
+        /// </summary>
+        private static double MeasureCodeBlockHeight(int lineCount)
+        {
+            string code = string.Join("\n", Enumerable.Range(1, lineCount).Select(i => $"var x{i} = {i};"));
+            var document = MarkdownFlowDocumentRenderer.Render($"```csharp\n{code}\n```");
+            var editor = Assert.Single(FindSyntaxEditors(document));
+
+            editor.Measure(new Size(600, double.PositiveInfinity));
+
+            return editor.DesiredSize.Height;
+        }
+
+        private static SyntaxEditor[] FindSyntaxEditors(FlowDocument document)
+        {
+            return document.Blocks
+                .OfType<BlockUIContainer>()
+                .Select(c => c.Child)
+                .Select(child => child is Border border ? border.Child : child)
+                .OfType<SyntaxEditor>()
+                .ToArray();
+        }
+
         /// <summary>
         /// Applies the viewer's shipped style, realizes its template, and returns the hosted rich text box.
         /// The default style is not resolved automatically outside of a hosting application, so the

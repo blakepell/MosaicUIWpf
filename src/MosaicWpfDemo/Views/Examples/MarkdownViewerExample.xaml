@@ -18,7 +18,7 @@
 
         <TextBlock
             Margin="0,0,0,8"
-            Text="A WPF-native Markdown viewer. Markdown is rendered into a FlowDocument hosted in a read-only RichTextBox, so the formatted text can be selected and copied as rich text instead of raw Markdown syntax. Select any text below and press Ctrl+C to copy it."
+            Text="A WPF-native Markdown viewer. Markdown is rendered into a FlowDocument hosted in a read-only RichTextBox, so the formatted text can be selected and copied as rich text instead of raw Markdown syntax. Multi-line code blocks are hosted in a read-only SyntaxEditor sized to their content, highlighted when the fence names a supported language. Select any text below and press Ctrl+C to copy it."
             TextWrapping="Wrap" />
 
         <Border

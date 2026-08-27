@@ -22,6 +22,13 @@ namespace Mosaic.UI.Wpf.Controls
     /// instead of raw Markdown syntax. Rendering is defensive: invalid Markdown never throws, and a
     /// failed render falls back to displaying the original text as plain text.
     /// </summary>
+    /// <remarks>
+    /// Multi-line code blocks are hosted in a read-only <see cref="SyntaxEditor"/> that stretches to
+    /// the full height of its content, so the code is syntax highlighted when the fence names a
+    /// language the editor supports (for example <c>```csharp</c> or <c>``` csharp</c>) and shown as
+    /// plain text when it does not. Because the embedded editor is sized to its document it never
+    /// scrolls on its own and leaves the viewer's scrolling intact.
+    /// </remarks>
     [TemplatePart(Name = PartRichTextBox, Type = typeof(RichTextBox))]
     public class MarkdownViewer : Control
     {
@@ -253,6 +260,11 @@ namespace Mosaic.UI.Wpf.Controls
                 _richTextBox.IsReadOnly = IsDocumentReadOnly;
                 _richTextBox.IsHitTestVisible = IsCopyEnabled;
                 _richTextBox.Focusable = IsCopyEnabled;
+
+                // Elements embedded in a rich text box are disabled unless the document is enabled,
+                // which would leave the code blocks' editors unselectable, without their context menu,
+                // and painted with the theme's disabled foreground.
+                _richTextBox.IsDocumentEnabled = true;
 
                 // A RichTextBox's text editor intercepts mouse clicks for selection before a
                 // Hyperlink can raise RequestNavigate (even when read-only), so links are opened by

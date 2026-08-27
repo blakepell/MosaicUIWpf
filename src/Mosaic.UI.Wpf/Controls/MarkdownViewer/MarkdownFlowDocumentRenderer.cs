@@ -356,9 +356,146 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Renders a fenced or indented code block as a monospace, shaded paragraph.
+        /// Renders a fenced or indented code block. Multi-line blocks are hosted in a read-only
+        /// <see cref="SyntaxEditor"/> so the code is syntax highlighted when the fence names a
+        /// supported language (<c>```csharp</c>) and displayed as plain text when it does not.
+        /// Single-line blocks stay a lightweight monospace, shaded paragraph.
         /// </summary>
         private static WpfBlock RenderCodeBlock(CodeBlock code)
+        {
+            string text = GetCodeBlockText(code);
+
+            if (text.Contains('\n'))
+            {
+                var editorBlock = TryRenderCodeBlockEditor(text, (code as FencedCodeBlock)?.Info);
+
+                if (editorBlock != null)
+                {
+                    return editorBlock;
+                }
+            }
+
+            return RenderCodeBlockParagraph(text);
+        }
+
+        /// <summary>
+        /// Joins a code block's lines into a single string, trimming trailing blank lines so an
+        /// embedded editor does not size itself around empty space at the end of the fence.
+        /// </summary>
+        private static string GetCodeBlockText(CodeBlock code)
+        {
+            var lines = code.Lines.Lines;
+            int count = code.Lines.Count;
+
+            while (count > 0 && lines[count - 1].Slice.ToString().Trim().Length == 0)
+            {
+                count--;
+            }
+
+            var builder = new StringBuilder();
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append('\n');
+                }
+
+                builder.Append(lines[i].Slice.ToString());
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Hosts a multi-line code block in a read-only <see cref="SyntaxEditor"/> sized to its full
+        /// content, so the editor never scrolls and the mouse wheel keeps scrolling the document that
+        /// contains it.
+        /// </summary>
+        /// <param name="text">The code to display.</param>
+        /// <param name="info">The fence's language identifier, if the block was fenced.</param>
+        /// <returns>
+        /// The rendered block, or <c>null</c> when the editor could not be created (for example when no
+        /// WPF application is available to resolve its resources), so the caller can fall back to text.
+        /// </returns>
+        private static WpfBlock? TryRenderCodeBlockEditor(string text, string? info)
+        {
+            try
+            {
+                var editor = new SyntaxEditor
+                {
+                    Text = text,
+                    Language = SyntaxLanguageMap.FromMarkdownLanguage(info),
+                    IsReadOnly = true,
+                    ShowLineNumbers = true,
+                    StatusBarVisible = false,
+                    ClearVisible = false,
+                    WordWrap = false,
+                    BorderThickness = new Thickness(0),
+                    Padding = new Thickness(6, 4, 6, 4),
+                    // The editor stretches to the height of its document, so it has nothing to scroll
+                    // vertically; a horizontal scroll bar only appears for long lines and leaves the
+                    // containing document's vertical scrolling alone.
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
+                };
+
+                editor.Options.HighlightCurrentLine = false;
+                editor.Options.AllowScrollBelowDocument = false;
+
+                // AvalonEdit's scroll viewer marks the wheel as handled even when it cannot scroll, so
+                // the event is re-raised on the parent to keep the outer scroll viewer responsive.
+                editor.PreviewMouseWheel += OnCodeBlockEditorPreviewMouseWheel;
+
+                var border = new Border
+                {
+                    Child = editor,
+                    BorderThickness = new Thickness(1)
+                };
+
+                border.SetResourceReference(Border.BorderBrushProperty, MosaicTheme.ControlSeparatorBrush);
+
+                return new BlockUIContainer(border)
+                {
+                    Margin = new Thickness(0, 0, 0, 8)
+                };
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Re-raises a mouse wheel event on an embedded code editor's parent so the wheel scrolls the
+        /// document rather than being swallowed by the editor's own scroll viewer.
+        /// </summary>
+        private static void OnCodeBlockEditorPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Handled || sender is not UIElement element)
+            {
+                return;
+            }
+
+            if (VisualTreeHelper.GetParent(element) is not UIElement parent)
+            {
+                return;
+            }
+
+            e.Handled = true;
+
+            parent.RaiseEvent(new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+            {
+                RoutedEvent = UIElement.MouseWheelEvent,
+                Source = parent
+            });
+        }
+
+        /// <summary>
+        /// Renders code as a monospace, shaded paragraph.
+        /// </summary>
+        private static WpfBlock RenderCodeBlockParagraph(string text)
         {
             var paragraph = new Paragraph
             {
@@ -371,19 +508,16 @@ namespace Mosaic.UI.Wpf.Controls
             paragraph.SetResourceReference(WpfBlock.BorderBrushProperty, MosaicTheme.ControlSeparatorBrush);
             paragraph.BorderThickness = new Thickness(1);
 
-            var lines = code.Lines.Lines;
-            int count = code.Lines.Count;
-            bool first = true;
+            var lines = text.Split('\n');
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
-                if (!first)
+                if (i > 0)
                 {
                     paragraph.Inlines.Add(new LineBreak());
                 }
 
-                paragraph.Inlines.Add(new Run(lines[i].Slice.ToString()));
-                first = false;
+                paragraph.Inlines.Add(new Run(lines[i]));
             }
 
             return paragraph;

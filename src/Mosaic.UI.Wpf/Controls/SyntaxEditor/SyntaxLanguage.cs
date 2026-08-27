@@ -182,6 +182,59 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Resolves a <see cref="SyntaxLanguage"/> from the language identifier written on a Markdown
+        /// fenced code block, e.g. the <c>csharp</c> in <c>```csharp</c>. Leading and trailing
+        /// whitespace is ignored (so <c>``` csharp</c> resolves the same way), only the first token is
+        /// considered (so <c>```csharp title=Example</c> still resolves), and common aliases such as
+        /// <c>c#</c>, <c>js</c>, and <c>py</c> are recognized. Identifiers that are not aliases fall
+        /// back to <see cref="FromExtension"/>, so a bare extension such as <c>cs</c> also resolves.
+        /// Returns <see cref="SyntaxLanguage.None"/> when the identifier is unknown or absent.
+        /// </summary>
+        /// <param name="info">The fenced code block's language identifier, or <c>null</c> when none was supplied.</param>
+        public static SyntaxLanguage FromMarkdownLanguage(string? info)
+        {
+            if (string.IsNullOrWhiteSpace(info))
+            {
+                return SyntaxLanguage.None;
+            }
+
+            // Fences may carry attributes after the language ("```csharp title=Example"); keep the
+            // first token and strip a leading dot so ".cs" and "cs" behave the same.
+            string token = info.Trim().Split(new[] { ' ', '\t', ',', ';', '{' }, 2)[0].TrimStart('.').ToLowerInvariant();
+
+            if (token.Length == 0)
+            {
+                return SyntaxLanguage.None;
+            }
+
+            var language = token switch
+            {
+                "csharp" or "c#" or "cs" or "dotnet" => SyntaxLanguage.CSharp,
+                "json" or "json5" or "jsonc" or "geojson" => SyntaxLanguage.Json,
+                "xml" or "xaml" or "html" or "xhtml" or "svg" or "xsl" or "xslt" or "axaml" or "csproj" or "config" => SyntaxLanguage.Xml,
+                "js" or "javascript" or "jsx" or "mjs" or "cjs" or "node" or "ts" or "typescript" or "tsx" => SyntaxLanguage.JavaScript,
+                "sql" or "tsql" or "mysql" or "postgres" or "postgresql" or "psql" or "pgsql" or "plsql" => SyntaxLanguage.Sql,
+                "sqlite" or "sqlite3" => SyntaxLanguage.Sqlite,
+                "md" or "markdown" or "mdown" => SyntaxLanguage.Markdown,
+                "c" or "h" or "cpp" or "c++" or "cc" or "cxx" or "hpp" or "objc" or "objective-c" => SyntaxLanguage.C,
+                "lua" => SyntaxLanguage.Lua,
+                "py" or "python" or "python3" => SyntaxLanguage.Python,
+                "ini" or "cfg" or "conf" or "toml" or "properties" or "editorconfig" => SyntaxLanguage.Ini,
+                "java" => SyntaxLanguage.Java,
+                "swift" => SyntaxLanguage.Swift,
+                "bas" or "basic" or "qbasic" or "gwbasic" or "freebasic" => SyntaxLanguage.Basic,
+                "vb" or "vbnet" or "vb.net" or "visualbasic" or "vbscript" => SyntaxLanguage.VbNet,
+                "pl" or "perl" or "pm" or "raku" => SyntaxLanguage.Perl,
+                "php" or "php5" or "phtml" => SyntaxLanguage.Php,
+                "stacktrace" => SyntaxLanguage.StackTrace,
+                _ => SyntaxLanguage.None
+            };
+
+            // Anything that is not a known alias may still be a bare file extension ("csproj", "vb").
+            return language == SyntaxLanguage.None ? FromExtension(token) : language;
+        }
+
+        /// <summary>
         /// Resolves a <see cref="SyntaxLanguage"/> from a file path or file extension. The argument
         /// may be a full path (e.g. <c>C:\temp\data.json</c>), a file name, or a bare extension
         /// (with or without the leading dot, e.g. <c>.cs</c> or <c>cs</c>). Returns

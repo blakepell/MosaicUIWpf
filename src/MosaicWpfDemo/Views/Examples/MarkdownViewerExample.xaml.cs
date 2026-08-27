@@ -49,6 +49,13 @@ namespace MosaicWpfDemo.Views.Examples
             }
             ```
 
+            A fence without a language is shown in the same editor, unhighlighted:
+
+            ```
+            > dotnet build MosaicUIWpf.sln
+            Build succeeded.
+            ```
+
             ## Table
 
             | Language | Typed | Year |
