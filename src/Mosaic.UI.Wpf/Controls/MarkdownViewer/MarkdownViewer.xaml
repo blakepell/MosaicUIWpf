@@ -4,6 +4,8 @@
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
+    <BooleanToVisibilityConverter x:Key="MarkdownViewerBooleanToVisibilityConverter" />
+
     <Style TargetType="{x:Type controls:MarkdownViewer}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
@@ -19,18 +21,151 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <RichTextBox
-                            x:Name="PART_RichTextBox"
-                            Padding="{TemplateBinding Padding}"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            Foreground="{TemplateBinding Foreground}"
-                            HorizontalScrollBarVisibility="Disabled"
-                            IsReadOnly="True"
-                            IsUndoEnabled="False"
-                            VerticalScrollBarVisibility="Auto" />
+                        <Grid>
+                            <RichTextBox
+                                x:Name="PART_RichTextBox"
+                                Padding="{TemplateBinding Padding}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalScrollBarVisibility="Disabled"
+                                IsReadOnly="True"
+                                IsUndoEnabled="False"
+                                VerticalScrollBarVisibility="Auto" />
+
+                            <!--  Find bar, modeled on the syntax editor's search panel.  -->
+                            <Border
+                                x:Name="PART_FindPanel"
+                                Margin="0,0,18,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                                BorderThickness="1"
+                                Cursor="Arrow"
+                                Visibility="{Binding IsFindPanelOpen, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource MarkdownViewerBooleanToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
+
+                                    <TextBox
+                                        x:Name="PART_FindTextBox"
+                                        Width="150"
+                                        Height="Auto"
+                                        Margin="5,5,0,5"
+                                        Focusable="True"
+                                        Text="{Binding FindText, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <TextBlock
+                                        MinWidth="52"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                        Opacity="0.7"
+                                        Text="{Binding FindStatusText, RelativeSource={RelativeSource TemplatedParent}}"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                    <!--  Find next  -->
+                                    <Button
+                                        Width="30"
+                                        Height="22"
+                                        Margin="3,1,0,1"
+                                        Padding="0"
+                                        Command="{x:Static controls:MarkdownViewer.FindNextCommand}"
+                                        ToolTip="Find next (Enter)">
+                                        <Path
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M 4,6 L 8,10.5 L 12,6"
+                                            Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                            StrokeEndLineCap="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="1.6" />
+                                    </Button>
+
+                                    <!--  Find previous  -->
+                                    <Button
+                                        Width="30"
+                                        Height="22"
+                                        Margin="1,1,0,1"
+                                        Padding="0"
+                                        Command="{x:Static controls:MarkdownViewer.FindPreviousCommand}"
+                                        ToolTip="Find previous (Shift+Enter)">
+                                        <Path
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M 4,10.5 L 8,6 L 12,10.5"
+                                            Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                            StrokeEndLineCap="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="1.6" />
+                                    </Button>
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <ToggleButton
+                                            Width="30"
+                                            Height="22"
+                                            Margin="1,0,0,0"
+                                            Content="aA"
+                                            Cursor="Hand"
+                                            FontFamily="Consolas,Courier New,Courier"
+                                            FontSize="12"
+                                            FontWeight="Normal"
+                                            IsChecked="{Binding FindMatchCase, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ToolTip="Match case" />
+
+                                        <ToggleButton
+                                            Width="30"
+                                            Height="22"
+                                            Margin="1,0,0,0"
+                                            Content="Ab"
+                                            Cursor="Hand"
+                                            FontFamily="Consolas,Courier New,Courier"
+                                            FontSize="12"
+                                            FontWeight="Normal"
+                                            IsChecked="{Binding FindWholeWords, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ToolTip="Match whole words" />
+
+                                        <ToggleButton
+                                            Width="30"
+                                            Height="22"
+                                            Margin="1,0,0,0"
+                                            Content="a*"
+                                            Cursor="Hand"
+                                            FontFamily="Consolas,Courier New,Courier"
+                                            FontSize="12"
+                                            FontWeight="Normal"
+                                            IsChecked="{Binding FindUseRegex, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ToolTip="Use regular expressions" />
+                                    </StackPanel>
+
+                                    <!--  Close  -->
+                                    <Button
+                                        Width="30"
+                                        Height="22"
+                                        Margin="1,0,4,0"
+                                        Padding="1"
+                                        Command="{x:Static controls:MarkdownViewer.CloseFindPanelCommand}"
+                                        ToolTip="Close (Esc)">
+                                        <Path
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M 4.5,4.5 L 11.5,11.5 M 11.5,4.5 L 4.5,11.5"
+                                            Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                            StrokeEndLineCap="Round"
+                                            StrokeStartLineCap="Round"
+                                            StrokeThickness="1.6" />
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

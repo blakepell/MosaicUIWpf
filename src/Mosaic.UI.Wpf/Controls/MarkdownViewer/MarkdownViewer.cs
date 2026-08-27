@@ -28,8 +28,16 @@ namespace Mosaic.UI.Wpf.Controls
     /// language the editor supports (for example <c>```csharp</c> or <c>``` csharp</c>) and shown as
     /// plain text when it does not. Because the embedded editor is sized to its document it never
     /// scrolls on its own and leaves the viewer's scrolling intact.
+    /// <para>
+    /// <c>Ctrl+F</c> opens a find bar modeled on the <see cref="SyntaxEditor"/> search panel. The
+    /// gesture is scoped to the focused control: pressed inside a code block it opens that editor's
+    /// own search panel, and pressed anywhere else it opens the viewer's find bar, which searches
+    /// the document text and the text of every embedded code block editor.
+    /// </para>
     /// </remarks>
     [TemplatePart(Name = PartRichTextBox, Type = typeof(RichTextBox))]
+    [TemplatePart(Name = PartFindPanel, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = PartFindTextBox, Type = typeof(TextBox))]
     public class MarkdownViewer : Control
     {
         /// <summary>
@@ -48,9 +56,59 @@ namespace Mosaic.UI.Wpf.Controls
         private const string PartRichTextBox = "PART_RichTextBox";
 
         /// <summary>
+        /// The name of the find bar template part.
+        /// </summary>
+        private const string PartFindPanel = "PART_FindPanel";
+
+        /// <summary>
+        /// The name of the find bar's search text box template part.
+        /// </summary>
+        private const string PartFindTextBox = "PART_FindTextBox";
+
+        /// <summary>
+        /// The wash painted behind every match in the document. A translucent amber reads on both
+        /// the light and dark themes without hiding the text beneath it.
+        /// </summary>
+        private static readonly Brush FindHighlightBrush = CreateFrozenBrush(0x4D, 0xF4, 0xB4, 0x00);
+
+        /// <summary>
+        /// The wash painted behind the selected match. A deeper, more opaque orange separates it
+        /// from the other matches, which the document selection cannot do on its own: while the
+        /// find bar holds focus that selection is drawn with the pale inactive highlight brush and
+        /// disappears against the other matches.
+        /// </summary>
+        private static readonly Brush FindCurrentHighlightBrush = CreateFrozenBrush(0xCC, 0xFF, 0x8C, 0x00);
+
+        /// <summary>
         /// The hosting rich text box, resolved from the template.
         /// </summary>
         private RichTextBox? _richTextBox;
+
+        /// <summary>
+        /// The find bar's search text box, resolved from the template.
+        /// </summary>
+        private TextBox? _findTextBox;
+
+        /// <summary>
+        /// The matches for the current find text, in document order.
+        /// </summary>
+        private List<MarkdownSearchMatch> _matches = new();
+
+        /// <summary>
+        /// The ranges currently painted with <see cref="FindHighlightBrush"/>.
+        /// </summary>
+        private readonly List<TextRange> _highlightedRanges = new();
+
+        /// <summary>
+        /// The index of the selected match within <see cref="_matches"/>, or <c>-1</c> when none is
+        /// selected.
+        /// </summary>
+        private int _currentMatchIndex = -1;
+
+        /// <summary>
+        /// The range currently painted with <see cref="FindCurrentHighlightBrush"/>.
+        /// </summary>
+        private TextRange? _currentHighlightRange;
 
         /// <summary>
         /// The absolute URI of the document currently loaded via <see cref="Source"/>, used to
@@ -94,6 +152,40 @@ namespace Mosaic.UI.Wpf.Controls
                     FrameworkPropertyMetadataOptions.Inherits,
                     OnFontSizeChanged));
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MarkdownViewer"/> class and wires the find
+        /// bar's commands and keyboard gestures.
+        /// </summary>
+        public MarkdownViewer()
+        {
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted));
+            this.CommandBindings.Add(new CommandBinding(FindNextCommand, (_, e) => { this.FindNext(true); e.Handled = true; }, this.OnFindNavigationCanExecute));
+            this.CommandBindings.Add(new CommandBinding(FindPreviousCommand, (_, e) => { this.FindNext(false); e.Handled = true; }, this.OnFindNavigationCanExecute));
+            this.CommandBindings.Add(new CommandBinding(CloseFindPanelCommand, (_, e) => { this.CloseFindPanel(); e.Handled = true; }));
+
+            // These bindings are only reached when the focused element did not already claim the
+            // gesture, which is what scopes Ctrl+F to a code block's own search panel when the
+            // caret is inside one.
+            this.InputBindings.Add(new KeyBinding(ApplicationCommands.Find, new KeyGesture(Key.F, ModifierKeys.Control)));
+            this.InputBindings.Add(new KeyBinding(FindNextCommand, new KeyGesture(Key.F3)));
+            this.InputBindings.Add(new KeyBinding(FindPreviousCommand, new KeyGesture(Key.F3, ModifierKeys.Shift)));
+        }
+
+        /// <summary>
+        /// Selects the next match in the find bar.
+        /// </summary>
+        public static readonly RoutedUICommand FindNextCommand = new("Find Next", nameof(FindNextCommand), typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Selects the previous match in the find bar.
+        /// </summary>
+        public static readonly RoutedUICommand FindPreviousCommand = new("Find Previous", nameof(FindPreviousCommand), typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Closes the find bar and clears its highlights.
+        /// </summary>
+        public static readonly RoutedUICommand CloseFindPanelCommand = new("Close", nameof(CloseFindPanelCommand), typeof(MarkdownViewer));
 
         /// <summary>
         /// Identifies the <see cref="Markdown"/> dependency property.
@@ -248,6 +340,128 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(IsDocumentReadOnlyProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="IsFindPanelOpen"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsFindPanelOpenProperty = DependencyProperty.Register(
+            nameof(IsFindPanelOpen),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(false, OnIsFindPanelOpenChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the find bar is shown. Setting this to
+        /// <c>true</c> is equivalent to pressing <c>Ctrl+F</c> over the document.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the find bar is shown.")]
+        public bool IsFindPanelOpen
+        {
+            get => (bool)GetValue(IsFindPanelOpenProperty);
+            set => SetValue(IsFindPanelOpenProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="FindText"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FindTextProperty = DependencyProperty.Register(
+            nameof(FindText),
+            typeof(string),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFindOptionChanged));
+
+        /// <summary>
+        /// Gets or sets the text the find bar searches for.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The text the find bar searches for.")]
+        public string FindText
+        {
+            get => (string)GetValue(FindTextProperty);
+            set => SetValue(FindTextProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="FindMatchCase"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FindMatchCaseProperty = DependencyProperty.Register(
+            nameof(FindMatchCase),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFindOptionChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the find bar's search is case sensitive.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the find bar's search is case sensitive.")]
+        public bool FindMatchCase
+        {
+            get => (bool)GetValue(FindMatchCaseProperty);
+            set => SetValue(FindMatchCaseProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="FindWholeWords"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FindWholeWordsProperty = DependencyProperty.Register(
+            nameof(FindWholeWords),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFindOptionChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the find bar matches whole words only.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the find bar matches whole words only.")]
+        public bool FindWholeWords
+        {
+            get => (bool)GetValue(FindWholeWordsProperty);
+            set => SetValue(FindWholeWordsProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="FindUseRegex"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FindUseRegexProperty = DependencyProperty.Register(
+            nameof(FindUseRegex),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnFindOptionChanged));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="FindText"/> is a regular expression.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the find text is treated as a regular expression.")]
+        public bool FindUseRegex
+        {
+            get => (bool)GetValue(FindUseRegexProperty);
+            set => SetValue(FindUseRegexProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the read-only <see cref="FindStatusText"/> dependency property.
+        /// </summary>
+        private static readonly DependencyPropertyKey FindStatusTextPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(FindStatusText),
+            typeof(string),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(string.Empty));
+
+        /// <summary>
+        /// Identifies the <see cref="FindStatusText"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FindStatusTextProperty = FindStatusTextPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the find bar's result summary, such as <c>3 of 12</c> or <c>No results</c>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The find bar's result summary.")]
+        public string FindStatusText => (string)GetValue(FindStatusTextProperty);
+
         /// <inheritdoc />
         public override void OnApplyTemplate()
         {
@@ -266,6 +480,10 @@ namespace Mosaic.UI.Wpf.Controls
                 // and painted with the theme's disabled foreground.
                 _richTextBox.IsDocumentEnabled = true;
 
+                // The find bar takes focus while it is open, so the selected match has to stay
+                // visible even though the document itself is no longer focused.
+                _richTextBox.IsInactiveSelectionHighlightEnabled = true;
+
                 // A RichTextBox's text editor intercepts mouse clicks for selection before a
                 // Hyperlink can raise RequestNavigate (even when read-only), so links are opened by
                 // hit-testing the click position for a hyperlink instead.
@@ -276,6 +494,14 @@ namespace Mosaic.UI.Wpf.Controls
                 // whole document, so the hand cursor over a link is applied here for the same reason.
                 _richTextBox.QueryCursor -= OnRichTextBoxQueryCursor;
                 _richTextBox.QueryCursor += OnRichTextBoxQueryCursor;
+            }
+
+            _findTextBox = GetTemplateChild(PartFindTextBox) as TextBox;
+
+            if (_findTextBox != null)
+            {
+                _findTextBox.PreviewKeyDown -= OnFindTextBoxPreviewKeyDown;
+                _findTextBox.PreviewKeyDown += OnFindTextBoxPreviewKeyDown;
             }
 
             RenderMarkdown(Markdown);
@@ -712,6 +938,12 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
+            // The previous document's matches point into content that is about to be replaced.
+            _highlightedRanges.Clear();
+            _currentHighlightRange = null;
+            _matches = new List<MarkdownSearchMatch>();
+            _currentMatchIndex = -1;
+
             FlowDocument document;
 
             try
@@ -738,6 +970,447 @@ namespace Mosaic.UI.Wpf.Controls
             document.Foreground = _richTextBox.Foreground;
 
             _richTextBox.Document = document;
+
+            if (IsFindPanelOpen)
+            {
+                UpdateMatches(true);
+            }
+        }
+
+        /// <summary>
+        /// Opens the find bar in response to <see cref="ApplicationCommands.Find"/>. This binding is
+        /// only reached when the focused element did not handle the gesture first, so <c>Ctrl+F</c>
+        /// inside a code block opens that editor's own search panel instead.
+        /// </summary>
+        private void OnFindCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            ShowFindPanel();
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Reports whether the find bar has matches to step through.
+        /// </summary>
+        private void OnFindNavigationCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsFindPanelOpen || !string.IsNullOrEmpty(FindText);
+        }
+
+        /// <summary>
+        /// Opens the find bar, seeds it with the current selection, and focuses its text box.
+        /// </summary>
+        public void ShowFindPanel()
+        {
+            // A single-line selection is what the user most likely wants to look for, matching the
+            // behavior of the syntax editor's search panel.
+            if (_richTextBox is { Selection.IsEmpty: false })
+            {
+                string selection = _richTextBox.Selection.Text.Trim();
+
+                if (!string.IsNullOrWhiteSpace(selection) && !selection.Contains('\n'))
+                {
+                    SetCurrentValue(FindTextProperty, selection);
+                }
+            }
+
+            SetCurrentValue(IsFindPanelOpenProperty, true);
+
+            // The panel is only realized once its visibility flips, so focus is deferred until the
+            // layout pass that shows it has run.
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    if (_findTextBox == null)
+                    {
+                        return;
+                    }
+
+                    _findTextBox.Focus();
+                    _findTextBox.SelectAll();
+                }),
+                DispatcherPriority.Input);
+        }
+
+        /// <summary>
+        /// Closes the find bar, clears its highlights, and returns focus to the document.
+        /// </summary>
+        public void CloseFindPanel()
+        {
+            SetCurrentValue(IsFindPanelOpenProperty, false);
+            _richTextBox?.Focus();
+        }
+
+        /// <summary>
+        /// Clears the find state when the panel closes, and re-runs the search when it opens.
+        /// </summary>
+        private static void OnIsFindPanelOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = (MarkdownViewer)d;
+
+            if ((bool)e.NewValue)
+            {
+                viewer.UpdateMatches(true);
+                return;
+            }
+
+            // The editors are cleared before the match list is dropped, since that list is what
+            // names the editors holding a selection.
+            viewer.ClearHighlights();
+            viewer.ClearEditorSelections();
+            viewer._matches = new List<MarkdownSearchMatch>();
+            viewer._currentMatchIndex = -1;
+            viewer.UpdateFindStatus();
+        }
+
+        /// <summary>
+        /// Re-runs the search when the find text or one of the find options changes.
+        /// </summary>
+        private static void OnFindOptionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = (MarkdownViewer)d;
+
+            if (viewer.IsFindPanelOpen)
+            {
+                viewer.UpdateMatches(true);
+            }
+        }
+
+        /// <summary>
+        /// Handles the keyboard gestures the find bar owns: <c>Enter</c> and <c>Shift+Enter</c> step
+        /// through the matches and <c>Escape</c> closes the bar.
+        /// </summary>
+        private void OnFindTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    FindNext((Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift);
+                    e.Handled = true;
+                    break;
+                case Key.Escape:
+                    CloseFindPanel();
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            // Bubbling rather than tunneling, so a code block's own search panel gets first refusal
+            // on Escape while it is open.
+            if (!e.Handled && e.Key == Key.Escape && IsFindPanelOpen)
+            {
+                CloseFindPanel();
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Recomputes the matches for the current find text and options.
+        /// </summary>
+        /// <param name="selectFirst">
+        /// Whether to move the selection to the first match at or after the caret.
+        /// </param>
+        private void UpdateMatches(bool selectFirst)
+        {
+            ClearHighlights();
+            ClearEditorSelections();
+
+            var regex = MarkdownDocumentSearch.BuildRegex(FindText, FindMatchCase, FindWholeWords, FindUseRegex);
+            _matches = MarkdownDocumentSearch.FindAll(_richTextBox?.Document, regex);
+            _currentMatchIndex = -1;
+
+            ApplyHighlights();
+
+            if (selectFirst && _matches.Count > 0)
+            {
+                SelectMatch(FirstMatchAtOrAfterCaret());
+            }
+
+            UpdateFindStatus();
+        }
+
+        /// <summary>
+        /// Returns the index of the first match at or after the current caret position so that
+        /// typing in the find bar moves forward through the document rather than jumping back to
+        /// the top.
+        /// </summary>
+        private int FirstMatchAtOrAfterCaret()
+        {
+            var caret = _richTextBox?.Selection.Start;
+
+            if (caret == null)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < _matches.Count; i++)
+            {
+                if (_matches[i].Range is { } range && caret.CompareTo(range.Start) <= 0)
+                {
+                    return i;
+                }
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Moves the selection to the next or previous match, wrapping at either end of the document.
+        /// </summary>
+        /// <param name="forward">Whether to move forward through the document.</param>
+        public void FindNext(bool forward)
+        {
+            if (!IsFindPanelOpen)
+            {
+                ShowFindPanel();
+                return;
+            }
+
+            if (_matches.Count == 0)
+            {
+                return;
+            }
+
+            int next = _currentMatchIndex < 0
+                ? (forward ? 0 : _matches.Count - 1)
+                : (_currentMatchIndex + (forward ? 1 : -1) + _matches.Count) % _matches.Count;
+
+            SelectMatch(next);
+        }
+
+        /// <summary>
+        /// Selects the match at the supplied index and scrolls it into view.
+        /// </summary>
+        /// <param name="index">The index of the match within the current result set.</param>
+        private void SelectMatch(int index)
+        {
+            if (_richTextBox == null || index < 0 || index >= _matches.Count)
+            {
+                return;
+            }
+
+            _currentMatchIndex = index;
+            var match = _matches[index];
+            ClearEditorSelections();
+            PaintCurrentMatch(match.Range);
+
+            if (match.Range != null)
+            {
+                _richTextBox.Selection.Select(match.Range.Start, match.Range.End);
+                BringRangeIntoView(match.Range);
+            }
+            else if (match.Editor != null)
+            {
+                // The document selection would otherwise keep showing the previous match while the
+                // current one is highlighted inside a code block.
+                _richTextBox.Selection.Select(_richTextBox.Selection.Start, _richTextBox.Selection.Start);
+                match.Editor.Select(match.EditorOffset, match.Length);
+                BringEditorMatchIntoView(match.Editor, match.EditorOffset);
+            }
+
+            UpdateFindStatus();
+        }
+
+        /// <summary>
+        /// Scrolls a matched range to the middle of the viewer.
+        /// </summary>
+        /// <param name="range">The range to reveal.</param>
+        private void BringRangeIntoView(TextRange range)
+        {
+            if (_richTextBox == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var rect = range.Start.GetCharacterRect(LogicalDirection.Forward);
+
+                if (!rect.IsEmpty)
+                {
+                    ScrollIntoView(rect.Top, rect.Height);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls the viewer so that a band of the document, measured in the hosting rich text
+        /// box own coordinate space, is centered in the viewport.
+        /// </summary>
+        /// <param name="top">The top of the band relative to the rich text box.</param>
+        /// <param name="height">The height of the band.</param>
+        private void ScrollIntoView(double top, double height)
+        {
+            if (_richTextBox == null || _richTextBox.ViewportHeight <= 0)
+            {
+                return;
+            }
+
+            if (top >= 0 && top + height <= _richTextBox.ViewportHeight)
+            {
+                return;
+            }
+
+            _richTextBox.ScrollToVerticalOffset(
+                _richTextBox.VerticalOffset + top - ((_richTextBox.ViewportHeight - height) / 2));
+        }
+
+        /// <summary>
+        /// Moves the current-match highlight to the supplied range, restoring the previous one to
+        /// the ordinary match highlight. A <c>null</c> range clears the current highlight, which is
+        /// what a match inside a code block editor needs.
+        /// </summary>
+        /// <param name="range">The range to paint as the current match.</param>
+        private void PaintCurrentMatch(TextRange? range)
+        {
+            try
+            {
+                _currentHighlightRange?.ApplyPropertyValue(TextElement.BackgroundProperty, FindHighlightBrush);
+                range?.ApplyPropertyValue(TextElement.BackgroundProperty, FindCurrentHighlightBrush);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            _currentHighlightRange = range;
+        }
+
+        /// <summary>
+        /// Scrolls a match inside a code block editor into view. The editor is sized to its whole
+        /// document, so the scrolling happens in the viewer rather than in the editor.
+        /// </summary>
+        /// <param name="editor">The editor holding the match.</param>
+        /// <param name="offset">The offset of the match in the editor's document.</param>
+        private void BringEditorMatchIntoView(SyntaxEditor editor, int offset)
+        {
+            try
+            {
+                if (editor.Document == null)
+                {
+                    return;
+                }
+
+                var textView = editor.TextArea.TextView;
+                var line = editor.Document.GetLineByOffset(offset);
+                double top = textView.GetVisualTopByDocumentLine(line.LineNumber) - textView.VerticalOffset;
+                double height = textView.DefaultLineHeight;
+
+                // The position has to be expressed in the rich text box coordinate space, since
+                // that is the element doing the scrolling; the editor shows its whole document and
+                // has nothing to scroll itself.
+                if (_richTextBox != null && editor.IsDescendantOf(_richTextBox))
+                {
+                    var origin = editor.TransformToAncestor(_richTextBox).Transform(new Point(0, top));
+                    ScrollIntoView(origin.Y, height);
+                    return;
+                }
+
+                editor.BringIntoView(new Rect(0, top, 1, height));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                editor.BringIntoView();
+            }
+        }
+
+        /// <summary>
+        /// Paints every match in the document with the find highlight.
+        /// </summary>
+        private void ApplyHighlights()
+        {
+            foreach (var match in _matches)
+            {
+                if (match.Range == null)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    match.Range.ApplyPropertyValue(TextElement.BackgroundProperty, FindHighlightBrush);
+                    _highlightedRanges.Add(match.Range);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes the find highlight from the ranges it was applied to.
+        /// </summary>
+        private void ClearHighlights()
+        {
+            foreach (var range in _highlightedRanges)
+            {
+                try
+                {
+                    range.ApplyPropertyValue(TextElement.BackgroundProperty, null);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+
+            _highlightedRanges.Clear();
+            _currentHighlightRange = null;
+        }
+
+        /// <summary>
+        /// Clears the selection in every code block editor that holds a match.
+        /// </summary>
+        private void ClearEditorSelections()
+        {
+            foreach (var editor in _matches.Select(m => m.Editor).Where(e => e != null).Distinct())
+            {
+                editor!.SelectionLength = 0;
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the find bar's result summary.
+        /// </summary>
+        private void UpdateFindStatus()
+        {
+            string status;
+
+            if (!IsFindPanelOpen || string.IsNullOrEmpty(FindText))
+            {
+                status = string.Empty;
+            }
+            else if (_matches.Count == 0)
+            {
+                status = "No results";
+            }
+            else
+            {
+                status = $"{Math.Max(_currentMatchIndex, 0) + 1} of {_matches.Count}";
+            }
+
+            SetValue(FindStatusTextPropertyKey, status);
+        }
+
+        /// <summary>
+        /// Creates a frozen brush from the supplied channels.
+        /// </summary>
+        private static Brush CreateFrozenBrush(byte a, byte r, byte g, byte b)
+        {
+            var brush = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+            brush.Freeze();
+
+            return brush;
         }
 
         /// <summary>

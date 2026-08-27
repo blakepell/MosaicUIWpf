@@ -455,6 +455,13 @@ namespace Mosaic.UI.Wpf.Controls
 
                 border.SetResourceReference(Border.BorderBrushProperty, MosaicTheme.ControlSeparatorBrush);
 
+                // TextBoxBase.IsReadOnly is an inheriting property, so the read-only rich text box
+                // hosting this document pushes its own read-only state down into every text box
+                // inside the code block - including the one in the editor's Ctrl+F search panel,
+                // which then silently refuses input. The editor's own read-only state is
+                // AvalonEdit's separate property and is unaffected by this.
+                border.SetValue(System.Windows.Controls.Primitives.TextBoxBase.IsReadOnlyProperty, false);
+
                 return new BlockUIContainer(border)
                 {
                     Margin = new Thickness(0, 0, 0, 8)
