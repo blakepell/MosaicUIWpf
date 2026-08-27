@@ -30,6 +30,20 @@ namespace Mosaic.UI.Wpf.Controls
         private readonly List<DateTime> _columnEnds = [];
 
         /// <summary>
+        /// Overlay visual used for the current time indicator and drag guides. It is reported as the last
+        /// visual child so those guides paint above the arranged event presenters.
+        /// </summary>
+        private readonly GuideVisual _guideVisual = new();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DayTimelinePanel"/> class.
+        /// </summary>
+        public DayTimelinePanel()
+        {
+            this.AddVisualChild(_guideVisual);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="HourHeight"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty HourHeightProperty = DependencyProperty.Register(
@@ -214,6 +228,27 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <inheritdoc />
+        protected override int VisualChildrenCount => this.InternalChildren.Count + 1;
+
+        /// <inheritdoc />
+        protected override Visual GetVisualChild(int index)
+        {
+            var childCount = this.InternalChildren.Count;
+
+            if (index == childCount)
+            {
+                return _guideVisual;
+            }
+
+            if (index < 0 || index > childCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            return this.InternalChildren[index];
+        }
+
+        /// <inheritdoc />
         protected override Size MeasureOverride(Size availableSize)
         {
             var width = double.IsInfinity(availableSize.Width)
@@ -304,7 +339,17 @@ namespace Mosaic.UI.Wpf.Controls
                 drawingContext.DrawText(text, new Point(0.0, Math.Max(0.0, y + 3.0)));
             }
 
-            DrawTimeGuides(drawingContext);
+            RenderTimeGuides();
+        }
+
+        /// <summary>
+        /// Repaints the guide overlay. The overlay renders after the event presenters so the current time
+        /// indicator stays visible when it overlaps an event.
+        /// </summary>
+        private void RenderTimeGuides()
+        {
+            using var guideContext = _guideVisual.RenderOpen();
+            DrawTimeGuides(guideContext);
         }
 
         private static Pen CreatePen(Brush brush, double thickness)
@@ -391,6 +436,17 @@ namespace Mosaic.UI.Wpf.Controls
 
             drawingContext.DrawRoundedRectangle(owner.Background, guidePen, labelRect, 3.0, 3.0);
             drawingContext.DrawText(formattedText, new Point(labelRect.Left + padding, labelRect.Top + padding));
+        }
+
+        /// <summary>
+        /// A <see cref="DrawingVisual"/> that never participates in hit testing so the guides drawn on top of
+        /// the events do not intercept mouse input intended for an event underneath them.
+        /// </summary>
+        private sealed class GuideVisual : DrawingVisual
+        {
+            protected override HitTestResult? HitTestCore(PointHitTestParameters hitTestParameters) => null;
+
+            protected override GeometryHitTestResult? HitTestCore(GeometryHitTestParameters hitTestParameters) => null;
         }
     }
 }
