@@ -46,11 +46,7 @@ namespace Mosaic.UI.Wpf.Controls
             }
         }
 
-        private static void AssignCluster(
-            List<CalendarEventLayoutItem> items,
-            int startIndex,
-            int endIndex,
-            List<DateTime> columnEnds)
+        private static void AssignCluster(List<CalendarEventLayoutItem> items, int startIndex, int endIndex, List<DateTime> columnEnds)
         {
             columnEnds.Clear();
 

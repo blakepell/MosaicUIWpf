@@ -25,12 +25,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="oldEnd">The original event end.</param>
         /// <param name="newStart">The proposed event start.</param>
         /// <param name="newEnd">The proposed event end.</param>
-        public CalendarEventTimeChangedEventArgs(
-            object calendarEvent,
-            DateTime oldStart,
-            DateTime oldEnd,
-            DateTime newStart,
-            DateTime newEnd)
+        public CalendarEventTimeChangedEventArgs(object calendarEvent, DateTime oldStart, DateTime oldEnd, DateTime newStart, DateTime newEnd)
         {
             Event = calendarEvent ?? throw new ArgumentNullException(nameof(calendarEvent));
             OldStart = oldStart;

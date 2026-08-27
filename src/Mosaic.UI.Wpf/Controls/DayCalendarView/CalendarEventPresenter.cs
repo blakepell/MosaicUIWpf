@@ -31,6 +31,9 @@ namespace Mosaic.UI.Wpf.Controls
         private static readonly DependencyPropertyKey IsReadOnlyPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(IsReadOnly), typeof(bool), typeof(CalendarEventPresenter), new PropertyMetadata(false));
 
+        private static readonly DependencyPropertyKey CanDeletePropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(CanDelete), typeof(bool), typeof(CalendarEventPresenter), new PropertyMetadata(true));
+
         /// <summary>
         /// Identifies the <see cref="IsSelected"/> dependency property.
         /// </summary>
@@ -40,6 +43,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="IsReadOnly"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty IsReadOnlyProperty = IsReadOnlyPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Identifies the <see cref="CanDelete"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CanDeleteProperty = CanDeletePropertyKey.DependencyProperty;
 
         /// <summary>
         /// Identifies the <see cref="DisplayTitle"/> dependency property.
@@ -78,6 +86,15 @@ namespace Mosaic.UI.Wpf.Controls
         /// <see langword="true"/> if the event cannot be moved; otherwise, <see langword="false"/>.
         /// </value>
         public bool IsReadOnly => (bool)GetValue(IsReadOnlyProperty);
+
+        /// <summary>
+        /// Gets a value that indicates whether this event may be deleted from the calendar.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> if pressing <c>Delete</c> while the event has focus may remove it;
+        /// otherwise, <see langword="false"/>.
+        /// </value>
+        public bool CanDelete => (bool)GetValue(CanDeleteProperty);
 
         /// <summary>
         /// Gets or sets the resolved title displayed by the default event template.
@@ -160,6 +177,11 @@ namespace Mosaic.UI.Wpf.Controls
         internal void SetReadOnly(bool value)
         {
             SetValue(IsReadOnlyPropertyKey, value);
+        }
+
+        internal void SetCanDelete(bool value)
+        {
+            SetValue(CanDeletePropertyKey, value);
         }
 
         internal void SetDragging(bool value)
@@ -265,6 +287,11 @@ namespace Mosaic.UI.Wpf.Controls
             else if (e.Key is Key.Enter or Key.Space)
             {
                 Owner?.ActivateEvent(this);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Delete && !_isDragging && CanDelete && Owner != null)
+            {
+                Owner.RequestDeleteEvent(this);
                 e.Handled = true;
             }
         }

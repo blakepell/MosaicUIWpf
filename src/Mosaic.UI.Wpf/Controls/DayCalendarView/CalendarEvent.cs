@@ -15,59 +15,37 @@ namespace Mosaic.UI.Wpf.Controls
     /// <summary>
     /// Represents a mutable calendar appointment suitable for use with <see cref="DayCalendarView"/>.
     /// </summary>
-    public class CalendarEvent : ObservableObject
+    public partial class CalendarEvent : ObservableObject
     {
-        private DateTime _startDate;
-        private DateTime _endDate;
-        private string _title = string.Empty;
-        private string? _description;
-        private Brush? _background;
-        private bool _isReadOnly;
-
         /// <summary>
         /// Gets or sets the inclusive start of the appointment.
         /// </summary>
-        public DateTime StartDate
-        {
-            get => _startDate;
-            set => SetProperty(ref _startDate, value);
-        }
+        [ObservableProperty]
+        public partial DateTime StartDate { get; set; }
 
         /// <summary>
         /// Gets or sets the exclusive end of the appointment.
         /// </summary>
-        public DateTime EndDate
-        {
-            get => _endDate;
-            set => SetProperty(ref _endDate, value);
-        }
+        [ObservableProperty]
+        public partial DateTime EndDate { get; set; }
 
         /// <summary>
         /// Gets or sets the appointment title.
         /// </summary>
-        public string Title
-        {
-            get => _title;
-            set => SetProperty(ref _title, value ?? string.Empty);
-        }
+        [ObservableProperty]
+        public partial string Title { get; set; }
 
         /// <summary>
         /// Gets or sets the optional secondary appointment text.
         /// </summary>
-        public string? Description
-        {
-            get => _description;
-            set => SetProperty(ref _description, value);
-        }
+        [ObservableProperty]
+        public partial string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the optional brush that overrides the calendar's default event background.
         /// </summary>
-        public Brush? Background
-        {
-            get => _background;
-            set => SetProperty(ref _background, value);
-        }
+        [ObservableProperty]
+        public partial Brush? Background { get; set; }
 
         /// <summary>
         /// Gets or sets a value that indicates whether the appointment cannot be moved by dragging.
@@ -76,10 +54,26 @@ namespace Mosaic.UI.Wpf.Controls
         /// <see langword="true"/> if the appointment cannot be moved; otherwise, <see langword="false"/>.
         /// The default is <see langword="false"/>.
         /// </value>
-        public bool IsReadOnly
+        [ObservableProperty]
+        public partial bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the appointment can be deleted from the calendar.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> if pressing <c>Delete</c> while the event has focus may remove it;
+        /// otherwise, <see langword="false"/>. The default is <see langword="true"/>.
+        /// </value>
+        [ObservableProperty]
+        public partial bool CanDelete { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CalendarEvent"/> class.
+        /// </summary>
+        public CalendarEvent()
         {
-            get => _isReadOnly;
-            set => SetProperty(ref _isReadOnly, value);
+            Title = string.Empty;
+            CanDelete = true;
         }
     }
 }

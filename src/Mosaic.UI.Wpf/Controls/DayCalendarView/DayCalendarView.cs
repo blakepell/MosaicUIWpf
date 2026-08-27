@@ -87,6 +87,12 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(EventTimeChangedCommand), typeof(ICommand), typeof(DayCalendarView), new PropertyMetadata(null));
 
         /// <summary>
+        /// Identifies the <see cref="EventDeletingCommand"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EventDeletingCommandProperty = DependencyProperty.Register(
+            nameof(EventDeletingCommand), typeof(ICommand), typeof(DayCalendarView), new PropertyMetadata(null));
+
+        /// <summary>
         /// Identifies the <see cref="HourHeight"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty HourHeightProperty = DependencyProperty.Register(
@@ -225,6 +231,12 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(IsReadOnlyPath), typeof(string), typeof(DayCalendarView), new PropertyMetadata("IsReadOnly", OnDataPropertyChanged));
 
         /// <summary>
+        /// Identifies the <see cref="CanDeletePath"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CanDeletePathProperty = DependencyProperty.Register(
+            nameof(CanDeletePath), typeof(string), typeof(DayCalendarView), new PropertyMetadata("CanDelete", OnDataPropertyChanged));
+
+        /// <summary>
         /// Identifies the <see cref="HourLineBrush"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty HourLineBrushProperty = DependencyProperty.Register(
@@ -260,6 +272,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public static readonly RoutedEvent EventTimeChangedEvent = EventManager.RegisterRoutedEvent(
             nameof(EventTimeChanged), RoutingStrategy.Bubble, typeof(EventHandler<CalendarEventTimeChangedEventArgs>), typeof(DayCalendarView));
+
+        /// <summary>
+        /// Identifies the <see cref="EventDeleting"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent EventDeletingEvent = EventManager.RegisterRoutedEvent(
+            nameof(EventDeleting), RoutingStrategy.Bubble, typeof(EventHandler<CalendarEventDeletingEventArgs>), typeof(DayCalendarView));
 
         /// <summary>
         /// Gets or sets the date represented by the timeline.
@@ -319,6 +337,20 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (ICommand?)GetValue(EventTimeChangedCommandProperty);
             set => SetValue(EventTimeChangedCommandProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the command executed with a <see cref="CalendarEventDeletingEventArgs"/> delete proposal.
+        /// </summary>
+        /// <remarks>
+        /// The command runs after <see cref="EventDeleting"/> and may set
+        /// <see cref="CalendarEventDeletingEventArgs.Cancel"/> to <see langword="true"/> to abandon the deletion.
+        /// </remarks>
+        [Category("Action")]
+        public ICommand? EventDeletingCommand
+        {
+            get => (ICommand?)GetValue(EventDeletingCommandProperty);
+            set => SetValue(EventDeletingCommandProperty, value);
         }
 
         /// <summary>
@@ -537,6 +569,21 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Gets or sets the property path that resolves whether each event can be deleted.
+        /// </summary>
+        /// <value>
+        /// A property path whose resolved Boolean value disables deletion when <see langword="false"/>.
+        /// Missing properties and non-Boolean values are treated as <see langword="true"/>. The default is
+        /// <c>CanDelete</c>.
+        /// </value>
+        [Category("Data")]
+        public string CanDeletePath
+        {
+            get => (string)GetValue(CanDeletePathProperty);
+            set => SetValue(CanDeletePathProperty, value);
+        }
+
+        /// <summary>
         /// Gets or sets the brush used for hour separators.
         /// </summary>
         [Category("Brushes")]
@@ -594,6 +641,16 @@ namespace Mosaic.UI.Wpf.Controls
         {
             add => AddHandler(EventTimeChangedEvent, value);
             remove => RemoveHandler(EventTimeChangedEvent, value);
+        }
+
+        /// <summary>
+        /// Occurs before a focused event is deleted, allowing a handler to cancel the removal.
+        /// </summary>
+        [Category("Behavior")]
+        public event EventHandler<CalendarEventDeletingEventArgs> EventDeleting
+        {
+            add => AddHandler(EventDeletingEvent, value);
+            remove => RemoveHandler(EventDeletingEvent, value);
         }
 
         internal DayTimelinePanel? TimelinePanel => _timelinePanel;
@@ -678,6 +735,56 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 command.Execute(presenter.EventItem);
             }
+        }
+
+        /// <summary>
+        /// Raises <see cref="EventDeleting"/> and executes <see cref="EventDeletingCommand"/> for the specified
+        /// source event, removing it from <see cref="ItemsSource"/> when the proposal is not cancelled.
+        /// </summary>
+        /// <param name="calendarEvent">The source object supplied by the calendar's items source.</param>
+        /// <returns>
+        /// <see langword="true"/> when the deletion was accepted; <see langword="false"/> when a handler or the
+        /// command cancelled it.
+        /// </returns>
+        /// <remarks>
+        /// The event is removed only when <see cref="ItemsSource"/> is a mutable, non-fixed-size <see cref="IList"/>.
+        /// Other sources are left untouched so the handler can perform the removal itself.
+        /// </remarks>
+        public bool DeleteEvent(object calendarEvent)
+        {
+            ArgumentNullException.ThrowIfNull(calendarEvent);
+
+            var args = new CalendarEventDeletingEventArgs(calendarEvent)
+            {
+                RoutedEvent = EventDeletingEvent,
+                Source = this
+            };
+
+            RaiseEvent(args);
+
+            var command = EventDeletingCommand;
+            if (command?.CanExecute(args) == true)
+            {
+                command.Execute(args);
+            }
+
+            if (args.Cancel)
+            {
+                return false;
+            }
+
+            RemoveFromSource(calendarEvent);
+            return true;
+        }
+
+        internal void RequestDeleteEvent(CalendarEventPresenter presenter)
+        {
+            if (!presenter.CanDelete)
+            {
+                return;
+            }
+
+            DeleteEvent(presenter.EventItem);
         }
 
         internal bool BeginEventDrag(CalendarEventPresenter presenter, double pointerDownY)
@@ -955,6 +1062,7 @@ namespace Mosaic.UI.Wpf.Controls
 
                 ApplyPresenterVisuals(presenter);
                 presenter.SetReadOnly(GetPathValue(item, IsReadOnlyPath) is true);
+                presenter.SetCanDelete(GetPathValue(item, CanDeletePath) is not false);
                 _timelinePanel.Children.Add(presenter);
             }
 
@@ -1002,6 +1110,28 @@ namespace Mosaic.UI.Wpf.Controls
                 {
                     presenter.SetSelected(ReferenceEquals(presenter.EventItem, SelectedItem));
                 }
+            }
+        }
+
+        private void RemoveFromSource(object calendarEvent)
+        {
+            if (ReferenceEquals(SelectedItem, calendarEvent))
+            {
+                SetCurrentValue(SelectedItemProperty, null);
+            }
+
+            if (ItemsSource is not IList list || list.IsReadOnly || list.IsFixedSize || !list.Contains(calendarEvent))
+            {
+                return;
+            }
+
+            list.Remove(calendarEvent);
+
+            // Observable sources rebuild through the collection-changed handler; plain lists do not notify.
+            if (ItemsSource is not INotifyCollectionChanged)
+            {
+                SubscribeToItemChanges();
+                RebuildPresenters();
             }
         }
 
