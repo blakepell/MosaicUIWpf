@@ -150,53 +150,108 @@
 
                 <Separator />
 
-                <Button
+                <!--  The default click applies Heading 1; the drop-down offers every heading level.  -->
+                <controls:SplitButton
+                    Width="32"
+                    MinWidth="48"
+                    Padding="0"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                     Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
+                    DropDownButtonWidth="16"
+                    Focusable="False"
                     Tag="1"
                     ToolTip="Heading 1">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-one-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
-
-                <Button
-                    Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="2"
-                    ToolTip="Heading 2">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-two-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
-
-                <Button
-                    Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="3"
-                    ToolTip="Heading 3">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-three-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
-
-                <Button
-                    Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="4"
-                    ToolTip="Heading 4">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-four-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
-
-                <Button
-                    Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="5"
-                    ToolTip="Heading 5">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-five-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
-
-                <Button
-                    Click="HeadingButton_Click"
-                    Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="6"
-                    ToolTip="Heading 6">
-                    <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-six-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
-                </Button>
+                    <controls:SplitButton.Content>
+                        <controls:AdaptiveImage
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-one-32.png"
+                            Stretch="Uniform" />
+                    </controls:SplitButton.Content>
+                    <controls:SplitButton.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 1"
+                                Tag="1"
+                                ToolTip="Heading 1">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-one-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 2"
+                                Tag="2"
+                                ToolTip="Heading 2">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-two-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 3"
+                                Tag="3"
+                                ToolTip="Heading 3">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-three-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 4"
+                                Tag="4"
+                                ToolTip="Heading 4">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-four-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 5"
+                                Tag="5"
+                                ToolTip="Heading 5">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-five-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Click="HeadingButton_Click"
+                                Header="Heading 6"
+                                Tag="6"
+                                ToolTip="Heading 6">
+                                <MenuItem.Icon>
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-heading-six-32.png"
+                                        Stretch="Uniform" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </controls:SplitButton.ContextMenu>
+                </controls:SplitButton>
 
                 <Separator />
 
