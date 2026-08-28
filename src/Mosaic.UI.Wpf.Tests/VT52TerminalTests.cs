@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -151,6 +151,109 @@ namespace Mosaic.UI.Wpf.Tests
 
                 Assert.Equal(25, terminal.Rows);
                 Assert.Equal(80, terminal.Columns);
+            });
+        }
+
+        [Fact]
+        public void Document_Has_Exactly_One_Line_Per_Terminal_Row()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 0 };
+                terminal.Reset(4, 5);
+
+                terminal.Add("abc");
+
+                // A trailing newline would add a phantom empty line that steals a row of the viewport
+                // and leaves a scrollback line parked above the live screen.
+                Assert.Equal(4, terminal.Document.LineCount);
+                Assert.False(terminal.Text.EndsWith('\n'));
+            });
+        }
+
+        [Fact]
+        public void Document_Line_Count_Tracks_Scrollback_Growth()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 10 };
+                terminal.Reset(2, 3);
+
+                // Two of these line feeds scroll the top row off into the scrollback.
+                terminal.Add("aaa\r\nbbb\r\nccc\r\nddd");
+
+                Assert.Equal(2 + 2, terminal.Document.LineCount);
+            });
+        }
+
+        [Fact]
+        public void Sgr_Does_Not_Cancel_A_Pending_Autowrap()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 0 };
+                terminal.Reset(2, 3);
+
+                // Fill the row, emit a colour change, then print. The glyph belongs on the next row;
+                // cancelling the deferred wrap would overwrite the last cell instead.
+                terminal.Add("abc\u001B[31md");
+
+                string[] lines = ScreenLines(terminal);
+                Assert.Equal("abc", lines[0]);
+                Assert.Equal("d  ", lines[1]);
+            });
+        }
+
+        [Fact]
+        public void Decset_Applies_Every_Parameter()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 0 };
+                terminal.Reset(2, 3);
+
+                // DECAWM off is the second parameter; a parser that only read the first would keep
+                // autowrap enabled and push the fourth glyph onto row two.
+                terminal.Add("\u001B[?1;7labcd");
+
+                string[] lines = ScreenLines(terminal);
+                Assert.Equal("abd", lines[0]);
+                Assert.Equal("   ", lines[1]);
+            });
+        }
+
+        [Fact]
+        public void Cursor_Position_Report_Is_Relative_To_Scroll_Region_In_Origin_Mode()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 0 };
+                terminal.Reset(10, 10);
+
+                var transmitted = new List<byte>();
+                terminal.Transmit += bytes => transmitted.AddRange(bytes!);
+
+                // Margins 3..8, origin mode on, cursor to the region's second row.
+                terminal.Add("\u001B[3;8r\u001B[?6h\u001B[2;1H\u001B[6n");
+
+                Assert.Equal("\u001B[2;1R", System.Text.Encoding.ASCII.GetString(transmitted.ToArray()));
+            });
+        }
+
+        [Fact]
+        public void Decaln_Fills_The_Screen_And_Consumes_Its_Parameter_Byte()
+        {
+            RunSta(() =>
+            {
+                var terminal = new VT52Terminal { MaxScrollbackLines = 0 };
+                terminal.Reset(2, 3);
+
+                terminal.Add("\u001B#8");
+
+                // An unconsumed parameter byte would leave a stray '8' on the screen.
+                string[] lines = ScreenLines(terminal);
+                Assert.Equal("EEE", lines[0]);
+                Assert.Equal("EEE", lines[1]);
             });
         }
     }

@@ -20,5 +20,10 @@ Important properties include:
 `SendTextAsync` sends programmatic text with the same optional pacing used by paste, and
 `OpenSearch` opens incremental search across the current screen and retained scrollback.
 
+The viewport follows new output only while it is already at the bottom, so scrolling up into
+the history is not disturbed by incoming data. Typing re-anchors the view on the live screen;
+`ScrollToBottom` does the same on demand, for hosts that want an explicit "jump to bottom"
+affordance.
+
 ![VT52Terminal](./images/VT52Terminal.png)
 

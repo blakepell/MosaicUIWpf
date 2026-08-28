@@ -115,7 +115,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             EscYCol,
             Csi,
             OscString, // Operating System Command (title, etc.)
-            EscScs // Select Character Set - consumes one more byte (e.g., ESC ( B)
+            EscScs, // Select Character Set - consumes one more byte (e.g., ESC ( B)
+            EscHash // ESC # - consumes one more byte (DECALN, DECDHL/DECDWL line attributes)
         }
 
         private ParseState _state = ParseState.Normal;
@@ -180,6 +181,17 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private SearchPanel? _searchPanel;
 
         private CharSet ActiveCharset => _shiftOut ? _g1Charset : _g0Charset;
+
+        // Tolerance used when converting a pixel measurement into a whole number of character cells.
+        // Guards against a viewport that is an exact multiple of the line height measuring as
+        // n - 0.0000001 and losing a row.
+        private const double Epsilon = 0.001;
+
+        // Set when the user does something that should re-anchor the view on the live screen (typing,
+        // pasting). Terminals conventionally jump back to the bottom on input; without this a viewport
+        // the user left partway up the scrollback never re-syncs, because a full-screen redraw does not
+        // change the document height and so never trips the stick-to-bottom check.
+        private bool _forceScrollToEnd;
 
         private readonly Lock _lock = new();
         private readonly SemaphoreSlim _sendGate = new(1, 1);
@@ -932,6 +944,9 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private bool SendToConnection(string text, string? localEchoText)
         {
+            // Typing re-anchors the view on the live screen even when nothing is connected yet.
+            _forceScrollToEnd = true;
+
             var connection = Connection;
 
             if (connection?.IsConnected != true || string.IsNullOrEmpty(text))
@@ -945,6 +960,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
         private bool SendToConnection(byte[] data)
         {
+            _forceScrollToEnd = true;
+
             var connection = Connection;
             if (connection?.IsConnected != true || data.Length == 0)
             {
@@ -1095,14 +1112,35 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return (Rows > 0 ? Rows : 24, Columns > 0 ? Columns : 80, Math.Max(0, (int)ActualWidth), Math.Max(0, (int)ActualHeight));
             }
 
-            double padH = Padding.Left + Padding.Right + BorderThickness.Left + BorderThickness.Right;
-            double padV = Padding.Top + Padding.Bottom + BorderThickness.Top + BorderThickness.Bottom;
+            // Measure against the TextView's own render size. TextView implements IScrollInfo, so its
+            // ActualWidth/ActualHeight are the scroll viewport, already net of padding, border and any
+            // visible scroll bar. Deriving the grid from ActualWidth/ActualHeight minus chrome undercounted
+            // the viewport by two lines, which left a scrollback line permanently parked above the live
+            // screen once anything had scrolled off the top.
+            double clientW = tv.ActualWidth;
+            double clientH = tv.ActualHeight;
 
-            double clientW = Math.Max(0, ActualWidth - padH);
-            double clientH = Math.Max(0, ActualHeight - padV);
+            if (clientW <= 0 || clientH <= 0)
+            {
+                double padH = Padding.Left + Padding.Right + BorderThickness.Left + BorderThickness.Right;
+                double padV = Padding.Top + Padding.Bottom + BorderThickness.Top + BorderThickness.Bottom;
 
-            int cols = Math.Max(1, (int)Math.Floor(clientW / charW));
-            int rows = Math.Max(1, (int)Math.Floor((clientH - lineH + 0.1) / lineH) - 1);
+                clientW = Math.Max(0, ActualWidth - padH);
+                clientH = Math.Max(0, ActualHeight - padV);
+            }
+
+            // Before the first layout pass there is nothing to measure. Keep the current grid rather than
+            // collapsing to 1x1 and reporting that size to the host.
+            if (clientW <= 0 || clientH <= 0)
+            {
+                return (Rows > 0 ? Rows : 24, Columns > 0 ? Columns : 80, 0, 0);
+            }
+
+            // TextView reports its horizontal extent as the widest line plus 3px of caret slack. Reserving
+            // that here keeps a full-width screen from tripping the horizontal scroll bar (which would eat
+            // a row of height and start a resize oscillation).
+            int cols = Math.Max(1, (int)Math.Floor((clientW - 3.0) / charW + Epsilon));
+            int rows = Math.Max(1, (int)Math.Floor(clientH / lineH + Epsilon));
 
             var dpi = VisualTreeHelper.GetDpi(this);
             int pxW = (int)Math.Round(clientW * dpi.DpiScaleX);
@@ -1443,6 +1481,17 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                         _state = ParseState.Normal;
                     }
                     return;
+                case ParseState.EscHash:
+                    // ESC # 8 is DECALN, the VT100 screen-alignment pattern. ESC # 3/4/5/6 select
+                    // double-height/double-width line attributes, which this control renders as normal
+                    // width; either way the parameter byte must be consumed rather than printed.
+                    if (ch == '8')
+                    {
+                        ScreenAlignmentPattern();
+                    }
+
+                    _state = ParseState.Normal;
+                    return;
             }
         }
 
@@ -1591,6 +1640,9 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 case '>': // DECKPNM - Keypad Numeric Mode
                     _applicationKeypad = false;
                     break;
+                case '#': // DECALN / line attributes - the parameter byte follows
+                    _state = ParseState.EscHash;
+                    return;
                 case '(': // SCS G0 - Select Character Set
                 case ')': // SCS G1
                 case '*': // SCS G2
@@ -1697,10 +1749,25 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 switch (cmd)
                 {
                     case 'h': // DECSET
-                        SetDecPrivateMode(p0, true);
-                        break;
                     case 'l': // DECRST
-                        SetDecPrivateMode(p0, false);
+                    {
+                        // A single sequence may carry several modes (e.g. CSI ? 1 ; 7 h). Applying only
+                        // the first parameter silently dropped the rest.
+                        bool set = cmd == 'h';
+
+                        for (int i = 0; i < _csiParams.Count; i++)
+                        {
+                            SetDecPrivateMode(_csiParams[i], set);
+                        }
+
+                        break;
+                    }
+                    case 'n': // DECDSR - device status report, private form
+                        if (p0 == 6)
+                        {
+                            TransmitToHost(Encoding.ASCII.GetBytes($"\x1B[?{ReportedCursorRow()};{_curCol + 1}R"));
+                        }
+
                         break;
                 }
                 return;
@@ -1840,7 +1907,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     if (p0 == 6) // Report Cursor Position
                     {
                         // Send CPR response: ESC [ row ; col R
-                        var response = $"\x1B[{_curRow + 1};{_curCol + 1}R";
+                        var response = $"\x1B[{ReportedCursorRow()};{_curCol + 1}R";
                         TransmitToHost(Encoding.ASCII.GetBytes(response));
                     }
                     else if (p0 == 5) // Report device status (always OK)
@@ -1858,7 +1925,37 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     for (int i = 0; i < Math.Max(1, p0); i++) ScrollDownRegion();
                     break;
             }
-            _autowrapPending = false;
+
+            // A deferred wrap survives sequences that neither move the cursor nor rewrite the line.
+            // SGR in particular must not swallow it: ANSI art routinely paints a full 80-column row and
+            // then emits a colour change, and cancelling the pending wrap there makes the next glyph
+            // overwrite the last cell instead of starting the following row. Sequences that do move the
+            // cursor clear the flag from their own handlers.
+            switch (cmd)
+            {
+                case 'm': // SGR
+                case 'h': // SM
+                case 'l': // RM
+                case 'n': // DSR
+                case 'c': // DA
+                case 'g': // TBC
+                case 'r': // DECSTBM (clears via CursorPositionCsi when the margins are accepted)
+                case 's': // SCP
+                case 'u': // RCP (clears via RestoreCursor)
+                    break;
+                default:
+                    _autowrapPending = false;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Returns the 1-based cursor row as it should appear in a CPR/DECDSR report. In origin mode
+        /// (DECOM) the row is reported relative to the top margin of the scroll region.
+        /// </summary>
+        private int ReportedCursorRow()
+        {
+            return _originMode ? _curRow - (_scrollTop - 1) + 1 : _curRow + 1;
         }
 
         /// <summary>Sets or resets a standard (non-private) ANSI mode.</summary>
@@ -2171,8 +2268,12 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             if (!_hasSavedCursor)
             {
+                // With nothing saved, DECRC homes the cursor and restores the power-on defaults.
                 _curRow = 0;
                 _curCol = 0;
+                _currentAttrs = TerminalAttributes.Default;
+                _originMode = false;
+                _autowrapPending = false;
                 return;
             }
 
@@ -2325,6 +2426,26 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 _curRow--;
             }
+        }
+
+        /// <summary>
+        /// DECALN: fills the screen with 'E' using default attributes, resets the margins and homes the
+        /// cursor. Hosts use it to check alignment and, in practice, as a hard screen clear.
+        /// </summary>
+        private void ScreenAlignmentPattern()
+        {
+            var cell = new TerminalCell('E', TerminalAttributes.Default);
+
+            for (int r = 0; r < Rows; r++)
+            {
+                FillRow(r, 0, Columns, cell);
+            }
+
+            _scrollTop = 1;
+            _scrollBottom = Rows;
+            _curRow = 0;
+            _curCol = 0;
+            _autowrapPending = false;
         }
 
         private void ScrollUpRegion()
@@ -2849,12 +2970,18 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             var sb = new StringBuilder((lines.Length * (Columns + 1)) + 1);
 
-            foreach (string line in lines)
+            for (int i = 0; i < lines.Length; i++)
             {
-                sb.Append(line);
-                sb.Append('\n'); // Always append LF, even for the last line.
+                if (i > 0)
+                {
+                    sb.Append('\n');
+                }
+
+                sb.Append(lines[i]);
             }
 
+            // No trailing LF. The document must hold exactly one line per terminal row; a phantom
+            // empty last line consumes a row of the viewport and pushes the live screen up by one.
             return sb.ToString();
         }
 
@@ -2865,7 +2992,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 Document = new TextDocument();
             }
 
-            bool stickToBottom = IsScrolledToBottom();
+            bool stickToBottom = _forceScrollToEnd || IsScrolledToBottom();
             var lines = BuildLineSnapshot();
             bool requiresFullReplace = forceScrollTop ||
                                        forceFullReplace ||
@@ -2920,7 +3047,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 Document = new TextDocument();
             }
 
-            bool stickToBottom = IsScrolledToBottom();
+            bool stickToBottom = _forceScrollToEnd || IsScrolledToBottom();
 
             Document.BeginUpdate();
             try
@@ -2958,6 +3085,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             // Keep the header pinned at the very top when explicitly requested (e.g., after Reset).
             if (forceScrollTop)
             {
+                _forceScrollToEnd = false;
                 ScrollTo(1, 1);
                 return;
             }
@@ -2966,8 +3094,26 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             // scrolled up into the scrollback history, leave the viewport where they left it.
             if (stickToBottom)
             {
+                _forceScrollToEnd = false;
                 ScrollToEnd();
             }
+        }
+
+        /// <summary>
+        /// Re-anchors the viewport on the live screen, abandoning any scrollback position the user has
+        /// scrolled to. Called automatically when the user types; hosts can call it to add a
+        /// "jump to bottom" affordance.
+        /// </summary>
+        public void ScrollToBottom()
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.BeginInvoke(ScrollToBottom, DispatcherPriority.Render);
+                return;
+            }
+
+            _forceScrollToEnd = false;
+            ScrollToEnd();
         }
 
         /// <summary>
