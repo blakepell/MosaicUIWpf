@@ -165,6 +165,48 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(StorageFolderProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="SaveButtonIsVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SaveButtonIsVisibleProperty = DependencyProperty.Register(
+            nameof(SaveButtonIsVisible),
+            typeof(bool),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the toolbar's Save button (and the separator that
+        /// follows it) is visible. Defaults to <c>true</c>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Determines whether the toolbar's Save button and its trailing separator are visible.")]
+        public bool SaveButtonIsVisible
+        {
+            get => (bool)this.GetValue(SaveButtonIsVisibleProperty);
+            set => this.SetValue(SaveButtonIsVisibleProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="PreviewButtonIsVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty PreviewButtonIsVisibleProperty = DependencyProperty.Register(
+            nameof(PreviewButtonIsVisible),
+            typeof(bool),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the toolbar's "Preview in Browser" button (and the
+        /// separator that follows it) is visible. Defaults to <c>true</c>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Determines whether the toolbar's preview button and its trailing separator are visible.")]
+        public bool PreviewButtonIsVisible
+        {
+            get => (bool)this.GetValue(PreviewButtonIsVisibleProperty);
+            set => this.SetValue(PreviewButtonIsVisibleProperty, value);
+        }
+
         #endregion
 
         /// <summary>
