@@ -21,8 +21,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         ClipToBounds="True"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <ContentPresenter
@@ -122,8 +122,8 @@
                                 HourLineBrush="{TemplateBinding HourLineBrush}"
                                 QuarterHourLineBrush="{TemplateBinding QuarterHourLineBrush}"
                                 ShowQuarterHourLines="{TemplateBinding ShowQuarterHourLines}"
-                                TimeColumnWidth="{TemplateBinding TimeColumnWidth}"
                                 TimeColumnBackground="{TemplateBinding TimeColumnBackground}"
+                                TimeColumnWidth="{TemplateBinding TimeColumnWidth}"
                                 TimeForeground="{TemplateBinding TimeForeground}" />
                         </ScrollViewer>
                     </Border>
