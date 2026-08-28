@@ -322,8 +322,8 @@
                                                     local:PropertyGrid.SelectOnClick="True"
                                                     BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
                                                     BorderThickness="0,0,0,1"
-                                                    Focusable="True"
-                                                    FocusVisualStyle="{x:Null}">
+                                                    FocusVisualStyle="{x:Null}"
+                                                    Focusable="True">
                                                     <Border.Style>
                                                         <Style TargetType="Border">
                                                             <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" />

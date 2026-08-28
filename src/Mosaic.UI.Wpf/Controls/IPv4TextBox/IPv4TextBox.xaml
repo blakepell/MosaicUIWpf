@@ -32,9 +32,7 @@
                         Header="Copy _Selection"
                         InputGestureText="Ctrl+C" />
                     <Separator />
-                    <MenuItem
-                        Command="{x:Static controls:IPv4TextBox.CopyAddressCommand}"
-                        Header="Copy _IP Address" />
+                    <MenuItem Command="{x:Static controls:IPv4TextBox.CopyAddressCommand}" Header="Copy _IP Address" />
                 </ContextMenu>
             </Setter.Value>
         </Setter>
@@ -89,13 +87,44 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <controls:NumericTextBox x:Name="PART_Segment1" Grid.Column="0" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
-                            <controls:NumericTextBox x:Name="PART_Segment2" Grid.Column="2" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
-                            <controls:NumericTextBox x:Name="PART_Segment3" Grid.Column="4" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" IsHitTestVisible="False" Text="." />
-                            <controls:NumericTextBox x:Name="PART_Segment4" Grid.Column="6" DecimalPlaces="0" Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <controls:NumericTextBox
+                                x:Name="PART_Segment1"
+                                Grid.Column="0"
+                                DecimalPlaces="0"
+                                Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Text="." />
+                            <controls:NumericTextBox
+                                x:Name="PART_Segment2"
+                                Grid.Column="2"
+                                DecimalPlaces="0"
+                                Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock
+                                Grid.Column="3"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Text="." />
+                            <controls:NumericTextBox
+                                x:Name="PART_Segment3"
+                                Grid.Column="4"
+                                DecimalPlaces="0"
+                                Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
+                            <TextBlock
+                                Grid.Column="5"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Text="." />
+                            <controls:NumericTextBox
+                                x:Name="PART_Segment4"
+                                Grid.Column="6"
+                                DecimalPlaces="0"
+                                Style="{StaticResource Mosaic.IPv4TextBox.SegmentStyle}" />
                         </Grid>
                     </Border>
 

@@ -23,9 +23,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <controls:SimpleStackPanel
-                        Orientation="Horizontal"
-                        Spacing="{Binding ItemSpacing, RelativeSource={RelativeSource AncestorType={x:Type controls:HorizontalListBox}}}" />
+                    <controls:SimpleStackPanel Orientation="Horizontal" Spacing="{Binding ItemSpacing, RelativeSource={RelativeSource AncestorType={x:Type controls:HorizontalListBox}}}" />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
