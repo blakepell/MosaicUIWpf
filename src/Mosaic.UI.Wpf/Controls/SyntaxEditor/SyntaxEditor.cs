@@ -60,6 +60,15 @@ namespace Mosaic.UI.Wpf.Controls
         private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.SyntaxEditor.{0}.{1}.xshd";
         private static readonly Uri SearchPanelResourceUri = new("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/AvalonEdit/SearchPanel.xaml", UriKind.Absolute);
 
+        /// <summary>
+        /// The wash painted behind every search match. AvalonEdit's default marker is an opaque,
+        /// bright fill that leaves the editor's own foreground unreadable on the dark themes, so the
+        /// same translucent amber the <see cref="MarkdownViewer"/> find bar uses is applied instead:
+        /// it reads on both the light and dark themes without hiding the text beneath it. The current
+        /// match continues to be distinguished by the editor's selection.
+        /// </summary>
+        private static readonly Brush SearchMarkerBrush = CreateFrozenBrush(0x4D, 0xF4, 0xB4, 0x00);
+
         // Cache parsed highlighting definitions keyed by "Base|ThemeSuffix" so repeated theme/language
         // toggles do not re-parse the embedded xshd each time.
         private static readonly Dictionary<string, IHighlightingDefinition> HighlightingCache = new();
@@ -463,6 +472,7 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             this.EnsureSearchPanelResources(_searchPanel.Resources);
+            _searchPanel.MarkerBrush = SearchMarkerBrush;
             this.ApplySearchPanelStyle();
         }
 
@@ -967,6 +977,22 @@ namespace Mosaic.UI.Wpf.Controls
 
             this.BorderBrush = new SolidColorBrush(border);
             this.BorderThickness = new Thickness(1);
+        }
+
+        /// <summary>
+        /// Creates a frozen brush from the supplied channels.
+        /// </summary>
+        /// <param name="a">The alpha channel.</param>
+        /// <param name="r">The red channel.</param>
+        /// <param name="g">The green channel.</param>
+        /// <param name="b">The blue channel.</param>
+        /// <returns>A frozen brush.</returns>
+        private static Brush CreateFrozenBrush(byte a, byte r, byte g, byte b)
+        {
+            var brush = new SolidColorBrush(Color.FromArgb(a, r, g, b));
+            brush.Freeze();
+
+            return brush;
         }
 
         /// <summary>
