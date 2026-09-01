@@ -79,10 +79,11 @@
                     <DataTemplate>
                         <mosaic:ContentPanel
                             Title="{Binding DisplayName}"
-                            Margin="0,0,0,12"
+                            Margin="0,0,6,12"
                             Background="Transparent"
                             BorderThickness="1"
                             CornerRadius="4"
+                            FooterVisibility="Collapsed"
                             HeaderBackground="{Binding HeaderBrush}"
                             HeaderForeground="{Binding HeaderForegroundBrush}"
                             SeparatorVisibility="Collapsed">
@@ -95,8 +96,8 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button
-                                            Height="92"
-                                            MinWidth="100"
+                                            Height="72"
+                                            MinWidth="80"
                                             AutomationProperties.HelpText="Copies the XAML DynamicResource expression."
                                             AutomationProperties.Name="{Binding ShortName, StringFormat={}{0} color swatch}"
                                             Background="{Binding Brush}"

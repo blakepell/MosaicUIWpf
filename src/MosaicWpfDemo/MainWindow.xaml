@@ -96,6 +96,24 @@
                     ImageSource="/Assets/theme2-48.png"
                     Text="Theme Settings" />
 
+                <!--  Color Palette  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/color-swatch-48.png"
+                    Text="Color Palette">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Color Palette" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ColorPaletteExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ColorPaletteExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ContentPanel}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ColorPaletteExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/color-swatch-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <mosaic:SideMenuHeader Text="DEBUG" />
 
                 <!--  Debug  -->
@@ -458,24 +476,6 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:TimeSpinner}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:TimeSpinnerExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/time-48.png" />
-                        </mosaic:SideMenuParameterCollection>
-                    </mosaic:SideMenuItem.ParameterCollection>
-                </mosaic:SideMenuItem>
-
-                <!--  Color Palette  -->
-                <mosaic:SideMenuItem
-                    ContentType="{x:Type views:ShellView}"
-                    ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/color-swatch-48.png"
-                    Text="Color Palette">
-                    <mosaic:SideMenuItem.ParameterCollection>
-                        <mosaic:SideMenuParameterCollection>
-                            <mosaic:SideMenuParameter Key="Title" Value="Color Palette" />
-                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ColorPaletteExample.xaml" />
-                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ColorPaletteExample.xaml.cs" />
-                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ContentPanel}" />
-                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ColorPaletteExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/color-swatch-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
