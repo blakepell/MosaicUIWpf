@@ -240,7 +240,10 @@ namespace Mosaic.UI.Wpf.Themes
 
         private List<ResourceDictionary> BuildManagedDictionaries()
         {
-            var dictionaries = new List<ResourceDictionary>();
+            var dictionaries = new List<ResourceDictionary>
+            {
+                CreateDictionary(ThemeDictionaryUris.Palette)
+            };
 
             if (Typography)
             {

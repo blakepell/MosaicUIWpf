@@ -7,6 +7,10 @@ namespace Mosaic.UI.Wpf.Themes
     {
         private const string BasePath = "pack://application:,,,/Mosaic.UI.Wpf;component/Themes";
 
+        /// <summary>
+        /// Gets the pack URI for the theme-independent Foundation color palette.
+        /// </summary>
+        public static readonly Uri Palette = new($"{BasePath}/Foundation/Palette.xaml", UriKind.Absolute);
         public static readonly Uri Typography = new($"{BasePath}/Foundation/Typography.xaml", UriKind.Absolute);
         public static readonly Uri WindowChrome = new($"{BasePath}/Foundation/WindowChrome.xaml", UriKind.Absolute);
         public static readonly Uri Generic = new($"{BasePath}/Generic.xaml", UriKind.Absolute);

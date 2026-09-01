@@ -467,6 +467,13 @@
 			<Link>LinkedSources\CheckBoxListExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ColorPaletteExample.xaml">
+			<Link>LinkedSources\ColorPaletteExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ColorPaletteExample.xaml.cs">
+			<Link>LinkedSources\ColorPaletteExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ColorPickerExample.xaml">
 			<Link>LinkedSources\ColorPickerExample.xaml</Link>
 		</EmbeddedResource>
