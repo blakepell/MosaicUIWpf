@@ -96,11 +96,14 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="HeaderVisibility"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty HeaderVisibilityProperty = DependencyProperty.Register(
-            nameof(HeaderVisibility), typeof(Visibility), typeof(ContentPanel), new PropertyMetadata(Visibility.Visible));
+            nameof(HeaderVisibility), typeof(Visibility), typeof(ContentPanel),
+            new FrameworkPropertyMetadata(Visibility.Visible, OnContentCornerRadiusInputChanged));
 
         /// <summary>
         /// Gets or sets the visibility of the header area.
         /// </summary>
+        [Category("Common")]
+        [Description("The visibility of the header area.")]
         public Visibility HeaderVisibility
         {
             get => (Visibility)GetValue(HeaderVisibilityProperty);
@@ -108,10 +111,31 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="FooterVisibility"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FooterVisibilityProperty = DependencyProperty.Register(
+            nameof(FooterVisibility), typeof(Visibility), typeof(ContentPanel),
+            new FrameworkPropertyMetadata(Visibility.Visible, OnContentCornerRadiusInputChanged));
+
+        /// <summary>
+        /// Gets or sets the visibility of the footer area. When the footer is not visible the main
+        /// content area picks up the bottom corners of <see cref="CornerRadius"/> so the outer
+        /// rounding of the panel stays consistent.
+        /// </summary>
+        [Category("Common")]
+        [Description("The visibility of the footer area.")]
+        public Visibility FooterVisibility
+        {
+            get => (Visibility)GetValue(FooterVisibilityProperty);
+            set => SetValue(FooterVisibilityProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="CornerRadius"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-            nameof(CornerRadius), typeof(CornerRadius), typeof(ContentPanel), new PropertyMetadata(new CornerRadius(5)));
+            nameof(CornerRadius), typeof(CornerRadius), typeof(ContentPanel),
+            new FrameworkPropertyMetadata(new CornerRadius(5), OnContentCornerRadiusInputChanged));
 
         /// <summary>
         /// Gets or sets the radius used to round the panel corners.
@@ -120,6 +144,47 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        private static readonly DependencyPropertyKey ContentCornerRadiusPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(ContentCornerRadius), typeof(CornerRadius), typeof(ContentPanel), new PropertyMetadata(new CornerRadius(0)));
+
+        /// <summary>
+        /// Identifies the <see cref="ContentCornerRadius"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ContentCornerRadiusProperty = ContentCornerRadiusPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the radius the template applies to the main content area. A corner is squared off
+        /// when the header or footer sits against it and picks up the matching corner of
+        /// <see cref="CornerRadius"/> when that area is hidden.
+        /// </summary>
+        public CornerRadius ContentCornerRadius => (CornerRadius)GetValue(ContentCornerRadiusProperty);
+
+        /// <summary>
+        /// Recomputes <see cref="ContentCornerRadius"/> when the header/footer visibility or the
+        /// outer <see cref="CornerRadius"/> changes.
+        /// </summary>
+        private static void OnContentCornerRadiusInputChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ContentPanel)d).UpdateContentCornerRadius();
+        }
+
+        /// <summary>
+        /// Squares off the content corners that are covered by the header or footer and rounds the
+        /// remaining ones to the outer <see cref="CornerRadius"/>.
+        /// </summary>
+        private void UpdateContentCornerRadius()
+        {
+            var outer = this.CornerRadius;
+            bool hasHeader = this.HeaderVisibility == Visibility.Visible;
+            bool hasFooter = this.FooterVisibility == Visibility.Visible;
+
+            this.SetValue(ContentCornerRadiusPropertyKey, new CornerRadius(
+                hasHeader ? 0 : outer.TopLeft,
+                hasHeader ? 0 : outer.TopRight,
+                hasFooter ? 0 : outer.BottomRight,
+                hasFooter ? 0 : outer.BottomLeft));
         }
 
         /// <summary>

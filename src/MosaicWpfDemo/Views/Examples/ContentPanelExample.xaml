@@ -1,9 +1,10 @@
-<UserControl
+﻿<UserControl
     x:Class="MosaicWpfDemo.Views.Examples.ContentPanelExample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:Mosaic.UI.Wpf.Converters;assembly=Mosaic.UI.Wpf"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
     d:DesignHeight="450"
@@ -40,6 +41,40 @@
                     <TextBlock Text="Footer remains available when the header is hidden." />
                 </mosaic:ContentPanel.FooterContent>
             </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                FooterVisibility="Collapsed"
+                Title="Footer Hidden">
+                <TextBlock TextWrapping="Wrap">
+                    FooterVisibility is collapsed here. The main content becomes the bottom surface, so it picks up the bottom corners of the panel
+                    CornerRadius automatically and the outer rounding stays consistent. With a footer visible the content area's corners stay square.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="This footer is never shown." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <mosaic:ContentPanel
+                Margin="0,16,0,0"
+                CornerRadius="16"
+                FooterVisibility="{Binding IsChecked, ElementName=FooterToggle, Converter={converters:BoolToVisibilityConverter}}"
+                HeaderVisibility="Collapsed"
+                Title="Header and Footer Hidden">
+                <TextBlock TextWrapping="Wrap">
+                    With a large CornerRadius the effect is easier to see. Toggle the footer with the checkbox below; the content area rounds its
+                    bottom corners when the footer goes away. The header is collapsed here too, so the content also rounds its top corners.
+                </TextBlock>
+                <mosaic:ContentPanel.FooterContent>
+                    <TextBlock Text="Toggled by the checkbox below." />
+                </mosaic:ContentPanel.FooterContent>
+            </mosaic:ContentPanel>
+
+            <CheckBox
+                x:Name="FooterToggle"
+                Margin="0,12,0,0"
+                Content="FooterVisibility"
+                IsChecked="True" />
 
             <mosaic:ContentPanel
                 Margin="0,16,0,0"
