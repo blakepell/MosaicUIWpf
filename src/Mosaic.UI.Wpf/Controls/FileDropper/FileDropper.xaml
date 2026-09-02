@@ -15,6 +15,8 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
         <Setter Property="BorderThickness" Value="2" />
+        <!--  Center the content by default; set to Left to left-align it (Padding keeps it off the border).  -->
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:FileDropper}">
@@ -25,61 +27,139 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Grid
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <Grid>
+                            <!--  Standard layout: prompt, icon, and accepted file types stacked vertically.  -->
+                            <Grid
+                                x:Name="PART_StandardLayout"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                            <!--  Top line: prompt  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
-                                FontWeight="SemiBold"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{TemplateBinding Prompt}"
-                                TextAlignment="Center" />
+                                <!--  Top line: prompt  -->
+                                <TextBlock
+                                    x:Name="PART_Prompt"
+                                    Grid.Row="0"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
+                                    FontWeight="SemiBold"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Prompt}"
+                                    TextAlignment="Center" />
 
-                            <!--  Middle: upload icon  -->
-                            <Viewbox
-                                Grid.Row="1"
-                                Width="48"
-                                Height="48"
-                                Margin="0,10"
-                                HorizontalAlignment="Center">
-                                <Path
-                                    x:Name="PART_Icon"
-                                    Data="{StaticResource FileDropperUploadGeometry}"
-                                    Fill="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
-                                    Stretch="Uniform" />
-                            </Viewbox>
+                                <!--  Middle: upload icon  -->
+                                <Viewbox
+                                    Grid.Row="1"
+                                    Width="48"
+                                    Height="48"
+                                    Margin="0,10"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                    <Path
+                                        x:Name="PART_Icon"
+                                        Data="{StaticResource FileDropperUploadGeometry}"
+                                        Fill="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                                        Stretch="Uniform" />
+                                </Viewbox>
 
-                            <!--  Bottom line: accepted file types  -->
-                            <TextBlock
-                                Grid.Row="2"
-                                HorizontalAlignment="Center"
-                                FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
-                                Foreground="{TemplateBinding Foreground}"
-                                Opacity="0.75"
-                                Text="{TemplateBinding AcceptedFileTypesDisplay}"
-                                TextAlignment="Center"
-                                TextWrapping="Wrap" />
+                                <!--  Bottom line: accepted file types  -->
+                                <TextBlock
+                                    x:Name="PART_FileTypes"
+                                    Grid.Row="2"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Opacity="0.75"
+                                    Text="{TemplateBinding AcceptedFileTypesDisplay}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+
+                            <!--  Compact layout: icon on the left, prompt and accepted file types stacked to its right.  -->
+                            <Grid
+                                x:Name="PART_CompactLayout"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!--  Left: upload icon  -->
+                                <Viewbox
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="0"
+                                    Width="32"
+                                    Height="32"
+                                    Margin="0,0,12,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                    <Path
+                                        x:Name="PART_CompactIcon"
+                                        Data="{StaticResource FileDropperUploadGeometry}"
+                                        Fill="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                                        Stretch="Uniform" />
+                                </Viewbox>
+
+                                <!--  Right, top line: prompt  -->
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Bottom"
+                                    FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeLarge}}"
+                                    FontWeight="SemiBold"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Prompt}"
+                                    TextTrimming="CharacterEllipsis" />
+
+                                <!--  Right, bottom line: accepted file types  -->
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Top"
+                                    FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Opacity="0.75"
+                                    Text="{TemplateBinding AcceptedFileTypesDisplay}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
                         </Grid>
                     </Border>
 
                     <ControlTemplate.Triggers>
+                        <!--  Wrapped/multi-line text follows the content alignment as well.  -->
+                        <Trigger Property="HorizontalContentAlignment" Value="Left">
+                            <Setter TargetName="PART_Prompt" Property="TextAlignment" Value="Left" />
+                            <Setter TargetName="PART_FileTypes" Property="TextAlignment" Value="Left" />
+                        </Trigger>
+                        <Trigger Property="HorizontalContentAlignment" Value="Right">
+                            <Setter TargetName="PART_Prompt" Property="TextAlignment" Value="Right" />
+                            <Setter TargetName="PART_FileTypes" Property="TextAlignment" Value="Right" />
+                        </Trigger>
+                        <Trigger Property="CompactMode" Value="True">
+                            <Setter Property="MinHeight" Value="0" />
+                            <Setter TargetName="PART_StandardLayout" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_CompactLayout" Property="Visibility" Value="Visible" />
+                        </Trigger>
                         <Trigger Property="DragState" Value="Valid">
                             <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SuccessBrush}}" />
                             <Setter TargetName="PART_Icon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.SuccessBrush}}" />
+                            <Setter TargetName="PART_CompactIcon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.SuccessBrush}}" />
                         </Trigger>
                         <Trigger Property="DragState" Value="Invalid">
                             <Setter TargetName="PART_Border" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
                             <Setter TargetName="PART_Icon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
+                            <Setter TargetName="PART_CompactIcon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.5" />

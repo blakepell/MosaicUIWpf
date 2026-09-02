@@ -9,6 +9,7 @@
  */
 
 using Mosaic.UI.Wpf.Controls;
+using System.Windows;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -22,6 +23,13 @@ namespace MosaicWpfDemo.Views.Examples
         private void FileDropper_OnFileDrop(object sender, FileDropEventArgs e)
         {
             DroppedFilesTextBox.Text = string.Join(Environment.NewLine, e.Files);
+        }
+
+        private void LeftAlignCheckBox_OnClick(object sender, RoutedEventArgs e)
+        {
+            ImageDropper.HorizontalContentAlignment = LeftAlignCheckBox.IsChecked == true
+                ? HorizontalAlignment.Left
+                : HorizontalAlignment.Center;
         }
     }
 }

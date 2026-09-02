@@ -21,9 +21,22 @@
 
         <!--  Restricted to images. AcceptedFileTypes is an ObservableCollection&lt;string&gt;.  -->
         <TextBlock Margin="0,20,0,6" Text="Accepts images only:" />
+        <CheckBox
+            x:Name="CompactModeCheckBox"
+            Margin="0,0,0,6"
+            HorizontalAlignment="Left"
+            Content="Compact mode (icon on the left, text stacked to its right)" />
+        <CheckBox
+            x:Name="LeftAlignCheckBox"
+            Margin="0,0,0,6"
+            HorizontalAlignment="Left"
+            Click="LeftAlignCheckBox_OnClick"
+            Content="Left align content (inset from the border by Padding)" />
         <controls:FileDropper
+            x:Name="ImageDropper"
             Width="320"
             HorizontalAlignment="Left"
+            CompactMode="{Binding IsChecked, ElementName=CompactModeCheckBox}"
             FileDrop="FileDropper_OnFileDrop"
             Prompt="Drop images here">
             <controls:FileDropper.AcceptedFileTypes>

@@ -42,6 +42,12 @@ namespace Mosaic.UI.Wpf.Controls
     /// files are dragged over it and red while invalid files are dragged over it. When files are
     /// dropped, the <see cref="FileDrop"/> event is raised (and the optional <see cref="FileDropCommand"/> executed).
     /// </summary>
+    /// <remarks>
+    /// Set <see cref="CompactMode"/> to place the icon on the left with the text stacked to its right. Content
+    /// placement inside the border is controlled by <see cref="Control.HorizontalContentAlignment"/> (defaults to
+    /// <see cref="HorizontalAlignment.Center"/>); when set to <see cref="HorizontalAlignment.Left"/> the content is
+    /// inset from the border by <see cref="Control.Padding"/>.
+    /// </remarks>
     [DefaultEvent(nameof(FileDrop))]
     [DefaultProperty(nameof(AcceptedFileTypes))]
     [TemplatePart(Name = PartBorder, Type = typeof(Border))]
@@ -158,6 +164,26 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="CompactMode"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CompactModeProperty = DependencyProperty.Register(
+            nameof(CompactMode), typeof(bool), typeof(FileDropper), new FrameworkPropertyMetadata(false));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the control uses a compact, horizontal layout. When
+        /// <c>true</c>, the upload icon is placed on the left side of the control and the prompt and the
+        /// accepted file types are stacked vertically to the right of the icon, reclaiming the vertical
+        /// space the stacked layout would otherwise use.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("When true, the upload icon is placed on the left and the prompt and accepted file types are stacked to its right, reducing the control's height.")]
+        public bool CompactMode
+        {
+            get => (bool)GetValue(CompactModeProperty);
+            set => SetValue(CompactModeProperty, value);
         }
 
         /// <summary>
