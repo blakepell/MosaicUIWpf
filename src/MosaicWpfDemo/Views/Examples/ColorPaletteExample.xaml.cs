@@ -127,7 +127,7 @@ namespace MosaicWpfDemo.Views.Examples
                 $"{paletteName.ToLowerInvariant()}-{shade}",
                 FormatHex(color),
                 brush,
-                GetReadableForeground(color),
+                ContrastBrushHelper.GetForegroundBrush(color),
                 resourceExpression);
         }
 
@@ -161,34 +161,6 @@ namespace MosaicWpfDemo.Views.Examples
             return color.A == byte.MaxValue
                 ? string.Format(CultureInfo.InvariantCulture, "#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B)
                 : string.Format(CultureInfo.InvariantCulture, "#{0:X2}{1:X2}{2:X2}{3:X2}", color.A, color.R, color.G, color.B);
-        }
-
-        /// <summary>
-        /// Selects black or white text according to WCAG relative luminance.
-        /// </summary>
-        /// <param name="background">The background color behind the text.</param>
-        /// <returns>A shared brush that provides the stronger contrast.</returns>
-        private static Brush GetReadableForeground(Color background)
-        {
-            double luminance =
-                (0.2126 * ToLinearColorChannel(background.R)) +
-                (0.7152 * ToLinearColorChannel(background.G)) +
-                (0.0722 * ToLinearColorChannel(background.B));
-
-            return luminance > 0.179 ? Brushes.Black : Brushes.White;
-        }
-
-        /// <summary>
-        /// Converts an sRGB color channel to its linear-light value.
-        /// </summary>
-        /// <param name="channel">The eight-bit sRGB channel value.</param>
-        /// <returns>The normalized linear-light value.</returns>
-        private static double ToLinearColorChannel(byte channel)
-        {
-            double normalized = channel / 255d;
-            return normalized <= 0.04045
-                ? normalized / 12.92
-                : Math.Pow((normalized + 0.055) / 1.055, 2.4);
         }
 
         /// <summary>

@@ -348,6 +348,13 @@
 			<Link>LinkedSources\ShadowTextBlockExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ThemedTextBlockExample.xaml">
+			<Link>LinkedSources\ThemedTextBlockExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ThemedTextBlockExample.xaml.cs">
+			<Link>LinkedSources\ThemedTextBlockExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ShieldExample.xaml">
 			<Link>LinkedSources\ShieldExample.xaml</Link>
 		</EmbeddedResource>
