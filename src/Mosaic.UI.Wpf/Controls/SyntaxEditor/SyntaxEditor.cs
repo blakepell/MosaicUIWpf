@@ -257,6 +257,27 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="WordWrapVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty WordWrapVisibleProperty = DependencyProperty.Register(
+            nameof(WordWrapVisible),
+            typeof(bool),
+            typeof(SyntaxEditor),
+            new PropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a checkable "Word Wrap" item is included in the
+        /// context menu. When <c>true</c>, the item toggles the editor's <see cref="TextEditor.WordWrap"/>.
+        /// </summary>
+        [Category("Mosaic")]
+        [Description("Whether a checkable Word Wrap item appears in the context menu.")]
+        public bool WordWrapVisible
+        {
+            get => (bool)this.GetValue(WordWrapVisibleProperty);
+            set => this.SetValue(WordWrapVisibleProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="StatusBarVisible"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty StatusBarVisibleProperty = DependencyProperty.Register(
@@ -1129,6 +1150,12 @@ namespace Mosaic.UI.Wpf.Controls
             menu.Items.Add(new Separator());
             menu.Items.Add(CreateItem("Select All", (_, _) => this.SelectAll(), "Ctrl+A"));
 
+            if (this.WordWrapVisible)
+            {
+                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateCheckableItem("Word Wrap", this.WordWrap, isChecked => this.WordWrap = isChecked));
+            }
+
             if (this.ClearVisible)
             {
                 menu.Items.Add(new Separator());
@@ -1196,6 +1223,29 @@ namespace Mosaic.UI.Wpf.Controls
                 InputGestureText = inputGestureText
             };
             item.Click += onClick;
+            return item;
+        }
+
+        /// <summary>
+        /// Creates a checkable context menu item that reports its new state when toggled.
+        /// </summary>
+        /// <param name="header">The item header text.</param>
+        /// <param name="isChecked">The initial checked state.</param>
+        /// <param name="onToggled">The callback invoked with the new checked state.</param>
+        /// <param name="inputGestureText">The shortcut text to display.</param>
+        /// <returns>A configured menu item.</returns>
+        private static MenuItem CreateCheckableItem(string header, bool isChecked, Action<bool> onToggled, string? inputGestureText = null)
+        {
+            var item = new MenuItem
+            {
+                Header = header,
+                IsCheckable = true,
+                IsChecked = isChecked,
+                StaysOpenOnClick = false,
+                InputGestureText = inputGestureText
+            };
+
+            item.Click += (s, _) => onToggled(((MenuItem)s).IsChecked);
             return item;
         }
 
