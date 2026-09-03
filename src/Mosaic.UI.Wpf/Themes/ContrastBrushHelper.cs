@@ -15,6 +15,18 @@ namespace Mosaic.UI.Wpf.Themes
     /// </summary>
     public static class ContrastBrushHelper
     {
+        private static readonly IReadOnlyDictionary<string, int> PaletteLightForegroundStartShades =
+            new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Blue"] = 500,
+                ["Purple"] = 500,
+                ["Orange"] = 500,
+                ["Yellow"] = 500,
+                ["Green"] = 500,
+                ["Teal"] = 600,
+                ["Cyan"] = 600
+            };
+
         /// <summary>
         /// The default relative-luminance cutoff used by Mosaic controls.
         /// </summary>
@@ -42,6 +54,54 @@ namespace Mosaic.UI.Wpf.Themes
         {
             ValidateLuminanceThreshold(luminanceThreshold);
             return GetRelativeLuminance(background) > luminanceThreshold ? Brushes.Black : Brushes.White;
+        }
+
+        /// <summary>
+        /// Selects black or white using Mosaic's family-specific palette switch point when one is defined,
+        /// or relative luminance for other palette families.
+        /// </summary>
+        /// <param name="paletteFamily">The palette family name, such as Blue or Yellow.</param>
+        /// <param name="shade">The numeric palette shade.</param>
+        /// <param name="background">The palette color behind the text.</param>
+        /// <param name="fallbackLuminanceThreshold">
+        /// The luminance cutoff used when <paramref name="paletteFamily"/> has no configured switch point.
+        /// </param>
+        /// <returns>A shared black or white brush.</returns>
+        public static Brush GetPaletteForegroundBrush(
+            string paletteFamily,
+            int shade,
+            Color background,
+            double fallbackLuminanceThreshold = DefaultLuminanceThreshold)
+        {
+            return ShouldUseLightForeground(paletteFamily, shade, background, fallbackLuminanceThreshold)
+                ? Brushes.White
+                : Brushes.Black;
+        }
+
+        /// <summary>
+        /// Determines whether a palette color should use its light foreground.
+        /// </summary>
+        /// <param name="paletteFamily">The palette family name.</param>
+        /// <param name="shade">The numeric palette shade.</param>
+        /// <param name="background">The palette color behind the text.</param>
+        /// <param name="fallbackLuminanceThreshold">The cutoff used for an unconfigured family.</param>
+        /// <returns><see langword="true"/> when the light foreground should be used.</returns>
+        public static bool ShouldUseLightForeground(
+            string? paletteFamily,
+            int shade,
+            Color background,
+            double fallbackLuminanceThreshold = DefaultLuminanceThreshold)
+        {
+            ValidateLuminanceThreshold(fallbackLuminanceThreshold);
+
+            if (!string.IsNullOrWhiteSpace(paletteFamily) &&
+                shade > 0 &&
+                PaletteLightForegroundStartShades.TryGetValue(paletteFamily, out int startShade))
+            {
+                return shade >= startShade;
+            }
+
+            return GetRelativeLuminance(background) <= fallbackLuminanceThreshold;
         }
 
         /// <summary>

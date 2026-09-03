@@ -69,6 +69,24 @@ namespace Mosaic.UI.Wpf.Controls
             new FrameworkPropertyMetadata(Brushes.Black, OnAppearancePropertyChanged));
 
         /// <summary>
+        /// Identifies the <see cref="PaletteFamily"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty PaletteFamilyProperty = DependencyProperty.Register(
+            nameof(PaletteFamily),
+            typeof(string),
+            typeof(ThemedTextBlock),
+            new FrameworkPropertyMetadata(null, OnAppearancePropertyChanged));
+
+        /// <summary>
+        /// Identifies the <see cref="PaletteShade"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty PaletteShadeProperty = DependencyProperty.Register(
+            nameof(PaletteShade),
+            typeof(int),
+            typeof(ThemedTextBlock),
+            new FrameworkPropertyMetadata(0, OnAppearancePropertyChanged));
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ThemedTextBlock"/> class.
         /// </summary>
         public ThemedTextBlock()
@@ -122,6 +140,31 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (Brush)GetValue(DarkForegroundBrushProperty);
             set => SetValue(DarkForegroundBrushProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the optional Mosaic palette family used for a family-specific foreground switch point.
+        /// Set this together with <see cref="PaletteShade"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The optional Mosaic palette family used to select the foreground switch point.")]
+        public string? PaletteFamily
+        {
+            get => (string?)GetValue(PaletteFamilyProperty);
+            set => SetValue(PaletteFamilyProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the optional Mosaic palette shade used with <see cref="PaletteFamily"/>.
+        /// A value of zero disables palette-specific selection.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The optional Mosaic palette shade used to select the foreground switch point.")]
+        [DefaultValue(0)]
+        public int PaletteShade
+        {
+            get => (int)GetValue(PaletteShadeProperty);
+            set => SetValue(PaletteShadeProperty, value);
         }
 
         /// <inheritdoc />
@@ -260,9 +303,13 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            Brush foreground = ContrastBrushHelper.GetRelativeLuminance(color) > LuminanceThreshold
-                ? DarkForegroundBrush
-                : LightForegroundBrush;
+            bool useLightForeground = ContrastBrushHelper.ShouldUseLightForeground(
+                PaletteFamily,
+                PaletteShade,
+                color,
+                LuminanceThreshold);
+
+            Brush foreground = useLightForeground ? LightForegroundBrush : DarkForegroundBrush;
 
             SetCurrentValue(ForegroundProperty, foreground);
         }

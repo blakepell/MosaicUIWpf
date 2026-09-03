@@ -127,7 +127,7 @@ namespace MosaicWpfDemo.Views.Examples
                 $"{paletteName.ToLowerInvariant()}-{shade}",
                 FormatHex(color),
                 brush,
-                ContrastBrushHelper.GetForegroundBrush(color),
+                ContrastBrushHelper.GetPaletteForegroundBrush(paletteName, shade, color),
                 resourceExpression);
         }
 

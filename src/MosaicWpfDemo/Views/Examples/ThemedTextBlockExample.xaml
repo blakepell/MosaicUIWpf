@@ -13,7 +13,7 @@
         <StackPanel Margin="20">
             <TextBlock
                 Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
-                Text="ThemedTextBlock finds the nearest Border, Panel, Control, or TextBlock background and selects a readable foreground automatically."
+                Text="ThemedTextBlock finds the nearest Border, Panel, Control, or TextBlock background and selects a foreground automatically. PaletteFamily and PaletteShade apply Mosaic's family-specific switch points."
                 TextWrapping="Wrap" />
 
             <TextBlock
@@ -38,13 +38,15 @@
                 <Border
                     Margin="4"
                     Padding="20"
-                    Background="{DynamicResource {x:Static themes:AssetResourceKeys.Yellow700BackgroundBrushKey}}"
+                    Background="{DynamicResource {x:Static themes:AssetResourceKeys.Yellow500BackgroundBrushKey}}"
                     CornerRadius="4">
                     <mosaic:ThemedTextBlock
                         HorizontalAlignment="Center"
                         FontSize="18"
                         FontWeight="SemiBold"
-                        Text="Yellow 700 · automatic" />
+                        PaletteFamily="Yellow"
+                        PaletteShade="500"
+                        Text="Yellow 500 · palette-aware" />
                 </Border>
 
                 <Border
