@@ -98,6 +98,17 @@ namespace Mosaic.UI.Wpf.Behaviors
             new PropertyMetadata(false, OnChromeSettingsChanged));
 
         /// <summary>
+        /// Tracks whether the rounded HWND region currently on a window was applied by this behavior.
+        /// <see cref="WindowChrome"/> applies a rounding region of its own, so the region may only be
+        /// cleared when we are the ones who set it.
+        /// </summary>
+        private static readonly DependencyProperty HasWindowRegionProperty = DependencyProperty.RegisterAttached(
+            "HasWindowRegion",
+            typeof(bool),
+            typeof(WindowChromeBehavior),
+            new PropertyMetadata(false));
+
+        /// <summary>
         /// Gets whether the behavior is enabled.
         /// </summary>
         public static bool GetIsEnabled(DependencyObject obj)
@@ -542,14 +553,29 @@ namespace Mosaic.UI.Wpf.Behaviors
             if (Win32.SetWindowRgn(hwnd, region, true) == 0)
             {
                 Win32.DeleteObject(region);
+                return;
             }
+
+            window.SetValue(HasWindowRegionProperty, true);
         }
 
         /// <summary>
-        /// Clears any native rounded region applied by <see cref="ApplyRoundWindowRegion"/>.
+        /// Clears the native rounded region applied by <see cref="ApplyRoundWindowRegion"/>.
         /// </summary>
+        /// <remarks>
+        /// This is a no-op unless the region currently on the window came from
+        /// <see cref="ApplyRoundWindowRegion"/>. <see cref="WindowChrome"/> maintains a rounding region of its own
+        /// (derived from <see cref="WindowChrome.CornerRadius"/>) and only refreshes it when the chrome changes, so
+        /// clearing it unconditionally — for instance on the state change out of a maximized window — would leave
+        /// the restored window with square corners.
+        /// </remarks>
         private static void ClearRoundWindowRegion(Window window)
         {
+            if (!(bool)window.GetValue(HasWindowRegionProperty))
+            {
+                return;
+            }
+
             var hwnd = new WindowInteropHelper(window).Handle;
 
             if (hwnd != IntPtr.Zero)
@@ -557,6 +583,8 @@ namespace Mosaic.UI.Wpf.Behaviors
                 Win32.SetWindowRgn(hwnd, IntPtr.Zero, true);
                 SetDwmCornerPreference(hwnd, DwmWindowCornerPreference.Default);
             }
+
+            window.SetValue(HasWindowRegionProperty, false);
         }
 
         private static double GetMaxCornerRadius(CornerRadius cornerRadius)
