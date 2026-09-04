@@ -47,6 +47,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             IconSource="/Assets/collage-48.png"
+            IsStretchButtonVisible="True"
             TitleText="Mosaic UI WPF Demo">
             <mosaic:WindowTitleBar.RightContent>
                 <!--  Toggle Theme Button  -->

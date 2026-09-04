@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="Iuf.Nexus.Controls.StretchWindowButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic"
+    mc:Ignorable="d">
+    <Button
+        Width="48"
+        Click="ButtonStretchWindow_Click"
+        Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
+        ToolTip="Auto Resize Window">
+        <Button.ContentTemplate>
+            <DataTemplate>
+                <Viewbox Width="16" Height="16">
+                    <Canvas
+                        Width="512"
+                        Height="512"
+                        Background="Transparent">
+                        <Path Data="M 236,236 L 236,96 L 196,136 L 176,116 L 256,36 L 336,116 L 316,136 L 276,96 L 276,236 L 416,236 L 376,196 L 396,176 L 476,256 L 396,336 L 376,316 L 416,276 L 276,276 L 276,416 L 316,376 L 336,396 L 256,476 L 176,396 L 196,376 L 236,416 L 236,276 L 96,276 L 136,316 L 116,336 L 36,256 L 116,176 L 136,196 L 96,236 L 236,236 Z" Fill="{DynamicResource {x:Static theme:MosaicTheme.WindowForegroundBrush}}" />
+                    </Canvas>
+                </Viewbox>
+            </DataTemplate>
+        </Button.ContentTemplate>
+    </Button>
+</UserControl>

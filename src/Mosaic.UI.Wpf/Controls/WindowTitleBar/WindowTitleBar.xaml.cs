@@ -88,6 +88,16 @@ namespace Mosaic.UI.Wpf.Controls
             new PropertyMetadata(true));
 
         /// <summary>
+        /// Gets or sets a value indicating whether the stretch (auto resize) button, shown to the
+        /// left of the minimize button, is visible.  Defaults to <see langword="false"/>.
+        /// </summary>
+        public static readonly DependencyProperty IsStretchButtonVisibleProperty = DependencyProperty.Register(
+            nameof(IsStretchButtonVisible),
+            typeof(bool),
+            typeof(WindowTitleBar),
+            new PropertyMetadata(false));
+
+        /// <summary>
         /// Gets or sets a value indicating whether the minimize button is visible.
         /// </summary>
         public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register(
@@ -182,6 +192,13 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (bool)GetValue(ShowIconProperty);
             set => SetValue(ShowIconProperty, value);
+        }
+
+        /// <inheritdoc cref="IsStretchButtonVisibleProperty"/>
+        public bool IsStretchButtonVisible
+        {
+            get => (bool)GetValue(IsStretchButtonVisibleProperty);
+            set => SetValue(IsStretchButtonVisibleProperty, value);
         }
 
         /// <inheritdoc cref="ShowMinimizeButtonProperty"/>
