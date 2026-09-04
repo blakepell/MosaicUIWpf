@@ -52,7 +52,23 @@ namespace Mosaic.UI.Wpf.Controls
         /// An additional base URI tried when a relative image does not resolve against
         /// <paramref name="BaseUri"/>, typically the viewer's storage folder.
         /// </param>
-        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri);
+        /// <param name="HeadingBottomSpacing">
+        /// The space, in device-independent pixels, left below each rendered heading.
+        /// </param>
+        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing);
+
+        /// <summary>
+        /// The default space, in device-independent pixels, left below each rendered heading.
+        /// </summary>
+        public const double DefaultHeadingBottomSpacing = 6;
+
+        /// <summary>
+        /// The prefix that marks a link as an application event rather than a navigable target,
+        /// for example <c>[Show](@ShowArticle?keyword=bpell)</c>. Such links are rendered with a
+        /// relative <see cref="Hyperlink.NavigateUri"/> that preserves the original text so the
+        /// hosting <see cref="MarkdownViewer"/> can raise <see cref="MarkdownViewer.EventRaised"/>.
+        /// </summary>
+        public const string EventLinkPrefix = "@";
 
         /// <summary>
         /// Renders the supplied Markdown text into a <see cref="FlowDocument"/>.
@@ -97,7 +113,37 @@ namespace Mosaic.UI.Wpf.Controls
         /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
         public static FlowDocument Render(string? markdown, Uri? baseUri, Uri? imageBaseUri)
         {
-            return Render(markdown, new RenderContext(baseUri, imageBaseUri));
+            return Render(markdown, baseUri, imageBaseUri, DefaultHeadingBottomSpacing);
+        }
+
+        /// <summary>
+        /// Renders the supplied Markdown text into a <see cref="FlowDocument"/>, resolving relative
+        /// link and image URLs against <paramref name="baseUri"/> and falling back to
+        /// <paramref name="imageBaseUri"/> for images that do not resolve there, and leaving
+        /// <paramref name="headingBottomSpacing"/> pixels of space below each heading.
+        /// </summary>
+        /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
+        /// <param name="baseUri">
+        /// The absolute URI relative links and images are resolved against, or <c>null</c> to leave
+        /// relative links unresolved.
+        /// </param>
+        /// <param name="imageBaseUri">
+        /// An additional absolute base URI (typically a storage folder) tried when a relative image
+        /// does not resolve against <paramref name="baseUri"/>, or <c>null</c> for none.
+        /// </param>
+        /// <param name="headingBottomSpacing">
+        /// The space, in device-independent pixels, left below each rendered heading. Negative or
+        /// non-finite values are treated as zero.
+        /// </param>
+        /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
+        public static FlowDocument Render(string? markdown, Uri? baseUri, Uri? imageBaseUri, double headingBottomSpacing)
+        {
+            if (double.IsNaN(headingBottomSpacing) || double.IsInfinity(headingBottomSpacing) || headingBottomSpacing < 0)
+            {
+                headingBottomSpacing = 0;
+            }
+
+            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing));
         }
 
         /// <summary>
@@ -157,7 +203,8 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Renders a heading block, scaling the font size by heading level.
+        /// Renders a heading block, scaling the font size by heading level and leaving the
+        /// context's configured spacing below it.
         /// </summary>
         private static WpfBlock RenderHeading(HeadingBlock heading, RenderContext context)
         {
@@ -165,7 +212,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 FontWeight = FontWeights.Bold,
                 FontSize = HeadingFontSize(heading.Level),
-                Margin = new Thickness(0, heading.Level <= 2 ? 12 : 8, 0, 4)
+                Margin = new Thickness(0, heading.Level <= 2 ? 12 : 8, 0, context.HeadingBottomSpacing)
             };
 
             AddInlines(paragraph.Inlines, heading.Inline, context);
@@ -832,7 +879,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// actual navigation is handled by the hosting control via the bubbling
         /// <see cref="Hyperlink.RequestNavigateEvent"/>. Relative URLs are resolved against the
         /// context's base URI when one is available; otherwise they are kept as relative URIs so the
-        /// hosting control can decide how to resolve them.
+        /// hosting control can decide how to resolve them. Event links (see
+        /// <see cref="EventLinkPrefix"/>) are never resolved against the base URI so the hosting
+        /// control receives the original <c>@Name?key=value</c> text.
         /// </summary>
         private static void AddHyperlink(InlineCollection target, string? url, IEnumerable<Markdig.Syntax.Inlines.Inline> labelInlines, RenderContext context)
         {
@@ -852,7 +901,12 @@ namespace Mosaic.UI.Wpf.Controls
                 hyperlink.Inlines.Add(new Run(url));
             }
 
-            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            if (IsEventLink(url))
+            {
+                hyperlink.NavigateUri = new Uri(url!, UriKind.Relative);
+                hyperlink.ToolTip = url;
+            }
+            else if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
             {
                 hyperlink.NavigateUri = uri;
                 hyperlink.ToolTip = url;
@@ -870,6 +924,19 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             target.Add(hyperlink);
+        }
+
+        /// <summary>
+        /// Determines whether a link URL is an application event link, that is one that starts with
+        /// <see cref="EventLinkPrefix"/> followed by an event name.
+        /// </summary>
+        /// <param name="url">The raw link destination from the Markdown source.</param>
+        /// <returns><c>true</c> when the URL is an event link; otherwise <c>false</c>.</returns>
+        public static bool IsEventLink(string? url)
+        {
+            return url != null
+                   && url.Length > EventLinkPrefix.Length
+                   && url.StartsWith(EventLinkPrefix, StringComparison.Ordinal);
         }
     }
 }

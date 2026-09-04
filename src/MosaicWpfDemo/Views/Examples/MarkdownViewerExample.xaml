@@ -18,7 +18,7 @@
 
         <TextBlock
             Margin="0,0,0,8"
-            Text="A WPF-native Markdown viewer. Markdown is rendered into a FlowDocument hosted in a read-only RichTextBox, so the formatted text can be selected and copied as rich text instead of raw Markdown syntax. Multi-line code blocks are hosted in a read-only SyntaxEditor sized to their content, highlighted when the fence names a supported language. Select any text below and press Ctrl+C to copy it. Ctrl+F opens a find bar that searches the document and the code blocks; pressed while the caret is inside a code block it opens that editor's own search panel instead."
+            Text="A WPF-native Markdown viewer. Markdown is rendered into a FlowDocument hosted in a read-only RichTextBox, so the formatted text can be selected and copied as rich text instead of raw Markdown syntax. Multi-line code blocks are hosted in a read-only SyntaxEditor sized to their content, highlighted when the fence names a supported language. Select any text below and press Ctrl+C to copy it. Ctrl+F opens a find bar that searches the document and the code blocks; pressed while the caret is inside a code block it opens that editor's own search panel instead. HeadingBottomSpacing controls the gap under each heading. Links whose destination starts with @ (for example @ShowArticle?keyword=bpell) do not navigate; they raise the EventRaised event with the event name and query-string parameters so the application can respond."
             TextWrapping="Wrap" />
 
         <Border
@@ -28,7 +28,11 @@
             BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
             BorderThickness="1"
             CornerRadius="4">
-            <controls:MarkdownViewer x:Name="Viewer" FontSize="14" />
+            <controls:MarkdownViewer
+                x:Name="Viewer"
+                EventRaised="Viewer_EventRaised"
+                FontSize="14"
+                HeadingBottomSpacing="6" />
         </Border>
     </Grid>
 </UserControl>

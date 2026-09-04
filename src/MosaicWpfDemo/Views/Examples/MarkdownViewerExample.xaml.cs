@@ -8,6 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Text;
+using System.Windows;
+using Mosaic.UI.Wpf.Controls;
+
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class MarkdownViewerExample
@@ -20,7 +24,36 @@ namespace MosaicWpfDemo.Views.Examples
         }
 
         /// <summary>
-        /// A sample document exercising headings, emphasis, lists, code, quotes, tables, and links.
+        /// Handles an @-prefixed event link such as <c>[Blake's Articles](@ShowArticle?keyword=bpell)</c>.
+        /// The viewer parses the event name and the query string; this demo simply displays them.
+        /// </summary>
+        private void Viewer_EventRaised(object sender, MarkdownEventRaisedEventArgs e)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Event: {e.EventName}");
+            sb.AppendLine($"Link: {e.Link}");
+            sb.AppendLine();
+
+            if (e.Parameters.Count == 0)
+            {
+                sb.AppendLine("No parameters were supplied.");
+            }
+            else
+            {
+                sb.AppendLine("Parameters:");
+
+                foreach (var pair in e.Parameters)
+                {
+                    sb.AppendLine($"  {pair.Key} = {pair.Value}");
+                }
+            }
+
+            MessageBox.Show(sb.ToString().TrimEnd(), "Markdown Event Link", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// A sample document exercising headings, emphasis, lists, code, quotes, tables, links, and
+        /// @-prefixed event links.
         /// </summary>
         private const string SampleMarkdown =
             """
@@ -64,6 +97,15 @@ namespace MosaicWpfDemo.Views.Examples
             | Python | No   | 1991 |
 
             [Mosaic UI for WPF](https://github.com/blakepell/MosaicUIWpf)
+
+            ## Event Links
+
+            A link whose destination starts with `@` raises the viewer's `EventRaised` event instead of
+            navigating. The text after `@` is the event name and the query string becomes the parameters:
+
+            - [Blake's Articles](@ShowArticle?keyword=bpell)
+            - [Search two terms](@Search?term=wpf&term2=markdown&page=2)
+            - [Refresh (no parameters)](@Refresh)
 
             ## Image
 

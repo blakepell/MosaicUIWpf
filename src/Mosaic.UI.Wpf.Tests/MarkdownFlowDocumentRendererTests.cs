@@ -154,6 +154,84 @@ namespace Mosaic.UI.Wpf.Tests
         }
 
         [Fact]
+        public void HeadingUsesDefaultBottomSpacingWhenNoneIsSupplied()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("# Title\n\nBody");
+                var heading = document.Blocks.OfType<Paragraph>().First();
+
+                Assert.Equal(MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing, heading.Margin.Bottom);
+            });
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(6)]
+        [InlineData(24.5)]
+        public void HeadingHonorsSuppliedBottomSpacing(double spacing)
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("## Title\n\nBody", null, null, spacing);
+                var heading = document.Blocks.OfType<Paragraph>().First();
+
+                Assert.Equal(spacing, heading.Margin.Bottom);
+            });
+        }
+
+        [Fact]
+        public void EventLinkKeepsItsOriginalTextEvenWhenABaseUriIsSupplied()
+        {
+            RunSta(() =>
+            {
+                var baseUri = new Uri("https://example.com/docs/index.md");
+                var document = MarkdownFlowDocumentRenderer.Render("[Articles](@ShowArticle?keyword=bpell)", baseUri);
+                var hyperlink = document.Blocks.OfType<Paragraph>().Single().Inlines.OfType<System.Windows.Documents.Hyperlink>().Single();
+
+                Assert.NotNull(hyperlink.NavigateUri);
+                Assert.False(hyperlink.NavigateUri!.IsAbsoluteUri);
+                Assert.Equal("@ShowArticle?keyword=bpell", hyperlink.NavigateUri.OriginalString);
+            });
+        }
+
+        [Fact]
+        public void EventLinkParsesNameAndDecodedParameters()
+        {
+            Assert.True(MarkdownEventRaisedEventArgs.TryParse("@ShowArticle?keyword=bpell&title=Hello%20World&tag=a+b", out var name, out var parameters));
+
+            Assert.Equal("ShowArticle", name);
+            Assert.Equal(3, parameters.Count);
+            Assert.Equal("bpell", parameters["keyword"]);
+            Assert.Equal("Hello World", parameters["title"]);
+            Assert.Equal("a b", parameters["tag"]);
+            Assert.Equal("bpell", parameters["KEYWORD"]);
+        }
+
+        [Theory]
+        [InlineData("@Refresh")]
+        [InlineData("@Refresh?")]
+        public void EventLinkWithoutParametersYieldsAnEmptyDictionary(string link)
+        {
+            Assert.True(MarkdownEventRaisedEventArgs.TryParse(link, out var name, out var parameters));
+
+            Assert.Equal("Refresh", name);
+            Assert.Empty(parameters);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("@")]
+        [InlineData("@?keyword=bpell")]
+        [InlineData("https://example.com/@user")]
+        [InlineData("docs/@readme.md")]
+        public void NonEventLinksAreRejected(string? link)
+        {
+            Assert.False(MarkdownEventRaisedEventArgs.TryParse(link, out _, out _));
+        }
+
+        [Fact]
         public void SingleLineCodeBlockStaysAPlainParagraph()
         {
             RunSta(() =>

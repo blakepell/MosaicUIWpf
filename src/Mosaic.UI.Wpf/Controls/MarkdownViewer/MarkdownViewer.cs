@@ -256,6 +256,29 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="HeadingBottomSpacing"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeadingBottomSpacingProperty = DependencyProperty.Register(
+            nameof(HeadingBottomSpacing),
+            typeof(double),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing, OnHeadingBottomSpacingChanged),
+            IsValidHeadingBottomSpacing);
+
+        /// <summary>
+        /// Gets or sets the space, in device-independent pixels, left below each rendered heading
+        /// before the following content. The default is
+        /// <see cref="MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The space, in device-independent pixels, left below each rendered heading.")]
+        public double HeadingBottomSpacing
+        {
+            get => (double)GetValue(HeadingBottomSpacingProperty);
+            set => SetValue(HeadingBottomSpacingProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the read-only <see cref="CanGoBack"/> dependency property.
         /// </summary>
         private static readonly DependencyPropertyKey CanGoBackPropertyKey = DependencyProperty.RegisterReadOnly(
@@ -296,6 +319,30 @@ namespace Mosaic.UI.Wpf.Controls
         {
             add => AddHandler(LinkClickedEvent, value);
             remove => RemoveHandler(LinkClickedEvent, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="EventRaised"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent EventRaisedEvent = EventManager.RegisterRoutedEvent(
+            nameof(EventRaised),
+            RoutingStrategy.Bubble,
+            typeof(MarkdownEventRaisedEventHandler),
+            typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Occurs when the user clicks an event link: a Markdown link whose destination starts with
+        /// <c>@</c>, such as <c>[Blake's Articles](@ShowArticle?keyword=bpell)</c>. The event data
+        /// carries the event name (<c>ShowArticle</c>) and the URL-decoded query-string parameters
+        /// (<c>keyword</c> = <c>bpell</c>). Event links never navigate and do not raise
+        /// <see cref="LinkClicked"/>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Raised when an @-prefixed event link is clicked, carrying the event name and query-string parameters.")]
+        public event MarkdownEventRaisedEventHandler EventRaised
+        {
+            add => AddHandler(EventRaisedEvent, value);
+            remove => RemoveHandler(EventRaisedEvent, value);
         }
 
         /// <summary>
@@ -634,6 +681,15 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="uri">The link target; may be relative.</param>
         private void NavigateTo(Uri uri)
         {
+            // Event links (@Name?key=value) are application callbacks rather than navigation
+            // targets: raise EventRaised with the parsed name and parameters and stop there.
+            if (!uri.IsAbsoluteUri &&
+                MarkdownEventRaisedEventArgs.TryParse(uri.OriginalString, out var eventName, out var parameters))
+            {
+                RaiseEvent(new MarkdownEventRaisedEventArgs(EventRaisedEvent, this, eventName, parameters, uri.OriginalString));
+                return;
+            }
+
             var args = new MarkdownLinkClickedEventArgs(LinkClickedEvent, this, uri);
             RaiseEvent(args);
 
@@ -757,6 +813,24 @@ namespace Mosaic.UI.Wpf.Controls
             var viewer = (MarkdownViewer)d;
             viewer._storageFolderUri = BuildStorageFolderUri(e.NewValue as string);
             viewer.RenderMarkdown(viewer.Markdown);
+        }
+
+        /// <summary>
+        /// Re-renders the document when <see cref="HeadingBottomSpacing"/> changes so the new
+        /// spacing applies to headings already on screen.
+        /// </summary>
+        private static void OnHeadingBottomSpacingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var viewer = (MarkdownViewer)d;
+            viewer.RenderMarkdown(viewer.Markdown);
+        }
+
+        /// <summary>
+        /// Validates <see cref="HeadingBottomSpacing"/>: the value must be a finite, non-negative number.
+        /// </summary>
+        private static bool IsValidHeadingBottomSpacing(object value)
+        {
+            return value is double d && !double.IsNaN(d) && !double.IsInfinity(d) && d >= 0;
         }
 
         /// <summary>
@@ -955,7 +1029,8 @@ namespace Mosaic.UI.Wpf.Controls
                 document = MarkdownFlowDocumentRenderer.Render(
                     markdown,
                     _resolvedSource ?? _storageFolderUri,
-                    _storageFolderUri);
+                    _storageFolderUri,
+                    HeadingBottomSpacing);
             }
             catch (Exception ex)
             {
