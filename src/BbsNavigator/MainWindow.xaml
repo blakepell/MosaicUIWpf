@@ -43,6 +43,7 @@
             Grid.Row="0"
             IconSource="pack://application:,,,/BbsNavigator;component/Assets/app.png"
             ShowIcon="True"
+            IsStretchButtonVisible="True"
             TitleAlignment="Center"
             TitleText="BBS Navigator">
             <mosaic:WindowTitleBar.RightContent>
