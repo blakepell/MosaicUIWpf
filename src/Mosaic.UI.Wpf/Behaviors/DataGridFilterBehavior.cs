@@ -10,7 +10,9 @@
 
 using Microsoft.Xaml.Behaviors;
 using System.ComponentModel;
+using System.Data;
 using System.Globalization;
+using System.Text;
 using System.Windows.Data;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -155,7 +157,16 @@ namespace Mosaic.UI.Wpf.Behaviors
                 return;
             }
 
-            // This is the filter that will filter the collection view.            
+            // A DataTable/DataView source produces a BindingListCollectionView, which does not support a
+            // predicate filter at all. Those views filter through a row expression instead, so the same
+            // "any displayed value contains the text" search is expressed as an OR of LIKE comparisons.
+            if (!collectionView.CanFilter && collectionView is BindingListCollectionView { CanCustomFilter: true } bindingListView)
+            {
+                bindingListView.CustomFilter = BuildRowFilter(TargetDataGrid.ItemsSource as DataView, searchText);
+                return;
+            }
+
+            // This is the filter that will filter the collection view.
             collectionView.Filter = item =>
             {
                 if (item == null)
@@ -197,6 +208,75 @@ namespace Mosaic.UI.Wpf.Behaviors
                 return false;
             };
         }
+
+        /// <summary>
+        /// Builds a <see cref="DataView.RowFilter"/> expression that matches rows where any column
+        /// contains the search text.
+        /// </summary>
+        /// <param name="view">The view being filtered, used to enumerate the available columns.</param>
+        /// <param name="searchText">The text to search for.</param>
+        /// <returns>The filter expression, or an empty string when every row should be shown.</returns>
+        private static string BuildRowFilter(DataView? view, string searchText)
+        {
+            if (view == null || string.IsNullOrWhiteSpace(searchText))
+            {
+                return string.Empty;
+            }
+
+            string pattern = EscapeLiteral(EscapeLikeWildcards(searchText));
+            var clauses = new List<string>();
+
+            foreach (DataColumn column in view.Table!.Columns)
+            {
+                // Every column is converted to a string so that numeric and date columns match the
+                // same way they read in the grid.
+                clauses.Add($"CONVERT([{EscapeColumnName(column.ColumnName)}], 'System.String') LIKE '%{pattern}%'");
+            }
+
+            return string.Join(" OR ", clauses);
+        }
+
+        /// <summary>
+        /// Escapes the characters that a row filter treats as LIKE wildcards.
+        /// </summary>
+        private static string EscapeLikeWildcards(string value)
+        {
+            var builder = new StringBuilder(value.Length);
+
+            foreach (char c in value)
+            {
+                switch (c)
+                {
+                    case '*':
+                        builder.Append("[*]");
+                        break;
+                    case '%':
+                        builder.Append("[%]");
+                        break;
+                    case '[':
+                        builder.Append("[[]");
+                        break;
+                    case ']':
+                        builder.Append("[]]");
+                        break;
+                    default:
+                        builder.Append(c);
+                        break;
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// Escapes a string literal for use inside a row filter expression.
+        /// </summary>
+        private static string EscapeLiteral(string value) => value.Replace("'", "''");
+
+        /// <summary>
+        /// Escapes a column name for use inside the square brackets of a row filter expression.
+        /// </summary>
+        private static string EscapeColumnName(string name) => name.Replace(@"\", @"\\").Replace("]", @"\]");
 
         private static bool ContainsSearchText(object? value, string searchText)
         {

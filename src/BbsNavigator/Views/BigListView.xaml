@@ -1,0 +1,75 @@
+<UserControl
+    x:Class="BbsNavigator.Views.BigListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Padding="2"
+            Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
+            BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="0,0,0,1">
+            <DockPanel>
+                <ToolBar>
+                    <Button
+                        Margin="2,0,0,0"
+                        Click="Save_OnClick"
+                        ToolTip="Save the list to a CSV file">
+                        <mosaic:SimpleStackPanel Orientation="Horizontal">
+                            <TextBlock Text="💾" />
+                            <TextBlock Margin="4,0,0,0" Text="Save" />
+                        </mosaic:SimpleStackPanel>
+                    </Button>
+
+                    <Button
+                        Margin="2,0,0,0"
+                        Click="SaveAs_OnClick"
+                        ToolTip="Save the list to a new CSV file">
+                        <mosaic:SimpleStackPanel Orientation="Horizontal">
+                            <TextBlock Text="📄" />
+                            <TextBlock Margin="4,0,0,0" Text="Save As…" />
+                        </mosaic:SimpleStackPanel>
+                    </Button>
+                </ToolBar>
+            </DockPanel>
+        </Border>
+
+        <mosaic:SearchBox
+            x:Name="FilterBox"
+            Grid.Row="1"
+            Margin="8"
+            Watermark="Filter the Big List…">
+            <i:Interaction.Behaviors>
+                <mosaic:DataGridFilterBehavior TargetDataGrid="{Binding ElementName=BigListGrid}" />
+            </i:Interaction.Behaviors>
+        </mosaic:SearchBox>
+
+        <DataGrid
+            x:Name="BigListGrid"
+            Grid.Row="2"
+            AutoGenerateColumns="True"
+            BorderThickness="0"
+            CanUserAddRows="True"
+            CanUserDeleteRows="True"
+            CanUserSortColumns="True"
+            EnableRowVirtualization="True"
+            SelectionMode="Extended"
+            SelectionUnit="CellOrRowHeader" />
+
+        <TextBlock
+            x:Name="StatusText"
+            Grid.Row="3"
+            Margin="10,7"
+            FontSize="11"
+            Opacity="0.7" />
+    </Grid>
+</UserControl>

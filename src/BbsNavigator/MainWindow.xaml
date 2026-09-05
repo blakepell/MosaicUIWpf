@@ -22,9 +22,9 @@
     mosaic:WindowChromeBehavior.ResizeBorderThickness="5"
     mosaic:WindowChromeBehavior.RoundBorder="True"
     mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Activated="MainWindow_OnActivated"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
     BorderThickness="0"
-    Activated="MainWindow_OnActivated"
     Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
     PreviewKeyDown="MainWindow_OnPreviewKeyDown"
@@ -42,8 +42,8 @@
             x:Name="AppTitleBar"
             Grid.Row="0"
             IconSource="pack://application:,,,/BbsNavigator;component/Assets/app.png"
-            ShowIcon="True"
             IsStretchButtonVisible="True"
+            ShowIcon="True"
             TitleAlignment="Center"
             TitleText="BBS Navigator">
             <mosaic:WindowTitleBar.RightContent>
@@ -102,6 +102,7 @@
                     InputGestureText="Ctrl+N" />
                 <MenuItem Click="ImportBbsList_OnClick" Header="_Import BBS List File…" />
                 <MenuItem Click="ImportBigList_OnClick" Header="Import _Big List" />
+                <MenuItem Click="BrowseBigList_OnClick" Header="Bro_wse Big List…" />
                 <Separator />
                 <MenuItem Click="EditBbs_OnClick" Header="_Edit BBS…" />
                 <MenuItem Click="RemoveBbs_OnClick" Header="_Remove BBS" />
@@ -229,10 +230,10 @@
                                     <TreeView
                                         x:Name="BbsTree"
                                         Grid.Row="2"
-                                        BorderThickness="0"
+                                        dd:DragDrop.DropHandler="{x:Static common:BbsDirectoryDropHandler.Instance}"
                                         dd:DragDrop.IsDragSource="True"
                                         dd:DragDrop.IsDropTarget="True"
-                                        dd:DragDrop.DropHandler="{x:Static common:BbsDirectoryDropHandler.Instance}"
+                                        BorderThickness="0"
                                         ItemsSource="{Binding BbsProfiles}"
                                         MouseDoubleClick="BbsTree_OnMouseDoubleClick"
                                         ScrollViewer.CanContentScroll="True"

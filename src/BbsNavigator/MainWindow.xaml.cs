@@ -34,6 +34,7 @@ namespace BbsNavigator
         private readonly Dictionary<string, LayoutDocument> _documents = new();
         private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
+        private LayoutDocument? _bigListDocument;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
         private bool _isFullScreen;
@@ -611,6 +612,22 @@ namespace BbsNavigator
         private void ImportBigList_OnClick(object sender, RoutedEventArgs e)
         {
             ImportBigList(interactive: true);
+        }
+
+        /// <summary>
+        /// Opens the bundled Big List in a document where it can be filtered, edited and saved.
+        /// </summary>
+        private void BrowseBigList_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_bigListDocument != null)
+            {
+                _bigListDocument.IsActive = true;
+                return;
+            }
+
+            var view = new BigListView();
+            _bigListDocument = DockingManager.Add(view, "Big List", activate: true, canClose: true);
+            _bigListDocument.ContentId = "big-list";
         }
 
         /// <summary>
@@ -1222,6 +1239,12 @@ namespace BbsNavigator
             if (e.Document.Content is UserGuideView)
             {
                 _userGuideDocument = null;
+                return;
+            }
+
+            if (e.Document.Content is BigListView)
+            {
+                _bigListDocument = null;
                 return;
             }
 
