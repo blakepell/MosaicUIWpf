@@ -90,7 +90,11 @@ namespace BbsNavigator
 
         private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+            // Alt combinations arrive as Key.System with the real key in SystemKey, so comparing
+            // against Key.Enter alone never matched and there was no way back out of full screen.
+            Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+
+            if (key == Key.Enter && (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
             {
                 ToggleFullScreen();
                 e.Handled = true;
@@ -1087,6 +1091,8 @@ namespace BbsNavigator
                 _isFullScreen = false;
             }
 
+            ExitFullScreenButton.Visibility = _isFullScreen ? Visibility.Visible : Visibility.Collapsed;
+            FullScreenMenuItem.Header = _isFullScreen ? "Exit _Full Screen" : "_Full Screen";
             ActiveTerminal?.FocusTerminal();
         }
 

@@ -1,4 +1,4 @@
-<Window
+﻿<Window
     x:Class="BbsNavigator.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -91,6 +91,7 @@
                 <MenuItem Click="SendPassword_OnClick" Header="Send Saved _Password" />
                 <Separator />
                 <MenuItem
+                    x:Name="FullScreenMenuItem"
                     Click="ToggleFullScreen_OnClick"
                     Header="_Full Screen"
                     InputGestureText="Alt+Enter" />
@@ -359,5 +360,36 @@
                 </ad:LayoutRoot>
             </ad:DockingManager>
         </Border>
+
+        <!--  Full screen hides the title bar and menu, so this is the only way back out with the mouse.  -->
+        <Button
+            x:Name="ExitFullScreenButton"
+            Grid.Row="2"
+            Margin="0,6,18,0"
+            Padding="10,4"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Click="ToggleFullScreen_OnClick"
+            Opacity="0.45"
+            ToolTip="Leave full screen (Alt+Enter)"
+            Visibility="Collapsed">
+            <Button.Style>
+                <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,1,6,0"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="12"
+                    Text="&#xE73F;" />
+                <TextBlock FontSize="11" Text="Exit Full Screen" />
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>
