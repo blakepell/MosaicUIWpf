@@ -13,6 +13,7 @@ using BbsNavigator.Models;
 using BbsNavigator.Networking;
 using BbsNavigator.Transfers;
 using Microsoft.Win32;
+using Mosaic.UI.Wpf.Controls.VT52Terminal;
 using Mosaic.UI.Wpf.Themes;
 using System.Diagnostics;
 using System.IO;
@@ -44,6 +45,12 @@ namespace BbsNavigator.Views
             @"\{(USERNAME|PASSWORD|ENTER)\}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        /// <summary>
+        /// How many raw session bytes are retained so the screen can be redrawn under a new
+        /// text encoding without reconnecting.
+        /// </summary>
+        private const int RawLogCapacity = 256 * 1024;
+
         private readonly AppSettings _settings;
         private readonly IBbsConnection _connection;
         private readonly string _endpoint;
@@ -54,12 +61,14 @@ namespace BbsNavigator.Views
         private readonly object _disposeLock = new();
         private readonly object _captureLock = new();
         private readonly DispatcherTimer _statsTimer;
+        private readonly RawTerminalLog _rawLog = new(RawLogCapacity);
         private readonly Stopwatch _transferStopwatch = new();
         private Task? _disposeTask;
         private volatile bool _disposed;
         private bool _manualDisconnect;
         private int _reconnectScheduled;
         private int _reconnectAttemptCount;
+        private bool _autoReconnectCanceled;
         private CancellationTokenSource? _reconnectCancellation;
         private CancellationTokenSource? _connectionCancellation;
         private int _scrollToEndQueued;
@@ -153,7 +162,13 @@ namespace BbsNavigator.Views
             _connection.ConnectionLost += Connection_OnConnectionLost;
             Terminal.Connection = _connection;
             _connection.DataReceived += Connection_OnDataReceived;
+            _connection.RawDataReceived += Connection_OnRawDataReceived;
+            CommandManager.AddPreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
+            profile.PropertyChanged += Profile_OnPropertyChanged;
             Terminal.FontSize = settings.FontSize;
+            // The encoding items must exist before the profile becomes the DataContext, or the
+            // two-way SelectedItem binding would have nothing to resolve the saved value against.
+            EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
             DataContext = profile;
             Loaded += BbsTerminalView_OnLoaded;
             Terminal.PreviewMouseWheel += Terminal_OnPreviewMouseWheel;
@@ -162,12 +177,6 @@ namespace BbsNavigator.Views
 
             ProtocolComboBox.ItemsSource = Enum.GetValues<TransferProtocol>();
             ProtocolComboBox.SelectedItem = settings.DefaultTransferProtocol;
-            EncodingText.Text = profile.TerminalEncoding switch
-            {
-                BbsEncoding.Cp437 => "CP437",
-                BbsEncoding.Latin1 => "Latin-1",
-                _ => "UTF-8"
-            };
             DoorwayToggle.IsChecked = profile.DoorwayMode;
 
             _statsTimer = new DispatcherTimer(DispatcherPriority.Background)
@@ -374,7 +383,7 @@ namespace BbsNavigator.Views
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
             {
             }
-            catch (OperationCanceledException) when (_manualDisconnect)
+            catch (OperationCanceledException) when (_manualDisconnect || _autoReconnectCanceled)
             {
             }
             catch (OperationCanceledException)
@@ -483,13 +492,79 @@ namespace BbsNavigator.Views
             }, DispatcherPriority.Render);
         }
 
+        private void Connection_OnRawDataReceived(ReadOnlySpan<byte> payload)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _rawLog.Append(payload);
+        }
+
+        private void TerminalCommand_OnPreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            // Clearing the screen also drops the bytes behind it, so a later encoding change does
+            // not resurrect content the user just cleared.
+            if (e.Command == VT52Terminal.ClearTerminalCommand)
+            {
+                _rawLog.Clear();
+            }
+        }
+
+        private void Profile_OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_disposed || e.PropertyName != nameof(BbsProfile.TerminalEncoding))
+            {
+                return;
+            }
+
+            ApplyTerminalEncoding();
+        }
+
+        /// <summary>
+        /// Applies the profile's encoding to the live connection and redraws the screen by
+        /// replaying the retained session bytes through the new decoder.
+        /// </summary>
+        private void ApplyTerminalEncoding()
+        {
+            var encoding = Profile.TerminalEncoding.ToEncoding();
+            _connection.Encoding = encoding;
+
+            byte[] raw = _rawLog.Snapshot();
+            Terminal.Reset(Terminal.Rows, Terminal.Columns);
+
+            if (raw.Length > 0)
+            {
+                // The oldest retained bytes may start mid-sequence once the log has wrapped; the
+                // emulator simply discards whatever it cannot parse.
+                Terminal.Add(encoding.GetString(raw));
+            }
+
+            Terminal.ScrollToEnd();
+            ShowTransientStatus($"Text encoding changed to {DescribeEncoding(Profile.TerminalEncoding)}.");
+        }
+
+        /// <summary>
+        /// Returns the short status-bar name for an encoding.
+        /// </summary>
+        private static string DescribeEncoding(BbsEncoding encoding)
+        {
+            return encoding switch
+            {
+                BbsEncoding.Cp437 => "CP437",
+                BbsEncoding.Latin1 => "Latin-1",
+                _ => "UTF-8"
+            };
+        }
+
         /// <summary>
         /// Queues an automatic reconnection attempt when the profile allows it and the session has
         /// not already exhausted <see cref="AppSettings.ReconnectAttempts"/>.
         /// </summary>
         private void ScheduleReconnect()
         {
-            if (!Profile.AutoReconnect || _manualDisconnect || _disposed)
+            if (!Profile.AutoReconnect || _manualDisconnect || _autoReconnectCanceled || _disposed)
             {
                 return;
             }
@@ -529,11 +604,24 @@ namespace BbsNavigator.Views
 
             try
             {
-                UpdateStatus(
-                    BbsConnectionState.Reconnecting,
-                    $"Reconnecting in {delaySeconds} seconds… (attempt {attempt} of {maxAttempts})");
+                // Tick the delay down a second at a time so the banner shows the user exactly how
+                // long is left before the next attempt.
+                for (int remaining = delaySeconds; remaining > 0; remaining--)
+                {
+                    string countdown = $"Reconnecting in {remaining} {(remaining == 1 ? "second" : "seconds")}… (attempt {attempt} of {maxAttempts})";
 
-                await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellation.Token);
+                    if (remaining == delaySeconds)
+                    {
+                        UpdateStatus(BbsConnectionState.Reconnecting, countdown);
+                    }
+                    else
+                    {
+                        // Only the first tick pulses the banner; the rest just rewrite the text.
+                        StatusText.Text = countdown;
+                    }
+
+                    await Task.Delay(TimeSpan.FromSeconds(1), cancellation.Token);
+                }
 
                 if (_manualDisconnect || _disposed)
                 {
@@ -586,8 +674,10 @@ namespace BbsNavigator.Views
 
         private async void Reconnect_OnClick(object sender, RoutedEventArgs e)
         {
-            // A reconnect the user asked for starts the attempt budget over.
+            // A reconnect the user asked for starts the attempt budget over and re-arms the
+            // automatic retries the Cancel button may have turned off.
             CancelPendingReconnect();
+            _autoReconnectCanceled = false;
             _reconnectAttemptCount = 0;
             await ConnectAsync(reconnecting: true);
         }
@@ -597,9 +687,35 @@ namespace BbsNavigator.Views
             await DisconnectAsync();
         }
 
-        private async void CancelReconnect_OnClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Stops the pending reconnect and suppresses automatic reconnects for the rest of this
+        /// session. Clicking Reconnect re-arms them.
+        /// </summary>
+        private void CancelReconnect_OnClick(object sender, RoutedEventArgs e)
         {
-            await DisconnectAsync($"Reconnection to {_endpoint} canceled.");
+            _autoReconnectCanceled = true;
+            CancelPendingReconnect();
+
+            // Abandon an attempt that is already in flight as well; ConnectAsync swallows the
+            // cancellation while _autoReconnectCanceled is set, so this message is the last word.
+            try
+            {
+                Volatile.Read(ref _connectionCancellation)?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+
+            if (_connection.IsConnected)
+            {
+                // The attempt beat the click; keep the session and just stop future retries.
+                ShowTransientStatus("Automatic reconnect disabled for this session.");
+                return;
+            }
+
+            UpdateStatus(
+                BbsConnectionState.Disconnected,
+                $"Automatic reconnect to {_endpoint} canceled. Click Reconnect to try again.");
         }
 
         /// <summary>
@@ -1263,6 +1379,9 @@ namespace BbsNavigator.Views
             StopCapture();
             _connection.ConnectionLost -= Connection_OnConnectionLost;
             _connection.DataReceived -= Connection_OnDataReceived;
+            _connection.RawDataReceived -= Connection_OnRawDataReceived;
+            Profile.PropertyChanged -= Profile_OnPropertyChanged;
+            CommandManager.RemovePreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
             Terminal.PreviewMouseLeftButtonUp -= Terminal_OnPreviewMouseLeftButtonUp;
             Terminal.TextArea.SelectionChanged -= TerminalSelection_OnChanged;
             Terminal.Connection = null;

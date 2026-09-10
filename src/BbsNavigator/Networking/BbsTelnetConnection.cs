@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -52,6 +52,7 @@ namespace BbsNavigator.Networking
         private volatile bool _isConnected;
         private volatile TelnetBinaryChannel? _binaryChannel;
         private Decoder? _decoder;
+        private Encoding _encoding = Encoding.UTF8;
         private long _bytesReceived;
         private long _bytesSent;
         private long _lastSendTicksUtc;
@@ -101,10 +102,26 @@ namespace BbsNavigator.Networking
         public int Height { get; set; } = 800;
 
         /// <summary>
-        /// Gets or sets the encoding used for BBS text. Set this before connecting; the
-        /// incremental decoder is created when the connection opens.
+        /// Gets or sets the encoding used for BBS text. Assigning a new value while connected
+        /// swaps the incremental decoder, so the change takes effect on the next read.
         /// </summary>
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding
+        {
+            get => _encoding;
+            set
+            {
+                if (ReferenceEquals(_encoding, value))
+                {
+                    return;
+                }
+
+                _encoding = value;
+
+                // The read loop picks the new decoder up on its next chunk; the reference
+                // assignment is atomic, so at worst one in-flight multi-byte sequence is dropped.
+                _decoder = value.GetDecoder();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the name returned for Telnet terminal-type negotiation.
@@ -140,6 +157,9 @@ namespace BbsNavigator.Networking
 
         /// <inheritdoc />
         public event EventHandler<string>? DataReceived;
+
+        /// <inheritdoc />
+        public event BbsRawDataHandler? RawDataReceived;
 
         /// <summary>
         /// Occurs when the peer closes the connection or network I/O fails.
@@ -338,6 +358,7 @@ namespace BbsNavigator.Networking
                         }
                         else
                         {
+                            RawDataReceived?.Invoke(payload.AsSpan(0, payloadLength));
                             string text = DecodeText(payload, payloadLength);
 
                             if (text.Length > 0)

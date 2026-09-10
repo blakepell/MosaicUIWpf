@@ -26,6 +26,7 @@ namespace BbsNavigator.Networking
         private readonly SemaphoreSlim _lifecycleGate = new(1, 1);
         private volatile SshBinaryChannel? _binaryChannel;
         private Decoder? _decoder;
+        private Encoding _encoding = Encoding.UTF8;
         private long _bytesReceived;
         private long _bytesSent;
         private bool _disposed;
@@ -107,10 +108,27 @@ namespace BbsNavigator.Networking
         }
 
         /// <summary>
-        /// Gets or sets the encoding used for BBS text. Set this before connecting; the
-        /// incremental decoder is created when the connection opens.
+        /// Gets or sets the encoding used for BBS text. Assigning a new value while connected
+        /// swaps the incremental decoder, so the change takes effect on the next read.
         /// </summary>
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding
+        {
+            get => _encoding;
+            set
+            {
+                if (ReferenceEquals(_encoding, value))
+                {
+                    return;
+                }
+
+                _encoding = value;
+                _ssh.Encoding = value;
+
+                // The read loop picks the new decoder up on its next chunk; the reference
+                // assignment is atomic, so at worst one in-flight multi-byte sequence is dropped.
+                _decoder = value.GetDecoder();
+            }
+        }
 
         /// <inheritdoc />
         public long BytesReceived => Interlocked.Read(ref _bytesReceived);
@@ -126,6 +144,9 @@ namespace BbsNavigator.Networking
 
         /// <inheritdoc />
         public event EventHandler<string>? DataReceived;
+
+        /// <inheritdoc />
+        public event BbsRawDataHandler? RawDataReceived;
 
         /// <inheritdoc />
         public event EventHandler<Exception?>? ConnectionLost;
@@ -309,6 +330,7 @@ namespace BbsNavigator.Networking
                 return;
             }
 
+            RawDataReceived?.Invoke(payload);
             string text = DecodeText(payload);
 
             if (text.Length > 0)

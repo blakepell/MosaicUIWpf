@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -9,9 +9,17 @@
  */
 
 using Mosaic.UI.Wpf.Controls.VT52Terminal;
+using System.Text;
 
 namespace BbsNavigator.Networking
 {
+    /// <summary>
+    /// Handles the raw payload bytes a BBS connection received, before they were decoded to text.
+    /// </summary>
+    /// <param name="payload">The bytes as they arrived from the remote system.</param>
+    /// <remarks>The span is only valid for the duration of the call; copy anything you retain.</remarks>
+    public delegate void BbsRawDataHandler(ReadOnlySpan<byte> payload);
+
     /// <summary>
     /// Defines the connection surface a BBS session document drives, regardless of whether
     /// the session runs over Telnet or SSH.
@@ -27,6 +35,12 @@ namespace BbsNavigator.Networking
         /// Gets the remote port.
         /// </summary>
         int Port { get; }
+
+        /// <summary>
+        /// Gets or sets the encoding used to interpret incoming terminal text. Assigning a new
+        /// value while connected swaps the incremental decoder and takes effect on the next read.
+        /// </summary>
+        Encoding Encoding { get; set; }
 
         /// <summary>
         /// Gets the total payload bytes received since the connection opened.
@@ -52,6 +66,12 @@ namespace BbsNavigator.Networking
         /// Occurs when the peer closes the connection or the transport fails.
         /// </summary>
         event EventHandler<Exception?>? ConnectionLost;
+
+        /// <summary>
+        /// Occurs when terminal payload bytes arrive, before they are decoded to text. Bytes routed
+        /// to a file transfer channel are not reported here.
+        /// </summary>
+        event BbsRawDataHandler? RawDataReceived;
 
         /// <summary>
         /// Connects asynchronously with cancellation support.
