@@ -86,6 +86,7 @@ For detailed property/event/example documentation, read the individual file list
 | `InputWaveformVisualizer` | `WaveformVisualizerBase` | Media | Live waveform from a selectable Windows audio input device | [WaveformVisualizer.md](controls/WaveformVisualizer.md) |
 | `IPv4TextBox` | `Control` | Input | Four-segment IPv4 address editor with strict validation and transactional paste | [IPv4TextBox.md](controls/IPv4TextBox.md) |
 | `LabeledSeparator` | `ContentControl` | Display | Horizontal separator with an embedded text label | [LabeledSeparator.md](controls/LabeledSeparator.md) |
+| `LineGraph` | `Control` | Data | Multi-series line graph of values over time (minutes to years) with legend, optional title, and line/point click events | [LineGraph.md](controls/LineGraph.md) |
 | `LoopbackWaveformVisualizer` | `WaveformVisualizerBase` | Media | Live waveform from the default Windows audio render device via WASAPI loopback | [WaveformVisualizer.md](controls/WaveformVisualizer.md) |
 | `MarkdownEditor` | `UserControl` | Input | Markdown editor built on SyntaxEditor with toolbar, snippets, save helpers, and preview/copy actions | [MarkdownEditor.md](controls/MarkdownEditor.md) |
 | `MarkdownViewer` | `Control` | Display | WPF-native Markdown renderer backed by a copyable FlowDocument/RichTextBox | [MarkdownViewer.md](controls/MarkdownViewer.md) |

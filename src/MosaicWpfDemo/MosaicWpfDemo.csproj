@@ -50,6 +50,7 @@
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
 		<None Remove="Assets\labeled-separator-96.png" />
+		<None Remove="Assets\line-chart-48.png" />
 		<None Remove="Assets\link-48.png" />
 		<None Remove="Assets\list-48.png" />
 		<None Remove="Assets\list-remove.96.png" />
@@ -137,6 +138,7 @@
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
 		<Resource Include="Assets\labeled-separator-96.png" />
+		<Resource Include="Assets\line-chart-48.png" />
 		<Resource Include="Assets\link-48.png" />
 		<Resource Include="Assets\list-48.png" />
 		<Resource Include="Assets\list-remove.96.png" />
@@ -416,6 +418,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\ColumnChartExample.xaml.cs">
 			<Link>LinkedSources\ColumnChartExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\LineGraphExample.xaml">
+			<Link>LinkedSources\LineGraphExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\LineGraphExample.xaml.cs">
+			<Link>LinkedSources\LineGraphExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\PieChartExample.xaml">

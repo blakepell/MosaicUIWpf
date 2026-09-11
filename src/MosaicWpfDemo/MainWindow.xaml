@@ -841,6 +841,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  LineGraph  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/line-chart-48.png"
+                    Text="LineGraph">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="LineGraph" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.LineGraphExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.LineGraphExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:LineGraph}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:LineGraphExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/line-chart-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  MessageBox  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
