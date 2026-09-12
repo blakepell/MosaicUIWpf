@@ -70,7 +70,7 @@ Details…**. A connection profile has these settings:
 | Use bundled CP437 font | In classic mode, use IBM VGA8 for a DOS-like presentation. It is off by default so the terminal uses the font selected in Options. |
 | Telnet TTYPE | Optional terminal name reported to the BBS. Leave blank to use the selected emulation's normal value. |
 | Reconnect automatically | Re-establishes the session after a dropped connection, after the delay set in [Options](options.md). |
-| Show typed characters locally | Local echo. Enable for MUDs and boards that do not echo your keystrokes back; leave off if you see doubled characters. |
+| Show typed characters locally | Automatic (the default for new profiles) echoes locally until the Telnet server sends WILL ECHO, resumes on WONT ECHO, and resets on reconnect. SSH uses remote echo in Automatic mode. On always echoes locally; Off never does. Existing saved On/Off choices are preserved. |
 | Send DEL (0x7F) for Backspace | Most classic boards expect Ctrl-H/BS (0x08), so leave this off unless Backspace misbehaves on a particular system. |
 | Start sessions in DoorWay mode | Sends DOS scan codes for extended keys used by some door games. Usually leave this off. |
 | Login macro | Tokenized text that can send the encrypted username and password. See [Saved login and quick-send commands](terminal.md#saved-login-and-quick-send-commands). |

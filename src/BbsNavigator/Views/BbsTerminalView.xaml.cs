@@ -160,6 +160,12 @@ namespace BbsNavigator.Views
             }
 
             _connection.ConnectionLost += Connection_OnConnectionLost;
+            if (_connection is BbsTelnetConnection telnet)
+            {
+                telnet.RemoteEchoChanged += Connection_OnRemoteEchoChanged;
+            }
+
+            UpdateLocalEcho();
             Terminal.Connection = _connection;
             _connection.DataReceived += Connection_OnDataReceived;
             _connection.RawDataReceived += Connection_OnRawDataReceived;
@@ -512,14 +518,35 @@ namespace BbsNavigator.Views
             }
         }
 
+        private void Connection_OnRemoteEchoChanged(object? sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(UpdateLocalEcho));
+        }
+
+        private void UpdateLocalEcho()
+        {
+            if (!_disposed)
+            {
+                Terminal.LocalEcho = Profile.LocalEcho
+                    ?? (_connection is BbsTelnetConnection telnet && !telnet.RemoteEchoEnabled);
+            }
+        }
+
         private void Profile_OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (_disposed || e.PropertyName != nameof(BbsProfile.TerminalEncoding))
+            if (_disposed)
             {
                 return;
             }
 
-            ApplyTerminalEncoding();
+            if (e.PropertyName == nameof(BbsProfile.LocalEcho))
+            {
+                UpdateLocalEcho();
+            }
+            else if (e.PropertyName == nameof(BbsProfile.TerminalEncoding))
+            {
+                ApplyTerminalEncoding();
+            }
         }
 
         /// <summary>
@@ -1380,6 +1407,11 @@ namespace BbsNavigator.Views
             _connection.ConnectionLost -= Connection_OnConnectionLost;
             _connection.DataReceived -= Connection_OnDataReceived;
             _connection.RawDataReceived -= Connection_OnRawDataReceived;
+            if (_connection is BbsTelnetConnection telnet)
+            {
+                telnet.RemoteEchoChanged -= Connection_OnRemoteEchoChanged;
+            }
+
             Profile.PropertyChanged -= Profile_OnPropertyChanged;
             CommandManager.RemovePreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
             Terminal.PreviewMouseLeftButtonUp -= Terminal_OnPreviewMouseLeftButtonUp;

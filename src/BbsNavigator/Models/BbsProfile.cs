@@ -121,12 +121,36 @@ namespace BbsNavigator.Models
         /// <summary>
         /// Gets or sets a value that indicates whether typed characters are echoed locally.
         /// </summary>
-        /// <value><see langword="true"/> to display keyboard input immediately; otherwise, <see langword="false"/>.</value>
+        /// <value>True forces local echo on, false forces it off, and null follows Telnet ECHO negotiation.</value>
         [property: Category("Terminal")]
         [property: DisplayName("Show typed characters locally")]
-        [property: Description("Displays keyboard input immediately for systems that do not negotiate or provide remote echo.")]
+        [property: Browsable(false)]
         [ObservableProperty]
-        private bool _localEcho;
+        [NotifyPropertyChangedFor(nameof(LocalEchoMode))]
+        private bool? _localEcho;
+
+        /// <summary>
+        /// Gets or sets the local echo policy. Automatic follows Telnet ECHO negotiation
+        /// and leaves local echo disabled for SSH sessions.
+        /// </summary>
+        [JsonIgnore]
+        [Category("Terminal")]
+        [DisplayName("Show typed characters locally")]
+        public BbsLocalEchoMode LocalEchoMode
+        {
+            get => LocalEcho switch
+            {
+                true => BbsLocalEchoMode.On,
+                false => BbsLocalEchoMode.Off,
+                null => BbsLocalEchoMode.Automatic
+            };
+            set => LocalEcho = value switch
+            {
+                BbsLocalEchoMode.On => true,
+                BbsLocalEchoMode.Off => false,
+                _ => null
+            };
+        }
 
         /// <summary>
         /// Gets or sets a value that indicates whether Backspace sends the DEL character.

@@ -69,7 +69,6 @@ namespace BbsNavigator
                     Name = "Dark & Shattered Lands",
                     Host = "dsl-mud.org",
                     Port = 4000,
-                    LocalEcho = true,
                     TerminalEncoding = BbsEncoding.Utf8,
                     Description = "Dragonlance text based multiplayer game."
                 });

@@ -147,7 +147,6 @@
                 FontWeight="{Binding Settings.FontWeight, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Foreground="#FFD8DEE9"
                 HorizontalScrollBarVisibility="Hidden"
-                LocalEcho="{Binding LocalEcho}"
                 SendKeyboardInputToConnection="True"
                 ShowLineNumbers="False"
                 VerticalScrollBarVisibility="Hidden" />

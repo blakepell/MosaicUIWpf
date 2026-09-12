@@ -36,7 +36,7 @@ namespace BbsNavigator.Views
                 SshKeyFile = profile?.SshKeyFile ?? string.Empty,
                 Description = profile?.Description ?? string.Empty,
                 AutoReconnect = profile?.AutoReconnect ?? true,
-                LocalEcho = profile?.LocalEcho ?? false,
+                LocalEcho = profile?.LocalEcho,
                 BackspaceSendsDelete = profile?.BackspaceSendsDelete ?? false,
                 TerminalEncoding = profile?.TerminalEncoding ?? BbsEncoding.Cp437,
                 TerminalEmulation = profile?.TerminalEmulation ?? BbsTerminalEmulation.AnsiBbs,
@@ -47,6 +47,7 @@ namespace BbsNavigator.Views
                 AutoLogin = profile?.AutoLogin ?? false,
                 LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}"
             };
+            LocalEchoComboBox.ItemsSource = Enum.GetValues<BbsLocalEchoMode>();
             EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
             EmulationComboBox.ItemsSource = Enum.GetValues<BbsTerminalEmulation>();
             DisplayModeComboBox.ItemsSource = Enum.GetValues<BbsTerminalDisplayMode>();

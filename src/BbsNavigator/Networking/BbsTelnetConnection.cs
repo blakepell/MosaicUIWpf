@@ -47,6 +47,7 @@ namespace BbsNavigator.Networking
         private byte _subnegotiationOption;
         private int _subnegotiationLength;
         private bool _nawsEnabled;
+        private volatile bool _remoteEchoEnabled;
         private bool _intentionalDisconnect;
         private bool _disposed;
         private volatile bool _isConnected;
@@ -85,6 +86,28 @@ namespace BbsNavigator.Networking
         /// Gets the remote port.
         /// </summary>
         public int Port { get; }
+
+        /// <summary>
+        /// Gets whether the server has enabled Telnet ECHO for this connection.
+        /// </summary>
+        public bool RemoteEchoEnabled => _remoteEchoEnabled;
+
+        /// <summary>
+        /// Occurs when negotiated remote echo changes, including reset before reconnecting.
+        /// Raised on the connection thread; UI subscribers must dispatch asynchronously.
+        /// </summary>
+        public event EventHandler? RemoteEchoChanged;
+
+        private void SetRemoteEcho(bool enabled)
+        {
+            if (_remoteEchoEnabled == enabled)
+            {
+                return;
+            }
+
+            _remoteEchoEnabled = enabled;
+            RemoteEchoChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         /// <inheritdoc />
         public bool IsConnected => _isConnected;
@@ -188,6 +211,7 @@ namespace BbsNavigator.Networking
                 }
 
                 _intentionalDisconnect = false;
+                SetRemoteEcho(false);
                 _parserState = ParserState.Data;
                 _subnegotiationLength = 0;
                 _nawsEnabled = false;
@@ -483,6 +507,11 @@ namespace BbsNavigator.Networking
 
         private int AppendNegotiationResponse(byte command, byte option, Span<byte> destination)
         {
+            if (option == OptionEcho && command is Will or Wont)
+            {
+                SetRemoteEcho(command == Will);
+            }
+
             byte response;
 
             if (command == Do)
