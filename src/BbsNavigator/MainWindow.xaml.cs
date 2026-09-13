@@ -53,6 +53,7 @@ namespace BbsNavigator
             _userGuideDocument = InitialUserGuideDocument;
             Settings = AppServices.GetRequiredService<AppSettings>();
             DataContext = Settings;
+            SettingsAnchorable.ToggleAutoHide();
             ThemeManager.ThemeChanged += ThemeManager_OnThemeChanged;
             UpdateThemeMenuChecks(Settings.Theme);
             CommandBindings.Add(new CommandBinding(ApplicationCommands.New, AddBbs_OnClick));
@@ -1193,12 +1194,23 @@ namespace BbsNavigator
         }
 
         /// <summary>
-        /// Opens the application options dialog. Also used by <c>app:options</c> links in the
+        /// Shows and activates the docked settings. Also used by <c>app:options</c> links in the
         /// user guide.
         /// </summary>
         public void ShowOptions()
         {
-            new SettingsWindow(Settings) { Owner = this }.ShowDialog();
+            if (SettingsAnchorable.IsHidden)
+            {
+                SettingsAnchorable.Show();
+            }
+
+            if (SettingsAnchorable.IsAutoHidden)
+            {
+                SettingsAnchorable.ToggleAutoHide();
+            }
+
+            SettingsAnchorable.IsSelected = true;
+            SettingsAnchorable.IsActive = true;
         }
 
         /// <summary>

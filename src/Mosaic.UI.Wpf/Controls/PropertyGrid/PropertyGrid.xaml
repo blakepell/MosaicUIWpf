@@ -9,6 +9,21 @@
     <!--  Bool->Visibility converter for the editor button  -->
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
+    <!--  Explicit styles theme menus outside the editor's visual tree.  -->
+    <ContextMenu
+        x:Key="PropertyGridEditorContextMenu"
+        x:Shared="False"
+        Style="{DynamicResource {x:Type ContextMenu}}"
+        ItemContainerStyle="{DynamicResource {x:Type MenuItem}}">
+        <MenuItem Command="ApplicationCommands.Undo" />
+        <Separator />
+        <MenuItem Command="ApplicationCommands.Cut" />
+        <MenuItem Command="ApplicationCommands.Copy" />
+        <MenuItem Command="ApplicationCommands.Paste" />
+        <Separator />
+        <MenuItem Command="ApplicationCommands.SelectAll" />
+    </ContextMenu>
+
     <!--  Define a dedicated style for the PropertyGrid TextBox editor  -->
     <Style
         x:Key="PropertyGridTextBoxStyle"
@@ -19,6 +34,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IsReadOnly" Value="{Binding IsReadOnly}" />
         <Setter Property="Padding" Value="4" />
+        <Setter Property="ContextMenu" Value="{StaticResource PropertyGridEditorContextMenu}" />
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding MaxLength}" Value="0">
@@ -73,6 +89,7 @@
     <!--  NumberEditor  -->
     <DataTemplate x:Key="NumberEditor">
         <local:NumericTextBox
+            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             Padding="4"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
@@ -87,6 +104,7 @@
     <!--  DecimalEditor  -->
     <DataTemplate x:Key="DecimalEditor">
         <local:NumericTextBox
+            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             Padding="4"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
@@ -263,6 +281,7 @@
                             <!--  Search box (optional)  -->
                             <TextBox
                                 x:Name="PART_Search"
+                                ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
                                 Margin="4"
                                 Visibility="Collapsed" />
 

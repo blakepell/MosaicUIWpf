@@ -462,6 +462,17 @@
                                 <views:UserGuideView />
                             </ad:LayoutDocument>
                         </ad:LayoutDocumentPane>
+                        <ad:LayoutAnchorablePane DockMinWidth="300" DockWidth="420">
+                            <ad:LayoutAnchorable
+                                x:Name="SettingsAnchorable"
+                                Title="Settings"
+                                AutoHideWidth="420"
+                                CanClose="False"
+                                CanHide="True"
+                                ContentId="settings">
+                                <mosaic:PropertyGrid Margin="8" Object="{Binding}" />
+                            </ad:LayoutAnchorable>
+                        </ad:LayoutAnchorablePane>
                     </ad:LayoutPanel>
                 </ad:LayoutRoot>
             </ad:DockingManager>
