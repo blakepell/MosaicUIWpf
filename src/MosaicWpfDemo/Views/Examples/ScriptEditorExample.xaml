@@ -11,17 +11,26 @@
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <TextBlock
             Margin="0,0,0,8"
-            Text="Edit the JavaScript below, then click Run or press F5 to show the result in an alert. Press Ctrl+Space for completion, F1 for snippets, or Ctrl+S to save the script."
+            Text="Edit the JavaScript below, then click Run or press F5 to show the result in an alert. Press Ctrl+Space for completion, F1 for snippets, or Ctrl+S to save the script. The view model is available to the script as vm; type vm. to see its members."
             TextWrapping="Wrap" />
+
+        <!--  Bound to the view model that the script also modifies through vm.TestLabel.  -->
+        <Label
+            Grid.Row="1"
+            Margin="0,0,0,8"
+            Padding="0"
+            Content="{Binding TestLabel}"
+            FontWeight="SemiBold" />
 
         <mosaic:ScriptEditorControl
             x:Name="Editor"
-            Grid.Row="1"
+            Grid.Row="2"
             MinHeight="250"
             AutomationProperties.Name="JavaScript demo editor" />
     </Grid>

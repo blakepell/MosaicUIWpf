@@ -75,6 +75,22 @@ public class ScriptingTests
     }
 
     [Fact]
+    public async Task ObservableViewModelIsSetFromScriptAndCompletesOnlyItsMembers()
+    {
+        var environment = new ScriptEnvironment();
+        var vm = new ExampleViewModel();
+        var changed = new List<string?>();
+        vm.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+        environment.RegisterObject("vm", vm);
+        await environment.ExecuteAsync("vm.TestLabel = 'this was set from JavaScript';");
+        Assert.Equal("this was set from JavaScript", vm.TestLabel);
+        Assert.Contains(nameof(ExampleViewModel.TestLabel), changed);
+        var member = Assert.Single(ScriptCompletion.GetMembers(environment, "vm"));
+        Assert.Equal("TestLabel", member.Text);
+        Assert.Contains("Gets or sets String TestLabel", member.Description.ToString());
+    }
+
+    [Fact]
     public async Task CancellationInterruptsCpuScriptAndLeavesEngineReusable()
     {
         var environment = new ScriptEnvironment();
@@ -245,6 +261,12 @@ public class ScriptingTests
     }
 
     public class AppValue { public string Name => "Example"; }
+
+    public class ExampleViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+    {
+        private string _testLabel = "";
+        public string TestLabel { get => _testLabel; set => SetProperty(ref _testLabel, value); }
+    }
 
     [ScriptModule(Name = "app")]
     public class AppCommands : UiScriptCommands
