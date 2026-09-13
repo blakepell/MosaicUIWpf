@@ -54,6 +54,8 @@ namespace BbsNavigator.Views
             EmulationComboBox.ItemsSource = Enum.GetValues<BbsTerminalEmulation>();
             DisplayModeComboBox.ItemsSource = Enum.GetValues<BbsTerminalDisplayMode>();
             DataContext = Profile;
+            TelnetPortTextBox.Text = Profile.Port == 0 ? string.Empty : Profile.Port.ToString();
+            SshPortTextBox.Text = Profile.SshPort == 0 ? string.Empty : Profile.SshPort.ToString();
             Loaded += (_, _) => NameTextBox.SelectAll();
         }
 
@@ -74,21 +76,24 @@ namespace BbsNavigator.Views
                 return;
             }
 
-            // Zero means the BBS does not offer that transport, so it is the only value
-            // permitted outside the port range on either port.
-            if (Profile.Port is < 0 or > 65535)
+            // Blank fields and zero both mean that the BBS does not offer that transport.
+            string telnetText = TelnetPortTextBox.Text.Trim();
+            string sshText = SshPortTextBox.Text.Trim();
+            if (!int.TryParse(telnetText.Length == 0 ? "0" : telnetText, out int telnetPort)
+                || telnetPort is < 0 or > 65535)
             {
-                ShowWarning("The Telnet port must be between 1 and 65535, or 0 when the BBS does not offer Telnet.");
+                ShowWarning("The Telnet port must be between 1 and 65535. Leave blank or enter 0 when the BBS does not offer Telnet.");
                 return;
             }
 
-            if (Profile.SshPort is < 0 or > 65535)
+            if (!int.TryParse(sshText.Length == 0 ? "0" : sshText, out int sshPort)
+                || sshPort is < 0 or > 65535)
             {
-                ShowWarning("The SSH port must be between 1 and 65535, or 0 when the BBS does not offer SSH.");
+                ShowWarning("The SSH port must be between 1 and 65535. Leave blank or enter 0 when the BBS does not offer SSH.");
                 return;
             }
 
-            if (Profile.Port == 0 && Profile.SshPort == 0)
+            if (telnetPort == 0 && sshPort == 0)
             {
                 ShowWarning("Enter a Telnet port, an SSH port, or both. A profile with neither cannot connect.");
                 return;
@@ -103,6 +108,8 @@ namespace BbsNavigator.Views
             }
 
             Profile.Name = Profile.Name.Trim();
+            Profile.Port = telnetPort;
+            Profile.SshPort = sshPort;
             Profile.Host = Profile.Host.Trim();
             Profile.SshKeyFile = keyFile;
             DialogResult = true;

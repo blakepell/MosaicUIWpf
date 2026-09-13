@@ -86,27 +86,25 @@
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="Telnet port" />
-            <mosaic:NumericTextBox
+            <TextBox
+                x:Name="TelnetPortTextBox"
                 Grid.Row="3"
                 Grid.Column="1"
                 Margin="0,4"
                 Padding="4"
-                DecimalPlaces="0"
-                Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="The port the BBS listens on for Telnet connections. Leave this at 0 when the BBS offers SSH only." />
+                ToolTip="The port the BBS listens on for Telnet connections. Leave blank or enter 0 when the BBS offers SSH only." />
             <TextBlock
                 Grid.Row="4"
                 Margin="0,6"
                 VerticalAlignment="Center"
                 Text="SSH port" />
-            <mosaic:NumericTextBox
+            <TextBox
+                x:Name="SshPortTextBox"
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="0,4"
                 Padding="4"
-                DecimalPlaces="0"
-                Text="{Binding SshPort, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="The port the BBS listens on for SSH connections. Leave this at 0 when the BBS does not offer SSH." />
+                ToolTip="The port the BBS listens on for SSH connections. Leave blank or enter 0 when the BBS does not offer SSH." />
             <TextBlock
                 Grid.Row="5"
                 Margin="0,6"
