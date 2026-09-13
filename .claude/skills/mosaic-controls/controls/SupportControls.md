@@ -60,6 +60,39 @@ A static class exposing one attached property that lets a `WDScrollViewer`'s ver
 | `Color` | `Color` | `#71000000` | Shadow color. |
 | `CornerRadius` | `CornerRadius` | `0` | Corner radius used when rendering shadow corners. |
 
+## WDBorder
+
+**Base class:** `Border`  
+**Namespace:** `Mosaic.UI.Wpf.Controls`  
+**Source:** `src/Mosaic.UI.Wpf/Controls/ClipBorder/WDBorder.cs`
+
+On every render, `WDBorder` works out a clip geometry for its inner area (its size minus `BorderThickness`, with the rounded `CornerRadius` corners). It publishes that geometry as a read-only property that child elements can bind their `Clip` to.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `ContentClip` | `Geometry` (read-only) | `null` | Frozen `StreamGeometry` of the inner rounded rectangle, or `null` when the border has no size. |
+
+```xml
+<mosaic:WDBorder CornerRadius="6" BorderThickness="1">
+    <ScrollViewer Clip="{Binding ContentClip, RelativeSource={RelativeSource AncestorType=mosaic:WDBorder}}" />
+</mosaic:WDBorder>
+```
+
+For general child clipping, prefer [ClipBorder.md](ClipBorder.md), which clips automatically.
+
+## DatePicker primitives
+
+**Namespace:** `Mosaic.UI.Wpf.Controls`  
+**Source:** `src/Mosaic.UI.Wpf/Controls/DatePicker/`
+
+These are public classes that add no members of their own. They exist so the `DatePicker` template can give its parts dedicated default styles.
+
+| Class | Base Class | Used as |
+|---|---|---|
+| `CalendarBox` | `ListBox` | `PART_ListBox`, the month day grid |
+| `CalendarSwitch` | `ToggleButton` | `PART_Switch`, which opens the popup |
+| `ChevronButton` | `Button` | `PART_Left` / `PART_Right`, the month navigation buttons |
+
 ## XAML Example
 
 ```xml
@@ -73,6 +106,7 @@ xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
 ## Notes
 
 - These controls are mostly referenced from `Themes/Native/*.xaml`.
-- `WDScrollViewer` is used by the native `TreeView` template.
+- `WDScrollViewer` and `WDBorder` are used by the native `TreeView` template.
+- `CalendarBox`, `CalendarSwitch`, and `ChevronButton` are used only by the `DatePicker` template.
 - `SliderRepeatButton` is used by the native `Slider` template.
 - `SystemDropShadowChrome` is used by native popup/chrome templates.

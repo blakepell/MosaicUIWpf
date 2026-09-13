@@ -19,11 +19,18 @@ A custom window title bar `UserControl` providing Minimize, Maximize/Restore, an
 | `TitleAlignment` | `HorizontalAlignment` | `Left` | Horizontal alignment of the title text. |
 | `IconSource` | `ImageSource` | `null` | The window icon image. |
 | `ShowIcon` | `bool` | `true` | Whether the icon is displayed. |
+| `IsStretchButtonVisible` | `bool` | `false` | Shows the stretch (auto resize) button to the left of minimize. See `StretchWindowButton` below. |
 | `ShowMinimizeButton` | `bool` | `true` | Show/hide the minimize (−) button. |
 | `ShowMaxRestoreButton` | `bool` | `true` | Show/hide the maximize/restore (⬜) button. |
 | `ShowCloseButton` | `bool` | `true` | Show/hide the close (✕) button. |
 | `LeftContent` | `object` | `null` | Arbitrary content placed to the left of the title (e.g., a logo). |
 | `RightContent` | `object` | `null` | Arbitrary content placed to the right of the title and before the window buttons (e.g., notification icons). |
+| `MaximizedGlyph` | `string` | `"\xE923"` (Restore) | Segoe MDL2 glyph on the max/restore button while the window is maximized. |
+| `RestoredGlyph` | `string` | `"\xE922"` (Maximize) | Segoe MDL2 glyph on the max/restore button while the window is in its normal state. |
+
+## StretchWindowButton
+
+`StretchWindowButton` (`UserControl`, `Mosaic.UI.Wpf.Controls`, `Controls/WindowTitleBar/StretchWindowButton.xaml`) is the title-bar button with the tooltip "Auto Resize Window". When clicked, it returns the owning window to its normal state. It then resizes the window to 90% × 90% of the work area on the monitor the window is currently on (the work area excludes the taskbar and is DPI-aware), keeping the window's `MinWidth`/`MinHeight`, and centers it. `WindowTitleBar` hosts it behind `IsStretchButtonVisible`, and you can also place it on its own in custom chrome.
 
 ## XAML Example
 

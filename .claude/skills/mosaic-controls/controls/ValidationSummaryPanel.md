@@ -13,8 +13,12 @@ An aggregating validation display that watches a target `FrameworkElement` (a fo
 
 | Property | Type | Default | Description |
 |---|---|---|---|
-| `Target` | `FrameworkElement` | `null` | The root element to scan for validation errors. |
+| `Target` | `FrameworkElement?` | `null` | The root element to scan for validation errors. If unset, the panel tries the nearest parent container. |
 | `Title` | `string` | `"Validation Errors"` | Heading text displayed above the error list. |
+| `IconGeometry` | `Geometry?` | `null` | Icon shown next to each error. |
+| `IconBrush` | `Brush` | `Brushes.Red` | Fill of the error icon. |
+| `HeaderBackground` | `Brush` | `#FEE2E2` | Background of the header area. |
+| `Errors` | `ObservableCollection<ValidationError>` (read-only) | empty | The current errors. It is also the control's `ItemsSource`. |
 | `HasErrors` | `bool` (read-only) | `false` | `true` when one or more validation errors exist. |
 | `ErrorCount` | `int` (read-only) | `0` | Number of current validation errors. |
 | `AutoHideWhenValid` | `bool` | `true` | When `true`, the control is collapsed when `HasErrors` is `false`. |
@@ -25,9 +29,21 @@ An aggregating validation display that watches a target `FrameworkElement` (a fo
 | Method | Description |
 |---|---|
 | `Refresh()` | Re-scans `Target` for current validation errors. |
-| `AddError(string message)` | Manually appends an error message (e.g., from server-side validation). |
+| `AddError(string message, string propertyName = "", FrameworkElement? sourceControl = null)` | Manually adds an error (e.g., from server-side validation). |
 | `ClearAndRefresh()` | Clears manually added errors and re-scans `Target`. |
-| `FocusError(int index)` | Focuses the control responsible for the error at `index`. |
+| `FocusError(ValidationError error)` | Focuses the error's `SourceControl`. |
+
+`FocusErrorCommand` (static `RoutedCommand`) takes a `ValidationError` parameter. Error item templates use it to call `FocusError`.
+
+## ValidationError
+
+This is Mosaic's own error model, `Mosaic.UI.Wpf.Controls.ValidationError`. It is not `System.Windows.Controls.ValidationError`, so qualify the name if both namespaces are imported.
+
+| Property | Type | Description |
+|---|---|---|
+| `Message` | `string` | Error text. |
+| `PropertyName` | `string` | Bound property name, if known. |
+| `SourceControl` | `FrameworkElement?` | Control that owns the error, used by `FocusError`. |
 
 ## XAML Example
 

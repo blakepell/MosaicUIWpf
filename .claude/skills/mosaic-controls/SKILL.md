@@ -65,11 +65,13 @@ For detailed property/event/example documentation, read the individual file list
 | `CopyTextBox` | `Control` | Input | Text box with an attached copy-to-clipboard button and optional toast feedback | [CopyTextBox.md](controls/CopyTextBox.md) |
 | `DatePicker` | `Control` | Input | Mosaic date picker with popup month calendar and nullable selected date | [DatePicker.md](controls/DatePicker.md) |
 | `DateSpinner` | `Control` | Input | WinUI-style date picker using three coordinated month/day/year scroll wheels instead of a calendar grid | [DateSpinner.md](controls/DateSpinner.md) |
+| `DayCalendarView` | `Control` | Data | Outlook-style single-day timeline of events with overlap columns, path-mapped source objects, drag-to-reschedule proposals, and delete | [DayCalendarView.md](controls/DayCalendarView.md) |
 | `DocumentContainer` | `TabControl` | Navigation | Closable, reorderable document tabs with active-document tracking | [DocumentContainer.md](controls/DocumentContainer.md) |
 | `EditableTextBlock` | `Control` | Input | Inline editable text that toggles between view/edit mode | [EditableTextBlock.md](controls/EditableTextBlock.md) |
 | `EnumComboBox` | `ComboBox` | Input | Combo box populated from an enum type; binds the enum value via `SelectedValue` | [EnumComboBox.md](controls/EnumComboBox.md) |
 | `ExecutionControl` | `Control` | Input | Play/Pause/Stop transport buttons driven by individual commands | [ExecutionControl.md](controls/ExecutionControl.md) |
 | `FavoriteCheckBox` | `CheckBox` | Input | Symbol-based favorite/star toggle with configurable brushes | [FavoriteCheckBox.md](controls/FavoriteCheckBox.md) |
+| `FileCard` | `Control` | Display | Clickable card for one file: shell icon, name, size, themed dominant-color tint, missing-file state | [FileCard.md](controls/FileCard.md) |
 | `FileDropper` | `Control` | Input | File drag-and-drop target with file type validation and command/event hooks | [FileDropper.md](controls/FileDropper.md) |
 | `Files` | `Control` | Data | Directory file list with shell icons, sorting, selection, watcher refresh, and activation event | [Files.md](controls/Files.md) |
 | `FlipPanel` | `ContentControl` | Display | Animated flip panel with front and back content faces | [FlipPanel.md](controls/FlipPanel.md) |
@@ -79,6 +81,7 @@ For detailed property/event/example documentation, read the individual file list
 | `FontWeightComboBox` | `ComboBox` | Input | Font weight picker (Thin–ExtraBlack) that renders each entry in its own weight; binds a `FontWeight` or a weight name | [FontControls.md](controls/FontControls.md) |
 | `GravatarImage` | `Image` | Media | Loads and displays a Gravatar avatar from an email address | [GravatarImage.md](controls/GravatarImage.md) |
 | `HexColorTextBox` | `ComboBox` | Input | Editable hex color field (`#RGB`, `#RRGGBB`, `#AARRGGBB`) with shade drop-down | [HexColorTextBox.md](controls/HexColorTextBox.md) |
+| `HorizontalListBox` | `ListBox` | Input | Horizontal row of toggle cells (multi-select by default, or single-select segmented picker) | [HorizontalListBox.md](controls/HorizontalListBox.md) |
 | `Hyperlink` | `ContentControl` | Navigation | Clickable link that opens a URI or executes an `ICommand` | [Hyperlink.md](controls/Hyperlink.md) |
 | `InertiaScrollViewer` | `ScrollViewer` | Layout | ScrollViewer with animated inertia/momentum on mouse wheel | [InertiaScrollViewer.md](controls/InertiaScrollViewer.md) |
 | `InfoBubble` | `ContentControl` | Display | Overlays a count/status/dot indicator on arbitrary content | [InfoBubble.md](controls/InfoBubble.md) |
@@ -119,6 +122,7 @@ For detailed property/event/example documentation, read the individual file list
 | `TabControl` | `TabControl` | Navigation | Mosaic-themed tab control with top/bottom active indicator | [TabControl.md](controls/TabControl.md) |
 | `TableSizePicker` | `Control` | Input | Word-style *Insert Table* grid picker with hover preview and `RequestClose` | [TableSizePicker.md](controls/TableSizePicker.md) |
 | `TagBox` | `Control` | Input | Token/tag entry box with removable chips, duplicate control, and cancellable change events | [TagBox.md](controls/TagBox.md) |
+| `ThemedTextBlock` | `TextBlock` | Display | TextBlock that picks a light/dark foreground from its ancestor (or explicit) background by luminance or palette shade | [ThemedTextBlock.md](controls/ThemedTextBlock.md) |
 | `TimeSpinner` | `Control` | Input | WinUI-style time picker using hour/minute/AM-PM scroll wheels | [TimeSpinner.md](controls/TimeSpinner.md) |
 | `ToastManager` / `ToastMessage` | class / `UserControl` | Dialog | Transient notification cards stacked per quadrant in an adorner overlay | [Toast.md](controls/Toast.md) |
 | `ToggleButton` | `ToggleButton` | Input | Mosaic-themed toggle button with checked/unchecked background | [ToggleButton.md](controls/ToggleButton.md) |
@@ -188,6 +192,9 @@ These public controls exist for native style dictionaries and low-level template
 | `SliderRepeatButton` | `RepeatButton` | Slider track repeat buttons with corner orientation metadata | [SupportControls.md](controls/SupportControls.md) |
 | `SystemDropShadowChrome` | `Decorator` | WPF-style chrome shadow rendering for popups and native templates | [SupportControls.md](controls/SupportControls.md) |
 | `WDScrollViewer` | `ScrollViewer` | Native `TreeView` template scrolling with optional wheel animation | [SupportControls.md](controls/SupportControls.md) |
+| `WDBorder` | `Border` | Exposes a read-only `ContentClip` geometry matching its rounded inner bounds (native `TreeView` template) | [SupportControls.md](controls/SupportControls.md) |
+| `CalendarBox` / `CalendarSwitch` / `ChevronButton` | `ListBox` / `ToggleButton` / `Button` | Style-key primitives inside the `DatePicker` template | [SupportControls.md](controls/SupportControls.md) |
+| `DayTimelinePanel` / `CalendarEventPresenter` | `Panel` / `ContentControl` | Timeline panel and per-event container used by the `DayCalendarView` template | [DayCalendarView.md](controls/DayCalendarView.md) |
 
 ---
 
@@ -244,4 +251,8 @@ See the `mosaic-setup-project` skill for the full wiring procedure.
 - **`ModalDialog`** and **`ToastManager`** both render into the host element's **adorner layer** — the host must be loaded and beneath an `AdornerDecorator` (window content is by default). Call `ToastManager.Initialize(this.Content as UIElement)` once at startup to set `ToastManager.Default`.
 - **`EnumComboBox`** binds through `SelectedValue` (the enum value), not `SelectedItem`; use `EnumDisplayNameAttribute` on enum members for friendly text.
 - **`ColumnChart`** and **`PieChart`** bind `ObservableCollection<ColumnChartItem>` / `ObservableCollection<PieCategory>` and repaint automatically on item property changes — no manual refresh needed.
+- **`DayCalendarView`** never mutates source events on drag — handle `EventTimeChanged` / `EventTimeChangedCommand` and apply `NewStart`/`NewEnd` yourself. Use `CalendarEvent` or map your own property names via the `*Path` properties.
+- **`FileCard`** passes its `FilePath` to `Command` when `CommandParameter` is unset; it does not watch the disk, so call `Refresh()` after the file changes.
+- **`HorizontalListBox`** defaults to `SelectionMode.Multiple`; set `Single` for a segmented control.
+- **`ThemedTextBlock`** overwrites `Foreground` whenever the background changes — customize via `LightForegroundBrush`/`DarkForegroundBrush`, not `Foreground`.
 - Public support controls such as `WDScrollViewer`, `SliderRepeatButton`, and `SystemDropShadowChrome` are primarily used by native theme dictionaries; see [SupportControls.md](controls/SupportControls.md).
