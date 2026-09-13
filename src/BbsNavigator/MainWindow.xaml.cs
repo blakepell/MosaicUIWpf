@@ -1201,16 +1201,12 @@ namespace BbsNavigator
 
         private void About_OnClick(object sender, RoutedEventArgs e)
         {
-            Mosaic.UI.Wpf.Controls.MessageBox.Show(
-                "BBS Navigator\n\n" +
-                "A Mosaic UI terminal client for classic bulletin board systems.\n\n" +
-                "• Telnet and SSH with CP437, UTF-8, and Latin-1 text encodings\n" +
-                "• ZMODEM, YMODEM, and XMODEM file transfers (auto-detects ZMODEM downloads)\n" +
-                "• Session capture, keepalives, and automatic reconnection\n\n" +
-                "Tip: hold Ctrl and scroll the mouse wheel to zoom the terminal font.",
-                "About BBS Navigator",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            var about = new AboutWindow
+            {
+                Owner = this
+            };
+
+            about.ShowDialog();
         }
 
         private void SaveSettings_OnClick(object sender, RoutedEventArgs e)

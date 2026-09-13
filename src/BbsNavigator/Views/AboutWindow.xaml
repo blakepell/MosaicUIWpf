@@ -1,0 +1,196 @@
+<Window
+    x:Class="BbsNavigator.Views.AboutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    Title="About BBS Navigator"
+    Width="540"
+    Height="325"
+    mosaic:WindowChromeBehavior.CaptionHeight="0"
+    mosaic:WindowChromeBehavior.CornerRadius="10"
+    mosaic:WindowChromeBehavior.GlassFrameThickness="0"
+    mosaic:WindowChromeBehavior.IsEnabled="True"
+    mosaic:WindowChromeBehavior.ResizeBorderThickness="5"
+    mosaic:WindowChromeBehavior.RoundBorder="True"
+    mosaic:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+    BorderThickness="1"
+    Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <mosaic:WindowTitleBar
+            Grid.Row="0"
+            IconSource="pack://application:,,,/BbsNavigator;component/Assets/app.png"
+            ShowMaxRestoreButton="False"
+            ShowMinimizeButton="False" />
+
+        <StackPanel Grid.Row="1" Margin="19,9">
+
+            <!--  Header  -->
+            <Grid Margin="0,0,0,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Image
+                        Width="48"
+                        Height="48"
+                        HorizontalAlignment="Left"
+                        Source="pack://application:,,,/BbsNavigator;component/Assets/app.png" />
+                    <TextBlock
+                        Margin="4,7,7,4"
+                        FontSize="22"
+                        SnapsToDevicePixels="True"
+                        Text="BBS Navigator"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+
+                <mosaic:Shield
+                    Grid.Column="1"
+                    Margin="0,5"
+                    VerticalAlignment="Center"
+                    Label="BbsNavigator"
+                    ValueBackgroundBrush="#14663A">
+                    <mosaic:VersionTextBlock AssemblyName="BbsNavigator" AssemblySource="ByName" />
+                </mosaic:Shield>
+            </Grid>
+
+            <Separator Margin="8,4,0,4" Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}" />
+
+            <Grid Margin="20,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="20,5,0,0"
+                    FontSize="12"
+                    Text="Project lead:" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="20,5,0,0"
+                    FontSize="12"
+                    Text="Blake Pell" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="20,2,0,0"
+                    FontSize="12"
+                    Text="Version:" />
+
+                <mosaic:VersionTextBlock
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="20,1,0,0"
+                    AssemblyName="BbsNavigator"
+                    AssemblySource="ByName"
+                    FontSize="12" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="20,2,0,0"
+                    FontSize="12"
+                    Text="Website:" />
+
+                <controls:Hyperlink
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    FontSize="12"
+                    NavigateUri="https://www.apexgate.net"
+                    Text="https://www.apexgate.net" />
+
+                <controls:Hyperlink
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    FontSize="12"
+                    NavigateUri="https://www.blakepell.com"
+                    Text="https://www.blakepell.com" />
+
+                <controls:Hyperlink
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    FontSize="12"
+                    NavigateUri="https://github.com/blakepell/MosaicUIWpf"
+                    Text="https://github.com/blakepell/MosaicUIWpf" />
+
+                <controls:Hyperlink
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="20,0,0,0"
+                    FontSize="12"
+                    NavigateUri="https://www.github.com/blakepell/ArgusFramework"
+                    Text="https://www.github.com/blakepell/ArgusFramework" />
+
+            </Grid>
+
+            <TextBlock
+                Margin="9,14,0,0"
+                FontSize="18"
+                Text="Attributions" />
+
+            <Separator
+                Height="1"
+                Margin="8,3,0,0"
+                Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlSeparatorBrush}}"
+                SnapsToDevicePixels="True" />
+
+            <Grid Margin="20,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="20,5,0,0"
+                    FontSize="12"
+                    Text="BBS list sourced from:" />
+                <controls:Hyperlink
+                    Grid.Column="1"
+                    Margin="20,5,0,0"
+                    FontSize="12"
+                    NavigateUri="https://www.telnetbbsguide.com/"
+                    Text="https://www.telnetbbsguide.com/" />
+            </Grid>
+
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="20,0,20,16">
+            <mosaic:AccentButton
+                Width="90"
+                HorizontalAlignment="Right"
+                AccentButtonType="ThemeAccent"
+                Content="OK"
+                IsCancel="True"
+                IsDefault="True" />
+        </Grid>
+    </Grid>
+</Window>
