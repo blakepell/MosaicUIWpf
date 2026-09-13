@@ -68,7 +68,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Themes
             SetBrush(dict, ResourceKeys.TabBackground, tabBg);
 
             // Auto Hide : Tab
-            SetBrush(dict, ResourceKeys.AutoHideTabDefaultBackground, palette.GetBackgroundOrDefault("AutoHideTabBackgroundBegin", background));
+            SetBrush(dict, ResourceKeys.AutoHideTabDefaultBackground, background);
             SetBrush(dict, ResourceKeys.AutoHideTabDefaultBorder, palette.GetBackgroundOrDefault("AutoHideTabBorder", panelBorder));
             SetBrush(dict, ResourceKeys.AutoHideTabDefaultText, palette.GetBackgroundOrDefault("AutoHideTabText", inactiveText));
             SetBrush(dict, ResourceKeys.AutoHideTabHoveredBackground, palette.GetBackgroundOrDefault("AutoHideTabMouseOverBackgroundBegin", panelBorder));

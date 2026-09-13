@@ -29,7 +29,7 @@
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.PanelBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.TabBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.DocumentTabStripBackgroundColor}}" />
 
-    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabDefaultBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabDefaultBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabDefaultBorder}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabDefaultText}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.AutoHideTabHoveredBackground}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundColor}}" />

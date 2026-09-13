@@ -77,7 +77,17 @@ namespace Mosaic.UI.Wpf.AvalonDock.Controls
 
             if (!e.Handled)
             {
-                _model.Root.Manager.ShowAutoHideWindow(this);
+                StopOpenUpTimer();
+                var manager = _model.Root.Manager;
+                if (e.ChangedButton == MouseButton.Left && manager.AutoHideWindow.Model == _model)
+                {
+                    manager.HideAutoHideWindow(this);
+                    _model.IsActive = false;
+                    e.Handled = true;
+                    return;
+                }
+
+                manager.ShowAutoHideWindow(this);
                 _model.IsActive = true;
             }
         }
@@ -141,14 +151,18 @@ namespace Mosaic.UI.Wpf.AvalonDock.Controls
         /// <inheritdoc/>
         protected override void OnMouseLeave(MouseEventArgs e)
         {
+            StopOpenUpTimer();
+            base.OnMouseLeave(e);
+        }
+
+        private void StopOpenUpTimer()
+        {
             if (_openUpTimer != null)
             {
                 _openUpTimer.Tick -= _openUpTimer_Tick;
                 _openUpTimer.Stop();
                 _openUpTimer = null;
             }
-
-            base.OnMouseLeave(e);
         }
 
         private void _model_IsSelectedChanged(object sender, EventArgs e)
@@ -178,9 +192,7 @@ namespace Mosaic.UI.Wpf.AvalonDock.Controls
 
         private void _openUpTimer_Tick(object sender, EventArgs e)
         {
-            _openUpTimer.Tick -= _openUpTimer_Tick;
-            _openUpTimer.Stop();
-            _openUpTimer = null;
+            StopOpenUpTimer();
             _model.Root.Manager.ShowAutoHideWindow(this);
         }
     }
