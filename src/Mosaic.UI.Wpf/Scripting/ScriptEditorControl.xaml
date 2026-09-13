@@ -31,12 +31,12 @@
                                 <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding SaveCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Save (Ctrl+S)" AutomationProperties.Name="Save script">
                                     <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-save-16.png" />
                                 </Button>
-                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Run (F5)" AutomationProperties.Name="Run script">
-                                    <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-play-16.png" />
-                                </Button>
-                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding StopCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Stop (F6)" AutomationProperties.Name="Stop script">
-                                    <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-stop-16.png" />
-                                </Button>
+                                <Separator Style="{DynamicResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,4" />
+                                <!--  Topaz cannot pause a running script, so the pause button is hidden.  -->
+                                <controls:ExecutionControl VerticalAlignment="Center" ButtonPadding="5" ShowPauseButton="False"
+                                                           PlayCommand="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}" PlayToolTip="Run (F5)"
+                                                           StopCommand="{Binding StopCommand, RelativeSource={RelativeSource TemplatedParent}}" StopToolTip="Stop (F6)"
+                                                           AutomationProperties.Name="Script execution" />
                             </StackPanel>
                             <controls:SyntaxEditor x:Name="PART_Editor" Grid.Row="1" Language="JavaScript" ShowLineNumbers="True"
                                                    FontFamily="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}" FontSize="{TemplateBinding FontSize}" Padding="5"
