@@ -205,6 +205,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private string[] _lineCache = [];
         private bool _isRemoteInputFlushQueued;
         private bool _isLoaded;
+        private bool _wasAtBottomWhenUnloaded = true;
 
         /// <summary>
         /// Identifies the <see cref="Connection"/> dependency property.
@@ -516,7 +517,23 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 connection.DataReceived += OnConnectionDataReceived;
             }
 
-            Dispatcher.BeginInvoke(OnSizeChanged, DispatcherPriority.Background);
+            Dispatcher.BeginInvoke(() =>
+            {
+                OnSizeChanged();
+
+                // Output keeps flowing into the buffer while the control is unloaded (e.g., an inactive
+                // dock tab), but the TextView had no viewport to render into. Repaint the whole screen
+                // now that it is back, and re-anchor on the live screen if that is where it was left.
+                lock (_lock)
+                {
+                    if (_wasAtBottomWhenUnloaded)
+                    {
+                        _forceScrollToEnd = true;
+                    }
+
+                    UpdateDocument(forceFullReplace: true);
+                }
+            }, DispatcherPriority.Background);
 
             if (AutoConnect && connection is { IsConnected: false })
             {
@@ -534,12 +551,22 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         private async void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _isLoaded = false;
+            _wasAtBottomWhenUnloaded = IsScrolledToBottom();
+
+            if (!DisconnectOnUnload)
+            {
+                // The session outlives the visual tree (tab switching, docking hosts that unload inactive
+                // content), so keep consuming output. Dropping it here would leave the screen buffer and
+                // parser state out of sync with the remote host when the control is shown again. The
+                // subscription is released when the Connection property changes or is cleared.
+                return;
+            }
 
             // Detach the DataReceived event so the connection does not hold a reference to this
             // control after it has been removed from the visual tree.
             Connection?.DataReceived -= OnConnectionDataReceived;
 
-            if (DisconnectOnUnload && Connection?.IsConnected == true)
+            if (Connection?.IsConnected == true)
             {
                 try
                 {
