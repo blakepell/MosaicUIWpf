@@ -136,6 +136,50 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
+    <!--
+        Parameter information (ScriptSignaturePopup). The rows are built in code with a signature or parameter
+        as each element's DataContext; these triggers dim the overloads that do not match the arguments and
+        bold the parameter being typed.
+    -->
+    <Style x:Key="ScriptSignaturePopupStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8,4" />
+        <Setter Property="MaxWidth" Value="640" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextElement.FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
+    </Style>
+
+    <Style x:Key="ScriptSignatureRowStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="Opacity" Value="0.5" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                <Setter Property="Opacity" Value="1" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ScriptSignatureParameterStyle" TargetType="{x:Type Span}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                <Setter Property="FontWeight" Value="Bold" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  The active overload's description and the current parameter's description.  -->
+    <Style x:Key="ScriptSignatureTextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+    </Style>
+
     <!--  Implicit styles do not cascade, so extend the shared completion tool tip rather than replace it.  -->
     <Style BasedOn="{StaticResource {x:Type ToolTip}}" TargetType="{x:Type ToolTip}">
         <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />

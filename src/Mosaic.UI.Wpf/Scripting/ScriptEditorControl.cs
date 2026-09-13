@@ -41,6 +41,7 @@ public class ScriptEditorControl : Control
         SaveCommand = new AsyncRelayCommand(SaveFromCommandAsync);
         CompletionCommand = new RelayCommand(() => _support?.ShowCompletion());
         SnippetsCommand = new RelayCommand(() => _support?.ShowCompletion(true));
+        SignatureHelpCommand = new RelayCommand(() => _support?.ShowSignatureHelp());
         SetCurrentValue(EnvironmentProperty, new ScriptEnvironment());
         Loaded += (_, _) => { _isUnloaded = false; AttachSupport(); };
         Unloaded += (_, _) => { _isUnloaded = true; DetachSupport(); Stop(); };
@@ -50,6 +51,7 @@ public class ScriptEditorControl : Control
         InputBindings.Add(new KeyBinding(SaveCommand, Key.S, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(CompletionCommand, Key.Space, ModifierKeys.Control));
         InputBindings.Add(new KeyBinding(CompletionCommand, Key.OemPeriod, ModifierKeys.Control));
+        InputBindings.Add(new KeyBinding(SignatureHelpCommand, Key.Space, ModifierKeys.Control | ModifierKeys.Shift));
         InputBindings.Add(new KeyBinding(SnippetsCommand, Key.F1, ModifierKeys.None));
         InputBindings.Add(new KeyBinding(new RelayCommand(() =>
         {
@@ -163,6 +165,12 @@ public class ScriptEditorControl : Control
     /// Gets the snippet command (F1).
     /// </summary>
     public ICommand SnippetsCommand { get; }
+    /// <summary>
+    /// Gets the parameter information command (Ctrl+Shift+Space), which shows the overloads of the call around the caret.
+    /// </summary>
+    public ICommand SignatureHelpCommand { get; }
+
+    internal ScriptEditorSupport? Support => _support;
 
     /// <summary>
     /// Gets or sets an optional application save callback, used instead of file saving.

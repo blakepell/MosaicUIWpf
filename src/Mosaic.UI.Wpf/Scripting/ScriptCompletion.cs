@@ -37,14 +37,13 @@ public static class ScriptCompletion
     {
         if (!environment.Registrations.TryGetValue(alias, out var registration)) return [];
         var result = new List<ICompletionData>();
+        var flags = MemberFlags(registration);
         if (registration.Instance is IEnumerable<KeyValuePair<string, object>> dictionary)
         {
             foreach (var pair in dictionary.OrderBy(p => p.Key, StringComparer.Ordinal))
                 result.Add(new ScriptCompletionData(pair.Key, ScriptCompletionKind.Global,
                     new ScriptCompletionDescription("Global", pair.Value?.GetType().Name ?? "null", $"Current value: {pair.Value}")));
         }
-        var flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
-        if (!registration.IsType) flags |= BindingFlags.Instance;
         foreach (var group in registration.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).GroupBy(m => m.Name))
         {
             var methods = group.ToArray();
@@ -81,8 +80,75 @@ public static class ScriptCompletion
         Snippet("While Loop", "A snippet to show how to do a while loop with pausing.", "let count = 1;\nwhile (count <= 5) {\n    log.Info(count.ToString());\n    await ui.PauseAsync(1000);\n    count++;\n}")
     ];
 
+    /// <summary>
+    /// Gets the overloads of a member call (alias.Method) or a constructor (new Type), ordered by parameter count.
+    /// </summary>
+    /// <param name="environment">The registration source.</param>
+    /// <param name="call">The call surrounding the caret.</param>
+    internal static IReadOnlyList<ScriptSignature> GetSignatures(ScriptEnvironment environment, ScriptCallContext call)
+    {
+        IEnumerable<ScriptSignature> signatures;
+        if (call.IsConstructor)
+        {
+            if (!environment.Registrations.TryGetValue(call.Name, out var type) || !type.IsType || type.Type.IsAbstract) return [];
+            signatures = type.Type.GetConstructors().Where(Visible).Select(c => CreateSignature(c, string.Empty, call.Key));
+        }
+        else
+        {
+            if (call.Qualifier == null || !environment.Registrations.TryGetValue(call.Qualifier, out var registration)) return [];
+            signatures = registration.Type.GetMethods(MemberFlags(registration))
+                .Where(m => m.Name == call.Name && !m.IsSpecialName && Visible(m))
+                .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key));
+        }
+        return signatures.OrderBy(s => s.Parameters.Count).ThenBy(s => s.HasParamsArray).ToArray();
+    }
+
     internal static bool Visible(MemberInfo member) => member.DeclaringType != typeof(object) &&
         member.GetCustomAttribute<ScriptHiddenAttribute>() == null;
+
+    private static BindingFlags MemberFlags(ScriptRegistration registration) =>
+        BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy | (registration.IsType ? 0 : BindingFlags.Instance);
+
+    private static ScriptSignature CreateSignature(MethodBase method, string returnType, string name)
+    {
+        var parameters = method.GetParameters();
+        bool hasParamsArray = parameters.Length > 0 && parameters[^1].IsDefined(typeof(ParamArrayAttribute));
+        var items = ParseHint(method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.AutoCompleteHint)
+            ?? parameters.Select(p => new ScriptSignatureParameter(TypeName(p.ParameterType), p.Name ?? string.Empty,
+                p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? string.Empty, DefaultValue(p), p.IsDefined(typeof(ParamArrayAttribute)))).ToArray();
+        return new ScriptSignature(returnType, name, items, Description(method), hasParamsArray);
+    }
+
+    /// <summary>
+    /// Splits an AutoCompleteHint such as Name(string one, two) into display parameters; null when it has no argument list.
+    /// </summary>
+    private static ScriptSignatureParameter[]? ParseHint(string? hint)
+    {
+        int open = hint?.IndexOf('(') ?? -1, close = hint?.LastIndexOf(')') ?? -1;
+        if (hint == null || open < 0 || close < open) return null;
+        var parts = new List<string>();
+        int depth = 0, start = open + 1;
+        for (int i = start; i < close; i++)
+        {
+            if (hint[i] is '(' or '[' or '<' or '{') depth++;
+            else if (hint[i] is ')' or ']' or '>' or '}') depth--;
+            else if (hint[i] == ',' && depth == 0) { parts.Add(hint[start..i]); start = i + 1; }
+        }
+        parts.Add(hint[start..close]);
+        return parts.Select(p => p.Trim()).Where(p => p.Length > 0).Select(p =>
+        {
+            int space = p.LastIndexOf(' ');
+            return space < 0 ? new ScriptSignatureParameter(string.Empty, p) : new ScriptSignatureParameter(p[..space].Trim(), p[(space + 1)..]);
+        }).ToArray();
+    }
+
+    private static string? DefaultValue(ParameterInfo parameter) => !parameter.HasDefaultValue ? null : parameter.DefaultValue switch
+    {
+        null => "null",
+        string text => $"\"{text}\"",
+        bool value => value ? "true" : "false",
+        var value => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)
+    };
 
     private static ScriptCompletionData Snippet(string name, string summary, string insertionText) =>
         new(name, ScriptCompletionKind.Snippet, new ScriptCompletionDescription(name, "snippet", summary)) { InsertionText = insertionText };

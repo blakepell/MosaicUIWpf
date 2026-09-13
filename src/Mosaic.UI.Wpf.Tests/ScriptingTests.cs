@@ -3,6 +3,7 @@
  * @project lead      : Blake Pell
  * @license           : MIT - https://opensource.org/license/mit/
  */
+using System.ComponentModel;
 using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -226,6 +227,121 @@ public class ScriptingTests
         return Task.CompletedTask;
     });
 
+    [Theory]
+    [InlineData("app.Add(1, |)", "app.Add", 1, 2)]
+    [InlineData("app.Add(|)", "app.Add", 0, 0)]
+    [InlineData("app.Add(|1, 2, 3)", "app.Add", 0, 3)]
+    [InlineData("app.Add(\"a,b\", 'c,d', `e,${[1, 2]}`, /* , */ |)", "app.Add", 3, 4)]
+    [InlineData("app.Add({ a: 1, b: 2| })", "app.Add", 0, 1)]
+    [InlineData("app.Add([1, 2], (3, |4))", "app.Add", 1, 2)]
+    [InlineData("app.Add(app.Join(1, |2), 3)", "app.Join", 1, 2)]
+    [InlineData("app.Add(app.Join(1, 2), |3)", "app.Add", 1, 2)]
+    [InlineData("app.Add(Math.max(1, |2))", "app.Add", 0, 1)]
+    [InlineData("let v = new AppValue(|", "new AppValue", 0, 0)]
+    [InlineData("app?.Add(1,\n    |", "app.Add", 1, 2)]
+    [InlineData("app.Add(1);\napp.Join(|);", "app.Join", 0, 0)]
+    public void CallParserFindsTheCallArgumentAndArgumentCount(string source, string key, int index, int count)
+    {
+        var call = FindCall(source);
+        Assert.NotNull(call);
+        Assert.Equal(key, call.Value.Key);
+        Assert.Equal(index, call.Value.ArgumentIndex);
+        Assert.Equal(count, call.Value.ArgumentCount);
+    }
+
+    [Theory]
+    [InlineData("app.Add(1)|")]
+    [InlineData("app.Add(1, // |\n)")]
+    [InlineData("app.Add(\"x\") + (|)")]
+    [InlineData("app.Run(() => { let x = 1;| })")]
+    [InlineData("x.app.Add(|)")]
+    public void CallParserIgnoresPositionsOutsideRegisteredCalls(string source) => Assert.Null(FindCall(source));
+
+    [Fact]
+    public void SignaturesListOverloadsAndTrackTheActiveOverloadAndParameter()
+    {
+        var environment = new ScriptEnvironment();
+        environment.RegisterObject("app", new AppCommands());
+        environment.RegisterType(typeof(AppValue));
+        var join = ScriptCompletion.GetSignatures(environment, new ScriptCallContext(0, 0, "app", "Join", false));
+        Assert.Equal(["String app.Join(String first)", "String app.Join(String first, String second, Int32 count = 1)"], join.Select(s => s.ToString()));
+        Assert.Equal("Joins text", join[0].Summary);
+        Assert.Single(ScriptCompletion.GetSignatures(environment, new ScriptCallContext(0, 0, null, "AppValue", true)), s => s.Name == "new AppValue");
+        Assert.Empty(ScriptCompletion.GetSignatures(environment, new ScriptCallContext(0, 0, "app", "Missing", false)));
+
+        var help = new ScriptSignatureHelp("app.Join", join);
+        help.Update(0, 0);
+        Assert.Same(join[0], help.ActiveSignature);
+        Assert.True(join[0].IsActive && join[0].Parameters[0].IsActive);
+        Assert.False(join[1].IsActive || join[1].Parameters[0].IsActive);
+
+        help.Update(1, 2);
+        Assert.Same(join[1], help.ActiveSignature);
+        Assert.False(join[0].IsActive);
+        Assert.Equal("second", help.ActiveParameter?.Name);
+        Assert.Equal("The second value.", help.ActiveParameter?.Description);
+        Assert.Equal([false, true, false], join[1].Parameters.Select(p => p.IsActive));
+
+        // A picked overload is kept while it fits, then matching takes over again.
+        help.Update(0, 1);
+        Assert.Same(join[0], help.ActiveSignature);
+        help.Cycle(1);
+        help.Update(0, 1);
+        Assert.Same(join[1], help.ActiveSignature);
+        help.Cycle(-1);
+        help.Update(1, 2);
+        Assert.Same(join[1], help.ActiveSignature);
+
+        var format = new ScriptSignatureHelp("app.Format", ScriptCompletion.GetSignatures(environment, new ScriptCallContext(0, 0, "app", "Format", false)));
+        format.Update(4, 5);
+        Assert.True(format.ActiveParameter?.IsParams);
+        Assert.Equal("String app.Format(String format, params Object[] args)", format.ActiveSignature?.ToString());
+    }
+
+    [Fact]
+    public void SignatureHelpFollowsTheCaretThroughTheEditor() => RunStaAsync(async () =>
+    {
+        var control = Realize(new ScriptEditorControl { Text = "app.Join(\"a\", \"b\");\nlet x = 1;" }, MosaicThemeMode.Dark);
+        control.Environment!.RegisterObject("app", new AppCommands());
+        var editor = control.Editor!;
+        var support = control.Support!;
+        editor.CaretOffset = "app.Join(".Length;
+        control.SignatureHelpCommand.Execute(null);
+        var help = Assert.IsType<ScriptSignatureHelp>(support.SignatureHelp);
+        Assert.Equal("first", help.ActiveParameter?.Name);
+        Assert.Equal(3, help.ActiveSignature?.Parameters.Count);
+
+        editor.CaretOffset = "app.Join(\"a\", ".Length;
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        Assert.Same(help, support.SignatureHelp);
+        Assert.Equal("second", help.ActiveParameter?.Name);
+
+        // Typing a comma inside the call keeps the same overload list and moves to the next parameter.
+        editor.CaretOffset = "app.Join(\"a\", \"b\"".Length;
+        editor.TextArea.PerformTextInput(",");
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        Assert.Same(help, support.SignatureHelp);
+        Assert.Equal("count", help.ActiveParameter?.Name);
+
+        editor.CaretOffset = editor.Text.Length;
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        Assert.Null(support.SignatureHelp);
+
+        // An opening parenthesis typed after a registered method opens it without a shortcut.
+        editor.TextArea.PerformTextInput("\napp.Join");
+        editor.TextArea.PerformTextInput("(");
+        await Dispatcher.Yield(DispatcherPriority.Background);
+        Assert.Equal("app.Join", support.SignatureHelp?.Key);
+        Assert.EndsWith("app.Join()", editor.Text);
+        control.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+    });
+
+    private static ScriptCallContext? FindCall(string source)
+    {
+        int caret = source.IndexOf('|');
+        return ScriptCallParser.Find(source.Remove(caret, 1), caret, c => c.Key is "app.Add" or "app.Join" or "new AppValue");
+    }
+
     private static ScriptEditorControl Realize(ScriptEditorControl control, MosaicThemeMode theme)
     {
         control.Resources.MergedDictionaries.Add(new ThemeManager { Theme = theme });
@@ -277,5 +393,9 @@ public class ScriptingTests
         [ScriptModuleMethod(Description = "Adds to the total")]
         public void Add(int amount) => Total += amount;
         public void Add(string amount) => Total += int.Parse(amount);
+        [ScriptModuleMethod(Description = "Joins text")]
+        public string Join(string first) => first;
+        public string Join(string first, [Description("The second value.")] string second, int count = 1) => first + second;
+        public string Format(string format, params object[] args) => string.Format(format, args);
     }
 }

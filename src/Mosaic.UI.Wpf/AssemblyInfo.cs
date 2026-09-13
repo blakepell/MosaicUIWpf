@@ -8,7 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Runtime.CompilerServices;
 using System.Windows.Markup;
+
+[assembly: InternalsVisibleTo("Mosaic.UI.Wpf.Tests")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None,            //where theme specific resource dictionaries are located
