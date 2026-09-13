@@ -108,10 +108,12 @@ namespace BbsNavigator
                 await app.LoadBbsProfilesAsync(Settings);
             }
 
-            if (Settings.BbsProfiles.Count == 0)
+            if (!Settings.HasPromptedForBigListImport)
             {
+                Settings.HasPromptedForBigListImport = true;
                 MessageBoxResult result = Mosaic.UI.Wpf.Controls.MessageBox.Show(
-                    "You have 0 BBS's setup, would you like to import the Big List of BBS's?",
+                    "Welcome to BBS Navigator! Would you like to import the BBS Big List?\n\n" +
+                    "Choose No to keep the initial directory entries. You can import the list later from Directory → Import Big List.",
                     "BBS Navigator",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);

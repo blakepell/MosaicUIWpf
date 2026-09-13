@@ -172,7 +172,7 @@
                     Grid.Column="0"
                     Margin="20,5,0,0"
                     FontSize="12"
-                    Text="BBS list sourced from:" />
+                    Text="BBS Big List:" />
                 <controls:Hyperlink
                     Grid.Column="1"
                     Margin="20,5,0,0"

@@ -54,6 +54,14 @@ namespace BbsNavigator.Common
         [ObservableProperty]
         private MosaicThemeMode _theme = MosaicThemeMode.Blue;
 
+        /// <summary>
+        /// Gets or sets a value that indicates whether the initial Big List import prompt has been shown.
+        /// </summary>
+        /// <value><see langword="true"/> if the prompt has been shown; otherwise, <see langword="false"/>.</value>
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private bool _hasPromptedForBigListImport;
+
         private string? _credentialEncryptionVerifier;
 
         /// <summary>
