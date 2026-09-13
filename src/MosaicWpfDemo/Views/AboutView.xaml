@@ -135,6 +135,8 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <TextBlock
@@ -226,6 +228,36 @@
                         FontSize="12"
                         NavigateUri="https://github.com/sveinungf/spreadcheetah"
                         Text="https://github.com/sveinungf/spreadcheetah" />
+
+                    <TextBlock
+                        Grid.Row="6"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="SSH.NET" />
+
+                    <controls:Hyperlink
+                        Grid.Row="6"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/sshnet/SSH.NET"
+                        Text="https://github.com/sshnet/SSH.NET" />
+
+                    <TextBlock
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="gong-wpf-dragdrop" />
+
+                    <controls:Hyperlink
+                        Grid.Row="7"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/punker76/gong-wpf-dragdrop"
+                        Text="https://github.com/punker76/gong-wpf-dragdrop" />
 
                 </Grid>
 
