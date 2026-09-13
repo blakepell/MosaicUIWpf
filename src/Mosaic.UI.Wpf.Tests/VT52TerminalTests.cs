@@ -10,6 +10,8 @@
 
 using System.Runtime.ExceptionServices;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Interop;
 using Mosaic.UI.Wpf.Controls.VT52Terminal;
 using Xunit;
 
@@ -45,6 +47,116 @@ namespace Mosaic.UI.Wpf.Tests
 
         private static string[] ScreenLines(VT52Terminal terminal) =>
             terminal.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+        private static bool PressKey(VT52Terminal terminal, Key key)
+        {
+            var args = new KeyEventArgs(
+                InputManager.Current.PrimaryKeyboardDevice,
+                new HwndSource(0, 0, 0, 0, 0, "t", IntPtr.Zero),
+                0,
+                key)
+            {
+                RoutedEvent = Keyboard.PreviewKeyDownEvent
+            };
+
+            terminal.RaiseEvent(args);
+            return args.Handled;
+        }
+
+        [Fact]
+        public void NumericKeypadNavigation_Sends_Cursor_Keys_For_Keypad_Digits()
+        {
+            RunSta(() =>
+            {
+                var connection = new RecordingConnection();
+                var terminal = new VT52Terminal { NumericKeypadNavigation = true, Connection = connection };
+
+                Assert.True(PressKey(terminal, Key.NumPad8));
+                Assert.True(PressKey(terminal, Key.NumPad4));
+                Assert.True(PressKey(terminal, Key.NumPad7));
+                Assert.True(PressKey(terminal, Key.Decimal));
+                Assert.False(PressKey(terminal, Key.NumPad5));
+
+                Assert.Equal(["[A", "[D", "[H", "[3~"], connection.Sent);
+            });
+        }
+
+        [Fact]
+        public void Keypad_Digits_Are_Not_Translated_By_Default()
+        {
+            RunSta(() =>
+            {
+                var connection = new RecordingConnection();
+                var terminal = new VT52Terminal { Connection = connection };
+
+                Assert.False(PressKey(terminal, Key.NumPad8));
+                Assert.Empty(connection.Sent);
+            });
+        }
+
+        [Fact]
+        public void NumericKeypadNavigation_Uses_DoorWay_Scan_Codes_In_DoorWay_Mode()
+        {
+            RunSta(() =>
+            {
+                var connection = new RecordingConnection();
+                var terminal = new VT52Terminal { NumericKeypadNavigation = true, DoorwayMode = true, Connection = connection };
+
+                Assert.True(PressKey(terminal, Key.NumPad2));
+                Assert.Equal([0, 80], Assert.Single(connection.SentBytes));
+            });
+        }
+
+        private sealed class RecordingConnection : ITerminalConnection
+        {
+            public event EventHandler<string>? DataReceived { add { } remove { } }
+
+            public List<string> Sent { get; } = [];
+
+            public List<byte[]> SentBytes { get; } = [];
+
+            public bool IsConnected => true;
+
+            public int Columns { get; set; }
+
+            public int Rows { get; set; }
+
+            public int Width { get; set; }
+
+            public int Height { get; set; }
+
+            public bool Connect() => true;
+
+            public Task<bool> ConnectAsync() => Task.FromResult(true);
+
+            public bool Disconnect() => true;
+
+            public Task<bool> DisconnectAsync() => Task.FromResult(true);
+
+            public void Send(string text) => Sent.Add(text);
+
+            public Task SendAsync(string text)
+            {
+                Sent.Add(text);
+                return Task.CompletedTask;
+            }
+
+            public void Send(byte[] data) => SentBytes.Add(data);
+
+            public Task SendAsync(byte[] data)
+            {
+                SentBytes.Add(data);
+                return Task.CompletedTask;
+            }
+
+            public void SendWindowChangeRequest(uint cols, uint rows, uint width, uint height)
+            {
+            }
+
+            public void Dispose()
+            {
+            }
+        }
 
         [Fact]
         public void Esc_D_Uses_Ansi_Index_By_Default()

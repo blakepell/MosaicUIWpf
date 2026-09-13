@@ -66,24 +66,79 @@
                 <MenuItem
                     Click="ConnectSelected_OnClick"
                     Header="_Connect"
-                    InputGestureText="Enter" />
-                <MenuItem Click="DisconnectSelected_OnClick" Header="_Disconnect" />
+                    InputGestureText="Enter">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/network-connecting-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Click="DisconnectSelected_OnClick" Header="_Disconnect">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/network-disconnected2-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Click="SaveSettings_OnClick" Header="_Save Settings" />
-                <MenuItem Click="BackupSettings_OnClick" Header="_Backup Settings" />
+                <MenuItem Click="SaveSettings_OnClick" Header="_Save Settings">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/save2-32.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Click="BackupSettings_OnClick" Header="_Backup Settings">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/archive-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem Click="Exit_OnClick" Header="E_xit" />
             </MenuItem>
             <MenuItem Header="_Transfer">
-                <MenuItem Click="DownloadFile_OnClick" Header="_Download Files…" />
-                <MenuItem Click="UploadFile_OnClick" Header="_Upload Files…" />
+                <MenuItem Click="DownloadFile_OnClick" Header="_Download Files…">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/down-arrow-purple-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Click="UploadFile_OnClick" Header="_Upload Files…">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/up-arrow-purple-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Click="ToggleCapture_OnClick" Header="Toggle Session _Capture" />
-                <MenuItem Click="OpenDownloadFolder_OnClick" Header="_Open Download Folder" />
+                <MenuItem Click="OpenDownloadFolder_OnClick" Header="_Open Download Folder">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/downloads-folder-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
-            <MenuItem Header="_Terminal">
+            <MenuItem Header="_Terminal" SubmenuOpened="TerminalMenu_OnSubmenuOpened">
                 <MenuItem Click="ToggleDoorway_OnClick" Header="Toggle _DoorWay Mode" />
+                <MenuItem Click="ToggleKeypadNavigation_OnClick" Header="Toggle _Keypad Arrows" />
                 <MenuItem Click="ToggleScrollbackLock_OnClick" Header="Toggle Scrollback _Lock" />
+                <!--  DataContext is the active session's profile, assigned when the menu opens.  -->
+                <MenuItem
+                    x:Name="CaptureMenuItem"
+                    Click="ToggleCapture_OnClick"
+                    Header="Toggle Session _Capture"
+                    IsChecked="{Binding CaptureSession, Mode=OneWay}" />
                 <MenuItem Click="SearchTerminal_OnClick" Header="_Search Screen and Scrollback…" />
                 <Separator />
                 <MenuItem Click="SendLogin_OnClick" Header="Send Login _Macro" />
@@ -100,17 +155,51 @@
                 <MenuItem
                     Click="AddBbs_OnClick"
                     Header="_Add BBS…"
-                    InputGestureText="Ctrl+N" />
+                    InputGestureText="Ctrl+N">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/add-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Click="ImportBbsList_OnClick" Header="_Import BBS List File…" />
                 <MenuItem Click="ImportBigList_OnClick" Header="Import _Big List" />
                 <MenuItem Click="BrowseBigList_OnClick" Header="Bro_wse Big List…" />
                 <Separator />
-                <MenuItem Click="EditBbs_OnClick" Header="_Edit BBS…" />
-                <MenuItem Click="RemoveBbs_OnClick" Header="_Remove BBS" />
+                <MenuItem Click="EditBbs_OnClick" Header="_Edit BBS…">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/edit-property-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Click="RemoveBbs_OnClick" Header="_Remove BBS">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/minus-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Setup">
-                <MenuItem Click="Options_OnClick" Header="_Options…" />
+                <MenuItem Click="Options_OnClick" Header="_Options…">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/settings-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="_Theme">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/theme2-48.png" />
+                    </MenuItem.Icon>
                     <MenuItem
                         x:Name="LightThemeMenuItem"
                         Click="LightTheme_OnClick"
@@ -132,9 +221,23 @@
                 <MenuItem
                     Click="UserGuide_OnClick"
                     Header="_User Guide"
-                    InputGestureText="F1" />
+                    InputGestureText="F1">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/question-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Click="About_OnClick" Header="_About BBS Navigator" />
+                <MenuItem Click="About_OnClick" Header="_About BBS Navigator">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/app.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </Menu>
 

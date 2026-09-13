@@ -278,6 +278,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public static readonly DependencyProperty DoorwayModeProperty = DependencyProperty.Register(
             nameof(DoorwayMode), typeof(bool), typeof(VT52Terminal), new PropertyMetadata(false));
 
+        /// <summary>Identifies the <see cref="NumericKeypadNavigation"/> dependency property.</summary>
+        public static readonly DependencyProperty NumericKeypadNavigationProperty = DependencyProperty.Register(
+            nameof(NumericKeypadNavigation), typeof(bool), typeof(VT52Terminal), new PropertyMetadata(false));
+
         /// <summary>Identifies the <see cref="PasteCharacterDelay"/> dependency property.</summary>
         public static readonly DependencyProperty PasteCharacterDelayProperty = DependencyProperty.Register(
             nameof(PasteCharacterDelay),
@@ -380,6 +384,17 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             get => (bool)GetValue(DoorwayModeProperty);
             set => SetValue(DoorwayModeProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets whether the numeric keypad digits send navigation keys (arrows, Home, End,
+        /// Page Up/Down, Insert, Delete) as they would with Num Lock off, regardless of the
+        /// keyboard's Num Lock state. Keypad 5 continues to send its digit.
+        /// </summary>
+        public bool NumericKeypadNavigation
+        {
+            get => (bool)GetValue(NumericKeypadNavigationProperty);
+            set => SetValue(NumericKeypadNavigationProperty, value);
         }
 
         /// <summary>
@@ -729,15 +744,22 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 return;
             }
 
-            if (DoorwayMode && TryGetDoorwaySequence(e, out byte[]? doorwaySequence))
+            Key key = NormalizeKey(e);
+
+            if (NumericKeypadNavigation)
+            {
+                key = GetKeypadNavigationKey(key);
+            }
+
+            if (DoorwayMode && TryGetDoorwaySequence(key, out byte[]? doorwaySequence))
             {
                 e.Handled = SendToConnection(doorwaySequence!);
                 return;
             }
 
-            string? sequence = GetKeySequence(e);
+            string? sequence = GetKeySequence(key);
 
-            if (sequence == null && TryGetControlKeySequence(e, out sequence))
+            if (sequence == null && TryGetControlKeySequence(key, out sequence))
             {
                 e.Handled = SendToConnection(sequence!, null);
                 return;
@@ -745,7 +767,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
 
             if (sequence != null)
             {
-                e.Handled = SendToConnection(sequence, GetLocalEchoText(NormalizeKey(e)));
+                e.Handled = SendToConnection(sequence, GetLocalEchoText(key));
             }
         }
 
@@ -754,10 +776,29 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             return e.Key == Key.System ? e.SystemKey : e.Key;
         }
 
-        private string? GetKeySequence(KeyEventArgs e)
+        /// <summary>
+        /// Maps a numeric keypad digit to the navigation key it produces with Num Lock off.
+        /// </summary>
+        private static Key GetKeypadNavigationKey(Key key)
         {
-            Key key = NormalizeKey(e);
+            return key switch
+            {
+                Key.NumPad7 => Key.Home,
+                Key.NumPad8 => Key.Up,
+                Key.NumPad9 => Key.PageUp,
+                Key.NumPad4 => Key.Left,
+                Key.NumPad6 => Key.Right,
+                Key.NumPad1 => Key.End,
+                Key.NumPad2 => Key.Down,
+                Key.NumPad3 => Key.PageDown,
+                Key.NumPad0 => Key.Insert,
+                Key.Decimal => Key.Delete,
+                _ => key
+            };
+        }
 
+        private string? GetKeySequence(Key key)
+        {
             if (key == Key.Tab && (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
             {
                 return "\x1b[Z";
@@ -853,7 +894,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             };
         }
 
-        private static bool TryGetControlKeySequence(KeyEventArgs e, out string? sequence)
+        private static bool TryGetControlKeySequence(Key key, out string? sequence)
         {
             sequence = null;
 
@@ -861,8 +902,6 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             {
                 return false;
             }
-
-            Key key = NormalizeKey(e);
 
             if (key >= Key.A && key <= Key.Z)
             {
@@ -888,10 +927,9 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         /// Converts DOS extended keys to the DoorWay wire form: NUL followed by the
         /// corresponding IBM PC keyboard scan code.
         /// </summary>
-        private static bool TryGetDoorwaySequence(KeyEventArgs e, out byte[]? sequence)
+        private static bool TryGetDoorwaySequence(Key key, out byte[]? sequence)
         {
             sequence = null;
-            Key key = NormalizeKey(e);
             bool alt = (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
 
             int scanCode = key switch

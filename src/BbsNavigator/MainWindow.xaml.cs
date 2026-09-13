@@ -843,6 +843,8 @@ namespace BbsNavigator
             profile.UseCp437Font = editor.Profile.UseCp437Font;
             profile.TerminalType = editor.Profile.TerminalType.Trim();
             profile.DoorwayMode = editor.Profile.DoorwayMode;
+            profile.NumericKeypadNavigation = editor.Profile.NumericKeypadNavigation;
+            profile.CaptureSession = editor.Profile.CaptureSession;
             profile.AutoLogin = editor.Profile.AutoLogin;
             profile.LoginMacro = editor.Profile.LoginMacro;
 
@@ -991,6 +993,13 @@ namespace BbsNavigator
             }
         }
 
+        private void TerminalMenu_OnSubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            // A local null (rather than clearing the value) keeps the item from inheriting the
+            // window's AppSettings DataContext when no session is active.
+            CaptureMenuItem.DataContext = ActiveTerminal?.Profile;
+        }
+
         private void ToggleCapture_OnClick(object sender, RoutedEventArgs e)
         {
             if (ActiveTerminal is { } terminal)
@@ -1008,6 +1017,18 @@ namespace BbsNavigator
             if (ActiveTerminal is { } terminal)
             {
                 terminal.ToggleDoorwayMode();
+            }
+            else
+            {
+                ShowNoActiveSessionMessage();
+            }
+        }
+
+        private void ToggleKeypadNavigation_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ActiveTerminal is { } terminal)
+            {
+                terminal.ToggleKeypadNavigation();
             }
             else
             {

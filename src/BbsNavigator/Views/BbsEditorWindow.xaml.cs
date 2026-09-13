@@ -44,6 +44,8 @@ namespace BbsNavigator.Views
                 UseCp437Font = profile?.UseCp437Font ?? false,
                 TerminalType = profile?.TerminalType ?? string.Empty,
                 DoorwayMode = profile?.DoorwayMode ?? false,
+                NumericKeypadNavigation = profile?.NumericKeypadNavigation ?? false,
+                CaptureSession = profile?.CaptureSession ?? false,
                 AutoLogin = profile?.AutoLogin ?? false,
                 LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}"
             };

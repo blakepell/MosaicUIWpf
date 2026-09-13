@@ -73,6 +73,7 @@ Details…**. A connection profile has these settings:
 | Show typed characters locally | Automatic (the default for new profiles) echoes locally until the Telnet server sends WILL ECHO, resumes on WONT ECHO, and resets on reconnect. SSH uses remote echo in Automatic mode. On always echoes locally; Off never does. Existing saved On/Off choices are preserved. |
 | Send DEL (0x7F) for Backspace | Most classic boards expect Ctrl-H/BS (0x08), so leave this off unless Backspace misbehaves on a particular system. |
 | Start sessions in DoorWay mode | Sends DOS scan codes for extended keys used by some door games. Usually leave this off. |
+| Start sessions with the numeric keypad as arrow keys | The keypad acts as if Num Lock were off, for games that move with the keypad. See [Numeric keypad](terminal.md#numeric-keypad). |
 | Login macro | Tokenized text that can send the encrypted username and password. See [Saved login and quick-send commands](terminal.md#saved-login-and-quick-send-commands). |
 | Log in automatically | Sends the login macro after every successful Telnet connection. |
 

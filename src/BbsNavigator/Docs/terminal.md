@@ -14,7 +14,9 @@ and a message with details such as connection errors. Two buttons sit on the rig
 - **Disconnect** — ends the session but leaves the tab open so you can reconnect later.
 
 If the profile has *Reconnect automatically* enabled, a dropped connection is retried
-after the delay configured in [Options](options.md).
+after the delay configured in [Options](options.md). With **Clear Screen on Reconnect**
+enabled (the default), the terminal is reset before each reconnect so the new session starts
+on a clean screen.
 
 ## Classic ANSI and responsive displays
 
@@ -66,6 +68,18 @@ typing continues normally.
 DoorWay mode is normally left off. If a door ignores a function or Alt key, or the BBS
 explicitly asks for DoorWay mode, turn it on for that session. Its state is remembered on
 the BBS profile.
+
+## Numeric keypad
+
+Some games move with the numeric keypad (8 = up, 2 = down, 7 = up-left, and so on). Click
+**Keypad Numbers** in the session status bar to switch to **Keypad Arrows**, or choose
+**Terminal → Toggle Keypad Arrows**. While it is on, the keypad sends arrow, Home, End,
+Page Up/Down, Insert, and Delete keys as if Num Lock were off, whatever the keyboard's
+Num Lock light shows. Keypad 5 still types `5`.
+
+The starting state comes from the profile's *Start sessions with the numeric keypad as
+arrow keys* option, and toggling it during a session updates the profile. With keypad
+arrows off, the keypad follows the keyboard's own Num Lock state.
 
 ## Scrollback, lock, and search
 
@@ -135,10 +149,14 @@ used after startup.
 
 ## Session capture
 
-The **Capture** toggle (also **Transfer → Toggle Session Capture** in the menu) records
+The **Capture** toggle (also **Terminal → Toggle Session Capture** in the menu) records
 everything the board sends to a plain-text log file. ANSI escape sequences are stripped
-so the log stays readable. The red dot on the button shows that capture is active; click
-the toggle again to stop.
+so the log stays readable. The red dot on the button, and the check mark on the menu item,
+show that capture is active; click the toggle again to stop.
+
+Capture is remembered per BBS: turning it on or off updates the board's profile, and later
+sessions with that board start capturing automatically. It can also be set with
+**Capture sessions to a log file** in the **Edit BBS** dialog.
 
 Logs are written to a `Logs` subfolder of your download folder, named after the board and
 the current date and time. Use **Transfer → Open Download Folder** to jump there.

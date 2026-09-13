@@ -176,6 +176,19 @@ namespace BbsNavigator.Common
         private int _reconnectAttempts = 5;
 
         /// <summary>
+        /// Gets or sets a value that indicates whether the terminal is reset before reconnecting.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> to clear the screen and terminal state before a reconnect writes
+        /// anything; otherwise, <see langword="false"/>. The default is <see langword="true"/>.
+        /// </value>
+        [property: Category("Connections")]
+        [property: DisplayName("Clear Screen on Reconnect")]
+        [property: Description("Clears the screen and resets terminal state (scroll region, colors, cursor) before reconnecting, so text from the new session is not stuck on the last line. Scrollback is also cleared.")]
+        [ObservableProperty]
+        private bool _clearScreenOnReconnect = true;
+
+        /// <summary>
         /// Gets or sets the maximum duration of a connection attempt.
         /// </summary>
         /// <value>The connection timeout, in seconds.</value>

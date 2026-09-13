@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
@@ -13,13 +13,24 @@
   <ItemGroup>
     <None Remove="Assets\add-48.png" />
     <None Remove="Assets\app.png" />
+    <None Remove="Assets\archive-48.png" />
     <None Remove="Assets\bbslist.csv" />
+    <None Remove="Assets\bug-48.png" />
+    <None Remove="Assets\down-arrow-purple-48.png" />
+    <None Remove="Assets\downloads-folder-48.png" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\minus-48.png" />
+    <None Remove="Assets\network-connecting-48.png" />
+    <None Remove="Assets\network-disconnected2-48.png" />
     <None Remove="Assets\PxPlus_IBM_VGA8.ttf" />
+    <None Remove="Assets\question-48.png" />
+    <None Remove="Assets\save2-32.png" />
+    <None Remove="Assets\settings-48.png" />
     <None Remove="Assets\sort-48.png" />
     <None Remove="Assets\terminal-gray-48.png" />
     <None Remove="Assets\terminal-48.png" />
+    <None Remove="Assets\theme2-48.png" />
+    <None Remove="Assets\up-arrow-purple-48.png" />
     <None Remove="Docs\*.md" />
   </ItemGroup>
   <ItemGroup>
@@ -29,13 +40,24 @@
   <ItemGroup>
     <Resource Include="Assets\add-48.png" />
     <Resource Include="Assets\app.png" />
+    <Resource Include="Assets\archive-48.png" />
     <Resource Include="Assets\bbslist.csv" />
+    <Resource Include="Assets\bug-48.png" />
+    <Resource Include="Assets\down-arrow-purple-48.png" />
+    <Resource Include="Assets\downloads-folder-48.png" />
     <Resource Include="Assets\edit-property-48.png" />
     <Resource Include="Assets\minus-48.png" />
+    <Resource Include="Assets\network-connecting-48.png" />
+    <Resource Include="Assets\network-disconnected2-48.png" />
     <Resource Include="Assets\PxPlus_IBM_VGA8.ttf" />
+    <Resource Include="Assets\question-48.png" />
+    <Resource Include="Assets\save2-32.png" />
+    <Resource Include="Assets\settings-48.png" />
     <Resource Include="Assets\sort-48.png" />
     <Resource Include="Assets\terminal-gray-48.png" />
     <Resource Include="Assets\terminal-48.png" />
+    <Resource Include="Assets\theme2-48.png" />
+    <Resource Include="Assets\up-arrow-purple-48.png" />
     <Resource Include="Docs\*.md" />
   </ItemGroup>
   <ItemGroup>

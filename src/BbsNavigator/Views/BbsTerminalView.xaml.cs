@@ -184,6 +184,7 @@ namespace BbsNavigator.Views
             ProtocolComboBox.ItemsSource = Enum.GetValues<TransferProtocol>();
             ProtocolComboBox.SelectedItem = settings.DefaultTransferProtocol;
             DoorwayToggle.IsChecked = profile.DoorwayMode;
+            KeypadToggle.IsChecked = profile.NumericKeypadNavigation;
 
             _statsTimer = new DispatcherTimer(DispatcherPriority.Background)
             {
@@ -233,6 +234,12 @@ namespace BbsNavigator.Views
         public void ToggleDoorwayMode()
         {
             DoorwayToggle.IsChecked = DoorwayToggle.IsChecked != true;
+        }
+
+        /// <summary>Toggles whether the numeric keypad sends navigation keys for the active session.</summary>
+        public void ToggleKeypadNavigation()
+        {
+            KeypadToggle.IsChecked = KeypadToggle.IsChecked != true;
         }
 
         /// <summary>Toggles whether the current scrollback position is held as new output arrives.</summary>
@@ -366,6 +373,16 @@ namespace BbsNavigator.Views
                 }
 
                 _manualDisconnect = false;
+
+                // A session dropped mid-screen can leave a scroll region, origin mode, or a partial
+                // escape sequence behind that would trap the new session's output on the last line.
+                // Resetting before connecting guarantees nothing from the new session is written first.
+                if (reconnecting && _settings.ClearScreenOnReconnect)
+                {
+                    Terminal.Reset(Terminal.Rows, Terminal.Columns);
+                    _rawLog.Clear();
+                }
+
                 UpdateStatus(
                     reconnecting ? BbsConnectionState.Reconnecting : BbsConnectionState.Connecting,
                     reconnecting ? $"Reconnecting to {_endpoint}…" : $"Connecting to {_endpoint}…");
@@ -445,6 +462,10 @@ namespace BbsNavigator.Views
             {
                 BeginStoryboard(fadeIn);
             }
+
+            // Started here rather than in the constructor so a file error can be reported over a
+            // visible window.
+            CaptureToggle.IsChecked = Profile.CaptureSession;
 
             UpdateStatus(BbsConnectionState.Connecting, $"Connecting to {_endpoint}…");
             await Dispatcher.Yield(DispatcherPriority.Background);
@@ -546,6 +567,10 @@ namespace BbsNavigator.Views
             else if (e.PropertyName == nameof(BbsProfile.TerminalEncoding))
             {
                 ApplyTerminalEncoding();
+            }
+            else if (e.PropertyName == nameof(BbsProfile.CaptureSession))
+            {
+                CaptureToggle.IsChecked = Profile.CaptureSession;
             }
         }
 
@@ -953,6 +978,20 @@ namespace BbsNavigator.Views
             DoorwayText.Text = "DoorWay Off";
         }
 
+        private void KeypadToggle_OnChecked(object sender, RoutedEventArgs e)
+        {
+            Terminal.NumericKeypadNavigation = true;
+            Profile.NumericKeypadNavigation = true;
+            KeypadText.Text = "Keypad Arrows";
+        }
+
+        private void KeypadToggle_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            Terminal.NumericKeypadNavigation = false;
+            Profile.NumericKeypadNavigation = false;
+            KeypadText.Text = "Keypad Numbers";
+        }
+
         private void ScrollLockToggle_OnChecked(object sender, RoutedEventArgs e)
         {
             _scrollbackLocked = true;
@@ -977,13 +1016,18 @@ namespace BbsNavigator.Views
                 string logFolder = Path.Combine(_settings.ResolveDownloadFolder(), "Logs");
                 Directory.CreateDirectory(logFolder);
                 string safeName = string.Join("_", Profile.Name.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
-                string path = Path.Combine(logFolder, $"{safeName} {DateTime.Now:yyyy-MM-dd HHmmss}.log");
+                // Telnet and SSH sessions for one profile share the setting, so they can start in the
+                // same second and must not collide on a file name.
+                string transportSuffix = Transport == BbsTransport.Ssh ? " (SSH)" : string.Empty;
+                string path = Path.Combine(logFolder, $"{safeName}{transportSuffix} {DateTime.Now:yyyy-MM-dd HHmmss}.log");
 
                 lock (_captureLock)
                 {
+                    _captureWriter?.Dispose();
                     _captureWriter = new StreamWriter(path, append: false) { AutoFlush = true };
                 }
 
+                Profile.CaptureSession = true;
                 CaptureDot.Foreground = FindResource(MosaicTheme.ErrorBrush) as System.Windows.Media.Brush;
                 CaptureDot.Opacity = 1.0;
                 ShowTransientStatus($"Capturing session to {path}");
@@ -1002,6 +1046,7 @@ namespace BbsNavigator.Views
         private void CaptureToggle_OnUnchecked(object sender, RoutedEventArgs e)
         {
             StopCapture();
+            Profile.CaptureSession = false;
             CaptureDot.ClearValue(TextBlock.ForegroundProperty);
             CaptureDot.Opacity = 0.6;
             ShowTransientStatus("Session capture stopped.");

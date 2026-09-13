@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="560"
-    Height="760"
+    Height="786"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -264,6 +264,16 @@
                     Content="Start sessions in DoorWay mode"
                     IsChecked="{Binding DoorwayMode}"
                     ToolTip="Enable when a DOS door needs Alt, function, or navigation keys as IBM PC scan codes." />
+                <CheckBox
+                    Margin="0,4,0,0"
+                    Content="Start sessions with the numeric keypad as arrow keys"
+                    IsChecked="{Binding NumericKeypadNavigation}"
+                    ToolTip="The keypad behaves as if Num Lock were off (8 = Up, 4 = Left, 7 = Home, and so on) regardless of the keyboard's Num Lock light." />
+                <CheckBox
+                    Margin="0,4,0,0"
+                    Content="Capture sessions to a log file"
+                    IsChecked="{Binding CaptureSession}"
+                    ToolTip="Records received text, with escape sequences removed, to a log in the download folder's Logs subfolder." />
             </StackPanel>
 
             <StackPanel

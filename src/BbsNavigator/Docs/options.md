@@ -28,6 +28,7 @@ Navigator closes.
 | Setting | Meaning |
 | ------- | ------- |
 | Reconnect Delay (seconds) | How long to wait before an automatic reconnection attempt (for profiles with auto-reconnect enabled). |
+| Clear Screen on Reconnect | Resets the terminal (screen, scrollback, scroll region, colors, and cursor) before reconnecting. This keeps a session that dropped mid-screen from trapping the new session's text on the last line. On by default. |
 | Connect Timeout (seconds) | How long a connection attempt may take before it is abandoned. |
 | Keepalive Interval (seconds) | Sends a telnet NOP after this much idle time so routers do not drop quiet sessions. Set to `0` to disable keepalives. |
 

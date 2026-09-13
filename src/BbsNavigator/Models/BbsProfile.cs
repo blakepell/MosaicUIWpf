@@ -210,6 +210,24 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private bool _doorwayMode;
 
+        /// <summary>
+        /// Gets or sets whether the numeric keypad starts as navigation keys, as if Num Lock were off.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Start with keypad as arrows")]
+        [property: Description("The numeric keypad sends arrow, Home, End, Page Up/Down, Insert, and Delete keys regardless of Num Lock, for games that move with the keypad.")]
+        [ObservableProperty]
+        private bool _numericKeypadNavigation;
+
+        /// <summary>
+        /// Gets or sets whether sessions with this BBS are captured to a log file.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Capture sessions")]
+        [property: Description("Records received text, with escape sequences removed, to a log in the download folder's Logs subfolder.")]
+        [ObservableProperty]
+        private bool _captureSession;
+
         /// <summary>Gets or sets whether the saved login macro runs after a Telnet connection opens.</summary>
         [property: Category("Login")]
         [property: DisplayName("Log in automatically")]

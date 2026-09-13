@@ -319,6 +319,15 @@
                         <TextBlock x:Name="DoorwayText" FontSize="11" Text="DoorWay Off" />
                     </ToggleButton>
                     <ToggleButton
+                        x:Name="KeypadToggle"
+                        Margin="5,0,0,0"
+                        Padding="7,2"
+                        Checked="KeypadToggle_OnChecked"
+                        ToolTip="Make the numeric keypad send arrow and navigation keys, as if Num Lock were off"
+                        Unchecked="KeypadToggle_OnUnchecked">
+                        <TextBlock x:Name="KeypadText" FontSize="11" Text="Keypad Numbers" />
+                    </ToggleButton>
+                    <ToggleButton
                         x:Name="ScrollLockToggle"
                         Margin="5,0,0,0"
                         Padding="7,2"
