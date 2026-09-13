@@ -1,0 +1,145 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:completion="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--
+        Merged into a script CompletionWindow's Resources by ScriptEditorSupport. Mirrors the ApexGate
+        script editor: a codicon beside each entry, the return type right aligned, and a metadata tool tip
+        (member type, return type, description, signatures). The icon brushes (ScriptCompletion*Brush) are
+        supplied per theme by ScriptEditorSupport, everything else resolves from the Mosaic theme.
+    -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/AvalonEdit/CompletionWindow.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--  Codicons (https://github.com/microsoft/vscode-codicons, CC BY 4.0), 200 unit view box.  -->
+    <Geometry x:Key="ScriptCompletionMethodGeometry" po:Freeze="True">M168.875 150L106.375 187.5H93.875L31.375 150L25.25 139.25V64.25L31.375 53.625L93.875 16.125H106.375L168.875 53.625L175 64.25V139.25L168.875 150zM93.875 30.5L37.625 64.25V128.75L93.875 98.125V30.5zM40.875 141.25L100.125 176.75L159.375 141.25L100.125 108.875L40.875 141.25zM162.625 64.25L106.375 30.5V98.125L162.625 128.75V64.25z</Geometry>
+    <Geometry x:Key="ScriptCompletionPropertyGeometry" po:Freeze="True">M35.0875 12.8125A21.875 21.875 0 0 0 19.4 19.7625A21.05 21.05 0 0 0 12.6 33.5125A21.5 21.5 0 0 0 17 48.75C32.1 64.625 61.8375 94.375 83.475 115.5625A53.2125 53.2125 0 0 0 84.075 154.0375A51.1875 51.1875 0 0 0 104.8875 178.65A53.2375 53.2375 0 0 0 155.3875 183.15L163.1 179.8L127.275 142.9125L142.9625 127.175L179.7625 163.1375L183.1 155.4A53.6875 53.6875 0 0 0 183.6 114.0125A52.475 52.475 0 0 0 172.0625 96.6125A53.375 53.375 0 0 0 162.775 89.35A52.7125 52.7125 0 0 0 115.125 83.775C101.4 69.875 67.125 35.375 48.625 18.1A20.375 20.375 0 0 0 35.075 12.8125zM134.3125 175.9A41.5 41.5 0 0 1 111.2 168.9375C108.5375 167.3125 106.05 165.3875 103.8125 163.2125A41.5125 41.5125 0 0 1 95.6 116.55L97.2875 112.8375L94.375 110C72.65 88.7875 41.0125 57.25 25.8125 41.2A10.0625 10.0625 0 0 1 27.4625 28.075A11.3875 11.3875 0 0 1 31.1875 25.325C32.4375 24.775 33.8 24.4625 35.175 24.425A8.675 8.675 0 0 1 40.8 26.6875C60.4625 45.05 98.45 83.425 109.6 94.6875L112.475 97.5875L116.15 95.9A41.075 41.075 0 0 1 156.4625 99.075A41.625 41.625 0 0 1 163.85 104.875A41 41 0 0 1 175.9 134.35C175.9 137.0375 175.6375 139.725 175.1 142.375L142.875 110.9375L110.9875 142.775L142.425 175.15A41.075 41.075 0 0 1 134.3 175.9z</Geometry>
+    <Geometry x:Key="ScriptCompletionFieldGeometry" po:Freeze="True">M180.625 143.75L118.125 175H106.875L19.375 131.25L12.5 120.125V63.875L19.375 52.625L81.875 21.375H93.125L180.625 65.125L187.5 76.375V132.625L180.625 143.75zM80.625 35.75L24.375 63.875V110.375L80.625 85.375V35.75zM86.875 95.75L28.625 122.125L111.875 163.875L170.25 134.625L86.875 95.75zM174.375 76.375L93.125 35.75V84.875L174.375 122.375V76.375z</Geometry>
+    <Geometry x:Key="ScriptCompletionVariableGeometry" po:Freeze="True">M25 137.5H50V150H18.75L12.5 143.75V43.75L18.75 37.5H50V50H25V137.5zM181.25 150H150V137.5H175V50H150V37.5H181.25L187.5 43.75V143.75L181.25 150zM147 117.875L150 112.5V81.125L146.25 75.5L90 50.5H84.25L53 69.25L50 74.625V105.875L53.75 111.625L110 136.625H115.75L147 117.875zM62.5 78.625L81.25 67.375V84L62.5 95.25V78.625zM69.75 105.5L87.875 94.625L130.25 113.375L112.125 124.25L69.75 105.5zM94.125 65.875L137.875 85.375V102.875L94.125 83.5V65.875z</Geometry>
+    <Geometry x:Key="ScriptCompletionClassGeometry" po:Freeze="True">M141.75 78.625H150.625L184 112V120.875L167.25 137.5H158.5L135.75 114.875H73.25V130.5L96.5 153.625V162.5L71.5 187.5H62.5L12.5 137.5V128.625L37.5 103.625H46.375L60.625 118V45.625L66.875 39.375H125V32.875L141.625 16.125H150.5L183.875 49.5V58.375L167.125 75H158.375L135.125 51.875H72.625V101.875H125V95.875L141.75 78.625zM162.875 124.25L170.75 116.375L145.75 91.375L137.875 99.25L162.875 124.25zM162.875 61.75L170.75 53.875L145.75 28.875L137.875 36.75L162.875 61.75zM41.875 116.875L25.75 133.125L66.875 174.25L83.125 158.125L41.875 116.875z</Geometry>
+    <Geometry x:Key="ScriptCompletionNamespaceGeometry" po:Freeze="True">M75 162.7V175H73.875C69.9625 175 66.175 174.225 62.5125 172.6875A29.125 29.125 0 0 1 52.825 166.0625A27.875 27.875 0 0 1 46.6625 156.65V156.6375A44.275 44.275 0 0 1 44.1875 146.2625V146.2375A76 76 0 0 1 43.8875 135.45C44.0375 131.825 44.1125 128.2 44.1125 124.5875C44.1125 122.05 43.6125 119.675 42.65 117.4375V117.425A18.8 18.8 0 0 0 33.0875 107.5875A17.2 17.2 0 0 0 26.1125 106.15H25V93.85H26.125C28.5625 93.85 30.875 93.35 33.075 92.3375L33.0875 92.325C35.3125 91.35 37.2 90.025 38.775 88.35L38.8 88.325C40.425 86.7 41.7125 84.7625 42.6375 82.5125L42.65 82.4875C43.625 80.2375 44.1125 77.8875 44.1125 75.4125C44.1125 71.7875 44.0375 68.1625 43.8875 64.55C43.7375 60.85 43.8375 57.2375 44.1875 53.675V53.6625C44.6 50.125 45.425 46.6875 46.65 43.3625V43.35C47.975 39.9375 50.0375 36.8 52.825 33.9375C55.6125 31.0625 58.85 28.85 62.5125 27.3125C66.175 25.775 69.9625 25 73.8875 25H75V37.3H73.875C71.3875 37.3 69.0375 37.775 66.85 38.7375A20.1625 20.1625 0 0 0 61.1375 42.7375A20.7375 20.7375 0 0 0 57.275 48.575C56.35 50.825 55.9 53.2 55.9 55.7375C55.9 58.5875 55.9375 61.4 56.0375 64.1375C56.1375 66.9875 56.1375 69.7625 56.0375 72.45A57.9875 57.9875 0 0 1 55.35 80.45A33.525 33.525 0 0 1 53.25 88.0625A28.55 28.55 0 0 1 44.025 100A28.55 28.55 0 0 1 53.25 111.9375C54.25 114.3375 54.9375 116.85 55.35 119.4625C55.7625 122.0875 55.9875 124.75 56.0375 127.4625C56.1375 130.2125 56.1375 132.9875 56.0375 135.7875C55.9375 138.5875 55.8875 141.4125 55.8875 144.2625A18.375 18.375 0 0 0 66.85 161.1875A16.625 16.625 0 0 0 73.8875 162.7H75zM125 37.3V25H126.125C130.0375 25 133.825 25.775 137.4875 27.3125C141.15 28.85 144.3875 31.0625 147.175 33.9375C149.9625 36.8125 152.025 39.9375 153.3375 43.35V43.3625C154.5875 46.6875 155.4 50.15 155.8125 53.7375V53.7625C156.1625 57.2625 156.2625 60.85 156.1125 64.55C155.9625 68.175 155.8875 71.8 155.8875 75.4125C155.8875 77.95 156.3875 80.325 157.35 82.5625V82.575A18.8 18.8 0 0 0 166.9125 92.4125C169.1125 93.375 171.4375 93.85 173.8875 93.85H175V106.15H173.875C171.4375 106.15 169.125 106.65 166.925 107.6625L166.9125 107.675A17.2 17.2 0 0 0 161.225 111.65L161.2 111.675A17.675 17.675 0 0 0 157.3625 117.4875L157.35 117.5125A17.5625 17.5625 0 0 0 155.8875 124.5875C155.8875 128.2125 155.9625 131.8375 156.1125 135.45A77.375 77.375 0 0 1 155.8125 146.325V146.3375A44.275 44.275 0 0 1 153.35 156.6375V156.65A27.875 27.875 0 0 1 147.175 166.0625A29.125 29.125 0 0 1 137.4875 172.6875A29.0625 29.0625 0 0 1 126.1125 175H125V162.7H126.125C128.625 162.7 130.95 162.225 133.15 161.2625C135.325 160.2375 137.225 158.9125 138.8625 157.2625C140.45 155.5875 141.7375 153.6375 142.725 151.425C143.65 149.175 144.1 146.8 144.1 144.2625C144.1 141.4125 144.0625 138.6125 143.9625 135.8625C143.8625 133.0125 143.8625 130.2375 143.9625 127.55C144.0125 124.775 144.2375 122.1125 144.65 119.55C145.0625 116.875 145.7625 114.35 146.75 111.9375A28.525 28.525 0 0 1 155.975 100A28.525 28.525 0 0 1 146.75 88.0625A33.75 33.75 0 0 1 144.65 80.5375C144.2375 77.9125 144.0125 75.25 143.9625 72.5375C143.8625 69.7875 143.8625 67.0125 143.9625 64.2125C144.0625 61.4125 144.1125 58.5875 144.1125 55.7375A18.375 18.375 0 0 0 138.8625 42.8A18.325 18.325 0 0 0 133.15 38.8125A16.625 16.625 0 0 0 126.1125 37.3H125z</Geometry>
+    <Geometry x:Key="ScriptCompletionCodeGeometry" po:Freeze="True">M58.85 130.275L25.7625 97.2L58.85 64.125L50 55.275L12.5 92.775V101.625L50 139.125L58.85 130.275zM146.35 139.125L137.5 130.275L170.5875 97.2L137.5 64.125L146.35 55.275L183.85 92.775V101.625L146.35 139.125zM61.35 37.5L72.525 31.9L135.025 156.9L123.85 162.5L61.35 37.5z</Geometry>
+
+    <!--  One completion entry: icon, name, and the return type right aligned.  -->
+    <DataTemplate x:Key="ScriptCompletionItemTemplate">
+        <DockPanel HorizontalAlignment="Stretch">
+            <Path
+                x:Name="Icon"
+                Width="16"
+                Height="16"
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Data="{StaticResource ScriptCompletionPropertyGeometry}"
+                DockPanel.Dock="Left"
+                Fill="{DynamicResource ScriptCompletionPropertyBrush}"
+                SnapsToDevicePixels="True"
+                Stretch="Uniform" />
+            <TextBlock
+                x:Name="Detail"
+                MaxWidth="150"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Foreground="{DynamicResource ScriptCompletionDetailBrush}"
+                Text="{Binding Detail, Mode=OneTime}"
+                TextAlignment="Right"
+                TextTrimming="CharacterEllipsis" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{Binding Text, Mode=OneTime}"
+                TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Method">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionMethodGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionMethodBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Field">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionFieldGeometry}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Global">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionVariableGeometry}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Class">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionClassGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionClassBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Module">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionNamespaceGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionSnippetBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Snippet">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource ScriptCompletionCodeGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionSnippetBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" Value="True">
+                <Setter TargetName="Detail" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!--  Replaces AvalonEdit's image + content template; PART_ListBox keeps the default list behavior.  -->
+    <Style x:Key="ScriptCompletionListStyle" TargetType="{x:Type completion:CompletionList}">
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type completion:CompletionList}">
+                    <completion:CompletionListBox x:Name="PART_ListBox" ItemTemplate="{StaticResource ScriptCompletionItemTemplate}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Separator line used between the metadata tool tip sections.  -->
+    <Style x:Key="ScriptCompletionRuleStyle" TargetType="{x:Type Border}">
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Margin" Value="0,4" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
+    </Style>
+
+    <!--  The metadata shown beside the selected entry (ScriptCompletionDescription).  -->
+    <DataTemplate x:Key="ScriptCompletionDescriptionTemplate">
+        <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+            <!--  Foreground is set per TextBlock: the tool tip popup does not reliably inherit its Foreground.  -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                    Text="{Binding MemberType, Mode=OneTime}" />
+                <TextBlock
+                    Margin="5,0,0,0"
+                    Foreground="{DynamicResource ScriptCompletionTypeBrush}"
+                    Text="{Binding ReturnType, Mode=OneTime}" />
+            </StackPanel>
+            <Border Style="{StaticResource ScriptCompletionRuleStyle}" />
+            <TextBlock
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                Text="{Binding Summary, Mode=OneTime}"
+                TextWrapping="Wrap" />
+            <Border x:Name="HintRule" Style="{StaticResource ScriptCompletionRuleStyle}" />
+            <TextBlock
+                x:Name="Hint"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                Text="{Binding Hint, Mode=OneTime}"
+                TextAlignment="Left"
+                TextWrapping="Wrap" />
+        </StackPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Hint, Mode=OneTime}" Value="">
+                <Setter TargetName="HintRule" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="Hint" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!--  Implicit styles do not cascade, so extend the shared completion tool tip rather than replace it.  -->
+    <Style BasedOn="{StaticResource {x:Type ToolTip}}" TargetType="{x:Type ToolTip}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}" />
+        <Setter Property="MaxWidth" Value="500" />
+        <Setter Property="ContentTemplate" Value="{StaticResource ScriptCompletionDescriptionTemplate}" />
+    </Style>
+</ResourceDictionary>

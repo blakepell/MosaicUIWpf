@@ -49,6 +49,7 @@
 		<None Remove="Assets\get-started-48.png" />
 		<None Remove="Assets\gravatar-48.png" />
 		<None Remove="Assets\home-48.png" />
+		<None Remove="Assets\javascript-48.png" />
 		<None Remove="Assets\labeled-separator-96.png" />
 		<None Remove="Assets\line-chart-48.png" />
 		<None Remove="Assets\link-48.png" />
@@ -137,6 +138,7 @@
 		<Resource Include="Assets\get-started-48.png" />
 		<Resource Include="Assets\gravatar-48.png" />
 		<Resource Include="Assets\home-48.png" />
+		<Resource Include="Assets\javascript-48.png" />
 		<Resource Include="Assets\labeled-separator-96.png" />
 		<Resource Include="Assets\line-chart-48.png" />
 		<Resource Include="Assets\link-48.png" />
@@ -715,6 +717,13 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\TypingProgressExample.xaml.cs">
 			<Link>LinkedSources\TypingProgressExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\ScriptEditorExample.xaml">
+			<Link>LinkedSources\ScriptEditorExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ScriptEditorExample.xaml.cs">
+			<Link>LinkedSources\ScriptEditorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\SearchBoxExample.xaml">

@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:example="clr-namespace:MosaicWpfDemo.Views.Examples"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:scripting="clr-namespace:Mosaic.UI.Wpf.Scripting;assembly=Mosaic.UI.Wpf"
     xmlns:terminal="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:views="clr-namespace:MosaicWpfDemo.Views"
@@ -1215,6 +1216,24 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ScalingTextBlock}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ScalingTextBlockExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/text-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Script Editor  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/javascript-48.png"
+                    Text="Script Editor">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Script Editor" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ScriptEditorExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ScriptEditorExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type scripting:ScriptEditorControl}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ScriptEditorExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/javascript-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

@@ -97,6 +97,9 @@
 
   <ItemGroup>
     <PackageReference Include="Argus.Core" Version="2026.7.21.1" />
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="10.9.0" />
+    <PackageReference Include="OllamaSharp" Version="5.4.30" />
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="gong-wpf-dragdrop" Version="4.0.0" />
@@ -108,10 +111,13 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.158" />
     <PackageReference Include="SSH.NET" Version="2026.0.0" />
+    <PackageReference Include="Topaz" Version="1.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Syntax highlighting definitions loaded at runtime by SyntaxEditor via GetManifestResourceStream. -->
+    <EmbeddedResource Include="Scripting\Assets\*.xshd" />
+    <Resource Include="Scripting\Assets\*.png" />
     <EmbeddedResource Include="Assets\SyntaxEditor\Json.Light.xshd" />
     <EmbeddedResource Include="Assets\SyntaxEditor\Json.Dark.xshd" />
     <EmbeddedResource Include="Assets\SyntaxEditor\CSharp.Light.xshd" />

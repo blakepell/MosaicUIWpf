@@ -20,6 +20,7 @@ using System.Windows.Markup;
 )]
 
 [assembly: XmlnsPrefix("http://schemas.apexgate.net/wpf/mosaic-ui", "mosaic")]
+[assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Scripting")]
 
 [assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf")]
 [assembly: XmlnsDefinition("http://schemas.apexgate.net/wpf/mosaic-ui", "Mosaic.UI.Wpf.Controls")]

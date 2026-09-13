@@ -1,0 +1,52 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:scripting="clr-namespace:Mosaic.UI.Wpf.Scripting"
+                    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+                    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ExecutionControl/ExecutionControl.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style x:Key="Mosaic.ScriptEditor.Button" TargetType="Button" BasedOn="{StaticResource MosaicExecutionButtonStyle}">
+        <Setter Property="Width" Value="28" />
+        <Setter Property="Height" Value="28" />
+        <Setter Property="Padding" Value="5" />
+    </Style>
+    <Style TargetType="{x:Type scripting:ScriptEditorControl}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontSize" Value="13.333" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type scripting:ScriptEditorControl}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Margin="3" Visibility="{TemplateBinding ToolBarVisibility}">
+                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding SaveCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Save (Ctrl+S)" AutomationProperties.Name="Save script">
+                                    <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-save-16.png" />
+                                </Button>
+                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Run (F5)" AutomationProperties.Name="Run script">
+                                    <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-play-16.png" />
+                                </Button>
+                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding StopCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Stop (F6)" AutomationProperties.Name="Stop script">
+                                    <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-stop-16.png" />
+                                </Button>
+                            </StackPanel>
+                            <controls:SyntaxEditor x:Name="PART_Editor" Grid.Row="1" Language="JavaScript" ShowLineNumbers="True"
+                                                   FontFamily="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}" FontSize="{TemplateBinding FontSize}" Padding="5"
+                                                   IsReadOnly="{TemplateBinding IsReadOnly}" AutomationProperties.Name="JavaScript source" />
+                            <TextBlock Grid.Row="2" Text="{Binding LastError.Message, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Foreground="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" TextWrapping="Wrap" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
