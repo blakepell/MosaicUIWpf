@@ -937,6 +937,36 @@ namespace BbsNavigator
         private BbsTerminalView? ActiveTerminal =>
             (DockingManager.Layout?.ActiveContent as LayoutDocument)?.Content as BbsTerminalView;
 
+        private void DockingManager_OnActiveContentChanged(object? sender, EventArgs e)
+        {
+            if (ActiveTerminal is not { } terminal)
+            {
+                return;
+            }
+
+            // Activating a tab is almost always followed by typing, so hand keyboard focus to the terminal.
+            // ContextIdle runs after AvalonDock's own activation and focus restoration, which would
+            // otherwise leave focus on the tab header. Inactive tabs are unloaded, so wait for the
+            // terminal to rejoin the visual tree before focusing it.
+            if (terminal.IsLoaded)
+            {
+                Dispatcher.BeginInvoke(terminal.FocusTerminal, DispatcherPriority.ContextIdle);
+                return;
+            }
+
+            void OnLoaded(object loadedSender, RoutedEventArgs loadedArgs)
+            {
+                terminal.Loaded -= OnLoaded;
+
+                if (ActiveTerminal == terminal)
+                {
+                    Dispatcher.BeginInvoke(terminal.FocusTerminal, DispatcherPriority.ContextIdle);
+                }
+            }
+
+            terminal.Loaded += OnLoaded;
+        }
+
         private async void UploadFile_OnClick(object sender, RoutedEventArgs e)
         {
             if (ActiveTerminal is { } terminal)

@@ -144,7 +144,10 @@
             Margin="4,0,4,4"
             BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
             BorderThickness="1,0,1,1">
-            <ad:DockingManager x:Name="DockingManager" DocumentClosed="DockingManager_OnDocumentClosed">
+            <ad:DockingManager
+                x:Name="DockingManager"
+                ActiveContentChanged="DockingManager_OnActiveContentChanged"
+                DocumentClosed="DockingManager_OnDocumentClosed">
                 <ad:DockingManager.Theme>
                     <ad:MosaicTheme />
                 </ad:DockingManager.Theme>
