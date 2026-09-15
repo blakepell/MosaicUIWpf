@@ -218,6 +218,77 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="TitleFontFamily"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TitleFontFamilyProperty = DependencyProperty.Register(
+            nameof(TitleFontFamily), typeof(FontFamily), typeof(ContentPanel), new FrameworkPropertyMetadata(default(FontFamily)));
+
+        /// <summary>
+        /// Gets or sets the font family used to render <see cref="Title"/>. Defaults to the panel's own
+        /// <see cref="Control.FontFamily"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The font family used to render the title.")]
+        public FontFamily TitleFontFamily
+        {
+            get => (FontFamily)GetValue(TitleFontFamilyProperty);
+            set => SetValue(TitleFontFamilyProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="TitleFontSize"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TitleFontSizeProperty = DependencyProperty.Register(
+            nameof(TitleFontSize), typeof(double), typeof(ContentPanel), new FrameworkPropertyMetadata(14d));
+
+        /// <summary>
+        /// Gets or sets the font size used to render <see cref="Title"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The font size used to render the title.")]
+        [TypeConverter(typeof(FontSizeConverter))]
+        public double TitleFontSize
+        {
+            get => (double)GetValue(TitleFontSizeProperty);
+            set => SetValue(TitleFontSizeProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="TitleFontWeight"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TitleFontWeightProperty = DependencyProperty.Register(
+            nameof(TitleFontWeight), typeof(FontWeight), typeof(ContentPanel), new FrameworkPropertyMetadata(FontWeights.SemiBold));
+
+        /// <summary>
+        /// Gets or sets the font weight used to render <see cref="Title"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The font weight used to render the title.")]
+        public FontWeight TitleFontWeight
+        {
+            get => (FontWeight)GetValue(TitleFontWeightProperty);
+            set => SetValue(TitleFontWeightProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="TitleForeground"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TitleForegroundProperty = DependencyProperty.Register(
+            nameof(TitleForeground), typeof(Brush), typeof(ContentPanel), new FrameworkPropertyMetadata(default(Brush)));
+
+        /// <summary>
+        /// Gets or sets the brush used to paint <see cref="Title"/>. Defaults to the themed window
+        /// foreground brush, matching <see cref="HeaderForeground"/>.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The brush used to paint the title.")]
+        public Brush TitleForeground
+        {
+            get => (Brush)GetValue(TitleForegroundProperty);
+            set => SetValue(TitleForegroundProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="FooterBackground"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty FooterBackgroundProperty = DependencyProperty.Register(

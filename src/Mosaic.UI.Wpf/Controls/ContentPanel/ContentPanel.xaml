@@ -15,6 +15,10 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HeaderBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.MessageBoxHeaderBackgroundBrush}}" />
         <Setter Property="HeaderForeground" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}" />
+        <Setter Property="TitleFontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="TitleFontSize" Value="14" />
+        <Setter Property="TitleFontWeight" Value="SemiBold" />
+        <Setter Property="TitleForeground" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}" />
         <Setter Property="FooterBackground" Value="{DynamicResource {x:Static themes:MosaicTheme.MessageBoxFooterBackgroundBrush}}" />
         <Setter Property="FooterForeground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="Template">
@@ -114,10 +118,10 @@
 
                                     <TextBlock
                                         VerticalAlignment="Center"
-                                        FontFamily="{TemplateBinding FontFamily}"
-                                        FontSize="14"
-                                        FontWeight="SemiBold"
-                                        Foreground="{TemplateBinding HeaderForeground}"
+                                        FontFamily="{TemplateBinding TitleFontFamily}"
+                                        FontSize="{TemplateBinding TitleFontSize}"
+                                        FontWeight="{TemplateBinding TitleFontWeight}"
+                                        Foreground="{TemplateBinding TitleForeground}"
                                         Text="{TemplateBinding Title}" />
                                     <ContentPresenter Content="{TemplateBinding HeaderContent}" TextElement.Foreground="{TemplateBinding HeaderForeground}" />
                                 </DockPanel>
