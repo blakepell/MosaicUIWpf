@@ -18,6 +18,13 @@
     public class AccentButton : Button
     {
         /// <summary>
+        /// Identifies the <see cref="CornerRadius" /> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+            nameof(CornerRadius), typeof(CornerRadius), typeof(AccentButton),
+            new FrameworkPropertyMetadata(new CornerRadius(0)));
+
+        /// <summary>
         /// Identifies the <see cref="AccentButtonType" /> dependency property.
         /// </summary>
         public static readonly DependencyProperty AccentButtonTypeProperty = DependencyProperty.Register(
@@ -30,6 +37,16 @@
         public AccentButton()
         {
             this.DefaultStyleKey = typeof(AccentButton);
+        }
+
+        /// <summary>
+        /// Gets or sets the radius of the button's corners.
+        /// </summary>
+        /// <value>The corner radius. The default style uses the theme's button corner radius.</value>
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)this.GetValue(CornerRadiusProperty);
+            set => this.SetValue(CornerRadiusProperty, value);
         }
 
         /// <summary>

@@ -23,5 +23,9 @@
             Margin="0,8,0,0"
             Content="Delete"
             AccentButtonType="FluentRed" />
+        <controls:AccentButton
+            Margin="0,8,0,0"
+            Content="Rounded Corners"
+            CornerRadius="6" />
     </StackPanel>
 </UserControl>

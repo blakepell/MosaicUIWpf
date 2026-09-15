@@ -8,6 +8,7 @@
         <Setter Property="MinHeight" Value="26" />
         <Setter Property="MinWidth" Value="72" />
         <Setter Property="Padding" Value="10,3" />
+        <Setter Property="CornerRadius" Value="{DynamicResource {x:Static themes:MosaicTheme.ButtonCornerRadius}}" />
         <Setter Property="Background" Value="{DynamicResource Button.Static.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Button.Static.Border}" />
         <Setter Property="BorderThickness" Value="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}" />
@@ -26,7 +27,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource {x:Static themes:MosaicTheme.ButtonCornerRadius}}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <ContentPresenter
                             Margin="{TemplateBinding Padding}"
