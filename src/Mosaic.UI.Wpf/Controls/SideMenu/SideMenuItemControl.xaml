@@ -19,25 +19,38 @@
     <StackPanel>
         <!--  Main Menu Item  -->
         <Border
+            x:Name="ItemBorder"
             Width="{Binding Compact, ElementName=Me, Converter={StaticResource CompactWidthConverter}}"
             Height="{Binding Compact, ElementName=Me, Converter={StaticResource CompactHeightConverter}}"
+            Background="Transparent"
             Cursor="Hand"
             MouseLeftButtonDown="OnItemMouseDown"
             MouseLeftButtonUp="OnItemMouseUp">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
-                        </DataTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
             <Grid>
+                <!--
+                    Selection / hover background. Kept as a separate layer (rather than the item Border's Background)
+                    so its Opacity can be lowered for translucent backdrops like Mica without fading the content.
+                -->
+                <Border Opacity="{Binding SideMenu.SelectionBackgroundOpacity, ElementName=Me, FallbackValue=1}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Background" Value="{Binding SideMenu.SelectionBackground, ElementName=Me}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SideMenu.SelectionBackground, ElementName=Me, FallbackValue={x:Null}}" Value="{x:Null}">
+                                    <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SidebarSelectedBackgroundBrush}}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding MenuItem.IsSelected, ElementName=Me}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=ItemBorder}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+
                 <!--  Selection Indicator  -->
                 <Rectangle
                     Width="3"

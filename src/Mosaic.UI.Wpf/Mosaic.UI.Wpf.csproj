@@ -109,7 +109,7 @@
     <!-- Pinned ahead of the version Microsoft.Data.Sqlite resolves to; 2.1.11 carries GHSA-2m69-gcr7-jv3q. -->
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.158" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
     <PackageReference Include="SSH.NET" Version="2026.0.0" />
     <PackageReference Include="Topaz" Version="1.4.1" />
   </ItemGroup>

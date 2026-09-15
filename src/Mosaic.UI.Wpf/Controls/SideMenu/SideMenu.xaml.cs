@@ -138,6 +138,51 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="SelectionBackground"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SelectionBackgroundProperty =
+            DependencyProperty.Register(nameof(SelectionBackground), typeof(Brush), typeof(SideMenu),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
+
+        /// <summary>
+        /// Gets or sets the brush used behind selected and hovered items. When <see langword="null"/> (the default),
+        /// the theme's <see cref="Themes.MosaicTheme.SidebarSelectedBackgroundBrush"/> is used.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The brush used behind selected and hovered items. Null uses the theme's sidebar selection brush.")]
+        public Brush? SelectionBackground
+        {
+            get => (Brush?)GetValue(SelectionBackgroundProperty);
+            set => SetValue(SelectionBackgroundProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="SelectionBackgroundOpacity"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SelectionBackgroundOpacityProperty =
+            DependencyProperty.Register(nameof(SelectionBackgroundOpacity), typeof(double), typeof(SideMenu),
+                new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, null, CoerceOpacity));
+
+        /// <summary>
+        /// Gets or sets the opacity (0.0 - 1.0) of the selected/hovered item background. Defaults to 1.0 (opaque).
+        /// Lower values let a translucent window backdrop such as Mica or Acrylic show through the selection
+        /// while still making the selected item clearly visible.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("Opacity (0.0 - 1.0) of the selected/hovered item background. Use a value below 1.0 on Mica or Acrylic windows.")]
+        public double SelectionBackgroundOpacity
+        {
+            get => (double)GetValue(SelectionBackgroundOpacityProperty);
+            set => SetValue(SelectionBackgroundOpacityProperty, value);
+        }
+
+        private static object CoerceOpacity(DependencyObject d, object baseValue)
+        {
+            double value = (double)baseValue;
+            return double.IsNaN(value) ? 1.0 : Math.Clamp(value, 0.0, 1.0);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="EnableDragAndDropReordering"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty EnableDragAndDropReorderingProperty =
