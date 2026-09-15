@@ -1,0 +1,1 @@
+https://github.com/Simnico99/MicaWPF/blob/main/src/MicaWPF.Core/Styles/Themes/MicaDark.xaml
