@@ -1181,7 +1181,7 @@ namespace Mosaic.UI.Wpf.Controls
                 }
                 else if (e.Key == Key.I)
                 {
-                    this.SurroundWith("__");
+                    this.SurroundWith("_");
                     e.Handled = true;
                 }
 

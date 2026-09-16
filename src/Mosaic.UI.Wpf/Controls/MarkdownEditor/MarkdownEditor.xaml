@@ -68,7 +68,7 @@
                 <Button
                     Click="SurroundWithButton_Click"
                     Style="{StaticResource Mosaic.MarkdownEditor.ToolBarButton}"
-                    Tag="__"
+                    Tag="_"
                     ToolTip="Italic [Ctrl+I]">
                     <controls:AdaptiveImage Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-italics-32.png" Style="{StaticResource Mosaic.MarkdownEditor.ToolBarImage}" />
                 </Button>
