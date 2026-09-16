@@ -1,0 +1,29 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/AccentButton/AccentButton.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--
+        The capture button shares the AccentButton chrome so AccentButtonType works on it unchanged.
+        The content setters below only apply when the consumer has not supplied their own Content.
+    -->
+    <Style
+        x:Key="{x:Type controls:VisualCaptureButton}"
+        BasedOn="{StaticResource {x:Type controls:AccentButton}}"
+        TargetType="{x:Type controls:VisualCaptureButton}">
+        <Setter Property="AccentButtonType" Value="Gray" />
+        <Setter Property="Content" Value="Copy Image" />
+        <Setter Property="ToolTip" Value="Copy an image of the target to the clipboard" />
+        <Style.Triggers>
+            <Trigger Property="Mode" Value="SaveToFile">
+                <Setter Property="Content" Value="Save Image..." />
+                <Setter Property="ToolTip" Value="Save an image of the target to a file" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

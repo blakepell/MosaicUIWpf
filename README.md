@@ -209,6 +209,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [TypingProgress](./docs/TypingProgress.md) | Represents a control that visually indicates typing progress, typically used in chat or messaging scenarios. |
 | [ValidationSummaryPanel](./docs/ValidationSummaryPanel.md) | A validation summary panel that displays all validation errors from child controls in a form. Supports both WPF's built-in validation and IDataErrorInfo/INotifyDataErrorInfo. |
 | [VersionTextBlock](./docs/VersionTextBlock.md) | A TextBlock that displays an assembly version. |
+| [VisualCaptureButton](./docs/VisualCaptureButton.md) | A button that renders a target element (including its full scroll extent) to an image and either copies it to the clipboard or saves it to a file. Backed by the `VisualCapture` utility class. |
 | [VT52Terminal](./docs/VT52Terminal.md) | A terminal emulator hosted inside an AvalonEdit TextEditor. Call Add(string) or Add(byte[]) with remote data; call SendKey/SendString for local keystrokes. Subscribe to Transmit to get bytes that the terminal sends back. |
 | [WDScrollViewer](./docs/WDScrollViewer.md) | Provides a ScrollViewer with optional animated wheel scrolling. |
 | [WindowTitleBar](./docs/WindowTitleBar.md) | A self-contained custom title bar control for borderless/chrome-less WPF windows. Automatically wires up drag-to-move, double-click maximize/restore, and the standard window system buttons. |
@@ -240,5 +241,6 @@ The following table lists the behaviors found in `src/Mosaic.UI.Wpf/Behaviors`.
 | [OpenWindowBehavior](./docs/OpenWindowBehavior.md) | Behavior to open a new Window when attached to a ButtonBase or MenuItem. |
 | [TextBoxClearOnEscapeBehavior](./docs/TextBoxClearOnEscapeBehavior.md) | Clears the contents of a TextBoxBase when the Escape key is pressed. |
 | [TextBoxCopyBehavior](./docs/TextBoxCopyBehavior.md) | A behavior that enables a Button to copy text from a specified TextBox to the clipboard. |
+| [VisualCaptureContextMenuBehavior](./docs/VisualCaptureContextMenuBehavior.md) | Adds "Copy as Image" and "Save as Image..." items to an element's context menu (creating one if needed) that capture the element at its full scroll extent. |
 | [WindowChromeBehavior](./docs/WindowChromeBehavior.md) | Attached behavior to apply and maintain WindowChrome settings on a Window. |
 

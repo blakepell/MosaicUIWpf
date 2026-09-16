@@ -830,6 +830,13 @@
 			<Link>LinkedSources\RadialProgressBarExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\VisualCaptureExample.xaml">
+			<Link>LinkedSources\VisualCaptureExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\VisualCaptureExample.xaml.cs">
+			<Link>LinkedSources\VisualCaptureExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\VersionTextBlockExample.xaml">
 			<Link>LinkedSources\VersionTextBlockExample.xaml</Link>
 		</EmbeddedResource>
