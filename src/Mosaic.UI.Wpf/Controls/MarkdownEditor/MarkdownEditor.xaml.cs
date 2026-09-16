@@ -207,7 +207,44 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(PreviewButtonIsVisibleProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="CustomMenuToolTip"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CustomMenuToolTipProperty = DependencyProperty.Register(
+            nameof(CustomMenuToolTip),
+            typeof(string),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata("Additional Actions"));
+
+        /// <summary>
+        /// Gets or sets the tooltip shown on the toolbar's custom menu split button.
+        /// </summary>
+        [Category("Appearance")]
+        [Description("The tooltip shown on the toolbar's custom menu split button.")]
+        public string? CustomMenuToolTip
+        {
+            get => (string?)this.GetValue(CustomMenuToolTipProperty);
+            set => this.SetValue(CustomMenuToolTipProperty, value);
+        }
+
         #endregion
+
+        /// <summary>
+        /// Gets the caller supplied menu items hosted by the split button at the end of the toolbar. The
+        /// split button (and its leading separator) stays collapsed while this collection is empty and
+        /// becomes visible as soon as it contains an item, so a host can extend the editor's toolbar
+        /// without re-templating it.
+        /// </summary>
+        /// <remarks>
+        /// Items may be populated in XAML as the content of a <c>MarkdownEditor.CustomMenuItems</c>
+        /// property element, or from code at any point in the control's lifetime. This is the drop-down
+        /// menu's own item collection, so the items become real logical children of it the moment they are
+        /// added and <see cref="MenuItem"/>, <see cref="Separator"/>, <c>Click</c>, <c>Command</c>,
+        /// <c>Icon</c>, and nested child items all behave as they would in a hand-authored menu.
+        /// </remarks>
+        [Category("Common")]
+        [Description("Additional caller supplied menu items hosted by a split button at the end of the toolbar.")]
+        public ItemCollection CustomMenuItems => this.CustomMenuButton.ContextMenu!.Items;
 
         /// <summary>
         /// Gets or sets the markdown text of the document.
@@ -524,6 +561,12 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         private void InsertImageFromFileButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromFile();
+
+        /// <summary>
+        /// The custom menu split button has no primary action of its own, so clicking either surface drops
+        /// the caller's menu down.
+        /// </summary>
+        private void CustomMenuButton_Click(object sender, RoutedEventArgs e) => this.CustomMenuButton.IsDropDownOpen = true;
 
         #endregion
 

@@ -46,6 +46,7 @@
     <None Remove="Assets\termina3-48.png" />
     <None Remove="Assets\vs-add-16.png" />
     <None Remove="Assets\vs-close-16.png" />
+    <None Remove="Assets\vs-context-menu-32.png" />
     <None Remove="Assets\vs-delete-16.png" />
     <None Remove="Assets\vs-find-next-16.png" />
     <None Remove="Assets\vs-find-previous-16.png" />
@@ -178,6 +179,7 @@
     <Resource Include="Assets\text-48.png" />
     <Resource Include="Assets\vs-add-16.png" />
     <Resource Include="Assets\vs-close-16.png" />
+    <Resource Include="Assets\vs-context-menu-32.png" />
     <Resource Include="Assets\vs-delete-16.png" />
     <Resource Include="Assets\vs-find-next-16.png" />
     <Resource Include="Assets\vs-find-previous-16.png" />

@@ -321,6 +321,38 @@
                         <Path Data="M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z" Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}" />
                     </Viewbox>
                 </Button>
+
+                <Separator Visibility="{Binding ContextMenu.HasItems, ElementName=CustomMenuButton, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}" />
+
+                <!--
+                    Host for the caller's CustomMenuItems, which is this ContextMenu's own Items collection
+                    (items added to it become real logical children, which an ItemsSource would not give them
+                    until the menu first opened). HasItems keeps the slot collapsed until there is something
+                    to show.
+                -->
+                <controls:SplitButton
+                    x:Name="CustomMenuButton"
+                    Width="32"
+                    MinWidth="48"
+                    Padding="0"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                    Click="CustomMenuButton_Click"
+                    DropDownButtonWidth="16"
+                    Focusable="False"
+                    ToolTip="{Binding CustomMenuToolTip, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Visibility="{Binding ContextMenu.HasItems, RelativeSource={RelativeSource Self}, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}">
+                    <controls:SplitButton.Content>
+                        <controls:AdaptiveImage
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/vs-context-menu-32.png"
+                            Stretch="Uniform" />
+                    </controls:SplitButton.Content>
+                    <controls:SplitButton.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" />
+                    </controls:SplitButton.ContextMenu>
+                </controls:SplitButton>
             </ToolBar>
         </ToolBarTray>
 

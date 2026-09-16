@@ -8,6 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Windows;
+
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class MarkdownEditorExample
@@ -38,6 +40,14 @@ namespace MosaicWpfDemo.Views.Examples
             this.Editor.Text = SampleMarkdown;
             this.Editor.FileName = "Sample.md";
             this.Editor.IsModified = false;
+        }
+
+        /// <summary>
+        /// Handles the custom toolbar menu item supplied through <c>MarkdownEditor.CustomMenuItems</c>.
+        /// </summary>
+        private void CharacterCountMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show($"The editor contains {this.Editor.Text.Length:N0} characters.", "Character Count", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

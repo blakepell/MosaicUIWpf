@@ -13,8 +13,8 @@
     <ContextMenu
         x:Key="PropertyGridEditorContextMenu"
         x:Shared="False"
-        Style="{DynamicResource {x:Type ContextMenu}}"
-        ItemContainerStyle="{DynamicResource {x:Type MenuItem}}">
+        ItemContainerStyle="{DynamicResource {x:Type MenuItem}}"
+        Style="{DynamicResource {x:Type ContextMenu}}">
         <MenuItem Command="ApplicationCommands.Undo" />
         <Separator />
         <MenuItem Command="ApplicationCommands.Cut" />
@@ -89,13 +89,13 @@
     <!--  NumberEditor  -->
     <DataTemplate x:Key="NumberEditor">
         <local:NumericTextBox
-            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             Padding="4"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
+            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             DecimalPlaces="0"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
@@ -104,13 +104,13 @@
     <!--  DecimalEditor  -->
     <DataTemplate x:Key="DecimalEditor">
         <local:NumericTextBox
-            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             Padding="4"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             local:PropertyGridValidation.PropertyItem="{Binding}"
             Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
             BorderThickness="0"
+            ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
             DecimalPlaces="10"
             IsReadOnly="{Binding IsReadOnly}"
             Text="{Binding Value, UpdateSourceTrigger=LostFocus, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, Mode=TwoWay, ValidatesOnExceptions=True, NotifyOnValidationError=True}" />
@@ -281,8 +281,8 @@
                             <!--  Search box (optional)  -->
                             <TextBox
                                 x:Name="PART_Search"
-                                ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
                                 Margin="4"
+                                ContextMenu="{StaticResource PropertyGridEditorContextMenu}"
                                 Visibility="Collapsed" />
 
                             <!--  The list of properties  -->

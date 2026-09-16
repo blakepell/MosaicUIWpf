@@ -17,13 +17,20 @@
 
         <TextBlock
             Margin="0,0,0,8"
-            Text="A markdown editor built on the Mosaic SyntaxEditor (AvalonEdit). Use the toolbar to format text, continue lists with Enter, indent with Tab/Shift+Tab, and right-click for 'Copy as HTML' and 'Paste Image as Base64'. The window title below the toolbar tracks unsaved changes with an asterisk."
+            Text="A markdown editor built on the Mosaic SyntaxEditor (AvalonEdit). Use the toolbar to format text, continue lists with Enter, indent with Tab/Shift+Tab, and right-click for 'Copy as HTML' and 'Paste Image as Base64'. The window title below the toolbar tracks unsaved changes with an asterisk. The split button at the end of the toolbar hosts the CustomMenuItems this example supplies."
             TextWrapping="Wrap" />
 
         <controls:MarkdownEditor
             x:Name="Editor"
             Grid.Row="1"
             StatusBarVisibility="Visible"
-            StorageFolder="C:\Temp" />
+            StorageFolder="C:\Temp">
+            <controls:MarkdownEditor.CustomMenuItems>
+                <MenuItem
+                    Click="CharacterCountMenuItem_Click"
+                    Header="Character Count..."
+                    ToolTip="Shows the number of characters currently in the editor." />
+            </controls:MarkdownEditor.CustomMenuItems>
+        </controls:MarkdownEditor>
     </Grid>
 </UserControl>
