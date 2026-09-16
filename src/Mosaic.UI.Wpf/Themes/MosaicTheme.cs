@@ -124,6 +124,11 @@
 
         public static ComponentResourceKey ControlSeparatorBrush { get; } = new(typeof(MosaicTheme), "ControlSeparatorBrush");
 
+        /// <summary>
+        /// Gets the brush used for the divider above a settings item footer.
+        /// </summary>
+        public static ComponentResourceKey SettingsItemSeparatorBrush { get; } = new(typeof(MosaicTheme), "SettingsItemSeparatorBrush");
+
         public static ComponentResourceKey ControlSeparatorColor { get; } = new(typeof(MosaicTheme), "ControlSeparatorColor");
 
         public static ComponentResourceKey HyperLinkBrush { get; } = new(typeof(MosaicTheme), "HyperLinkBrush");

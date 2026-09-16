@@ -53,5 +53,24 @@
             get => (double)GetValue(IconSizeProperty);
             set => SetValue(IconSizeProperty, value);
         }
+
+        /// <summary>
+        /// Identifies the <see cref="Footer"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FooterProperty =
+            DependencyProperty.Register(nameof(Footer), typeof(object), typeof(SettingsItem), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the content displayed below the settings row and its divider.
+        /// </summary>
+        /// <value>
+        /// The footer content. The default is <see langword="null"/>, which hides the footer and divider.
+        /// Collapsing a footer element also hides the footer and divider.
+        /// </value>
+        public object? Footer
+        {
+            get => GetValue(FooterProperty);
+            set => SetValue(FooterProperty, value);
+        }
     }
 }

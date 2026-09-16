@@ -44,6 +44,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundColor}">#FF8792C8</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderColor}">#FF26347A</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlSeparatorColor}">#FF24337F</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SettingsItemSeparatorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorColor}}" />
 
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColor}">#FF9AA7EC</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColor}">#FFC2CAFF</Color>

@@ -40,6 +40,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledForegroundColor}">#FFB0B0B0</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlDisabledBorderColor}">#FF6B6B6B</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlSeparatorColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.SettingsItemSeparatorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorColor}}" />
 
     <!--  Hyperlink / tabs / status  -->
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkColor}">#FF80FFFF</Color>

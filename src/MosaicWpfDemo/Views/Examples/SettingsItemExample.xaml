@@ -23,5 +23,24 @@
             <TextBox Width="150" Text="{Binding DefaultUsername, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
         </mosaic:SettingsItem>
 
+        <mosaic:SettingsItem
+            Title="Account Information"
+            Description="Choose the default username used for this account."
+            IconSource="../../Assets/avatar-48.png">
+            <mosaic:SettingsItem.Footer>
+                <StackPanel>
+                    <TextBlock FontWeight="SemiBold" Text="About this setting" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Text="Your default username is used to prefill sign-in forms. You can change it at any time."
+                        TextWrapping="Wrap" />
+                    <TextBlock Margin="0,8,0,0">
+                        <Run Text="Current username: " />
+                        <Run FontWeight="SemiBold" Text="{Binding DefaultUsername, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>
+            </mosaic:SettingsItem.Footer>
+            <TextBox Width="150" Text="{Binding DefaultUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </mosaic:SettingsItem>
     </StackPanel>
 </UserControl>
