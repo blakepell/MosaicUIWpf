@@ -563,6 +563,11 @@ namespace Mosaic.UI.Wpf.Controls
         private void InsertImageFromFileButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromFile();
 
         /// <summary>
+        /// Saves the image on the clipboard and inserts a markdown image that references it.
+        /// </summary>
+        private void InsertImageFromClipboardButton_Click(object sender, RoutedEventArgs e) => this.InsertImageFromClipboard();
+
+        /// <summary>
         /// The custom menu split button has no primary action of its own, so clicking either surface drops
         /// the caller's menu down.
         /// </summary>
@@ -1112,6 +1117,94 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             this.FileAttached?.Invoke(this, new FileAttachedEventArgs(finalPath, sourcePath, copiedToStorageFolder));
+        }
+
+        /// <summary>
+        /// Saves the image currently on the clipboard as a PNG and inserts it as a markdown image.
+        /// When <see cref="StorageFolder"/> is set, the PNG is written into that folder under a
+        /// generated <c>{Guid}.png</c> name and referenced by a relative link, so a
+        /// <see cref="MarkdownViewer"/> configured with the same <see cref="StorageFolder"/> can resolve
+        /// it. When no storage folder is set, the PNG is written to the temporary folder and referenced
+        /// by an absolute file URI. If the clipboard holds no image the user is told so.
+        /// </summary>
+        public void InsertImageFromClipboard()
+        {
+            BitmapSource? bitmapSource = null;
+
+            try
+            {
+                if (Clipboard.ContainsImage())
+                {
+                    bitmapSource = Clipboard.GetImage();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            if (bitmapSource == null)
+            {
+                MessageBox.Show("There is no available image on the clipboard.", "Insert Image from Clipboard", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string url;
+            string finalPath;
+            bool copiedToStorageFolder;
+
+            try
+            {
+                string fileName = $"{Guid.NewGuid()}.png";
+
+                if (!string.IsNullOrWhiteSpace(this.StorageFolder))
+                {
+                    Directory.CreateDirectory(this.StorageFolder);
+                    finalPath = Path.Combine(this.StorageFolder, fileName);
+
+                    // A relative link (just the file name) so a MarkdownViewer with the same
+                    // StorageFolder resolves the image against that folder.
+                    url = fileName;
+                    copiedToStorageFolder = true;
+                }
+                else
+                {
+                    // A clipboard image has no origin on disk to reference in place, so park it in the
+                    // temp folder and reference it by an absolute file URI.
+                    finalPath = Path.Combine(Path.GetTempPath(), fileName);
+                    url = new Uri(finalPath).AbsoluteUri;
+                    copiedToStorageFolder = false;
+                }
+
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+
+                using (var fs = File.Create(finalPath))
+                {
+                    encoder.Save(fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show($"The image could not be inserted.\r\n\r\n{ex.Message}", "Insert Image from Clipboard", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string markdown = $"![Image]({url})";
+
+            if (this.Editor.SelectionLength > 0)
+            {
+                this.Editor.SelectedText = markdown;
+            }
+            else
+            {
+                int pos = this.Editor.CaretOffset;
+                this.Editor.Document.Insert(pos, markdown);
+                this.Editor.CaretOffset = pos + markdown.Length;
+            }
+
+            this.FileAttached?.Invoke(this, new FileAttachedEventArgs(finalPath, finalPath, copiedToStorageFolder));
         }
 
         /// <summary>

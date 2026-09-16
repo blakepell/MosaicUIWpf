@@ -296,6 +296,10 @@
                                 Click="InsertImageFromFileButton_Click"
                                 Header="Insert Image from File..."
                                 ToolTip="Select an image from the file system to insert." />
+                            <MenuItem
+                                Click="InsertImageFromClipboardButton_Click"
+                                Header="Insert Image from Clipboard"
+                                ToolTip="Save the image on the clipboard as a PNG and insert it." />
                         </ContextMenu>
                     </controls:SplitButton.ContextMenu>
                 </controls:SplitButton>
