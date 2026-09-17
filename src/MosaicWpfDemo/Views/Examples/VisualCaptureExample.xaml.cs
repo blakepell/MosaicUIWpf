@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Media;
 using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Controls;
+using Mosaic.UI.Wpf.Themes;
 
 namespace MosaicWpfDemo.Views.Examples
 {
@@ -41,7 +42,11 @@ namespace MosaicWpfDemo.Views.Examples
 
         private void OnCopyWholePageClick(object sender, RoutedEventArgs e)
         {
-            if (VisualCapture.TryCopyToClipboard(this, new VisualCaptureOptions { Background = Brushes.White }, out var error))
+            // Use the current theme's window background so the capture matches what is on screen in
+            // both light and dark mode; this page itself paints no background of its own.
+            var background = this.TryFindResource(MosaicTheme.WindowBackgroundBrush) as Brush ?? Brushes.White;
+
+            if (VisualCapture.TryCopyToClipboard(this, new VisualCaptureOptions { Background = background }, out var error))
             {
                 StatusTextBlock.Text = "The entire example page was copied to the clipboard via VisualCapture.CopyToClipboard.";
             }

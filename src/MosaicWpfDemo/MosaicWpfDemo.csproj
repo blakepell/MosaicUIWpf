@@ -65,6 +65,7 @@
 		<None Remove="Assets\pie-chart-48.png" />
 		<None Remove="Assets\play-pause-stop-48.png" />
 		<None Remove="Assets\progress-48.png" />
+		<None Remove="Assets\screenshot-48.png" />
 		<None Remove="Assets\search-48.png" />
 		<None Remove="Assets\settings-panel-48.png" />
 		<None Remove="Assets\settings-panel-96.png" />
@@ -153,6 +154,7 @@
 		<Resource Include="Assets\pie-chart-48.png" />
 		<Resource Include="Assets\play-pause-stop-48.png" />
 		<Resource Include="Assets\progress-48.png" />
+		<Resource Include="Assets\screenshot-48.png" />
 		<Resource Include="Assets\search-48.png" />
 		<Resource Include="Assets\settings-panel-48.png" />
 		<Resource Include="Assets\settings-panel-96.png" />

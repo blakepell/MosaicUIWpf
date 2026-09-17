@@ -1494,7 +1494,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/collage-48.png"
+                    ImageSource="/Assets/screenshot-48.png"
                     Text="VisualCapture">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -1503,7 +1503,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.VisualCaptureExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:VisualCaptureButton}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:VisualCaptureExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/screenshot-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

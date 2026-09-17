@@ -272,8 +272,10 @@ namespace Mosaic.UI.Wpf.Common
 
         /// <summary>
         /// Renders the element at the given logical size into a <see cref="RenderTargetBitmap"/>.  The
-        /// element is drawn through a <see cref="VisualBrush"/> so that any offset the element has within
-        /// its parent (margins, alignment) does not shift the image.
+        /// element is rendered directly (a <see cref="VisualBrush"/> is not used: its contents are
+        /// realized lazily and an element that has not been invalidated since it was last drawn comes out
+        /// blank).  Because <see cref="RenderTargetBitmap.Render"/> honours the offset the element has
+        /// within its parent (margins, alignment), that offset is rendered as well and then cropped away.
         /// </summary>
         private static RenderTargetBitmap RenderCore(UIElement element, Size size, VisualCaptureOptions options)
         {
@@ -299,6 +301,23 @@ namespace Mosaic.UI.Wpf.Common
             int pixelWidth = Math.Max(1, (int)Math.Ceiling(size.Width * dpiX / 96.0));
             int pixelHeight = Math.Max(1, (int)Math.Ceiling(size.Height * dpiY / 96.0));
 
+            var offset = VisualTreeHelper.GetOffset(element);
+            int offsetX = Math.Max(0, (int)Math.Round(offset.X * dpiX / 96.0));
+            int offsetY = Math.Max(0, (int)Math.Round(offset.Y * dpiY / 96.0));
+
+            var rendered = new RenderTargetBitmap(offsetX + pixelWidth, offsetY + pixelHeight, dpiX, dpiY, PixelFormats.Pbgra32);
+            rendered.Render(element);
+
+            if (offsetX == 0 && offsetY == 0 && options.Background == null)
+            {
+                rendered.Freeze();
+                return rendered;
+            }
+
+            BitmapSource source = offsetX == 0 && offsetY == 0
+                ? rendered
+                : new CroppedBitmap(rendered, new Int32Rect(offsetX, offsetY, pixelWidth, pixelHeight));
+
             var bounds = new Rect(size);
             var visual = new DrawingVisual();
 
@@ -309,16 +328,7 @@ namespace Mosaic.UI.Wpf.Common
                     context.DrawRectangle(options.Background, null, bounds);
                 }
 
-                var brush = new VisualBrush(element)
-                {
-                    Stretch = Stretch.None,
-                    AlignmentX = AlignmentX.Left,
-                    AlignmentY = AlignmentY.Top,
-                    ViewboxUnits = BrushMappingMode.Absolute,
-                    Viewbox = bounds
-                };
-
-                context.DrawRectangle(brush, null, bounds);
+                context.DrawImage(source, bounds);
             }
 
             var bitmap = new RenderTargetBitmap(pixelWidth, pixelHeight, dpiX, dpiY, PixelFormats.Pbgra32);

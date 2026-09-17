@@ -24,13 +24,13 @@ namespace WpfDemo
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            // Makes it easier to search when debugging.
             TestSideMenu.FocusSearchBoxOnLoad = true;
             TestSideMenu.SelectByIndex(1);
-#else
-            TestSideMenu.MenuItems[1].Visibility = Visibility.Collapsed;
-            TestSideMenu.SelectByIndex(0);
+#if !DEBUG
+            // Makes it easier to search when debugging.
+            TestSideMenu.MenuItems[4].Visibility = Visibility.Collapsed;
+            TestSideMenu.MenuItems[5].Visibility = Visibility.Collapsed;
+            TestSideMenu.MenuItems[6].Visibility = Visibility.Collapsed;
 #endif
         }
 

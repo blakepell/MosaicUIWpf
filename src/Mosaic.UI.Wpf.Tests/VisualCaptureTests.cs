@@ -13,6 +13,7 @@ using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Xaml.Behaviors;
 using Mosaic.UI.Wpf.Behaviors;
 using Mosaic.UI.Wpf.Common;
@@ -95,6 +96,78 @@ namespace Mosaic.UI.Wpf.Tests
 
                 Assert.Equal(300, bitmap.PixelWidth);
                 Assert.Equal(400, bitmap.PixelHeight);
+            });
+        }
+
+        /// <summary>
+        /// Reads a single pixel out of a rendered bitmap.
+        /// </summary>
+        private static Color GetPixel(RenderTargetBitmap bitmap, int x, int y)
+        {
+            var pixel = new byte[4];
+            bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
+
+            // Pbgra32: the channels are premultiplied by alpha.
+            if (pixel[3] == 0)
+            {
+                return Colors.Transparent;
+            }
+
+            return Color.FromArgb(pixel[3],
+                (byte)(pixel[2] * 255 / pixel[3]),
+                (byte)(pixel[1] * 255 / pixel[3]),
+                (byte)(pixel[0] * 255 / pixel[3]));
+        }
+
+        [Fact]
+        public void Render_Draws_The_Element_Itself_And_Not_Just_The_Background()
+        {
+            RunSta(() =>
+            {
+                // A non-scrolling element that was laid out once and never invalidated again is the case
+                // that used to come back blank when the element was drawn through a VisualBrush.
+                var target = new Border { Width = 40, Height = 20, Background = Brushes.Red };
+                var host = new Grid { Width = 40, Height = 20 };
+                host.Children.Add(target);
+                host.Measure(new Size(40, 20));
+                host.Arrange(new Rect(0, 0, 40, 20));
+                host.UpdateLayout();
+
+                var bitmap = VisualCapture.Render(target, new VisualCaptureOptions { Dpi = 96, Background = Brushes.Lime });
+
+                Assert.Equal(Colors.Red, GetPixel(bitmap, 20, 10));
+            });
+        }
+
+        [Fact]
+        public void Render_Ignores_The_Offset_The_Element_Has_Within_Its_Parent()
+        {
+            RunSta(() =>
+            {
+                var target = new Border
+                {
+                    Width = 40,
+                    Height = 20,
+                    Margin = new Thickness(30, 15, 0, 0),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Background = Brushes.Red
+                };
+
+                var host = new Grid { Width = 200, Height = 100 };
+                host.Children.Add(target);
+                host.Measure(new Size(200, 100));
+                host.Arrange(new Rect(0, 0, 200, 100));
+                host.UpdateLayout();
+
+                var bitmap = VisualCapture.Render(target, new VisualCaptureOptions { Dpi = 96 });
+
+                Assert.Equal(40, bitmap.PixelWidth);
+                Assert.Equal(20, bitmap.PixelHeight);
+
+                // Every corner is the element; the margin must not have shifted the image.
+                Assert.Equal(Colors.Red, GetPixel(bitmap, 0, 0));
+                Assert.Equal(Colors.Red, GetPixel(bitmap, 39, 19));
             });
         }
 
