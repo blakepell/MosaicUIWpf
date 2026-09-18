@@ -209,8 +209,10 @@ internal sealed class ScriptCompletionData(string text, ScriptCompletionKind kin
             textArea.Document.GetCharAt(completionSegment.EndOffset) == '(';
         bool addParentheses = IsMethod && !followingOpening;
         if (addParentheses) value += "()";
+        // The segment is anchor based and its Offset moves to the end of the inserted text after Replace, so capture it first.
+        int start = completionSegment.Offset;
         textArea.Document.Replace(completionSegment, value);
-        textArea.Caret.Offset = completionSegment.Offset + value.Length - (addParentheses && (HasParameters || typedOpening) ? 1 : 0);
+        textArea.Caret.Offset = start + value.Length - (addParentheses && (HasParameters || typedOpening) ? 1 : 0);
         if (typedOpening && addParentheses && insertionRequestEventArgs is TextCompositionEventArgs input) input.Handled = true;
     }
 }
