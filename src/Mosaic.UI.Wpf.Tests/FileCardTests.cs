@@ -121,6 +121,38 @@ namespace Mosaic.UI.Wpf.Tests
         }
 
         [Fact]
+        public void DisplayName_Overrides_The_Shown_Name_But_Not_The_File()
+        {
+            RunSta(() =>
+            {
+                string path = CreateTempFile(1024, ".pdf");
+
+                try
+                {
+                    var card = Realize(new FileCard { FilePath = path, DisplayName = "Quarterly Report.pdf" });
+
+                    // The override is what the card shows, but everything else still comes from the real file.
+                    Assert.Equal("Quarterly Report.pdf", card.FileName);
+                    Assert.Equal(path, card.FilePath);
+                    Assert.True(card.FileExists);
+                    Assert.Equal("1 KB", card.FileSizeText);
+
+                    // Clearing the override falls back to the actual file name.
+                    card.DisplayName = null;
+                    Assert.Equal(Path.GetFileName(path), card.FileName);
+
+                    // Whitespace is treated the same as unset.
+                    card.DisplayName = "   ";
+                    Assert.Equal(Path.GetFileName(path), card.FileName);
+                }
+                finally
+                {
+                    File.Delete(path);
+                }
+            });
+        }
+
+        [Fact]
         public void Card_Background_Is_Always_Painted_With_Or_Without_The_Tint()
         {
             RunSta(() =>

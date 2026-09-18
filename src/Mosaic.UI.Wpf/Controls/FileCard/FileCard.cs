@@ -27,6 +27,8 @@ namespace Mosaic.UI.Wpf.Controls
     /// <para>
     /// Only the file name is displayed; the full path is surfaced as the tooltip. When the file is missing an
     /// error glyph replaces the shell icon and the size is omitted, but the intended file name is still shown.
+    /// Set <see cref="DisplayName"/> to show a different, display-only name (for example the original name of a
+    /// file stored under a generated one) without changing which file the card represents.
     /// </para>
     /// <para>
     /// With <see cref="IsTintEnabled"/> set the card background is washed with a small amount of the icon's
@@ -103,6 +105,49 @@ namespace Mosaic.UI.Wpf.Controls
         private static void OnFilePathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((FileCard)d).Refresh();
+        }
+
+        #endregion
+
+        #region DisplayName
+
+        /// <summary>
+        /// Identifies the <see cref="DisplayName"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty DisplayNameProperty = DependencyProperty.Register(
+            nameof(DisplayName),
+            typeof(string),
+            typeof(FileCard),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnDisplayNameChanged));
+
+        /// <summary>
+        /// Gets or sets an optional name shown on the card in place of the file name portion of <see cref="FilePath"/>.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This is purely cosmetic. The card still represents <see cref="FilePath"/>: the tooltip, the size, the icon,
+        /// <see cref="Command"/>, <see cref="Click"/>, and <see cref="OpenFileOnClick"/> all continue to use the real
+        /// file. It is intended for cases such as a file stored under a generated name (for example <c>{guid}.pdf</c>)
+        /// where the original, human-friendly name is known from metadata.
+        /// </para>
+        /// <para>
+        /// When this is <c>null</c>, empty, or whitespace the card falls back to the file name from <see cref="FilePath"/>.
+        /// </para>
+        /// </remarks>
+        [Category("Common")]
+        [Description("An optional name displayed instead of the file name from FilePath. Display only; the card still represents FilePath.")]
+        public string? DisplayName
+        {
+            get => (string?)GetValue(DisplayNameProperty);
+            set => SetValue(DisplayNameProperty, value);
+        }
+
+        /// <summary>
+        /// Recomputes the displayed name when the override is set or cleared.
+        /// </summary>
+        private static void OnDisplayNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FileCard)d).UpdateFileName();
         }
 
         #endregion
@@ -267,7 +312,8 @@ namespace Mosaic.UI.Wpf.Controls
         public static readonly DependencyProperty FileNameProperty = FileNamePropertyKey.DependencyProperty;
 
         /// <summary>
-        /// Gets the file name portion of <see cref="FilePath"/>, which is what the card displays.
+        /// Gets the name the card displays: <see cref="DisplayName"/> when one has been supplied, otherwise the
+        /// file name portion of <see cref="FilePath"/>.
         /// </summary>
         public string FileName => (string)GetValue(FileNameProperty);
 
@@ -576,30 +622,16 @@ namespace Mosaic.UI.Wpf.Controls
         {
             string? path = this.FilePath;
 
+            this.UpdateFileName();
+
             if (string.IsNullOrWhiteSpace(path))
             {
-                SetValue(FileNamePropertyKey, string.Empty);
                 SetValue(FileSizeTextPropertyKey, string.Empty);
                 SetValue(FileExistsPropertyKey, false);
                 SetValue(IconPropertyKey, GetErrorIcon());
                 this.UpdateCardBackground();
                 return;
             }
-
-            // Path.GetFileName throws on characters that are illegal in a path, and a card should render
-            // whatever it was handed rather than bring down the app.
-            string name;
-
-            try
-            {
-                name = Path.GetFileName(path);
-            }
-            catch (ArgumentException)
-            {
-                name = path;
-            }
-
-            SetValue(FileNamePropertyKey, string.IsNullOrEmpty(name) ? path : name);
 
             bool exists = false;
             long length = 0;
@@ -635,6 +667,44 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             this.UpdateCardBackground();
+        }
+
+        /// <summary>
+        /// Recomputes the read-only <see cref="FileName"/>: the <see cref="DisplayName"/> override when one is
+        /// set, otherwise the file name portion of <see cref="FilePath"/>.
+        /// </summary>
+        private void UpdateFileName()
+        {
+            string? displayName = this.DisplayName;
+
+            if (!string.IsNullOrWhiteSpace(displayName))
+            {
+                SetValue(FileNamePropertyKey, displayName);
+                return;
+            }
+
+            string? path = this.FilePath;
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                SetValue(FileNamePropertyKey, string.Empty);
+                return;
+            }
+
+            // Path.GetFileName throws on characters that are illegal in a path, and a card should render
+            // whatever it was handed rather than bring down the app.
+            string name;
+
+            try
+            {
+                name = Path.GetFileName(path);
+            }
+            catch (ArgumentException)
+            {
+                name = path;
+            }
+
+            SetValue(FileNamePropertyKey, string.IsNullOrEmpty(name) ? path : name);
         }
 
         /// <summary>
