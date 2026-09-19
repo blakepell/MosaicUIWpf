@@ -437,7 +437,8 @@ namespace Mosaic.UI.Wpf.Controls
                 _completion = new SyntaxCompletionController(_sqlEditor)
                 {
                     IsEnabled = this.AutoCompleteEnabled,
-                    ProvideCompletions = this.ProvideCompletions
+                    ProvideCompletions = this.ProvideCompletions,
+                    ConfigureWindow = window => SqliteCompletionData.ConfigureWindow(window, _sqlEditor.Theme)
                 };
             }
         }
@@ -1428,7 +1429,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 if (!string.IsNullOrEmpty(table.Name))
                 {
-                    results.Add(new SyntaxCompletionData(table.Name, $"Table\r\n{table.Fields.Count} column(s)", priority: 2.0));
+                    results.Add(new SqliteCompletionData(table.Name, "Table", "Table", $"{table.Fields.Count} column(s)", priority: 2.0));
                 }
             }
 
@@ -1436,7 +1437,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 if (!string.IsNullOrEmpty(view.Name))
                 {
-                    results.Add(new SyntaxCompletionData(view.Name, $"View\r\n{view.Fields.Count} column(s)"));
+                    results.Add(new SqliteCompletionData(view.Name, "View", "View", $"{view.Fields.Count} column(s)"));
                 }
             }
 
@@ -1463,7 +1464,8 @@ namespace Mosaic.UI.Wpf.Controls
                     continue;
                 }
 
-                results.Add(new SyntaxCompletionData(field.Name, DescribeFieldForCompletion(field)));
+                results.Add(new SqliteCompletionData(field.Name, field.PrimaryKey ? "PrimaryKey" : "Column",
+                    string.IsNullOrWhiteSpace(field.Type) ? "unspecified" : field.Type, DescribeFieldForCompletion(field)));
             }
 
             return results;

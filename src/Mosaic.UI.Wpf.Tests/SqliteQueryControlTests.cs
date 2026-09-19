@@ -371,6 +371,40 @@ namespace Mosaic.UI.Wpf.Tests
 
         #region Completion word scanning
 
+        [Theory]
+        [InlineData(MosaicThemeMode.Light)]
+        [InlineData(MosaicThemeMode.Dark)]
+        [InlineData(MosaicThemeMode.HighContrast)]
+        public void CompletionPopup_LoadsSqlTemplatesAndEditorTheme(MosaicThemeMode theme)
+        {
+            RunSta(() =>
+            {
+                var editor = new SyntaxEditor { Theme = theme };
+                var window = new ICSharpCode.AvalonEdit.CodeCompletion.CompletionWindow(editor.TextArea);
+                try
+                {
+                    SqliteCompletionData.ConfigureWindow(window, theme);
+                    Assert.Equal(ResizeMode.NoResize, window.ResizeMode);
+                    Assert.Equal(new Thickness(1), window.BorderThickness);
+                    Assert.True(window.CompletionList.ApplyTemplate());
+                    Assert.NotNull(window.CompletionList.ListBox);
+                    Assert.NotNull(window.FindResource(MosaicTheme.MonospaceFontFamily));
+                    var template = Assert.IsType<DataTemplate>(window.FindResource("SqliteCompletionItemTemplate"));
+                    foreach (string kind in new[] { "Table", "View", "Column", "PrimaryKey" })
+                    {
+                        var row = Assert.IsType<DockPanel>(template.LoadContent());
+                        row.DataContext = new SqliteCompletionData("Sample", kind, "INTEGER", "Schema details");
+                        Assert.IsType<System.Windows.Shapes.Path>(row.Children[0]);
+                    }
+                    Assert.IsType<Style>(window.FindResource(typeof(ToolTip)));
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
         // These cover the offsets that made the original implementation throw: it computed
         // "CaretOffset - 2" and indexed the document with it unguarded, so a document one character
         // long produced a negative offset and an ArgumentOutOfRangeException.

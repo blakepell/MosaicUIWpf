@@ -1,0 +1,58 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:completion="clr-namespace:ICSharpCode.AvalonEdit.CodeCompletion;assembly=ICSharpCode.AvalonEdit"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Scripting/ScriptCompletionWindow.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Simple schema symbols on a 16-unit grid. -->
+    <Geometry x:Key="SqliteTableGeometry" po:Freeze="True">M1,1H15V15H1Z M2,2V5H14V2Z M2,6V9H5V6Z M6,6V9H14V6Z M2,10V14H5V10Z M6,10V14H14V10Z</Geometry>
+    <Geometry x:Key="SqliteViewGeometry" po:Freeze="True">M1,1H12V4H15V15H4V12H1Z M2,2V5H4V4H11V2Z M2,6V11H4V6Z M5,5V8H14V5Z M5,9V14H8V9Z M9,9V14H14V9Z</Geometry>
+    <Geometry x:Key="SqliteColumnGeometry" po:Freeze="True">M4,1H12V15H4Z M5,2V5H11V2Z M5,6V9H11V6Z M5,10V14H11V10Z</Geometry>
+    <Geometry x:Key="SqliteKeyGeometry" po:Freeze="True">M10,1A5,5 0 0 1 10,11L8,11L8,13H6V15H1V10L5,6A5,5 0 0 1 10,1Z M11,3A2,2 0 1 0 11,7A2,2 0 1 0 11,3Z</Geometry>
+
+    <DataTemplate x:Key="SqliteCompletionItemTemplate">
+        <DockPanel HorizontalAlignment="Stretch">
+            <Path x:Name="Icon" Width="16" Height="16" Margin="0,0,5,0"
+                  VerticalAlignment="Center" DockPanel.Dock="Left" Stretch="Uniform" SnapsToDevicePixels="True"
+                  Data="{StaticResource SqliteColumnGeometry}" Fill="{DynamicResource ScriptCompletionPropertyBrush}" />
+            <TextBlock x:Name="Detail" MaxWidth="150" Margin="10,0,0,0" VerticalAlignment="Center"
+                       DockPanel.Dock="Right" Foreground="{DynamicResource ScriptCompletionDetailBrush}"
+                       Text="{Binding Detail, Mode=OneTime}" TextAlignment="Right" TextTrimming="CharacterEllipsis" />
+            <TextBlock VerticalAlignment="Center" Text="{Binding Text, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Table">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource SqliteTableGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionClassBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="View">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource SqliteViewGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionSnippetBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="PrimaryKey">
+                <Setter TargetName="Icon" Property="Data" Value="{StaticResource SqliteKeyGeometry}" />
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource ScriptCompletionMethodBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" Value="True">
+                <Setter TargetName="Icon" Property="Fill" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+                <Setter TargetName="Detail" Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <Style x:Key="SqliteCompletionListStyle" TargetType="{x:Type completion:CompletionList}"
+           BasedOn="{StaticResource ScriptCompletionListStyle}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type completion:CompletionList}">
+                    <completion:CompletionListBox x:Name="PART_ListBox" ItemTemplate="{StaticResource SqliteCompletionItemTemplate}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -103,6 +103,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public Func<SyntaxCompletionRequest, IReadOnlyList<ICompletionData>?>? ProvideCompletions { get; set; }
 
+        /// <summary>Applies control-specific presentation before a completion window is shown.</summary>
+        internal Action<CompletionWindow>? ConfigureWindow { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether a completion window is currently open.
         /// </summary>
@@ -186,6 +189,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             var window = new CompletionWindow(_editor.TextArea);
             ApplyTheme(window);
+            this.ConfigureWindow?.Invoke(window);
 
             foreach (var item in items)
             {

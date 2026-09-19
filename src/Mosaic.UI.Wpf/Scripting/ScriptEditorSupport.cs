@@ -241,14 +241,16 @@ internal sealed class ScriptEditorSupport : IDisposable
     /// Merges the theme and script popup resources into a completion window or the parameter information
     /// popup; neither inherits the editor's resource tree.
     /// </summary>
-    private void AddThemeResources(FrameworkElement element)
+    private void AddThemeResources(FrameworkElement element) => AddThemeResources(element, _editor.Theme);
+
+    internal static void AddThemeResources(FrameworkElement element, MosaicThemeMode theme)
     {
         var dictionaries = element.Resources.MergedDictionaries;
         dictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.Palette });
         dictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.Typography });
-        dictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.GetThemeUri(_editor.Theme) });
+        dictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.GetThemeUri(theme) });
         dictionaries.Add(new ResourceDictionary { Source = new Uri("/Mosaic.UI.Wpf;component/Scripting/ScriptCompletionWindow.xaml", UriKind.Relative) });
-        dictionaries.Add(CreateCompletionPalette(element));
+        dictionaries.Add(CreateCompletionPalette(element, theme));
     }
 
     /// <summary>
@@ -256,17 +258,17 @@ internal sealed class ScriptEditorSupport : IDisposable
     /// The icon colors are the ApexGate script editor's; the popups are rebuilt when the theme changes,
     /// so resolving once here keeps them in step with the theme.
     /// </summary>
-    private ResourceDictionary CreateCompletionPalette(FrameworkElement element)
+    private static ResourceDictionary CreateCompletionPalette(FrameworkElement element, MosaicThemeMode theme)
     {
         var palette = new ResourceDictionary();
-        if (_editor.Theme == MosaicThemeMode.HighContrast)
+        if (theme == MosaicThemeMode.HighContrast)
         {
             foreach (string key in new[] { "Method", "Property", "Class", "Snippet" }) palette[$"ScriptCompletion{key}Brush"] = SystemColors.WindowTextBrush;
             palette["ScriptCompletionTypeBrush"] = SystemColors.HotTrackBrush;
             palette["ScriptCompletionDetailBrush"] = SystemColors.GrayTextBrush;
             return palette;
         }
-        bool light = _editor.Theme == MosaicThemeMode.Light;
+        bool light = theme == MosaicThemeMode.Light;
         Add("Method", light ? "#7E6187" : "#4EC9B0");
         Add("Property", light ? "#33479B" : "#569CD6");
         Add("Class", "#7160E8");
