@@ -153,7 +153,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     if (attrs.Reverse)
                     {
                         byte bg = attrs.Background;
-                        if (attrs.DefaultBackground) bg = 0; // default bg = black (index 0)
+                        if (attrs.DefaultBackground)
+                        {
+                            bg = 0; // default bg = black (index 0)
+                        }
+
                         fg = bg;
                         fgDefault = false;
                     }

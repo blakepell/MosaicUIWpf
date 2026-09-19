@@ -55,7 +55,10 @@ public class ScriptEditorControl : Control
         InputBindings.Add(new KeyBinding(SnippetsCommand, Key.F1, ModifierKeys.None));
         InputBindings.Add(new KeyBinding(new RelayCommand(() =>
         {
-            if (_editor is { IsReadOnly: false }) _editor.SelectedText = Guid.NewGuid().ToString();
+            if (_editor is { IsReadOnly: false })
+            {
+                _editor.SelectedText = Guid.NewGuid().ToString();
+            }
         }), Key.G, ModifierKeys.Control));
     }
 
@@ -198,7 +201,11 @@ public class ScriptEditorControl : Control
     public override void OnApplyTemplate()
     {
         DetachSupport();
-        if (_editor != null) _editor.TextChanged -= OnEditorTextChanged;
+        if (_editor != null)
+        {
+            _editor.TextChanged -= OnEditorTextChanged;
+        }
+
         base.OnApplyTemplate();
         _editor = GetTemplateChild("PART_Editor") as SyntaxEditor;
         if (_editor != null)
@@ -216,7 +223,11 @@ public class ScriptEditorControl : Control
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
         Dispatcher.VerifyAccess();
-        if (IsRunning) return;
+        if (IsRunning)
+        {
+            return;
+        }
+
         var environment = Environment ?? throw new InvalidOperationException("A scripting environment is required.");
         string code = Text;
         using var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -265,14 +276,21 @@ public class ScriptEditorControl : Control
     {
         Dispatcher.VerifyAccess();
         string text = Text;
-        if (SaveTextAsync != null) await SaveTextAsync(text, cancellationToken);
+        if (SaveTextAsync != null)
+        {
+            await SaveTextAsync(text, cancellationToken);
+        }
         else
         {
             string? path = FilePath;
             if (string.IsNullOrWhiteSpace(path))
             {
                 var dialog = new SaveFileDialog { Filter = "JavaScript (*.js)|*.js|All files (*.*)|*.*", DefaultExt = ".js" };
-                if (dialog.ShowDialog() != true) return;
+                if (dialog.ShowDialog() != true)
+                {
+                    return;
+                }
+
                 path = dialog.FileName;
             }
             await File.WriteAllTextAsync(path, text, cancellationToken);
@@ -294,12 +312,19 @@ public class ScriptEditorControl : Control
     {
         DetachSupport();
         _runCommand?.NotifyCanExecuteChanged();
-        if (!_isUnloaded && _editor != null && Environment != null) _support = new ScriptEditorSupport(_editor, Environment);
+        if (!_isUnloaded && _editor != null && Environment != null)
+        {
+            _support = new ScriptEditorSupport(_editor, Environment);
+        }
     }
     private void DetachSupport() { _support?.Dispose(); _support = null; }
     private void SynchronizeText()
     {
-        if (!_synchronizing && _editor != null && _editor.Text != Text) _editor.Text = Text;
+        if (!_synchronizing && _editor != null && _editor.Text != Text)
+        {
+            _editor.Text = Text;
+        }
+
         SetValue(IsModifiedPropertyKey, Text != _savedText);
     }
     private void OnEditorTextChanged(object? sender, EventArgs e)

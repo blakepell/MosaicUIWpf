@@ -320,7 +320,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void AttachToTarget(FrameworkElement? target)
         {
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
             // Subscribe to validation error events
             Validation.AddErrorHandler(target, OnValidationError);
@@ -331,7 +334,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void DetachFromTarget(FrameworkElement? target)
         {
-            if (target == null) return;
+            if (target == null)
+            {
+                return;
+            }
 
             Validation.RemoveErrorHandler(target, OnValidationError);
         }
@@ -351,7 +357,10 @@ namespace Mosaic.UI.Wpf.Controls
         {
             Errors.Clear();
 
-            if (Target == null) return;
+            if (Target == null)
+            {
+                return;
+            }
 
             CollectValidationErrors(Target);
             UpdateErrorState();

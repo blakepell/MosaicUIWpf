@@ -52,15 +52,31 @@ internal static class ScriptCallParser
         caret = Math.Clamp(caret, 0, text.Length);
         var scanner = new Scanner(text);
         scanner.Advance(caret);
-        if (scanner.Mode is ScanMode.LineComment or ScanMode.BlockComment) return null;
+        if (scanner.Mode is ScanMode.LineComment or ScanMode.BlockComment)
+        {
+            return null;
+        }
+
         for (int depth = scanner.Stack.Count - 1; depth >= 0; depth--)
         {
             var frame = scanner.Stack[depth];
             // A function body ends the search: its statements are not arguments of the enclosing call.
-            if (frame.Kind == FrameKind.Block) return null;
-            if (frame.Kind != FrameKind.Paren || ReadCallee(text, frame.Offset) is not { } callee) continue;
+            if (frame.Kind == FrameKind.Block)
+            {
+                return null;
+            }
+
+            if (frame.Kind != FrameKind.Paren || ReadCallee(text, frame.Offset) is not { } callee)
+            {
+                continue;
+            }
+
             var context = callee with { ArgumentIndex = frame.Commas };
-            if (accept != null && !accept(context)) continue;
+            if (accept != null && !accept(context))
+            {
+                continue;
+            }
+
             var closed = scanner.Advance((int)Math.Min(text.Length, (long)caret + MaxLookahead), depth) ?? scanner.Stack[depth];
             return context with { ArgumentCount = closed.HasContent ? closed.Commas + 1 : 0 };
         }
@@ -71,7 +87,11 @@ internal static class ScriptCallParser
     {
         int nameEnd = SkipWhitespaceBack(text, openParen - 1) + 1;
         int nameStart = ReadIdentifierBack(text, nameEnd);
-        if (nameStart == nameEnd || char.IsDigit(text[nameStart])) return null;
+        if (nameStart == nameEnd || char.IsDigit(text[nameStart]))
+        {
+            return null;
+        }
+
         string name = text[nameStart..nameEnd];
         int before = SkipWhitespaceBack(text, nameStart - 1);
         if (before >= 0 && text[before] == '.')
@@ -80,7 +100,11 @@ internal static class ScriptCallParser
             int qualifierStart = ReadIdentifierBack(text, qualifierEnd);
             int preceding = SkipWhitespaceBack(text, qualifierStart - 1);
             // Only root aliases resolve: x.app.Add is not the registered app module.
-            if (qualifierStart == qualifierEnd || char.IsDigit(text[qualifierStart]) || (preceding >= 0 && text[preceding] is '.' or '?')) return null;
+            if (qualifierStart == qualifierEnd || char.IsDigit(text[qualifierStart]) || (preceding >= 0 && text[preceding] is '.' or '?'))
+            {
+                return null;
+            }
+
             return new ScriptCallContext(openParen, qualifierStart, text[qualifierStart..qualifierEnd], name, false);
         }
         int wordStart = ReadIdentifierBack(text, before + 1);
@@ -90,14 +114,22 @@ internal static class ScriptCallParser
 
     private static int SkipWhitespaceBack(string text, int index)
     {
-        while (index >= 0 && char.IsWhiteSpace(text[index])) index--;
+        while (index >= 0 && char.IsWhiteSpace(text[index]))
+        {
+            index--;
+        }
+
         return index;
     }
 
     private static int ReadIdentifierBack(string text, int end)
     {
         int start = end;
-        while (start > 0 && IsIdentifierPart(text[start - 1])) start--;
+        while (start > 0 && IsIdentifierPart(text[start - 1]))
+        {
+            start--;
+        }
+
         return start;
     }
 
@@ -127,31 +159,56 @@ internal static class ScriptCallParser
                 switch (Mode)
                 {
                     case ScanMode.LineComment:
-                        if (c == '\n') Mode = ScanMode.Code;
+                        if (c == '\n')
+                        {
+                            Mode = ScanMode.Code;
+                        }
+
                         continue;
                     case ScanMode.BlockComment:
                         if (c == '*' && At(i + 1) == '/') { Mode = ScanMode.Code; _position++; }
                         continue;
                     case ScanMode.SingleQuote or ScanMode.DoubleQuote:
-                        if (c == '\\') _position++;
-                        else if (c == '\n' || c == (Mode == ScanMode.SingleQuote ? '\'' : '"')) Mode = ScanMode.Code;
+                        if (c == '\\')
+                        {
+                            _position++;
+                        }
+                        else if (c == '\n' || c == (Mode == ScanMode.SingleQuote ? '\'' : '"'))
+                        {
+                            Mode = ScanMode.Code;
+                        }
+
                         continue;
                 }
                 if (Stack.Count > 0 && Stack[^1].Kind == FrameKind.Template)
                 {
-                    if (c == '\\') _position++;
-                    else if (c == '`') Stack.RemoveAt(Stack.Count - 1);
+                    if (c == '\\')
+                    {
+                        _position++;
+                    }
+                    else if (c == '`')
+                    {
+                        Stack.RemoveAt(Stack.Count - 1);
+                    }
                     else if (c == '$' && At(i + 1) == '{') { _position++; Stack.Add(new Frame(FrameKind.TemplateExpression, i)); }
                     continue;
                 }
-                if (char.IsWhiteSpace(c)) continue;
+                if (char.IsWhiteSpace(c))
+                {
+                    continue;
+                }
+
                 if (c == '/' && At(i + 1) is '/' or '*')
                 {
                     Mode = At(i + 1) == '/' ? ScanMode.LineComment : ScanMode.BlockComment;
                     _position++;
                     continue;
                 }
-                if (c is not (')' or ']' or '}') && Stack.Count > 0) Stack[^1] = Stack[^1] with { HasContent = true };
+                if (c is not (')' or ']' or '}') && Stack.Count > 0)
+                {
+                    Stack[^1] = Stack[^1] with { HasContent = true };
+                }
+
                 switch (c)
                 {
                     case '\'': Mode = ScanMode.SingleQuote; break;
@@ -161,10 +218,18 @@ internal static class ScriptCallParser
                     case '[': Stack.Add(new Frame(FrameKind.Bracket, i)); break;
                     case '{': Stack.Add(new Frame(IsBlock(i) ? FrameKind.Block : FrameKind.Brace, i)); break;
                     case ')' or ']' or '}':
-                        if (Close(c, stopDepth) is { } closed) return closed;
+                        if (Close(c, stopDepth) is { } closed)
+                        {
+                            return closed;
+                        }
+
                         break;
                     case ',':
-                        if (Stack.Count > 0 && Stack[^1].Kind == FrameKind.Paren) Stack[^1] = Stack[^1] with { Commas = Stack[^1].Commas + 1 };
+                        if (Stack.Count > 0 && Stack[^1].Kind == FrameKind.Paren)
+                        {
+                            Stack[^1] = Stack[^1] with { Commas = Stack[^1].Commas + 1 };
+                        }
+
                         break;
                     // A statement terminator directly inside the call means its closing parenthesis is missing.
                     case ';' when stopDepth >= 0 && Stack.Count - 1 == stopDepth:
@@ -187,8 +252,16 @@ internal static class ScriptCallParser
                     ']' => kind == FrameKind.Bracket,
                     _ => kind is FrameKind.Brace or FrameKind.Block or FrameKind.TemplateExpression
                 };
-                if (kind == FrameKind.Template) return null;
-                if (!matches) continue;
+                if (kind == FrameKind.Template)
+                {
+                    return null;
+                }
+
+                if (!matches)
+                {
+                    continue;
+                }
+
                 Frame? stopped = stopDepth >= 0 && index <= stopDepth ? Stack[stopDepth] : null;
                 Stack.RemoveRange(index, Stack.Count - index);
                 return stopped;
@@ -202,10 +275,22 @@ internal static class ScriptCallParser
         private bool IsBlock(int brace)
         {
             int previous = SkipWhitespaceBack(text, brace - 1);
-            if (previous < 0) return true;
+            if (previous < 0)
+            {
+                return true;
+            }
+
             char c = text[previous];
-            if (c is ')' or ';' or '{' or '}' || (c == '>' && previous > 0 && text[previous - 1] == '=')) return true;
-            if (!IsIdentifierPart(c)) return false;
+            if (c is ')' or ';' or '{' or '}' || (c == '>' && previous > 0 && text[previous - 1] == '='))
+            {
+                return true;
+            }
+
+            if (!IsIdentifierPart(c))
+            {
+                return false;
+            }
+
             string word = text[ReadIdentifierBack(text, previous + 1)..(previous + 1)];
             return word is not ("return" or "typeof" or "yield" or "await" or "case" or "in" or "of" or "void" or "delete");
         }
@@ -294,7 +379,11 @@ internal sealed class ScriptSignatureHelp : ObservableObject
     /// <param name="argumentCount">The number of arguments in the call.</param>
     public void Update(int argumentIndex, int argumentCount)
     {
-        if (Signatures.Count == 0) return;
+        if (Signatures.Count == 0)
+        {
+            return;
+        }
+
         _argumentIndex = argumentIndex;
         int required = Math.Max(argumentCount, argumentIndex + 1);
         if (_isUserSelected && ActiveSignature?.Accepts(required) == true)
@@ -313,7 +402,11 @@ internal sealed class ScriptSignatureHelp : ObservableObject
     /// </summary>
     public void Cycle(int delta)
     {
-        if (Signatures.Count == 0) return;
+        if (Signatures.Count == 0)
+        {
+            return;
+        }
+
         int index = ActiveSignature == null ? 0 : IndexOf(ActiveSignature);
         Select(Signatures[((index + delta) % Signatures.Count + Signatures.Count) % Signatures.Count]);
     }
@@ -323,14 +416,25 @@ internal sealed class ScriptSignatureHelp : ObservableObject
     /// </summary>
     public void Select(ScriptSignature signature)
     {
-        if (IndexOf(signature) < 0) return;
+        if (IndexOf(signature) < 0)
+        {
+            return;
+        }
+
         _isUserSelected = true;
         Activate(signature);
     }
 
     private int IndexOf(ScriptSignature signature)
     {
-        for (int i = 0; i < Signatures.Count; i++) if (ReferenceEquals(Signatures[i], signature)) return i;
+        for (int i = 0; i < Signatures.Count; i++)
+        {
+            if (ReferenceEquals(Signatures[i], signature))
+            {
+                return i;
+            }
+        }
+
         return -1;
     }
 
@@ -340,7 +444,10 @@ internal sealed class ScriptSignatureHelp : ObservableObject
         foreach (var signature in Signatures)
         {
             signature.IsActive = ReferenceEquals(signature, active);
-            for (int i = 0; i < signature.Parameters.Count; i++) signature.Parameters[i].IsActive = signature.IsActive && i == parameterIndex;
+            for (int i = 0; i < signature.Parameters.Count; i++)
+            {
+                signature.Parameters[i].IsActive = signature.IsActive && i == parameterIndex;
+            }
         }
         ActiveSignature = active;
         ActiveParameter = parameterIndex >= 0 ? active.Parameters[parameterIndex] : null;

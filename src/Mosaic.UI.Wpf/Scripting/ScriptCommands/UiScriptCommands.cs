@@ -60,15 +60,30 @@ public class UiScriptCommands
 
     private static string ShowTextDialog(string text, bool readOnly)
     {
-        var window = new Window { Title = readOnly ? "Script output" : "Input", Width = 560, Height = 340,
-            Owner = Application.Current.MainWindow, WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        var window = new Window
+        {
+            Title = readOnly ? "Script output" : "Input",
+            Width = 560,
+            Height = 340,
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         window.SetResourceReference(Control.BackgroundProperty, MosaicTheme.WindowBackgroundBrush);
         window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.ControlTextForegroundBrush);
         foreach (string resource in new[] { "TextBox", "Button", "ScrollBar", "ScrollViewer" })
+        {
             window.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Mosaic.UI.Wpf;component/Themes/Native/{resource}.xaml", UriKind.Relative) });
+        }
+
         var panel = new DockPanel { Margin = new Thickness(12) };
-        var button = new Button { Content = readOnly ? "Close" : "OK", IsDefault = true, MinWidth = 80,
-            HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 8, 0, 0) };
+        var button = new Button
+        {
+            Content = readOnly ? "Close" : "OK",
+            IsDefault = true,
+            MinWidth = 80,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Margin = new Thickness(0, 8, 0, 0)
+        };
         button.Click += (_, _) => window.DialogResult = true;
         DockPanel.SetDock(button, Dock.Bottom);
         panel.Children.Add(button);
@@ -78,12 +93,18 @@ public class UiScriptCommands
             DockPanel.SetDock(prompt, Dock.Top);
             panel.Children.Add(prompt);
         }
-        var editor = new TextBox { Text = readOnly ? text : "", IsReadOnly = readOnly, AcceptsReturn = readOnly,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto, TextWrapping = TextWrapping.Wrap };
+        var editor = new TextBox
+        {
+            Text = readOnly ? text : "",
+            IsReadOnly = readOnly,
+            AcceptsReturn = readOnly,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            TextWrapping = TextWrapping.Wrap
+        };
         panel.Children.Add(editor);
         window.Content = panel;
         window.Loaded += (_, _) => editor.Focus();
-        window.PreviewKeyDown += (_, e) => { if (e.Key == Key.Escape) window.Close(); };
+        window.PreviewKeyDown += (_, e) => { if (e.Key == Key.Escape) { window.Close(); } };
         return window.ShowDialog() == true ? editor.Text : string.Empty;
     }
 }

@@ -165,9 +165,13 @@
 
             GradientStopCollection topLeftStops;
             if (cornerRadius.TopLeft == 0.0)
+            {
                 topLeftStops = stops;
+            }
             else
+            {
                 topLeftStops = CreateStops(c, cornerRadius.TopLeft);
+            }
 
             var topLeftBrush = new RadialGradientBrush(topLeftStops)
             {
@@ -181,11 +185,17 @@
 
             GradientStopCollection topRightStops;
             if (cornerRadius.TopRight == 0.0)
+            {
                 topRightStops = stops;
+            }
             else if (cornerRadius.TopRight == cornerRadius.TopLeft)
+            {
                 topRightStops = topLeftStops;
+            }
             else
+            {
                 topRightStops = CreateStops(c, cornerRadius.TopRight);
+            }
 
             var topRightBrush = new RadialGradientBrush(topRightStops)
             {
@@ -199,13 +209,21 @@
 
             GradientStopCollection bottomLeftStops;
             if (cornerRadius.BottomLeft == 0.0)
+            {
                 bottomLeftStops = stops;
+            }
             else if (cornerRadius.BottomLeft == cornerRadius.TopLeft)
+            {
                 bottomLeftStops = topLeftStops;
+            }
             else if (cornerRadius.BottomLeft == cornerRadius.TopRight)
+            {
                 bottomLeftStops = topRightStops;
+            }
             else
+            {
                 bottomLeftStops = CreateStops(c, cornerRadius.BottomLeft);
+            }
 
             var bottomLeftBrush = new RadialGradientBrush(bottomLeftStops)
             {
@@ -219,15 +237,25 @@
 
             GradientStopCollection bottomRightStops;
             if (cornerRadius.BottomRight == 0.0)
+            {
                 bottomRightStops = stops;
+            }
             else if (cornerRadius.BottomRight == cornerRadius.TopLeft)
+            {
                 bottomRightStops = topLeftStops;
+            }
             else if (cornerRadius.BottomRight == cornerRadius.TopRight)
+            {
                 bottomRightStops = topRightStops;
+            }
             else if (cornerRadius.BottomRight == cornerRadius.BottomLeft)
+            {
                 bottomRightStops = bottomLeftStops;
+            }
             else
+            {
                 bottomRightStops = CreateStops(c, cornerRadius.BottomRight);
+            }
 
             var bottomRightBrush = new RadialGradientBrush(bottomRightStops)
             {
@@ -302,7 +330,9 @@
 
             Color color = Color;
             if (shadowBounds.Width <= 0 || shadowBounds.Height <= 0 || color.A <= 0)
+            {
                 return;
+            }
 
             double centerWidth = (shadowBounds.Right - shadowBounds.Left) - 2 * ShadowDepth;
             double centerHeight = (shadowBounds.Bottom - shadowBounds.Top) - 2 * ShadowDepth;
@@ -409,7 +439,9 @@
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[TopLeft], guidelineSetY[Top]), true));
                 }
                 else
+                {
                     figure.StartPoint = new Point(guidelineSetX[TopLeft], guidelineSetY[TopLeft]);
+                }
 
                 if (cornerRadius.BottomLeft > ShadowDepth)
                 {
@@ -418,7 +450,9 @@
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[Left], guidelineSetY[Right]), true));
                 }
                 else
+                {
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[TopLeft], guidelineSetY[Right]), true));
+                }
 
                 if (cornerRadius.BottomRight > ShadowDepth)
                 {
@@ -427,7 +461,9 @@
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[Right], guidelineSetY[Center]), true));
                 }
                 else
+                {
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[Right], guidelineSetY[Right]), true));
+                }
 
                 if (cornerRadius.TopRight > ShadowDepth)
                 {
@@ -436,7 +472,9 @@
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[TopRight], guidelineSetY[TopLeft]), true));
                 }
                 else
+                {
                     figure.Segments.Add(new LineSegment(new Point(guidelineSetX[Right], guidelineSetY[TopLeft]), true));
+                }
 
                 figure.IsClosed = true;
                 figure.Freeze();

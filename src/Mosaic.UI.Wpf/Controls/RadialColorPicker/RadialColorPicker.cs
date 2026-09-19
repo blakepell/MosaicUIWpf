@@ -728,10 +728,22 @@ namespace Mosaic.UI.Wpf.Controls
 
             if (byte.TryParse(textBox.Text?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out byte channel))
             {
-                if (ReferenceEquals(textBox, _redTextBox)) r = channel;
-                else if (ReferenceEquals(textBox, _greenTextBox)) g = channel;
-                else if (ReferenceEquals(textBox, _blueTextBox)) b = channel;
-                else if (ReferenceEquals(textBox, _alphaTextBox)) a = channel;
+                if (ReferenceEquals(textBox, _redTextBox))
+                {
+                    r = channel;
+                }
+                else if (ReferenceEquals(textBox, _greenTextBox))
+                {
+                    g = channel;
+                }
+                else if (ReferenceEquals(textBox, _blueTextBox))
+                {
+                    b = channel;
+                }
+                else if (ReferenceEquals(textBox, _alphaTextBox))
+                {
+                    a = channel;
+                }
 
                 SelectedColor = Color.FromArgb(a, r, g, b);
             }

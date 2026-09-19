@@ -37,7 +37,9 @@ public sealed class ScriptEnvironment
         Engine = engine ?? new TopazEngine();
         Registrations = new ReadOnlyDictionary<string, ScriptRegistration>(_registrations);
         if (engine == null || includeDefaults)
+        {
             RegisterDefaults();
+        }
     }
 
     /// <summary>
@@ -137,7 +139,10 @@ public sealed class ScriptEnvironment
             ("string", typeof(string)), ("int", typeof(int)), ("date", typeof(DateTime)),
             ("file", typeof(File)), ("directory", typeof(Directory)), ("double", typeof(double)),
             ("math", typeof(Math)), ("guid", typeof(Guid)), ("StringBuilder", typeof(StringBuilder)) })
+        {
             RegisterType(type, alias);
+        }
+
         RegisterObject("JSON", new JSONObject());
         RegisterObject("globalThis", new GlobalThis(Engine.GlobalScope));
         RegisterObject("globals", Globals);
@@ -149,7 +154,9 @@ public sealed class ScriptEnvironment
             new ClipboardScriptCommands(), new HttpScriptCommands(), new ScreenshotScriptCommands(),
             new MouseScriptCommands(), new EnvironmentScriptCommands(), new LogScriptCommands(),
             new AiScriptCommands(), new RegexScriptCommands(), new UiScriptCommands() })
+        {
             RegisterModule(module);
+        }
     }
 
     private static string ResolveAlias(Type type, string? alias)
@@ -162,7 +169,9 @@ public sealed class ScriptEnvironment
     private static void ValidateAlias(string alias)
     {
         if (string.IsNullOrWhiteSpace(alias) || !Regex.IsMatch(alias, @"^[$\p{L}_][$\p{L}\p{N}_]*$"))
+        {
             throw new ArgumentException("A script alias must be a JavaScript identifier.", nameof(alias));
+        }
     }
 }
 

@@ -89,9 +89,13 @@ internal sealed class ScriptEditorSupport : IDisposable
         int start = offset - prefix.Length;
         if (snippets) { Show(ScriptCompletion.GetSnippets(), offset); return; }
         if (start > 0 && _editor.Document.GetCharAt(start - 1) == '.')
+        {
             Show(ScriptCompletion.GetMembers(_environment, GetIdentifierBefore(start - 1)), start);
+        }
         else
+        {
             Show(ScriptCompletion.GetModules(_environment, SyntaxCompletionController.GetWordBefore(_editor.Document, start) == "new"), start);
+        }
     }
 
     /// <summary>
@@ -101,9 +105,14 @@ internal sealed class ScriptEditorSupport : IDisposable
 
     private void OnTextEntered(object sender, TextCompositionEventArgs e)
     {
-        if (e.Text == ".") ShowCompletion();
+        if (e.Text == ".")
+        {
+            ShowCompletion();
+        }
         else if (e.Text == " " && SyntaxCompletionController.GetWordBefore(_editor.Document, _editor.CaretOffset) == "new")
+        {
             Show(ScriptCompletion.GetModules(_environment, true), _editor.CaretOffset);
+        }
     }
 
     private string GetIdentifierBefore(int end)
@@ -112,7 +121,11 @@ internal sealed class ScriptEditorSupport : IDisposable
         while (start > 0)
         {
             char c = _editor.Document.GetCharAt(start - 1);
-            if (!char.IsLetterOrDigit(c) && c != '_' && c != '$') break;
+            if (!char.IsLetterOrDigit(c) && c != '_' && c != '$')
+            {
+                break;
+            }
+
             start--;
         }
         return _editor.Document.GetText(start, end - start);
@@ -120,15 +133,33 @@ internal sealed class ScriptEditorSupport : IDisposable
 
     private void OnTextEntering(object sender, TextCompositionEventArgs e)
     {
-        if (_editor.IsReadOnly || e.Text.Length != 1) return;
+        if (_editor.IsReadOnly || e.Text.Length != 1)
+        {
+            return;
+        }
+
         char c = e.Text[0];
         // Queued before the completion commit below can mark the input handled; it runs once the text is in.
-        if (c is '(' or ',') QueueSignatureHelp(SignatureTrigger.Open);
+        if (c is '(' or ',')
+        {
+            QueueSignatureHelp(SignatureTrigger.Open);
+        }
+
         if (_window != null && !char.IsLetterOrDigit(c) && c != '_' && c != '$')
         {
-            if (_window.CompletionList.SelectedItem != null) _window.CompletionList.RequestInsertion(e);
-            else _window.Close();
-            if (e.Handled) return;
+            if (_window.CompletionList.SelectedItem != null)
+            {
+                _window.CompletionList.RequestInsertion(e);
+            }
+            else
+            {
+                _window.Close();
+            }
+
+            if (e.Handled)
+            {
+                return;
+            }
         }
         int offset = _editor.CaretOffset;
         if (c is ')' or ']' or '}' && offset < _editor.Document.TextLength && _editor.Document.GetCharAt(offset) == c)
@@ -149,7 +180,10 @@ internal sealed class ScriptEditorSupport : IDisposable
 
     private void OnCaretOrTextChanged(object? sender, EventArgs e)
     {
-        if (_signaturePopup?.IsOpen == true) QueueSignatureHelp(SignatureTrigger.Refresh);
+        if (_signaturePopup?.IsOpen == true)
+        {
+            QueueSignatureHelp(SignatureTrigger.Refresh);
+        }
     }
 
     private void OnDocumentChanged(object? sender, EventArgs e) => _signaturePopup?.Close();
@@ -160,22 +194,37 @@ internal sealed class ScriptEditorSupport : IDisposable
     /// </summary>
     private void QueueSignatureHelp(SignatureTrigger trigger)
     {
-        if (trigger > _pendingSignatureTrigger) _pendingSignatureTrigger = trigger;
-        if (_isSignatureUpdateQueued) return;
+        if (trigger > _pendingSignatureTrigger)
+        {
+            _pendingSignatureTrigger = trigger;
+        }
+
+        if (_isSignatureUpdateQueued)
+        {
+            return;
+        }
+
         _isSignatureUpdateQueued = true;
         _editor.Dispatcher.InvokeAsync(() =>
         {
             var pending = _pendingSignatureTrigger;
             _pendingSignatureTrigger = SignatureTrigger.Refresh;
             _isSignatureUpdateQueued = false;
-            if (!_isDisposed) UpdateSignatureHelp(pending);
+            if (!_isDisposed)
+            {
+                UpdateSignatureHelp(pending);
+            }
         }, DispatcherPriority.Normal);
     }
 
     private void UpdateSignatureHelp(SignatureTrigger trigger)
     {
         bool isOpen = _signaturePopup?.IsOpen == true;
-        if (!isOpen && trigger == SignatureTrigger.Refresh) return;
+        if (!isOpen && trigger == SignatureTrigger.Refresh)
+        {
+            return;
+        }
+
         int caret = _editor.CaretOffset;
         var found = ScriptCallParser.Find(_editor.Document.Text, caret, c => GetSignatures(c).Count > 0);
         if (found is not { } call)
@@ -183,7 +232,11 @@ internal sealed class ScriptEditorSupport : IDisposable
             _signaturePopup?.Close();
             return;
         }
-        if (!isOpen && trigger == SignatureTrigger.CallStart && call.OpenParenOffset != caret - 1) return;
+        if (!isOpen && trigger == SignatureTrigger.CallStart && call.OpenParenOffset != caret - 1)
+        {
+            return;
+        }
+
         var popup = GetSignaturePopup();
         var help = popup.Help;
         // The anchor tells a new call apart from the same call shifted by edits above it, keeping a picked overload.
@@ -198,7 +251,11 @@ internal sealed class ScriptEditorSupport : IDisposable
 
     private IReadOnlyList<ScriptSignature> GetSignatures(ScriptCallContext call)
     {
-        if (!_signatures.TryGetValue(call.Key, out var signatures)) _signatures[call.Key] = signatures = ScriptCompletion.GetSignatures(_environment, call);
+        if (!_signatures.TryGetValue(call.Key, out var signatures))
+        {
+            _signatures[call.Key] = signatures = ScriptCompletion.GetSignatures(_environment, call);
+        }
+
         return signatures;
     }
 
@@ -216,7 +273,10 @@ internal sealed class ScriptEditorSupport : IDisposable
     private void Show(IReadOnlyList<ICompletionData> items, int start)
     {
         _window?.Close();
-        if (items.Count == 0 || _editor.IsReadOnly) return;
+        if (items.Count == 0 || _editor.IsReadOnly)
+        {
+            return;
+        }
         // AvalonEdit leaves the window resizable, which makes Windows draw a resize strip along the top
         // edge of the borderless window; NoResize plus a uniform 1px border matches ApexGate's popup.
         var window = new CompletionWindow(_editor.TextArea)
@@ -224,17 +284,27 @@ internal sealed class ScriptEditorSupport : IDisposable
             StartOffset = start, Width = 300, ResizeMode = ResizeMode.NoResize, BorderThickness = new Thickness(1)
         };
         AddThemeResources(window);
-        if (window.TryFindResource("ScriptCompletionListStyle") is Style listStyle) window.CompletionList.Style = listStyle;
+        if (window.TryFindResource("ScriptCompletionListStyle") is Style listStyle)
+        {
+            window.CompletionList.Style = listStyle;
+        }
+
         window.SetResourceReference(Control.BackgroundProperty, MosaicTheme.ControlTextBackgroundBrush);
         window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.ControlTextForegroundBrush);
         window.SetResourceReference(Control.BorderBrushProperty, MosaicTheme.ControlBorderBrush);
-        foreach (var item in items) window.CompletionList.CompletionData.Add(item);
+        foreach (var item in items)
+        {
+            window.CompletionList.CompletionData.Add(item);
+        }
         // Runs after the window's own handler has inserted the item: a method leaves the caret inside "()".
         window.CompletionList.InsertionRequested += (_, _) => QueueSignatureHelp(SignatureTrigger.CallStart);
-        window.Closed += (_, _) => { if (ReferenceEquals(_window, window)) _window = null; };
+        window.Closed += (_, _) => { if (ReferenceEquals(_window, window)) { _window = null; } };
         _window = window;
         window.Show();
-        if (start < _editor.CaretOffset) window.CompletionList.SelectItem(_editor.Document.GetText(start, _editor.CaretOffset - start));
+        if (start < _editor.CaretOffset)
+        {
+            window.CompletionList.SelectItem(_editor.Document.GetText(start, _editor.CaretOffset - start));
+        }
     }
 
     /// <summary>
@@ -263,7 +333,11 @@ internal sealed class ScriptEditorSupport : IDisposable
         var palette = new ResourceDictionary();
         if (theme == MosaicThemeMode.HighContrast)
         {
-            foreach (string key in new[] { "Method", "Property", "Class", "Snippet" }) palette[$"ScriptCompletion{key}Brush"] = SystemColors.WindowTextBrush;
+            foreach (string key in new[] { "Method", "Property", "Class", "Snippet" })
+            {
+                palette[$"ScriptCompletion{key}Brush"] = SystemColors.WindowTextBrush;
+            }
+
             palette["ScriptCompletionTypeBrush"] = SystemColors.HotTrackBrush;
             palette["ScriptCompletionDetailBrush"] = SystemColors.GrayTextBrush;
             return palette;
@@ -302,7 +376,10 @@ internal sealed class ScriptEditorSupport : IDisposable
         if (_editor.Theme == MosaicThemeMode.HighContrast)
         {
             methodColor = moduleColor = SystemColors.WindowTextColor;
-            foreach (var color in definition.NamedHighlightingColors) color.Foreground = new SimpleHighlightingBrush(SystemColors.WindowTextColor);
+            foreach (var color in definition.NamedHighlightingColors)
+            {
+                color.Foreground = new SimpleHighlightingBrush(SystemColors.WindowTextColor);
+            }
         }
         AddRule(methods, methodColor);
         AddRule(_environment.Registrations.Keys, moduleColor);
@@ -311,7 +388,11 @@ internal sealed class ScriptEditorSupport : IDisposable
         void AddRule(IEnumerable<string> names, Color color)
         {
             string pattern = string.Join("|", names.Select(Regex.Escape));
-            if (pattern.Length == 0) return;
+            if (pattern.Length == 0)
+            {
+                return;
+            }
+
             definition.MainRuleSet.Rules.Insert(0, new HighlightingRule
             {
                 Regex = new Regex(@"(?<![\w$])(?:" + pattern + @")(?![\w$])", RegexOptions.CultureInvariant),

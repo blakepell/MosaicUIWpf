@@ -35,14 +35,20 @@ public static class ScriptCompletion
     /// <param name="alias">The member access qualifier.</param>
     public static IReadOnlyList<ICompletionData> GetMembers(ScriptEnvironment environment, string alias)
     {
-        if (!environment.Registrations.TryGetValue(alias, out var registration)) return [];
+        if (!environment.Registrations.TryGetValue(alias, out var registration))
+        {
+            return [];
+        }
+
         var result = new List<ICompletionData>();
         var flags = MemberFlags(registration);
         if (registration.Instance is IEnumerable<KeyValuePair<string, object>> dictionary)
         {
             foreach (var pair in dictionary.OrderBy(p => p.Key, StringComparer.Ordinal))
+            {
                 result.Add(new ScriptCompletionData(pair.Key, ScriptCompletionKind.Global,
                     new ScriptCompletionDescription("Global", pair.Value?.GetType().Name ?? "null", $"Current value: {pair.Value}")));
+            }
         }
         foreach (var group in registration.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).GroupBy(m => m.Name))
         {
@@ -90,12 +96,20 @@ public static class ScriptCompletion
         IEnumerable<ScriptSignature> signatures;
         if (call.IsConstructor)
         {
-            if (!environment.Registrations.TryGetValue(call.Name, out var type) || !type.IsType || type.Type.IsAbstract) return [];
+            if (!environment.Registrations.TryGetValue(call.Name, out var type) || !type.IsType || type.Type.IsAbstract)
+            {
+                return [];
+            }
+
             signatures = type.Type.GetConstructors().Where(Visible).Select(c => CreateSignature(c, string.Empty, call.Key));
         }
         else
         {
-            if (call.Qualifier == null || !environment.Registrations.TryGetValue(call.Qualifier, out var registration)) return [];
+            if (call.Qualifier == null || !environment.Registrations.TryGetValue(call.Qualifier, out var registration))
+            {
+                return [];
+            }
+
             signatures = registration.Type.GetMethods(MemberFlags(registration))
                 .Where(m => m.Name == call.Name && !m.IsSpecialName && Visible(m))
                 .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key));
@@ -125,13 +139,23 @@ public static class ScriptCompletion
     private static ScriptSignatureParameter[]? ParseHint(string? hint)
     {
         int open = hint?.IndexOf('(') ?? -1, close = hint?.LastIndexOf(')') ?? -1;
-        if (hint == null || open < 0 || close < open) return null;
+        if (hint == null || open < 0 || close < open)
+        {
+            return null;
+        }
+
         var parts = new List<string>();
         int depth = 0, start = open + 1;
         for (int i = start; i < close; i++)
         {
-            if (hint[i] is '(' or '[' or '<' or '{') depth++;
-            else if (hint[i] is ')' or ']' or '>' or '}') depth--;
+            if (hint[i] is '(' or '[' or '<' or '{')
+            {
+                depth++;
+            }
+            else if (hint[i] is ')' or ']' or '>' or '}')
+            {
+                depth--;
+            }
             else if (hint[i] == ',' && depth == 0) { parts.Add(hint[start..i]); start = i + 1; }
         }
         parts.Add(hint[start..close]);
@@ -208,11 +232,17 @@ internal sealed class ScriptCompletionData(string text, ScriptCompletionKind kin
         bool followingOpening = completionSegment.EndOffset < textArea.Document.TextLength &&
             textArea.Document.GetCharAt(completionSegment.EndOffset) == '(';
         bool addParentheses = IsMethod && !followingOpening;
-        if (addParentheses) value += "()";
+        if (addParentheses)
+        {
+            value += "()";
+        }
         // The segment is anchor based and its Offset moves to the end of the inserted text after Replace, so capture it first.
         int start = completionSegment.Offset;
         textArea.Document.Replace(completionSegment, value);
         textArea.Caret.Offset = start + value.Length - (addParentheses && (HasParameters || typedOpening) ? 1 : 0);
-        if (typedOpening && addParentheses && insertionRequestEventArgs is TextCompositionEventArgs input) input.Handled = true;
+        if (typedOpening && addParentheses && insertionRequestEventArgs is TextCompositionEventArgs input)
+        {
+            input.Handled = true;
+        }
     }
 }

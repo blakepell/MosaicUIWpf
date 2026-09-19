@@ -65,7 +65,7 @@ internal sealed class ScriptSignaturePopup
         addResources(_root);
         _root.SetResourceReference(FrameworkElement.StyleProperty, "ScriptSignaturePopupStyle");
         AutomationProperties.SetName(_root, "Parameter information");
-        _root.SizeChanged += (_, e) => { if (e.NewSize.Width > _root.MinWidth) _root.MinWidth = e.NewSize.Width; };
+        _root.SizeChanged += (_, e) => { if (e.NewSize.Width > _root.MinWidth) { _root.MinWidth = e.NewSize.Width; } };
         _popup = new Popup
         {
             Child = _root, PlacementTarget = textArea.TextView, Placement = PlacementMode.Top,
@@ -90,7 +90,11 @@ internal sealed class ScriptSignaturePopup
         _nameOffset = nameOffset;
         if (!ReferenceEquals(Help, help))
         {
-            if (Help != null) Help.PropertyChanged -= OnHelpChanged;
+            if (Help != null)
+            {
+                Help.PropertyChanged -= OnHelpChanged;
+            }
+
             Help = help;
             help.PropertyChanged += OnHelpChanged;
             BuildRows(help);
@@ -102,12 +106,19 @@ internal sealed class ScriptSignaturePopup
             Attach();
             _popup.IsOpen = true;
         }
-        else if (!Reposition()) Close();
+        else if (!Reposition())
+        {
+            Close();
+        }
     }
 
     public void Close()
     {
-        if (_isClosing || Help == null) return;
+        if (_isClosing || Help == null)
+        {
+            return;
+        }
+
         _isClosing = true;
         try
         {
@@ -155,16 +166,32 @@ internal sealed class ScriptSignaturePopup
         {
             var row = new TextBlock { DataContext = signature };
             row.SetResourceReference(FrameworkElement.StyleProperty, "ScriptSignatureRowStyle");
-            if (signature.ReturnType.Length > 0) row.Inlines.Add(TypeRun(signature.ReturnType + " "));
+            if (signature.ReturnType.Length > 0)
+            {
+                row.Inlines.Add(TypeRun(signature.ReturnType + " "));
+            }
+
             row.Inlines.Add(new Run(signature.Name + "("));
             for (int i = 0; i < signature.Parameters.Count; i++)
             {
                 var parameter = signature.Parameters[i];
-                if (i > 0) row.Inlines.Add(new Run(", "));
+                if (i > 0)
+                {
+                    row.Inlines.Add(new Run(", "));
+                }
+
                 var span = new Span { DataContext = parameter };
                 span.SetResourceReference(FrameworkContentElement.StyleProperty, "ScriptSignatureParameterStyle");
-                if (parameter.IsParams) span.Inlines.Add(TypeRun("params "));
-                if (parameter.Type.Length > 0) span.Inlines.Add(TypeRun(parameter.Type + " "));
+                if (parameter.IsParams)
+                {
+                    span.Inlines.Add(TypeRun("params "));
+                }
+
+                if (parameter.Type.Length > 0)
+                {
+                    span.Inlines.Add(TypeRun(parameter.Type + " "));
+                }
+
                 span.Inlines.Add(new Run(parameter.Name));
                 if (parameter.DefaultValue != null)
                 {
@@ -195,7 +222,9 @@ internal sealed class ScriptSignaturePopup
     {
         UpdateDetails();
         if (e.PropertyName == nameof(ScriptSignatureHelp.ActiveSignature))
+        {
             _rows.Children.OfType<TextBlock>().FirstOrDefault(r => ReferenceEquals(r.DataContext, Help?.ActiveSignature))?.BringIntoView();
+        }
     }
 
     /// <summary>
@@ -213,7 +242,11 @@ internal sealed class ScriptSignaturePopup
             _parameter.Inlines.Add(new Run(": " + parameter.Description));
             _parameter.Visibility = Visibility.Visible;
         }
-        else _parameter.Visibility = Visibility.Collapsed;
+        else
+        {
+            _parameter.Visibility = Visibility.Collapsed;
+        }
+
         _rule.Visibility = _summary.Visibility == Visibility.Visible || _parameter.Visibility == Visibility.Visible ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -224,20 +257,35 @@ internal sealed class ScriptSignaturePopup
     {
         var view = _textArea.TextView;
         var document = _textArea.Document;
-        if (document == null) return false;
+        if (document == null)
+        {
+            return false;
+        }
+
         var top = view.GetVisualPosition(_textArea.Caret.Position, VisualYPosition.LineTop) - view.ScrollOffset;
         var bottom = view.GetVisualPosition(_textArea.Caret.Position, VisualYPosition.LineBottom) - view.ScrollOffset;
-        if (bottom.Y < 0 || top.Y > view.ActualHeight) return false;
+        if (bottom.Y < 0 || top.Y > view.ActualHeight)
+        {
+            return false;
+        }
+
         var name = new TextViewPosition(document.GetLocation(Math.Clamp(_nameOffset, 0, document.TextLength)));
         double x = view.GetVisualPosition(name, VisualYPosition.LineTop).X - view.ScrollOffset.X - _root.Padding.Left - _root.BorderThickness.Left;
         var anchor = new Rect(Math.Max(0, x), top.Y, 0, Math.Max(1, bottom.Y - top.Y));
-        if (_popup.PlacementRectangle != anchor) _popup.PlacementRectangle = anchor;
+        if (_popup.PlacementRectangle != anchor)
+        {
+            _popup.PlacementRectangle = anchor;
+        }
+
         return true;
     }
 
     private void OnViewChanged(object? sender, EventArgs e)
     {
-        if (!Reposition()) Close();
+        if (!Reposition())
+        {
+            Close();
+        }
     }
 
     /// <summary>
@@ -255,7 +303,10 @@ internal sealed class ScriptSignaturePopup
         _textArea.Dispatcher.InvokeAsync(() =>
         {
             bool ownedWindowActive = _window?.OwnedWindows.Cast<Window>().Any(w => w.IsActive) == true;
-            if (!_textArea.IsKeyboardFocusWithin && !ownedWindowActive) Close();
+            if (!_textArea.IsKeyboardFocusWithin && !ownedWindowActive)
+            {
+                Close();
+            }
         }, DispatcherPriority.Background);
 
     /// <summary>

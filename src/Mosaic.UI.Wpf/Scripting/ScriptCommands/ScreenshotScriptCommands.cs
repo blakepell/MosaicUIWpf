@@ -20,7 +20,11 @@ public class ScreenshotScriptCommands
     /// </summary>
     public Bitmap CurrentWindow()
     {
-        if (!GetWindowRect(GetForegroundWindow(), out var rect)) throw new Win32Exception();
+        if (!GetWindowRect(GetForegroundWindow(), out var rect))
+        {
+            throw new Win32Exception();
+        }
+
         return ByLocation(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
     }
 

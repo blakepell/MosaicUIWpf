@@ -142,7 +142,10 @@ namespace Mosaic.UI.Wpf.Controls
         {
             if (d is HexColorTextBox control && e.NewValue is string hexValue)
             {
-                if (control._isUpdating) return;
+                if (control._isUpdating)
+                {
+                    return;
+                }
 
                 if (control.TryParseHexColor(hexValue, out Color color, out string normalized))
                 {
@@ -290,7 +293,10 @@ namespace Mosaic.UI.Wpf.Controls
 
             // If we're suppressing selection updates while the user is typing, don't normalize or
             // overwrite the editable text. This allows the user to continue typing freely.
-            if (_suppressSelectionChangeDuringTyping) return;
+            if (_suppressSelectionChangeDuringTyping)
+            {
+                return;
+            }
 
             if (!_isUpdating && SelectedItem is Color selectedColor)
             {
@@ -320,7 +326,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="e">The event data containing information about the text change.</param>
         private void OnEditableTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_editableTextBox == null || _isUpdating) return;
+            if (_editableTextBox == null || _isUpdating)
+            {
+                return;
+            }
 
             string text = _editableTextBox.Text;
             if (TryParseHexColor(text, out Color color, out string normalized))
@@ -348,7 +357,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="e">The event data associated with the <see cref="RoutedEventArgs"/>.</param>
         private void OnEditableLostFocus(object sender, RoutedEventArgs e)
         {
-            if (_editableTextBox == null) return;
+            if (_editableTextBox == null)
+            {
+                return;
+            }
 
             string text = _editableTextBox.Text;
             if (TryParseHexColor(text, out Color color, out string normalized))
@@ -389,7 +401,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
         private void OnEditablePreviewKeyDown(object? sender, KeyEventArgs e)
         {
-            if (_editableTextBox == null) return;
+            if (_editableTextBox == null)
+            {
+                return;
+            }
 
             if (e.Key == Key.Escape)
             {

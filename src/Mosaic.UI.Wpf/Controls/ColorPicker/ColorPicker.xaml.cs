@@ -413,7 +413,9 @@ namespace Mosaic.UI.Wpf.Controls
         private static bool IsValidHexColor(string hex)
         {
             if (string.IsNullOrWhiteSpace(hex))
+            {
                 return false;
+            }
 
             string pattern = @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$";
             return Regex.IsMatch(hex, pattern);

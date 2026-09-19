@@ -104,8 +104,16 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             if (attrs.Reverse)
             {
                 // Resolve default sentinel values to their concrete palette indices before swapping.
-                if (fgDefault) fg = 7; // default fg = index 7 (light gray)
-                if (bgDefault) bg = 0; // default bg = index 0 (black)
+                if (fgDefault)
+                {
+                    fg = 7; // default fg = index 7 (light gray)
+                }
+
+                if (bgDefault)
+                {
+                    bg = 0; // default bg = index 0 (black)
+                }
+
                 (fg, bg) = (bg, fg);
                 bgDefault = false; // resolved + swapped → always explicit now
             }

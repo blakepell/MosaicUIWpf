@@ -849,9 +849,21 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             var m = Keyboard.Modifiers;
             int mod = 0;
-            if ((m & ModifierKeys.Shift) == ModifierKeys.Shift) mod += 1;
-            if ((m & ModifierKeys.Alt) == ModifierKeys.Alt) mod += 2;
-            if ((m & ModifierKeys.Control) == ModifierKeys.Control) mod += 4;
+            if ((m & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                mod += 1;
+            }
+
+            if ((m & ModifierKeys.Alt) == ModifierKeys.Alt)
+            {
+                mod += 2;
+            }
+
+            if ((m & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                mod += 4;
+            }
+
             return mod + 1;
         }
 
@@ -1864,41 +1876,77 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
             switch (cmd)
             {
                 case 'A': // CUU - Cursor Up
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorUp();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorUp();
+                    }
+
                     break;
                 case 'B': // CUD - Cursor Down
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorDownNoScroll();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorDownNoScroll();
+                    }
+
                     break;
                 case 'C': // CUF - Cursor Forward (Right)
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorRight();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorRight();
+                    }
+
                     break;
                 case 'D': // CUB - Cursor Back (Left)
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorLeft();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorLeft();
+                    }
+
                     break;
                 case 'E': // CNL - Cursor Next Line
                     _curCol = 0;
-                    for (int i = 0; i < Math.Max(1, p0); i++) LineFeed();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        LineFeed();
+                    }
+
                     break;
                 case 'F': // CPL - Cursor Previous Line
                     _curCol = 0;
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorUp();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorUp();
+                    }
+
                     break;
                 case 'G': // CHA - Cursor Horizontal Absolute
                 case '`': // HPA - Horizontal Position Absolute (same as CHA)
                     _curCol = Math.Max(0, Math.Min((p0 > 0 ? p0 : 1) - 1, Columns - 1));
                     break;
                 case 'a': // HPR - Horizontal Position Relative (cursor forward)
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorRight();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorRight();
+                    }
+
                     break;
                 case 'H': // CUP - Cursor Position
                 case 'f': // HVP - same as CUP
                     CursorPositionCsi(p0 > 0 ? p0 : 1, p1 > 0 ? p1 : 1);
                     break;
                 case 'I': // CHT - Cursor Horizontal (forward) Tab
-                    for (int i = 0; i < Math.Max(1, p0); i++) _curCol = NextTabStop(_curCol);
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        _curCol = NextTabStop(_curCol);
+                    }
+
                     break;
                 case 'Z': // CBT - Cursor Backward Tab
-                    for (int i = 0; i < Math.Max(1, p0); i++) _curCol = PrevTabStop(_curCol);
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        _curCol = PrevTabStop(_curCol);
+                    }
+
                     break;
                 case 'J': // ED - Erase in Display
                     EraseInDisplay(p0);
@@ -1928,7 +1976,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     _curRow = Math.Max(0, Math.Min((p0 > 0 ? p0 : 1) - 1, Rows - 1));
                     break;
                 case 'e': // VPR - Vertical Position Relative (cursor down)
-                    for (int i = 0; i < Math.Max(1, p0); i++) CursorDownNoScroll();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        CursorDownNoScroll();
+                    }
+
                     break;
                 case 'g': // TBC - Tab Clear
                     if (p0 == 3)
@@ -1984,10 +2036,18 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     SendPrimaryDeviceAttributes();
                     break;
                 case 'S': // SU - Scroll Up
-                    for (int i = 0; i < Math.Max(1, p0); i++) ScrollUpRegion();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        ScrollUpRegion();
+                    }
+
                     break;
                 case 'T': // SD - Scroll Down
-                    for (int i = 0; i < Math.Max(1, p0); i++) ScrollDownRegion();
+                    for (int i = 0; i < Math.Max(1, p0); i++)
+                    {
+                        ScrollDownRegion();
+                    }
+
                     break;
             }
 
@@ -2649,7 +2709,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             // Insert blank lines at cursor, pushing existing lines down
             // Only works within scroll region
-            if (_curRow < _scrollTop - 1 || _curRow > _scrollBottom - 1) return;
+            if (_curRow < _scrollTop - 1 || _curRow > _scrollBottom - 1)
+            {
+                return;
+            }
 
             var blankCell = new TerminalCell(' ', _currentAttrs);
             int bottom = _scrollBottom - 1;
@@ -2669,7 +2732,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             // Delete lines at cursor, pulling up lines from below
             // Only works within scroll region
-            if (_curRow < _scrollTop - 1 || _curRow > _scrollBottom - 1) return;
+            if (_curRow < _scrollTop - 1 || _curRow > _scrollBottom - 1)
+            {
+                return;
+            }
 
             var blankCell = new TerminalCell(' ', _currentAttrs);
             int bottom = _scrollBottom - 1;
@@ -2883,7 +2949,10 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         /// </summary>
         private int ParseExtendedColor(int index, ref byte colorOut)
         {
-            if (index + 1 >= _csiParams.Count) return index;
+            if (index + 1 >= _csiParams.Count)
+            {
+                return index;
+            }
 
             int mode = _csiParams[index + 1];
             if (mode == 5 && index + 2 < _csiParams.Count)
