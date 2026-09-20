@@ -25,6 +25,9 @@ have used since the dial-up era.
 | Review old output | Scroll up to lock the history, then use **Terminal → Search Screen and Scrollback…** if needed. |
 | Use a DOS door's Alt/function keys | Turn on **DoorWay** in the session status bar. |
 | Send a saved login | Choose **Terminal → Send Login Macro**. |
+| Configure prompt-aware login | **Edit BBS → Use prompt-aware steps → Edit steps…**. |
+| Write a message offline | **Terminal → Compose Message…**; drafts are saved per board. |
+| Stop a paste or login | Click **Stop sending** in the session banner or use the Terminal menu. |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
 | Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |
 | Choose a theme | **Setup → Theme → Light, Dark, or Blue** |

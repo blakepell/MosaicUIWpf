@@ -242,6 +242,27 @@ namespace BbsNavigator.Models
         private string _loginMacro = "{USERNAME}{ENTER}{PASSWORD}{ENTER}";
 
         /// <summary>
+        /// Gets or sets whether login uses explicit prompt-aware steps instead of the legacy macro.
+        /// </summary>
+        [ObservableProperty]
+        private bool _useLoginSequence;
+
+        /// <summary>
+        /// Gets or sets the ordered login actions. Credentials are resolved only at execution time.
+        /// </summary>
+        public List<LoginStep> LoginSteps { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the per-board character delay, or -1 to use the application setting.
+        /// </summary>
+        public int PasteCharacterDelayOverride { get; set; } = -1;
+
+        /// <summary>
+        /// Gets or sets the additional delay after each pasted line, in milliseconds.
+        /// </summary>
+        public int PasteLineDelayMilliseconds { get; set; } = 100;
+
+        /// <summary>
         /// Gets or sets the current connection state.
         /// </summary>
         /// <value>One of the enumeration values that describes the BBS session state.</value>

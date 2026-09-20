@@ -439,6 +439,14 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         public event Action? Bell;
 
         /// <summary>
+        /// Gets whether the remote host has requested bracketed paste delimiters.
+        /// </summary>
+        public bool IsBracketedPasteEnabled
+        {
+            get { lock (_lock) return _bracketedPaste; }
+        }
+
+        /// <summary>
         /// Fired when the remote host switches into or out of the alternate screen buffer
         /// (CSI ? 1049 h / l, CSI ? 47 h / l, CSI ? 1047 h / l).
         /// The boolean argument is <c>true</c> when entering the alternate screen and

@@ -15,6 +15,28 @@ namespace BbsNavigator.Transfers
     /// </summary>
     public static class TransferCrc
     {
+        /// <summary>
+        /// Computes the complemented ZMODEM CRC-32 of the specified file prefix.
+        /// </summary>
+        /// <param name="stream">The readable, seekable file stream.</param>
+        /// <param name="length">The number of bytes to verify.</param>
+        /// <param name="cancellationToken">A token that cancels the read.</param>
+        /// <returns>The CRC-32 of the prefix.</returns>
+        public static async Task<uint> ComputePrefixCrc32Async(System.IO.Stream stream, long length, CancellationToken cancellationToken)
+        {
+            stream.Position = 0;
+            uint crc = uint.MaxValue;
+            byte[] buffer = new byte[65536];
+            while (length > 0)
+            {
+                int count = await stream.ReadAsync(buffer.AsMemory(0, (int)Math.Min(buffer.Length, length)), cancellationToken).ConfigureAwait(false);
+                if (count == 0) throw new System.IO.EndOfStreamException("The partial file ended before its expected position.");
+                for (int i = 0; i < count; i++) crc = UpdateCrc32(crc, buffer[i]);
+                length -= count;
+            }
+            return ~crc;
+        }
+
         private static readonly uint[] _crc32Table = BuildCrc32Table();
 
         /// <summary>

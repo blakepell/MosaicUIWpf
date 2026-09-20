@@ -32,6 +32,7 @@ namespace BbsNavigator
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, LayoutDocument> _documents = new();
+        private readonly Dictionary<Guid, MessageComposerWindow> _composers = new();
         private readonly BbsFavoriteOrganizer _favoriteOrganizer;
         private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
@@ -905,6 +906,10 @@ namespace BbsNavigator
             profile.CaptureSession = editor.Profile.CaptureSession;
             profile.AutoLogin = editor.Profile.AutoLogin;
             profile.LoginMacro = editor.Profile.LoginMacro;
+            profile.UseLoginSequence = editor.Profile.UseLoginSequence;
+            profile.LoginSteps = editor.Profile.LoginSteps;
+            profile.PasteCharacterDelayOverride = editor.Profile.PasteCharacterDelayOverride;
+            profile.PasteLineDelayMilliseconds = editor.Profile.PasteLineDelayMilliseconds;
 
             foreach (LayoutDocument document in GetDocuments(profile))
             {
@@ -1069,6 +1074,35 @@ namespace BbsNavigator
             {
                 ShowNoActiveSessionMessage();
             }
+        }
+
+        private void StopSending_OnClick(object sender, RoutedEventArgs e) => ActiveTerminal?.StopSending();
+
+        private void ComposeMessage_OnClick(object sender, RoutedEventArgs e)
+        {
+            BbsProfile? profile = ActiveTerminal?.Profile ?? SelectedProfile;
+            if (profile == null) { ShowNoProfileSelectedMessage("compose a message"); return; }
+            if (_composers.TryGetValue(profile.Id, out var existing)) { existing.Activate(); return; }
+            BbsTerminalView? FindTerminal() => ActiveTerminal?.Profile.Id == profile.Id && ActiveTerminal.IsConnected
+                ? ActiveTerminal
+                : GetDocuments(profile).Select(d => d.Content).OfType<BbsTerminalView>().FirstOrDefault(t => t.IsConnected);
+            string folder = Settings.ApplicationDataFolder ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apps", "BBSNavigator");
+            BbsTerminalView? sendingTerminal = null;
+            var composer = new MessageComposerWindow(profile, folder, async text =>
+            {
+                var terminal = FindTerminal();
+                if (terminal == null)
+                {
+                    Mosaic.UI.Wpf.Controls.MessageBox.Show("Connect to this board and open its message editor before sending.", "Compose message");
+                    return false;
+                }
+                sendingTerminal = terminal;
+                try { return await terminal.SendPreparedTextAsync(text); }
+                finally { sendingTerminal = null; }
+            }, () => sendingTerminal?.StopSending()) { Owner = this };
+            _composers[profile.Id] = composer;
+            composer.Closed += (_, _) => _composers.Remove(profile.Id);
+            composer.Show();
         }
 
         private void ToggleDoorway_OnClick(object sender, RoutedEventArgs e)
@@ -1395,6 +1429,12 @@ namespace BbsNavigator
             if (_shutdownStarted)
             {
                 return;
+            }
+
+            foreach (var composer in _composers.Values.ToArray())
+            {
+                composer.Close();
+                if (composer.IsVisible) return;
             }
 
             _shutdownStarted = true;

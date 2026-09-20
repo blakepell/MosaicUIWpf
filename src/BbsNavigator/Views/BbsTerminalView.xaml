@@ -111,6 +111,8 @@
                     Margin="4,0,12,0"
                     IsActive="False" />
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <Button x:Name="StopTextButton" Content="Stop sending" Click="StopText_OnClick"
+                            Visibility="Collapsed" Margin="0,0,6,0" Padding="8,3" />
                     <Button
                         x:Name="CancelReconnectButton"
                         MinWidth="110"

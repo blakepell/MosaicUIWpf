@@ -1,0 +1,33 @@
+<Window x:Class="BbsNavigator.Views.MessageComposerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+        Title="Compose message" Width="800" Height="620" MinWidth="600" MinHeight="420"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        mosaic:WindowChromeBehavior.IsEnabled="True" mosaic:WindowChromeBehavior.CaptionHeight="0"
+        Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+        Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}">
+    <DockPanel Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+        <mosaic:WindowTitleBar DockPanel.Dock="Top" ShowMinimizeButton="False" />
+        <StackPanel DockPanel.Dock="Top" Margin="16,12">
+            <TextBlock x:Name="BoardText" FontSize="20" />
+            <TextBlock Margin="0,6,0,8" TextWrapping="Wrap" Text="Drafts are saved locally for this board, including after sending. Open the BBS message editor before sending your draft." />
+            <WrapPanel>
+                <Button Content="Quote selection" Click="Quote_OnClick" Padding="8,4" />
+                <TextBlock Text="Wrap at columns:" Margin="16,0,8,0" VerticalAlignment="Center" />
+                <TextBox x:Name="WrapBox" Text="72" Width="50" AutomationProperties.Name="Wrap columns, zero disables wrapping" />
+                <TextBlock Text="(0 = no wrapping)" Margin="8,0" VerticalAlignment="Center" />
+            </WrapPanel>
+        </StackPanel>
+        <DockPanel DockPanel.Dock="Bottom" Margin="16,12">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button x:Name="StopButton" Content="Stop sending" Click="Stop_OnClick" IsEnabled="False" Margin="8,0" />
+                <Button x:Name="SendButton" Content="Preview and send…" Click="Send_OnClick" Padding="12,5" />
+            </StackPanel>
+            <TextBlock x:Name="DraftStatus" Text="Draft saved" VerticalAlignment="Center" TextWrapping="Wrap" />
+        </DockPanel>
+        <TextBox x:Name="DraftBox" Margin="16,0" AcceptsReturn="True" AcceptsTab="True" SpellCheck.IsEnabled="True"
+                 FontFamily="Consolas" FontSize="15" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                 TextChanged="Draft_OnTextChanged" AutomationProperties.Name="Message draft" />
+    </DockPanel>
+</Window>

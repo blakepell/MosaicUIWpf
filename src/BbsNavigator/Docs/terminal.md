@@ -121,9 +121,9 @@ The available tokens are:
 - `{PASSWORD}` — the saved BBS password.
 - `{ENTER}` — one terminal Enter key.
 
-Enable **Send this macro automatically after Telnet connects** in the BBS editor to run
+Enable **Run the selected login method after Telnet connects** in the BBS editor to run
 it after every successful connection, including a reconnect. Leave automatic login off
-when a board shows changing questions, requires a pause before login, or uses a different
+when using the legacy macro on a board that shows changing questions, requires a pause, or uses a different
 prompt order.
 
 The **Terminal** menu can send the complete login macro, only the saved username, or only
@@ -134,6 +134,54 @@ used after startup.
 > Telnet itself is unencrypted. Encryption protects credentials while they are stored on
 > disk, but text sent to a Telnet BBS—including an automatic password—travels over the
 > network without SSH-style encryption.
+
+### Prompt-aware login steps
+
+In **Edit BBS**, enable **Use prompt-aware steps** and choose **Edit steps…**.
+The step editor starts with a username/password example; adjust its prompt text to
+match your board. Actions run in order:
+
+- **WaitForText** waits for literal prompt text, without case sensitivity. ANSI color
+  codes are ignored, and prompts may span multiple network packets. **Seconds** is
+  the timeout (1–300 seconds).
+- **SendUsername** and **SendPassword** use saved encrypted credentials.
+- **SendText** sends the literal text in that row. Use a separate **Enter** step to
+  submit it. Do not put passwords into a SendText row.
+- **Delay** waits for the specified number of seconds.
+
+Use **Send Login Macro** to run the selected method manually, or enable automatic
+login to run it after a Telnet connection opens. Existing profiles keep using their
+original macro until prompt-aware steps are enabled. A timeout stops the sequence
+before subsequent responses are sent. **Stop sending** cancels a wait or send, and
+disconnecting or starting a file transfer also stops it.
+
+## Reviewing and stopping pasted text
+
+Multiline clipboard text opens a review window by default. Edit the preview, check
+the destination board, and set character and extra end-of-line delays before choosing
+**Send text**. Text that cannot be represented by the session encoding must be edited
+or sent using a compatible encoding; it is not silently replaced with question marks.
+
+Select **Remember these delays for this board** to override the global character delay.
+The initial extra line delay is 100 ms. **Options → Preview Multiline Paste** can turn
+off routine multiline previews; encoding problems still open the review window.
+The session banner shows send progress and **Stop sending**. The same stop command
+is available on the Terminal menu. Already transmitted text cannot be recalled.
+Normal typing is paused while a login, paste, or composed-message send is active.
+
+## Composing messages locally
+
+Choose **Terminal → Compose Message…** for the active session, or select a saved board
+in the directory when no terminal is active. The composer works while disconnected.
+Drafts are saved as local text files under the application data folder's `Drafts`
+directory, separately for each board, shortly after editing and when closing.
+
+The editor supports spellchecking and **Quote selection**. Choose a wrapping width
+(72 columns initially; 0 leaves lines unchanged), then **Preview and send…**. Wrapping
+affects the send preview, not the saved draft. Connect to that board and open its BBS
+message editor before sending. Your draft remains saved after sending, cancellation,
+or a disconnect, and reappears when you reopen the composer. Drafts are ordinary local
+text, not encrypted credential records.
 
 ## Zoom and status information
 

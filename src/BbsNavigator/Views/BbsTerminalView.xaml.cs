@@ -259,67 +259,31 @@ namespace BbsNavigator.Views
         /// <summary>Sends the profile's saved username without exposing it on the application UI.</summary>
         public async Task SendUserNameAsync()
         {
-            BbsCredentials? credentials = await GetCredentialsAsync();
-            if (credentials != null)
+            await RunTextOperationAsync(async ct =>
             {
-                await Terminal.SendTextAsync(credentials.UserName);
-                ShowTransientStatus("Saved username sent.");
-            }
+                BbsCredentials? credentials = await GetCredentialsAsync();
+                ct.ThrowIfCancellationRequested();
+                if (credentials == null) throw new InvalidOperationException("No saved credentials are available.");
+                await SendPacedAsync(credentials.UserName, CharacterDelay, 0, false, ct);
+            }, "Saved username sent.");
         }
 
         /// <summary>Sends the profile's saved password without placing it on the clipboard.</summary>
         public async Task SendPasswordAsync()
         {
-            BbsCredentials? credentials = await GetCredentialsAsync();
-            if (credentials != null)
+            await RunTextOperationAsync(async ct =>
             {
-                await Terminal.SendTextAsync(credentials.Password);
-                ShowTransientStatus("Saved password sent.");
-            }
+                BbsCredentials? credentials = await GetCredentialsAsync();
+                ct.ThrowIfCancellationRequested();
+                if (credentials == null) throw new InvalidOperationException("No saved credentials are available.");
+                await SendPacedAsync(credentials.Password, CharacterDelay, 0, false, ct);
+            }, "Saved password sent.");
         }
 
-        /// <summary>Sends the tokenized login macro using the saved credentials.</summary>
-        public Task SendLoginAsync() => SendLoginAsync(showStatus: true);
-
-        private async Task SendLoginAsync(bool showStatus)
-        {
-            BbsCredentials? credentials = await GetCredentialsAsync();
-            if (credentials == null)
-            {
-                if (showStatus)
-                {
-                    ShowTransientStatus("No saved credentials are available for the login macro.");
-                }
-
-                return;
-            }
-
-            string text = _loginTokens.Replace(Profile.LoginMacro ?? string.Empty, match =>
-                    match.Groups[1].Value.ToUpperInvariant() switch
-                    {
-                        "USERNAME" => credentials.UserName,
-                        "PASSWORD" => credentials.Password,
-                        _ => "\r"
-                    })
-                .Replace("\r\n", "\r")
-                .Replace("\n", "\r");
-
-            if (text.Length == 0)
-            {
-                if (showStatus)
-                {
-                    ShowTransientStatus("The login macro is empty.");
-                }
-
-                return;
-            }
-
-            await Terminal.SendTextAsync(text);
-            if (showStatus)
-            {
-                ShowTransientStatus("Login macro sent.");
-            }
-        }
+        /// <summary>
+        /// Runs the selected login sequence or legacy macro using saved credentials.
+        /// </summary>
+        public Task SendLoginAsync() => RunLoginAsync(automatic: false);
 
         private async Task<BbsCredentials?> GetCredentialsAsync()
         {
@@ -391,6 +355,9 @@ namespace BbsNavigator.Views
                 Interlocked.Exchange(ref _connectionCancellation, timeoutCts)?.Dispose();
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(Math.Clamp(_settings.ConnectTimeoutSeconds, 1, 300)));
 
+                await StopSendingAsync();
+                _connectionEpoch++;
+                _loginPrompts.Reset();
                 await _connection.ConnectAsync(timeoutCts.Token);
                 _reconnectAttemptCount = 0;
                 UpdateStatus(BbsConnectionState.Connected, $"Connected to {_endpoint}");
@@ -400,7 +367,7 @@ namespace BbsNavigator.Views
 
                 if (Transport == BbsTransport.Telnet && Profile.AutoLogin)
                 {
-                    await SendLoginAsync(showStatus: true);
+                    await RunLoginAsync(automatic: true);
                 }
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
@@ -476,6 +443,7 @@ namespace BbsNavigator.Views
         {
             Dispatcher.BeginInvoke(() =>
             {
+                StopSending();
                 if (_disposed || _manualDisconnect)
                 {
                     return;
@@ -496,6 +464,7 @@ namespace BbsNavigator.Views
             }
 
             WriteCapture(data);
+            _loginPrompts.Append(data);
             DetectZmodemStart(data);
 
             if (Interlocked.Exchange(ref _scrollToEndQueued, 1) != 0)
@@ -529,8 +498,19 @@ namespace BbsNavigator.Views
             _rawLog.Append(payload);
         }
 
-        private void TerminalCommand_OnPreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        private async void TerminalCommand_OnPreviewExecuted(object sender, ExecutedRoutedEventArgs e)
         {
+            if (e.Command == VT52Terminal.PasteTextCommand || e.Command == ApplicationCommands.Paste)
+            {
+                e.Handled = true;
+                try
+                {
+                    string text = Clipboard.GetText();
+                    await SendPreparedTextAsync(text, _settings.PreviewMultilinePaste && (text.Contains('\n') || text.Contains('\r')));
+                }
+                catch (Exception ex) { ShowTransientStatus($"Could not paste: {ex.Message}"); }
+                return;
+            }
             // Clearing the screen also drops the bytes behind it, so a later encoding change does
             // not resurrect content the user just cleared.
             if (e.Command == VT52Terminal.ClearTerminalCommand)
@@ -786,6 +766,7 @@ namespace BbsNavigator.Views
             // full connect timeout, and the waiting delay would otherwise fire once it is released.
             _manualDisconnect = true;
             CancelPendingReconnect();
+            await StopSendingAsync();
             try
             {
                 Volatile.Read(ref _connectionCancellation)?.Cancel();
@@ -870,7 +851,7 @@ namespace BbsNavigator.Views
 
         private void UpdateTransferButtons()
         {
-            bool enabled = _connection.IsConnected && !_transferActive;
+            bool enabled = _connection.IsConnected && !_transferActive && _textCancellation == null;
             UploadButton.IsEnabled = enabled;
             DownloadButton.IsEnabled = enabled;
             ProtocolComboBox.IsEnabled = !_transferActive;
@@ -1226,6 +1207,8 @@ namespace BbsNavigator.Views
             }
 
             _transferActive = true;
+            await StopSendingAsync();
+            if (_disposed || !_connection.IsConnected) { _transferActive = false; return; }
             _transferCts = new CancellationTokenSource();
             Terminal.SendKeyboardInputToConnection = false;
             UpdateTransferButtons();
@@ -1251,7 +1234,8 @@ namespace BbsNavigator.Views
 
                 TransferResult result = await Task.Run(() => direction == TransferDirection.Download
                     ? protocol == TransferProtocol.Zmodem
-                        ? new ZmodemReceiver().ReceiveAsync(channel, downloadFolder, progressSink, token)
+                        ? new ZmodemReceiver().ReceiveAsync(channel, downloadFolder, progressSink, token,
+                            $"{Profile.Id:N}:{Transport}:{_endpoint}", ChooseDownloadResumeAsync)
                         : new XymodemReceiver(protocol).ReceiveAsync(channel, downloadFolder, xmodemFileName, progressSink, token)
                     : protocol == TransferProtocol.Zmodem
                         ? new ZmodemSender().SendAsync(channel, uploadFiles!, progressSink, token)
@@ -1446,6 +1430,7 @@ namespace BbsNavigator.Views
             _manualDisconnect = true;
             _transferCts?.Cancel();
             _lifetimeCancellation.Cancel();
+            await StopSendingAsync();
             _statsTimer.Stop();
             _transferUiTimer?.Stop();
             StopCapture();

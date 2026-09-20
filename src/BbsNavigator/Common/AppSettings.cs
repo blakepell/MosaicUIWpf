@@ -126,6 +126,14 @@ namespace BbsNavigator.Common
         private int _pastePacingMilliseconds = 5;
 
         /// <summary>
+        /// Gets or sets whether multiline clipboard text is reviewed before sending.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Preview Multiline Paste")]
+        [ObservableProperty]
+        private bool _previewMultilinePaste = true;
+
+        /// <summary>
         /// Gets or sets a value that indicates whether selecting terminal text copies it to the clipboard.
         /// </summary>
         /// <value>

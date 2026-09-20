@@ -30,6 +30,8 @@ namespace BbsNavigator.Transfers
         /// <param name="destinationFolder">The folder that receives the files.</param>
         /// <param name="progress">An optional progress sink.</param>
         /// <param name="cancellationToken">A token that aborts the transfer.</param>
+        /// <param name="sourceIdentity">The board and endpoint identity used to isolate partial files.</param>
+        /// <param name="chooseResume">An optional resume/restart decision; without one, a verified resume is attempted.</param>
         /// <returns>A summary of the completed session.</returns>
         /// <exception cref="TransferException">The remote side canceled or the protocol failed.</exception>
         /// <exception cref="OperationCanceledException">The transfer was canceled locally.</exception>
@@ -37,7 +39,9 @@ namespace BbsNavigator.Transfers
             ITransferLink link,
             string destinationFolder,
             IProgress<TransferSnapshot>? progress,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            string sourceIdentity = "",
+            Func<PartialDownloadInfo, CancellationToken, Task<DownloadResumeAction>>? chooseResume = null)
         {
             Directory.CreateDirectory(destinationFolder);
 
@@ -49,6 +53,7 @@ namespace BbsNavigator.Transfers
             int errors = 0;
 
             FileStream? currentFile = null;
+            PartialDownload? partial = null;
             byte[]? currentInfo = null;
             string currentName = string.Empty;
             long currentSize = -1;
@@ -144,14 +149,34 @@ namespace BbsNavigator.Transfers
 
                             currentInfo = subpacket.AsSpan(0, length).ToArray();
 
-                            string path = XymodemReceiver.MakeUniquePath(destinationFolder, name);
-                            currentFile = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, useAsync: true);
-                            currentName = Path.GetFileName(path);
+                            if (size > uint.MaxValue) throw new TransferException("This ZMODEM implementation supports files up to 4 GiB minus one byte.");
+                            partial = PartialDownload.Open(destinationFolder, sourceIdentity, name, size, currentInfo);
+                            currentFile = partial.Stream;
+                            currentName = Path.GetFileName(name);
                             currentSize = size;
                             position = 0;
+                            string phase = "Starting";
+                            if (currentFile.Length > 0)
+                            {
+                                var action = chooseResume == null ? DownloadResumeAction.Resume
+                                    : await chooseResume(new PartialDownloadInfo(currentName, currentFile.Length, size), cancellationToken).ConfigureAwait(false);
+                                if (action == DownloadResumeAction.Cancel) throw new OperationCanceledException("Download canceled.", cancellationToken);
+                                if (action == DownloadResumeAction.Resume && size >= currentFile.Length && currentFile.Length <= uint.MaxValue)
+                                {
+                                    progress?.Report(new TransferSnapshot(currentName, currentFile.Length, size, files.Count + 1, "Verifying saved bytes"));
+                                    if (await VerifyPrefixAsync(framing, currentFile, currentInfo, cancellationToken).ConfigureAwait(false))
+                                    {
+                                        position = currentFile.Length;
+                                        phase = "Resuming";
+                                    }
+                                    else phase = "Prefix unverified; restarting";
+                                }
+                            }
+                            currentFile.SetLength(position);
+                            currentFile.Position = position;
                             errors = 0;
-                            progress?.Report(new TransferSnapshot(currentName, 0, currentSize, files.Count + 1, "Starting"));
-                            await framing.WriteHexHeaderAsync(ZFrameType.ZRPOS, 0, cancellationToken).ConfigureAwait(false);
+                            progress?.Report(new TransferSnapshot(currentName, position, currentSize, files.Count + 1, phase));
+                            await framing.WriteHexHeaderAsync(ZFrameType.ZRPOS, (uint)position, cancellationToken).ConfigureAwait(false);
                             continue;
                         }
 
@@ -190,6 +215,8 @@ namespace BbsNavigator.Transfers
                                     break;
                                 }
 
+                                if ((currentSize >= 0 && position + length > currentSize) || position + length > uint.MaxValue)
+                                    throw new TransferException("The sender exceeded the announced file size.");
                                 await currentFile.WriteAsync(subpacket.AsMemory(0, length), cancellationToken).ConfigureAwait(false);
                                 position += length;
                                 totalBytes += length;
@@ -230,8 +257,11 @@ namespace BbsNavigator.Transfers
                                 continue;
                             }
 
-                            await currentFile.DisposeAsync().ConfigureAwait(false);
+                            if (currentSize >= 0 && position != currentSize)
+                                throw new TransferException("The sender ended the file before its announced size was received.");
+                            currentName = await partial!.CompleteAsync(cancellationToken).ConfigureAwait(false);
                             currentFile = null;
+                            partial = null;
                             currentInfo = null;
                             files.Add(currentName);
                             progress?.Report(new TransferSnapshot(currentName, position, currentSize, files.Count, "Complete"));
@@ -239,6 +269,7 @@ namespace BbsNavigator.Transfers
                             continue;
 
                         case ZFrameType.ZFIN:
+                            if (currentFile != null) throw new TransferException("The sender ended the session with an incomplete file.");
                             await framing.WriteHexHeaderAsync(ZFrameType.ZFIN, 0, cancellationToken).ConfigureAwait(false);
                             await ReadOverAndOutAsync(framing, cancellationToken).ConfigureAwait(false);
                             return new TransferResult(files, totalBytes, stopwatch.Elapsed);
@@ -272,6 +303,32 @@ namespace BbsNavigator.Transfers
                     await currentFile.DisposeAsync().ConfigureAwait(false);
                 }
             }
+        }
+
+        // A matching name/size is insufficient: ask the sender to checksum the retained prefix.
+        // Unsupported or timed-out ZCRC requests fall back to a fresh download.
+        private static async Task<bool> VerifyPrefixAsync(ZmodemFraming framing, FileStream file, byte[] announcement, CancellationToken token)
+        {
+            uint expected = await TransferCrc.ComputePrefixCrc32Async(file, file.Length, token).ConfigureAwait(false);
+            await framing.WriteHexHeaderAsync(ZFrameType.ZCRC, (uint)file.Length, token).ConfigureAwait(false);
+            for (int attempt = 0; attempt < 3; attempt++)
+            {
+                var (status, type, value) = await framing.ReadHeaderAsync(TimeSpan.FromSeconds(5), token).ConfigureAwait(false);
+                if (status < 0) return false;
+                if (type == ZFrameType.ZCRC) return value == expected;
+                if (type is ZFrameType.ZCAN or ZFrameType.ZABORT) throw new TransferException("The remote system canceled the transfer.");
+                if (type == ZFrameType.ZFILE)
+                {
+                    // Startup ZRINITs can cause duplicate announcements already in flight.
+                    // Consume those while waiting for the checksum response.
+                    byte[] duplicate = new byte[8192];
+                    var (length, _) = await framing.ReadDataSubpacketAsync(duplicate, token).ConfigureAwait(false);
+                    if (length < 0 || !duplicate.AsSpan(0, length).SequenceEqual(announcement)) return false;
+                    continue;
+                }
+                if (type == ZFrameType.ZNAK) return false;
+            }
+            return false;
         }
 
         /// <summary>

@@ -47,7 +47,11 @@ namespace BbsNavigator.Views
                 NumericKeypadNavigation = profile?.NumericKeypadNavigation ?? false,
                 CaptureSession = profile?.CaptureSession ?? false,
                 AutoLogin = profile?.AutoLogin ?? false,
-                LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}"
+                LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}",
+                UseLoginSequence = profile?.UseLoginSequence ?? false,
+                LoginSteps = profile?.LoginSteps.Select(s => new LoginStep { Action = s.Action, Text = s.Text, Seconds = s.Seconds }).ToList() ?? new(),
+                PasteCharacterDelayOverride = profile?.PasteCharacterDelayOverride ?? -1,
+                PasteLineDelayMilliseconds = profile?.PasteLineDelayMilliseconds ?? 100
             };
             LocalEchoComboBox.ItemsSource = Enum.GetValues<BbsLocalEchoMode>();
             EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
@@ -66,6 +70,11 @@ namespace BbsNavigator.Views
 
         private void Save_OnClick(object sender, RoutedEventArgs e)
         {
+            if (Profile.UseLoginSequence)
+            {
+                try { Common.LoginSequenceRunner.Validate(Profile.LoginSteps); }
+                catch (ArgumentException ex) { ShowWarning(ex.Message); return; }
+            }
             if (string.IsNullOrWhiteSpace(Profile.Name) || string.IsNullOrWhiteSpace(Profile.Host))
             {
                 Mosaic.UI.Wpf.Controls.MessageBox.Show(
@@ -137,6 +146,16 @@ namespace BbsNavigator.Views
             if (dialog.ShowDialog(this) == true)
             {
                 Profile.SshKeyFile = dialog.FileName;
+            }
+        }
+
+        private void EditLoginSteps_OnClick(object sender, RoutedEventArgs e)
+        {
+            var editor = new LoginSequenceWindow(Profile.LoginSteps) { Owner = this };
+            if (editor.ShowDialog() == true)
+            {
+                Profile.LoginSteps = editor.Steps.ToList();
+                Profile.UseLoginSequence = true;
             }
         }
 

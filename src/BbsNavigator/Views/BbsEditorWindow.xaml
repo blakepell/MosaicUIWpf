@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="560"
-    Height="786"
+    Height="840"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -32,7 +32,8 @@
             ShowMaxRestoreButton="False"
             ShowMinimizeButton="False" />
 
-        <Grid Grid.Row="1" Margin="20">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
@@ -221,6 +222,10 @@
                 VerticalAlignment="Top"
                 Text="Login macro" />
             <StackPanel Grid.Row="11" Grid.Column="1" Margin="0,4">
+                <DockPanel Margin="0,0,0,5">
+                    <Button DockPanel.Dock="Right" Content="Edit steps…" Click="EditLoginSteps_OnClick" Padding="8,3" />
+                    <CheckBox Content="Use prompt-aware steps" IsChecked="{Binding UseLoginSequence}" VerticalAlignment="Center" />
+                </DockPanel>
                 <TextBox
                     AcceptsReturn="True"
                     MinHeight="50"
@@ -229,7 +234,7 @@
                     ToolTip="Use {USERNAME}, {PASSWORD}, and {ENTER}. The saved password remains encrypted." />
                 <CheckBox
                     Margin="0,5,0,0"
-                    Content="Send this macro automatically after Telnet connects"
+                    Content="Run the selected login method after Telnet connects"
                     IsChecked="{Binding AutoLogin}" />
             </StackPanel>
 
@@ -294,5 +299,6 @@
                     IsDefault="True" />
             </StackPanel>
         </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>

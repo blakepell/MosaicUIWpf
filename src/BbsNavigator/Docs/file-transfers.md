@@ -38,7 +38,22 @@ and a **Cancel** button. Received files are saved to your download folder — by
 With XMODEM variants the sender does not transmit the file name, so you are asked where
 to save the file before the transfer starts.
 
-## Uploading
+## Resuming an interrupted ZMODEM download
+
+Incomplete ZMODEM files are stored under `.bbs-partials` in the download folder, with
+metadata identifying the board and remote file. They do not appear as completed files.
+After reconnecting, request the same download on the BBS again. When a matching partial
+file is found, choose **Yes** to verify and resume, **No** to restart, or **Cancel** to
+keep the partial file and stop the transfer.
+
+Resume verifies the saved prefix against the sender using ZMODEM's ZCRC request before
+requesting a nonzero restart position. If the sender does not support this check, or
+the bytes differ, the download restarts from zero. Completed files are moved into the
+download folder without overwriting existing files. Files from different boards or
+with different announcements are kept separate. XMODEM and YMODEM do not gain resume
+support from this feature.
+
+## Uploading files
 
 1. On the BBS, start the upload from its file area and choose the protocol.
 2. Click **Upload** in the status bar (or **Transfer → Upload Files…**) and pick the

@@ -167,6 +167,21 @@ namespace BbsNavigator.Transfers
 
                 (int status, ZFrameType type, uint data) = await framing.ReadHeaderAsync(_headerTimeout, cancellationToken).ConfigureAwait(false);
 
+                // Receivers verify a saved prefix before accepting a resume offset.
+                for (int crcRequest = 0; status == 0 && type == ZFrameType.ZCRC && crcRequest < MaxErrors; crcRequest++)
+                {
+                    await using var verify = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 65536, useAsync: true);
+                    long length = data == 0 ? verify.Length : data;
+                    if (length > verify.Length)
+                        await framing.WriteHexHeaderAsync(ZFrameType.ZNAK, 0, cancellationToken).ConfigureAwait(false);
+                    else
+                    {
+                        uint crc = await TransferCrc.ComputePrefixCrc32Async(verify, length, cancellationToken).ConfigureAwait(false);
+                        await framing.WriteHexHeaderAsync(ZFrameType.ZCRC, crc, cancellationToken).ConfigureAwait(false);
+                    }
+                    (status, type, data) = await framing.ReadHeaderAsync(_headerTimeout, cancellationToken).ConfigureAwait(false);
+                }
+
                 if (status < 0)
                 {
                     continue;

@@ -143,6 +143,9 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="_Terminal" SubmenuOpened="TerminalMenu_OnSubmenuOpened">
+                <MenuItem Click="ComposeMessage_OnClick" Header="_Compose Message…" />
+                <MenuItem Click="StopSending_OnClick" Header="Stop Sending Text" />
+                <Separator />
                 <MenuItem Click="ToggleDoorway_OnClick" Header="Toggle _DoorWay Mode" />
                 <MenuItem Click="ToggleKeypadNavigation_OnClick" Header="Toggle _Keypad Arrows" />
                 <MenuItem Click="ToggleScrollbackLock_OnClick" Header="Toggle Scrollback _Lock" />
