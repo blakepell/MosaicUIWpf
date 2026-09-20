@@ -53,7 +53,7 @@
                     Content="◐"
                     FontSize="17"
                     Style="{DynamicResource {x:Static mosaic:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Toggle light and dark themes" />
+                    ToolTip="Toggle between the blue, light and dark themes" />
             </mosaic:WindowTitleBar.RightContent>
         </mosaic:WindowTitleBar>
 

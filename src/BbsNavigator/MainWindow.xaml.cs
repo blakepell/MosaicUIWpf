@@ -138,10 +138,20 @@ namespace BbsNavigator
             UpdateThemeMenuChecks(e);
         }
 
+        /// <summary>
+        /// Cycles the title bar theme button through the three themes the client ships with:
+        /// Blue (the default) to Light to Dark and back to Blue.
+        /// </summary>
         private void ToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
             var themeManager = AppServices.GetRequiredService<ThemeManager>();
-            themeManager.ToggleTheme();
+
+            themeManager.Theme = themeManager.Theme switch
+            {
+                MosaicThemeMode.Blue => MosaicThemeMode.Light,
+                MosaicThemeMode.Light => MosaicThemeMode.Dark,
+                _ => MosaicThemeMode.Blue
+            };
         }
 
         private void LightTheme_OnClick(object sender, RoutedEventArgs e)
