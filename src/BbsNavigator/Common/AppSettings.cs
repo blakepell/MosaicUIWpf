@@ -268,5 +268,13 @@ namespace BbsNavigator.Common
         [property: Browsable(false)]
         [ObservableProperty]
         private ObservableCollection<BbsProfile> _bbsProfiles = new();
+
+        /// <summary>
+        /// Gets or sets the identifiers of the most recently connected BBS profiles.
+        /// </summary>
+        /// <value>The profile identifiers, most recently connected first.</value>
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private ObservableCollection<Guid> _recentConnections = new();
     }
 }

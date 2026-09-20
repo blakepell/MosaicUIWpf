@@ -32,6 +32,7 @@ namespace BbsNavigator
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, LayoutDocument> _documents = new();
+        private readonly BbsFavoriteOrganizer _favoriteOrganizer;
         private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
         private LayoutDocument? _bigListDocument;
@@ -52,6 +53,7 @@ namespace BbsNavigator
             InitializeComponent();
             _userGuideDocument = InitialUserGuideDocument;
             Settings = AppServices.GetRequiredService<AppSettings>();
+            _favoriteOrganizer = BbsFavoriteOrganizer.Attach(Settings, Dispatcher);
             DataContext = Settings;
             SettingsAnchorable.ToggleAutoHide();
             ThemeManager.ThemeChanged += ThemeManager_OnThemeChanged;
@@ -393,6 +395,49 @@ namespace BbsNavigator
             LayoutDocument document = DockingManager.Add(terminal, title, activate: true, canClose: true);
             document.ContentId = $"bbs-{profile.Id:N}-{transport}";
             _documents[key] = document;
+            RecentConnections.Record(Settings, profile);
+        }
+
+        /// <summary>
+        /// Rebuilds the File -> Recent Connections submenu from the saved recent list.
+        /// </summary>
+        private void RecentConnections_OnSubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            RecentConnectionsMenuItem.Items.Clear();
+            List<BbsProfile> profiles = RecentConnections.Resolve(Settings);
+
+            if (profiles.Count == 0)
+            {
+                RecentConnectionsMenuItem.Items.Add(new MenuItem { Header = "(None)", IsEnabled = false });
+                return;
+            }
+
+            for (int i = 0; i < profiles.Count; i++)
+            {
+                BbsProfile profile = profiles[i];
+
+                // The access key digit runs 1-9 and then 0, and underscores in the BBS name are
+                // escaped so they are not swallowed as access keys of their own.
+                string accessKey = i == 9 ? "1_0" : $"_{i + 1}";
+                var item = new MenuItem
+                {
+                    Header = $"{accessKey} {profile.Name.Replace("_", "__")}",
+                    ToolTip = profile.Host,
+                    Tag = profile,
+                    IsEnabled = profile.CanConnectTelnet || profile.CanConnectSsh
+                };
+
+                item.Click += RecentConnection_OnClick;
+                RecentConnectionsMenuItem.Items.Add(item);
+            }
+        }
+
+        private async void RecentConnection_OnClick(object sender, RoutedEventArgs e)
+        {
+            if ((sender as MenuItem)?.Tag is BbsProfile profile)
+            {
+                await ConnectAsync(profile);
+            }
         }
 
         /// <summary>
@@ -907,6 +952,7 @@ namespace BbsNavigator
             }
 
             Settings.BbsProfiles.Remove(profile);
+            RecentConnections.Remove(Settings, profile);
         }
 
         private async void SortBbs_OnClick(object sender, RoutedEventArgs e)

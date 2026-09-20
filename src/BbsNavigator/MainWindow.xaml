@@ -83,6 +83,19 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
+                <MenuItem
+                    x:Name="RecentConnectionsMenuItem"
+                    Header="_Recent Connections"
+                    SubmenuOpened="RecentConnections_OnSubmenuOpened">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/network-connecting-48.png" />
+                    </MenuItem.Icon>
+                    <MenuItem Header="(None)" IsEnabled="False" />
+                </MenuItem>
+                <Separator />
                 <MenuItem Click="SaveSettings_OnClick" Header="_Save Settings">
                     <MenuItem.Icon>
                         <Image
