@@ -1,0 +1,162 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.CommandBoxExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel Orientation="Vertical">
+
+        <TextBlock
+            MaxWidth="640"
+            HorizontalAlignment="Left"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            Text="CommandBox is a single-line command input built on AvalonEdit. Press Enter to dispatch a command, Up and Down to walk the history, Tab to complete from the most recent matching entry, and Escape to clear. Type something below and press Enter — the executed command is echoed into the output pane. Try 'help', 'clear' or 'time'."
+            TextWrapping="Wrap" />
+
+        <!--  A miniature terminal: read-only output pane above, command line below  -->
+        <Border
+            Width="640"
+            Margin="0,14,0,0"
+            HorizontalAlignment="Left"
+            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="220" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBox
+                    x:Name="Output"
+                    Grid.Row="0"
+                    Padding="6"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                    BorderThickness="0"
+                    FontFamily="Consolas"
+                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                    IsReadOnly="True"
+                    IsReadOnlyCaretVisible="False"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+
+                <controls:CommandBox
+                    x:Name="Input"
+                    Grid.Row="1"
+                    Padding="6,4"
+                    BorderThickness="0,1,0,0"
+                    CommandExecuted="Input_CommandExecuted"
+                    Prompt="&gt;"
+                    ShowPrompt="True"
+                    UseBlockCaret="True"
+                    Watermark="Enter a command..." />
+            </Grid>
+        </Border>
+
+        <!--  Live option toggles  -->
+        <TextBlock
+            Margin="0,18,0,0"
+            FontWeight="Bold"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+            Text="Options" />
+
+        <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Commit behavior:" />
+            <mosaic:EnumComboBox
+                Width="140"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                EnumType="{x:Type controls:CommandBoxCommitBehavior}"
+                SelectedValue="{Binding CommitBehavior, ElementName=Input, Mode=TwoWay}" />
+
+            <TextBlock
+                Margin="24,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Duplicates:" />
+            <mosaic:EnumComboBox
+                Width="160"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                EnumType="{x:Type controls:HistoryDuplicatePolicy}"
+                SelectedValue="{Binding HistoryDuplicatePolicy, ElementName=Input, Mode=TwoWay}" />
+        </StackPanel>
+
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="Block caret"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding UseBlockCaret, ElementName=Input}" />
+            <CheckBox
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Content="History enabled"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding IsHistoryEnabled, ElementName=Input}" />
+            <CheckBox
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Content="Tab completion"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding IsTabCompletionEnabled, ElementName=Input}" />
+            <CheckBox
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Content="Prompt"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding ShowPrompt, ElementName=Input}" />
+            <CheckBox
+                Margin="20,0,0,0"
+                VerticalAlignment="Center"
+                Content="Clear on Escape"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                IsChecked="{Binding ClearOnEscape, ElementName=Input}" />
+        </StackPanel>
+
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Watermark:" />
+            <TextBox
+                Width="220"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Text="{Binding Watermark, ElementName=Input, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBlock
+                Margin="24,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Prompt:" />
+            <TextBox
+                Width="60"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Text="{Binding Prompt, ElementName=Input, UpdateSourceTrigger=PropertyChanged}" />
+            <Button
+                Margin="20,0,0,0"
+                Padding="10,2"
+                VerticalAlignment="Center"
+                Click="ClearHistory_Click"
+                Content="Clear history" />
+        </StackPanel>
+
+        <TextBlock
+            Margin="0,14,0,0"
+            MaxWidth="640"
+            HorizontalAlignment="Left"
+            Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+            Text="Tip: the box refuses to become two lines. Paste a multi-line block into it and the line breaks are collapsed to spaces rather than the paste being rejected."
+            TextWrapping="Wrap" />
+    </StackPanel>
+</UserControl>

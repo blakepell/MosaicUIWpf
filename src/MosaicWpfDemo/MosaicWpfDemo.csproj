@@ -417,6 +417,13 @@
 			<Link>LinkedSources\BadgeExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\CommandBoxExample.xaml">
+			<Link>LinkedSources\CommandBoxExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\CommandBoxExample.xaml.cs">
+			<Link>LinkedSources\CommandBoxExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\ColumnChartExample.xaml">
 			<Link>LinkedSources\ColumnChartExample.xaml</Link>
 		</EmbeddedResource>

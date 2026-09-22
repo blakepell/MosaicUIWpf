@@ -56,6 +56,7 @@ For detailed property/event/example documentation, read the individual file list
 | `Avatar` | `Button` | Display | User avatar with image source or fallback initials | [Avatar.md](controls/Avatar.md) |
 | `Badge` | `ContentControl` | Display | Small inline status/count badge | [Badge.md](controls/Badge.md) |
 | `BindablePasswordBox` | `ContentControl` | Input | Password field with a bindable `Password` string property | [BindablePasswordBox.md](controls/BindablePasswordBox.md) |
+| `CommandBox` | `TextEditor` | Input | Single-line AvalonEdit command input: Enter dispatches, Up/Down walk a persistent history, Tab completes, optional block caret | [CommandBox.md](controls/CommandBox.md) |
 | `ContentPanel` | `ContentControl` | Layout | Themed content container with header, footer, separator, and corner styling | [ContentPanel.md](controls/ContentPanel.md) |
 | `ChatThread` | `UserControl` | Data | Chat conversation view with sent/received message templates | [ChatThread.md](controls/ChatThread.md) |
 | `CheckBoxList` | `ListBox` | Input | Multi-select list that shows checkboxes beside each item | [CheckBoxList.md](controls/CheckBoxList.md) |

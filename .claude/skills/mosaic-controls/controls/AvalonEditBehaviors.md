@@ -22,6 +22,29 @@ Applies a retro VT/CRT terminal skin to an AvalonEdit `TextEditor`: phosphor for
 </avalonedit:TextEditor>
 ```
 
+## AvalonEditBlockCaretBehavior
+
+Replaces the thin line caret of a `TextEditor` with a solid block caret, re-drawing the character underneath it in a contrasting color so it stays legible. Attaches to the editor itself. The same renderer is built into `CommandBox` behind its `UseBlockCaret` property, so this behavior is for *other* editors (`SyntaxEditor`, a bare `TextEditor`).
+
+Note that `BlockCaretBehavior` (no `AvalonEdit` prefix) is a different type: it targets a plain WPF `TextBox` and cannot be attached to a `TextEditor`.
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `IsEnabled` | `bool` | `true` | Shows the block caret. Toggling it installs or removes the renderer at runtime. |
+| `CaretBrush` | `Brush?` | `null` | Fill of the block. Null uses the editor `Foreground`. A `SolidColorBrush` is recommended, it is the only type the automatic contrast calculation can inspect. |
+| `CaretTextBrush` | `Brush?` | `null` | Color of the covered character. Null picks black or white based on the block composited over the editor background. |
+| `CaretOpacity` | `double` | `0.8` | Opacity of the block, 0.0 to 1.0. |
+
+```xml
+<avalonedit:TextEditor>
+    <i:Interaction.Behaviors>
+        <mosaic:AvalonEditBlockCaretBehavior CaretBrush="LimeGreen" CaretOpacity="0.8" />
+    </i:Interaction.Behaviors>
+</avalonedit:TextEditor>
+```
+
+Drawn on `KnownLayer.Caret` and only while the text area is focused. It honors per-run typefaces from syntax highlighting, uses the real advance width so wide (CJK) glyphs are not clipped, draws surrogate pairs as a unit, and caches brushes because the caret layer redraws on every blink. `VT52Terminal` keeps its own renderer, its caret is driven by escape sequences rather than the editor caret.
+
 ## AvalonTextEditorBindingBehavior
 
 Adds binding-friendly dependency properties to AvalonEdit `TextEditor`.

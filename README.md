@@ -138,6 +138,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [ClipBorder](./docs/ClipBorder.md) | Border which allows clipping to its border. Useful especially when you need to clip to round corners. |
 | [ColorPicker](./docs/ColorPicker.md) | A color picker UserControl that allows users to select colors from presets or enter hex values. |
 | [ColumnChart](./docs/ColumnChart.md) | A responsive column chart backed by observable items, with theme-aware axes and columns plus click events and command support. |
+| [CommandBox](./docs/CommandBox.md) | A single-line command input built on AvalonEdit. Enter raises a CommandExecuted event, Up/Down walk a persistent command history, Tab completes from it, and an optional block caret gives the box a terminal feel. |
 | [ContentPanel](./docs/ContentPanel.md) | A content panel with optional header and footer areas, configurable separators, corner radius, and header/footer brushes. |
 | [CopyTextBox](./docs/CopyTextBox.md) | A text box with an attached copy button that places its text onto the clipboard, with optional toast notification of success or failure. |
 | [DatePicker](./docs/DatePicker.md) | Represents a date picker control that displays a popup calendar for date selection. |
@@ -221,6 +222,7 @@ The following table lists the behaviors found in `src/Mosaic.UI.Wpf/Behaviors`.
 | Behavior | Description |
 |---|---|
 | [AvalonEditBindingBehavior](./docs/AvalonEditBindingBehavior.md) | AvalonEdit TextEditor binding behavior that allows for binding of the text property, the selected text property, the selection property, and the cursor position property. |
+| [AvalonEditBlockCaretBehavior](./docs/AvalonEditBlockCaretBehavior.md) | A behavior that replaces the thin line caret in an AvalonEdit TextEditor with a solid block caret, re-drawing the covered character in a contrasting color. |
 | [AvalonEditCopyBehavior](./docs/AvalonEditCopyBehavior.md) | A behavior that enables a Button to copy text from a specified AvalonEdit TextEditor to the clipboard. |
 | [AvalonEditPropertiesBehavior](./docs/AvalonEditPropertiesBehavior.md) | A behavior that allows various common properties of an AvalonEdit TextEditor to be dynamically set or bound. |
 | [AvalonEditVtTerminalBehavior](./docs/AvalonEditVtTerminalBehavior.md) | A behavior that applies a retro VT/CRT terminal visual skin to an AvalonEdit TextEditor. |
