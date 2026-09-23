@@ -366,7 +366,11 @@ internal static class ScriptTypeInference
                         int open = i;
                         if (!SkipGroup(ref i))
                         {
-                            return null;
+                            // An unclosed call, usually a typo such as 'Who's Online' in its arguments, still has a
+                            // known result when every overload agrees; the rest of the text is its argument list.
+                            i = tokens.Count;
+                            value = value is { } unclosed ? ResolveMethod(unclosed, member, -1) : null;
+                            break;
                         }
 
                         value = value is { } target ? ResolveMethod(target, member, CountArguments(open, i - 1)) : null;
@@ -541,10 +545,19 @@ internal static class ScriptTypeInference
             var methods = target.Type.GetMethods(ScriptCompletion.MemberFlags(target))
                 .Where(m => m.Name == name && !m.IsSpecialName && ScriptCompletion.Visible(m))
                 .OrderBy(m => m.GetParameters().Length).ToArray();
+            if (argumentCount < 0)
+            {
+                // The arguments are unknown, so only a return type shared by every overload is certain.
+                var returnTypes = methods.Select(ReturnType).Distinct().ToArray();
+                return returnTypes.Length == 1 ? Instance(returnTypes[0]) : null;
+            }
+
             var method = methods.FirstOrDefault(m => Accepts(m, argumentCount)) ?? methods.FirstOrDefault();
-            return method == null ? null
-                : Instance(method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.ReturnType ?? method.ReturnType);
+            return method == null ? null : Instance(ReturnType(method));
         }
+
+        private static Type ReturnType(MethodInfo method) =>
+            method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.ReturnType ?? method.ReturnType;
 
         private static ScriptValueType? ResolveProperty(ScriptValueType target, string name)
         {

@@ -34,6 +34,9 @@ public class ScriptTypeInferenceTests
     [InlineData("let p;\np = panels.Get('x');\np.|", typeof(Panel))]
     [InlineData("let s = 'text';\ns.|", typeof(string))]
     [InlineData("let n = panels.Count;\nn.|", typeof(int))]
+    [InlineData("let p = panels.CreateTool('who', 'Who is Online');\np.SetText('Users online: 3');\np.| // comment", typeof(Panel))]
+    [InlineData("let p = panels.CreateTool('who', 'Who's Online');\np.SetText('Users online: 3');\np.| // comment", typeof(Panel))]
+    [InlineData("let p = panels.CreateTool('who', 'Who's Online');\nlet sb = new StringBuilder();\nsb.|", typeof(StringBuilder))]
     [InlineData("app.Run(() => {\n    let sb = new StringBuilder();\n    sb.|", typeof(StringBuilder))]
     [InlineData("let sb = new StringBuilder(); // a comment.\nsb.|", typeof(StringBuilder))]
     public void VariablesResolveToTheirInferredType(string source, Type expected)
