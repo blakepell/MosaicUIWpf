@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using Mosaic.UI.Wpf.Scripting.ScriptCommands;
 using Tenray.Topaz;
 using Tenray.Topaz.API;
@@ -78,12 +79,27 @@ public sealed class ScriptEnvironment
     /// <summary>
     /// Registers an object, including derived application command bridges, in the engine and editor.
     /// </summary>
+    /// <remarks>
+    /// Registered WPF dispatcher objects retain their identity. Property access and method calls
+    /// are marshalled to the object's dispatcher while the script continues to run on a worker thread.
+    /// </remarks>
     /// <param name="alias">The script name to add or replace.</param>
     /// <param name="instance">The object exposed under that name.</param>
     public void RegisterObject(string alias, object instance)
     {
         ValidateAlias(alias);
         ArgumentNullException.ThrowIfNull(instance);
+        if (instance is DispatcherObject)
+        {
+            var registry = Engine.ObjectProxyRegistry;
+            registry.TryGetObjectProxy(instance, out var existingProxy);
+            if (existingProxy is not DispatcherObjectScriptProxy)
+            {
+                var proxy = new DispatcherObjectScriptProxy(existingProxy ?? Engine.DefaultObjectProxy, Engine.DefaultObjectProxy);
+                registry.RemoveObjectProxy(instance.GetType());
+                registry.AddObjectProxy(instance.GetType(), proxy);
+            }
+        }
         Engine.SetValue(alias, instance);
         RegisterCompletionType(alias, instance.GetType(), false, instance);
     }

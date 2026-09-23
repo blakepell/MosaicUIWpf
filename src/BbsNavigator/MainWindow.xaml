@@ -45,7 +45,7 @@
             IsStretchButtonVisible="True"
             ShowIcon="True"
             TitleAlignment="Center"
-            TitleText="BBS Navigator">
+            TitleText="{Binding Title, RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
             <mosaic:WindowTitleBar.RightContent>
                 <Button
                     Width="48"
@@ -199,6 +199,9 @@
                             Source="pack://application:,,,/BbsNavigator;component/Assets/minus-48.png" />
                     </MenuItem.Icon>
                 </MenuItem>
+            </MenuItem>
+            <MenuItem Header="S_cripting">
+                <MenuItem Click="ShowScriptEditor_OnClick" Header="_Show Script Editor" />
             </MenuItem>
             <MenuItem Header="_Setup">
                 <MenuItem Click="Options_OnClick" Header="_Options…">

@@ -100,6 +100,39 @@ public class ScriptingTests
         await environment.ExecuteAsync("let value = 1;");
     }
 
+    [Fact]
+    public void RegisteredWindowUsesItsActualInstanceAndDispatcher() => RunStaAsync(async () =>
+    {
+        var window = new Window { Left = 100, Title = "Original" };
+        try
+        {
+            var environment = new ScriptEnvironment();
+            environment.RegisterObject("win", window);
+            Assert.Same(window, environment.Engine.GetValue("win"));
+            Assert.Same(window, environment.Registrations["win"].Instance);
+            Assert.Contains(ScriptCompletion.GetMembers(environment, "win"), member => member.Text == "Left");
+            Assert.Contains(ScriptCompletion.GetMembers(environment, "win"), member => member.Text == "Title");
+
+            await environment.ExecuteAsync("win.Left = 0; win.Title = 'Test'; win.VerifyAccess(); globals.title = win.Title;");
+
+            Assert.Equal(0, window.Left);
+            Assert.Equal("Test", window.Title);
+            Assert.Equal("Test", environment.Globals["title"]);
+
+            // Re-registering must preserve the dispatcher proxy and its cached member access.
+            environment.RegisterObject("win", window);
+            await environment.ExecuteAsync("win.Left += 25; win.Title = 'Updated';");
+            Assert.Equal(25, window.Left);
+            Assert.Equal("Updated", window.Title);
+
+            // UI validation errors still propagate, and do not prevent the next run.
+            await Assert.ThrowsAnyAsync<Exception>(() => environment.ExecuteAsync("win.Width = -1;"));
+            await environment.ExecuteAsync("win.Title = 'Recovered';");
+            Assert.Equal("Recovered", window.Title);
+        }
+        finally { window.Close(); }
+    });
+
     [Theory]
     [InlineData(MosaicThemeMode.Light)]
     [InlineData(MosaicThemeMode.Dark)]

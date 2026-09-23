@@ -15,6 +15,7 @@ using BbsNavigator.Views;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
+using Mosaic.UI.Wpf.Scripting;
 using Mosaic.UI.Wpf.Themes;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -37,6 +38,7 @@ namespace BbsNavigator
         private string? _credentialEncryptionPassphrase;
         private LayoutDocument? _userGuideDocument;
         private LayoutDocument? _bigListDocument;
+        private LayoutDocument? _scriptEditorDocument;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
         private bool _isFullScreen;
@@ -1278,6 +1280,21 @@ namespace BbsNavigator
                 MessageBoxImage.Information);
         }
 
+        private void ShowScriptEditor_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_scriptEditorDocument != null)
+            {
+                _scriptEditorDocument.IsActive = true;
+                return;
+            }
+
+            var editor = new ScriptEditorControl();
+            // The editor creates a Topaz environment; register the same instance for execution and IntelliSense.
+            editor.Environment!.RegisterObject("win", this);
+            _scriptEditorDocument = DockingManager.Add(editor, "Script Editor", activate: true, canClose: true);
+            _scriptEditorDocument.ContentId = "script-editor";
+        }
+
         private void Options_OnClick(object sender, RoutedEventArgs e)
         {
             ShowOptions();
@@ -1393,6 +1410,13 @@ namespace BbsNavigator
 
         private async void DockingManager_OnDocumentClosed(object? sender, DocumentClosedEventArgs e)
         {
+            if (e.Document.Content is ScriptEditorControl editor)
+            {
+                editor.Stop();
+                _scriptEditorDocument = null;
+                return;
+            }
+
             if (e.Document.Content is UserGuideView)
             {
                 _userGuideDocument = null;
