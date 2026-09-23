@@ -39,6 +39,7 @@ namespace BbsNavigator
         private LayoutDocument? _userGuideDocument;
         private LayoutDocument? _bigListDocument;
         private LayoutDocument? _scriptEditorDocument;
+        private PanelScriptCommands? _panels;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
         private bool _isFullScreen;
@@ -1290,9 +1291,26 @@ namespace BbsNavigator
 
             var editor = new ScriptEditorControl();
             // The editor creates a Topaz environment; register the same instance for execution and IntelliSense.
-            editor.Environment!.RegisterObject("win", this);
+            RegisterScriptObjects(editor.Environment!);
             _scriptEditorDocument = DockingManager.Add(editor, "Script Editor", activate: true, canClose: true);
             _scriptEditorDocument.ContentId = "script-editor";
+        }
+
+        /// <summary>
+        /// Gets the registry of terminal info panels. It outlives every script run and engine, so
+        /// panels created by one script can be retrieved by id from any other.
+        /// </summary>
+        public PanelScriptCommands Panels => _panels ??= new PanelScriptCommands(DockingManager);
+
+        /// <summary>
+        /// Exposes the application objects every script environment shares: <c>win</c> and <c>panels</c>.
+        /// </summary>
+        /// <param name="environment">The environment to register into.</param>
+        public void RegisterScriptObjects(ScriptEnvironment environment)
+        {
+            ArgumentNullException.ThrowIfNull(environment);
+            environment.RegisterObject("win", this);
+            environment.RegisterObject("panels", Panels);
         }
 
         private void Options_OnClick(object sender, RoutedEventArgs e)

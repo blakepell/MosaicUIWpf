@@ -70,5 +70,52 @@ namespace Mosaic.UI.Wpf.AvalonDock
 
             return document;
         }
+
+        /// <summary>
+        /// Adds a control as a tool window. The control is hosted on a new
+        /// <see cref="LayoutAnchorable"/> docked to the requested side of the layout.
+        /// </summary>
+        /// <param name="dock">The parent docking manager.</param>
+        /// <param name="ctrl">The control to be shown in the tool window.</param>
+        /// <param name="title">The title of the tool window.</param>
+        /// <param name="strategy">
+        /// The side to dock to. The tool window joins an existing pane on that side when one exists;
+        /// otherwise a new pane is created at the edge of the layout.
+        /// </param>
+        /// <param name="activate">If the tool window should receive the active focus.</param>
+        /// <param name="canClose">If the tool window can be closed by the user.</param>
+        /// <param name="canHide">
+        /// If the tool window's close button hides it (so it can be shown again) instead of closing it.
+        /// </param>
+        /// <returns>The <see cref="LayoutAnchorable"/> that hosts <paramref name="ctrl"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="dock"/> or <paramref name="ctrl"/> is <see langword="null"/>.</exception>
+        /// <exception cref="InvalidOperationException">The manager has no layout.</exception>
+        public static LayoutAnchorable AddToolWindow(this DockingManager dock, Control ctrl, string title, AnchorableShowStrategy strategy = AnchorableShowStrategy.Right, bool activate = true, bool canClose = true, bool canHide = false)
+        {
+            ArgumentNullException.ThrowIfNull(dock);
+            ArgumentNullException.ThrowIfNull(ctrl);
+
+            if (dock.Layout == null)
+            {
+                throw new InvalidOperationException("The DockingManager has no Layout assigned.");
+            }
+
+            var anchorable = new LayoutAnchorable
+            {
+                Title = title,
+                Content = ctrl,
+                CanClose = canClose,
+                CanHide = canHide,
+            };
+
+            anchorable.AddToLayout(dock, strategy);
+
+            if (activate)
+            {
+                anchorable.IsActive = true;
+            }
+
+            return anchorable;
+        }
     }
 }

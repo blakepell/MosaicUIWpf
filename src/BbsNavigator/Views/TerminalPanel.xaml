@@ -1,0 +1,17 @@
+<UserControl
+    x:Class="BbsNavigator.Views.TerminalPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:vt52="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
+    Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+    <!--  A connectionless terminal: everything it shows is written by the host or a script.  -->
+    <vt52:VT52Terminal
+        x:Name="PanelTerminal"
+        Padding="4,0,4,0"
+        AutoConnect="False"
+        Background="#FF080B10"
+        EmulationMode="Ansi"
+        SendKeyboardInputToConnection="False"
+        ShowLineNumbers="False" />
+</UserControl>

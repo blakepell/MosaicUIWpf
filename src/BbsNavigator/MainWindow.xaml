@@ -200,18 +200,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="S_cripting">
-                <MenuItem Click="ShowScriptEditor_OnClick" Header="_Show Script Editor" />
-            </MenuItem>
-            <MenuItem Header="_Setup">
-                <MenuItem Click="Options_OnClick" Header="_Options…">
-                    <MenuItem.Icon>
-                        <Image
-                            Width="16"
-                            Height="16"
-                            Source="pack://application:,,,/BbsNavigator;component/Assets/settings-48.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
+            <MenuItem Header="_Tools">
                 <MenuItem Header="_Theme">
                     <MenuItem.Icon>
                         <Image
@@ -234,6 +223,24 @@
                         Click="BlueTheme_OnClick"
                         Header="_Blue"
                         IsCheckable="True" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Click="ShowScriptEditor_OnClick" Header="_Show Script Editor">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/javascript-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem Click="Options_OnClick" Header="_Options…">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/settings-48.png" />
+                    </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
             <MenuItem x:Name="HelpMenuItem" Header="_Help">
