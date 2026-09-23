@@ -38,6 +38,12 @@ namespace Mosaic.UI.Wpf.Scripting
         public string? ReturnTypeHint { get; set; }
 
         /// <summary>
+        /// The type the member actually returns, when it is declared as object or a base type; the editor
+        /// uses it to infer variable types, so <c>let p = module.Member()</c> completes the members of p.
+        /// </summary>
+        public Type? ReturnType { get; set; }
+
+        /// <summary>
         /// The number of parameters a function has.
         /// </summary>
         public int ParameterCount { get; set; }

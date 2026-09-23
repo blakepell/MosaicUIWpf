@@ -33,16 +33,18 @@ public static class ScriptCompletion
     /// </summary>
     /// <param name="environment">The registration source.</param>
     /// <param name="alias">The member access qualifier.</param>
-    public static IReadOnlyList<ICompletionData> GetMembers(ScriptEnvironment environment, string alias)
-    {
-        if (!environment.Registrations.TryGetValue(alias, out var registration))
-        {
-            return [];
-        }
+    public static IReadOnlyList<ICompletionData> GetMembers(ScriptEnvironment environment, string alias) =>
+        environment.Registrations.TryGetValue(alias, out var registration) ? GetMembers(ScriptValueType.From(registration)) : [];
 
+    /// <summary>
+    /// Gets methods, overload signatures, properties, fields and live dictionary keys for a registered or inferred value.
+    /// </summary>
+    /// <param name="value">The member access target.</param>
+    internal static IReadOnlyList<ICompletionData> GetMembers(ScriptValueType value)
+    {
         var result = new List<ICompletionData>();
-        var flags = MemberFlags(registration);
-        if (registration.Instance is IEnumerable<KeyValuePair<string, object>> dictionary)
+        var flags = MemberFlags(value);
+        if (value.Registration?.Instance is IEnumerable<KeyValuePair<string, object>> dictionary)
         {
             foreach (var pair in dictionary.OrderBy(p => p.Key, StringComparer.Ordinal))
             {
@@ -50,7 +52,7 @@ public static class ScriptCompletion
                     new ScriptCompletionDescription("Global", pair.Value?.GetType().Name ?? "null", $"Current value: {pair.Value}")));
             }
         }
-        foreach (var group in registration.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).GroupBy(m => m.Name))
+        foreach (var group in value.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).GroupBy(m => m.Name))
         {
             var methods = group.ToArray();
             string returnType = string.Join(" | ", methods.Select(ReturnTypeName).Distinct(StringComparer.Ordinal));
@@ -59,14 +61,14 @@ public static class ScriptCompletion
                 new ScriptCompletionDescription("Method", returnType, summary, string.Join("\n", methods.Select(Signature))))
             { IsMethod = true, HasParameters = methods.Any(m => m.GetParameters().Length > 0) });
         }
-        foreach (var property in registration.Type.GetProperties(flags).Where(p => Visible(p) && p.GetIndexParameters().Length == 0))
+        foreach (var property in value.Type.GetProperties(flags).Where(p => Visible(p) && p.GetIndexParameters().Length == 0))
         {
             string type = TypeName(property.PropertyType);
             string access = property.SetMethod?.IsPublic == true ? "Gets or sets" : "Gets";
             result.Add(new ScriptCompletionData(property.Name, ScriptCompletionKind.Property,
                 new ScriptCompletionDescription("Property", type, Description(property), $"{access} {type} {property.Name}")));
         }
-        foreach (var field in registration.Type.GetFields(flags).Where(Visible))
+        foreach (var field in value.Type.GetFields(flags).Where(Visible))
         {
             string type = TypeName(field.FieldType);
             string access = field.IsInitOnly || field.IsLiteral ? "Gets" : "Gets or sets";
@@ -91,7 +93,17 @@ public static class ScriptCompletion
     /// </summary>
     /// <param name="environment">The registration source.</param>
     /// <param name="call">The call surrounding the caret.</param>
-    internal static IReadOnlyList<ScriptSignature> GetSignatures(ScriptEnvironment environment, ScriptCallContext call)
+    internal static IReadOnlyList<ScriptSignature> GetSignatures(ScriptEnvironment environment, ScriptCallContext call) =>
+        GetSignatures(environment, call, call.Qualifier != null && environment.Registrations.TryGetValue(call.Qualifier, out var registration)
+            ? ScriptValueType.From(registration) : null);
+
+    /// <summary>
+    /// Gets the overloads of a member call on a registered or inferred target, or of a constructor, ordered by parameter count.
+    /// </summary>
+    /// <param name="environment">The registration source.</param>
+    /// <param name="call">The call surrounding the caret.</param>
+    /// <param name="target">The value the method is called on; ignored for a constructor.</param>
+    internal static IReadOnlyList<ScriptSignature> GetSignatures(ScriptEnvironment environment, ScriptCallContext call, ScriptValueType? target)
     {
         IEnumerable<ScriptSignature> signatures;
         if (call.IsConstructor)
@@ -105,12 +117,12 @@ public static class ScriptCompletion
         }
         else
         {
-            if (call.Qualifier == null || !environment.Registrations.TryGetValue(call.Qualifier, out var registration))
+            if (call.Qualifier == null || target is not { } value)
             {
                 return [];
             }
 
-            signatures = registration.Type.GetMethods(MemberFlags(registration))
+            signatures = value.Type.GetMethods(MemberFlags(value))
                 .Where(m => m.Name == call.Name && !m.IsSpecialName && Visible(m))
                 .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key));
         }
@@ -120,8 +132,11 @@ public static class ScriptCompletion
     internal static bool Visible(MemberInfo member) => member.DeclaringType != typeof(object) &&
         member.GetCustomAttribute<ScriptHiddenAttribute>() == null;
 
-    private static BindingFlags MemberFlags(ScriptRegistration registration) =>
-        BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy | (registration.IsType ? 0 : BindingFlags.Instance);
+    /// <summary>
+    /// A type alias exposes static members; a registered object also lists its type's statics, an inferred instance does not.
+    /// </summary>
+    internal static BindingFlags MemberFlags(ScriptValueType value) => BindingFlags.Public | BindingFlags.FlattenHierarchy |
+        (value.IsStatic ? BindingFlags.Static : BindingFlags.Instance | (value.Registration != null ? BindingFlags.Static : 0));
 
     private static ScriptSignature CreateSignature(MethodBase method, string returnType, string name)
     {

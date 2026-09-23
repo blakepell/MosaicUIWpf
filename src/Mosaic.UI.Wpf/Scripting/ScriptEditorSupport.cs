@@ -90,7 +90,9 @@ internal sealed class ScriptEditorSupport : IDisposable
         if (snippets) { Show(ScriptCompletion.GetSnippets(), offset); return; }
         if (start > 0 && _editor.Document.GetCharAt(start - 1) == '.')
         {
-            Show(ScriptCompletion.GetMembers(_environment, GetIdentifierBefore(start - 1)), start);
+            // Resolves registered aliases, inferred variables and chains such as panels.Get('who').
+            var target = ScriptTypeInference.ResolveTarget(_environment, _editor.Document.Text, start - 1);
+            Show(target is { } value ? ScriptCompletion.GetMembers(value) : [], start);
         }
         else
         {
@@ -226,7 +228,8 @@ internal sealed class ScriptEditorSupport : IDisposable
         }
 
         int caret = _editor.CaretOffset;
-        var found = ScriptCallParser.Find(_editor.Document.Text, caret, c => GetSignatures(c).Count > 0);
+        string text = _editor.Document.Text;
+        var found = ScriptCallParser.Find(text, caret, c => GetSignatures(c, text).Count > 0);
         if (found is not { } call)
         {
             _signaturePopup?.Close();
@@ -242,18 +245,32 @@ internal sealed class ScriptEditorSupport : IDisposable
         // The anchor tells a new call apart from the same call shifted by edits above it, keeping a picked overload.
         if (help == null || help.Key != call.Key || _callAnchor is not { IsDeleted: false } anchor || anchor.Offset != call.OpenParenOffset)
         {
-            help = new ScriptSignatureHelp(call.Key, GetSignatures(call));
+            help = new ScriptSignatureHelp(call.Key, GetSignatures(call, text));
             _callAnchor = _editor.Document.CreateAnchor(call.OpenParenOffset);
         }
         help.Update(call.ArgumentIndex, call.ArgumentCount);
         popup.Show(help, call.NameOffset);
     }
 
-    private IReadOnlyList<ScriptSignature> GetSignatures(ScriptCallContext call)
+    private IReadOnlyList<ScriptSignature> GetSignatures(ScriptCallContext call, string text)
     {
-        if (!_signatures.TryGetValue(call.Key, out var signatures))
+        // The qualifier may be a variable whose type depends on where the call is, so the cache is keyed by its type.
+        ScriptValueType? target = null;
+        string key = call.Key;
+        if (!call.IsConstructor && call.Qualifier != null)
         {
-            _signatures[call.Key] = signatures = ScriptCompletion.GetSignatures(_environment, call);
+            if (ScriptTypeInference.ResolveTarget(_environment, text, call.NameOffset + call.Qualifier.Length) is not { } value)
+            {
+                return [];
+            }
+
+            target = value;
+            key = $"{value.Type.AssemblyQualifiedName}|{value.IsStatic}|{value.Registration != null}|{call.Key}";
+        }
+
+        if (!_signatures.TryGetValue(key, out var signatures))
+        {
+            _signatures[key] = signatures = ScriptCompletion.GetSignatures(_environment, call, target);
         }
 
         return signatures;
