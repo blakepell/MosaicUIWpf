@@ -202,6 +202,16 @@ namespace BbsNavigator.Views
         public BbsProfile Profile { get; }
 
         /// <summary>
+        /// Occurs when the session's BBS details should be opened for editing.
+        /// </summary>
+        public event EventHandler? EditDetailsRequested;
+
+        private void Options_OnClick(object sender, RoutedEventArgs e)
+        {
+            EditDetailsRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
         /// Gets the protocol this session runs over.
         /// </summary>
         public BbsTransport Transport { get; }

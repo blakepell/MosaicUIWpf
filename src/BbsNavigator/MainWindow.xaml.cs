@@ -395,6 +395,7 @@ namespace BbsNavigator
 
             Func<Task<BbsCredentials?>> credentialProvider = () => ResolveSavedCredentialsAsync(profile);
             var terminal = new BbsTerminalView(profile, Settings, transport, credentials, credentialProvider);
+            terminal.EditDetailsRequested += (_, _) => EditBbs(profile);
             string title = transport == BbsTransport.Ssh ? $"{profile.Name} (SSH)" : profile.Name;
             LayoutDocument document = DockingManager.Add(terminal, title, activate: true, canClose: true);
             document.ContentId = $"bbs-{profile.Id:N}-{transport}";
