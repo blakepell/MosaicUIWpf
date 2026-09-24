@@ -75,24 +75,30 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Identifies the Environment dependency property.
     /// </summary>
-    public static readonly DependencyProperty EnvironmentProperty = DependencyProperty.Register(nameof(Environment), typeof(ScriptEnvironment), typeof(ScriptEditorControl),
-        new FrameworkPropertyMetadata(null, (d, _) => ((ScriptEditorControl)d).AttachSupport()));
+    public static readonly DependencyProperty EnvironmentProperty = DependencyProperty.Register(nameof(Environment), typeof(ScriptEnvironment), typeof(ScriptEditorControl), new FrameworkPropertyMetadata(null, (d, _) => ((ScriptEditorControl)d).AttachSupport()));
 
     /// <summary>
     /// Gets or sets the engine and registration context; null disables execution and completion.
     /// </summary>
-    public ScriptEnvironment? Environment { get => (ScriptEnvironment?)GetValue(EnvironmentProperty); set => SetValue(EnvironmentProperty, value); }
+    public ScriptEnvironment? Environment
+    {
+        get => (ScriptEnvironment?)GetValue(EnvironmentProperty);
+        set => SetValue(EnvironmentProperty, value);
+    }
 
     /// <summary>
     /// Identifies the Text dependency property.
     /// </summary>
-    public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ScriptEditorControl),
-        new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, _) => ((ScriptEditorControl)d).SynchronizeText(), (_, value) => value ?? string.Empty));
+    public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(ScriptEditorControl), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (d, _) => ((ScriptEditorControl)d).SynchronizeText(), (_, value) => value ?? string.Empty));
 
     /// <summary>
     /// Gets or sets script text without replacing the host's DataContext.
     /// </summary>
-    public string Text { get => (string)GetValue(TextProperty); set => SetValue(TextProperty, value); }
+    public string Text
+    {
+        get => (string)GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
+    }
 
     /// <summary>
     /// Identifies the FilePath dependency property.
@@ -102,7 +108,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Gets or sets the save destination; saving without one displays a file picker.
     /// </summary>
-    public string? FilePath { get => (string?)GetValue(FilePathProperty); set => SetValue(FilePathProperty, value); }
+    public string? FilePath
+    {
+        get => (string?)GetValue(FilePathProperty);
+        set => SetValue(FilePathProperty, value);
+    }
 
     /// <summary>
     /// Identifies the SaveObject dependency property.
@@ -114,7 +124,7 @@ public class ScriptEditorControl : Control
     /// </summary>
     public object? SaveObject
     {
-        get => GetValue(SaveObjectProperty); 
+        get => GetValue(SaveObjectProperty);
         set => SetValue(SaveObjectProperty, value);
     }
 
@@ -126,7 +136,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Gets or sets the name of a public, writable string property on <see cref="SaveObject"/> that receives the text on save.
     /// </summary>
-    public string? SaveToProperty { get => (string?)GetValue(SaveToPropertyProperty); set => SetValue(SaveToPropertyProperty, value); }
+    public string? SaveToProperty
+    {
+        get => (string?)GetValue(SaveToPropertyProperty);
+        set => SetValue(SaveToPropertyProperty, value);
+    }
 
     /// <summary>
     /// Identifies the IsReadOnly dependency property.
@@ -136,7 +150,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Gets or sets whether editing is disabled; execution remains available.
     /// </summary>
-    public bool IsReadOnly { get => (bool)GetValue(IsReadOnlyProperty); set => SetValue(IsReadOnlyProperty, value); }
+    public bool IsReadOnly
+    {
+        get => (bool)GetValue(IsReadOnlyProperty);
+        set => SetValue(IsReadOnlyProperty, value);
+    }
 
     /// <summary>
     /// Identifies the ToolBarVisibility dependency property.
@@ -146,7 +164,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Gets or sets the visibility of save, run and stop actions.
     /// </summary>
-    public Visibility ToolBarVisibility { get => (Visibility)GetValue(ToolBarVisibilityProperty); set => SetValue(ToolBarVisibilityProperty, value); }
+    public Visibility ToolBarVisibility
+    {
+        get => (Visibility)GetValue(ToolBarVisibilityProperty);
+        set => SetValue(ToolBarVisibilityProperty, value);
+    }
 
     private static readonly DependencyPropertyKey IsRunningPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsRunning), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
 
@@ -234,7 +256,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Occurs before execution, on the UI thread.
     /// </summary>
-    public event RoutedEventHandler Executing { add => AddHandler(ExecutingEvent, value); remove => RemoveHandler(ExecutingEvent, value); }
+    public event RoutedEventHandler Executing
+    {
+        add => AddHandler(ExecutingEvent, value);
+        remove => RemoveHandler(ExecutingEvent, value);
+    }
 
     /// <summary>
     /// Identifies the Executed routed event.
@@ -244,7 +270,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Occurs after success, cancellation or failure, once the running state has been reset.
     /// </summary>
-    public event RoutedEventHandler Executed { add => AddHandler(ExecutedEvent, value); remove => RemoveHandler(ExecutedEvent, value); }
+    public event RoutedEventHandler Executed
+    {
+        add => AddHandler(ExecutedEvent, value);
+        remove => RemoveHandler(ExecutedEvent, value);
+    }
 
     /// <inheritdoc />
     public override void OnApplyTemplate()
@@ -288,7 +318,9 @@ public class ScriptEditorControl : Control
             RaiseEvent(new RoutedEventArgs(ExecutingEvent, this));
             await environment.ExecuteAsync(code, source.Token);
         }
-        catch (OperationCanceledException) when (source.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (source.IsCancellationRequested)
+        {
+        }
         catch (Exception ex)
         {
             SetValue(LastErrorPropertyKey, ex);
@@ -354,9 +386,11 @@ public class ScriptEditorControl : Control
 
                 path = dialog.FileName;
             }
+
             await File.WriteAllTextAsync(path, text, cancellationToken);
             SetCurrentValue(FilePathProperty, path);
         }
+
         _savedText = text;
         SetValue(IsModifiedPropertyKey, Text != _savedText);
     }
@@ -375,8 +409,7 @@ public class ScriptEditorControl : Control
 
     private static void WriteToSaveProperty(object target, string propertyName, string text)
     {
-        var property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
-            ?? throw new InvalidOperationException($"'{target.GetType().Name}' has no public instance property named '{propertyName}'.");
+        var property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance) ?? throw new InvalidOperationException($"'{target.GetType().Name}' has no public instance property named '{propertyName}'.");
 
         if (!property.CanWrite || property.SetMethod?.IsPublic != true || !property.PropertyType.IsAssignableFrom(typeof(string)))
         {
@@ -385,6 +418,7 @@ public class ScriptEditorControl : Control
 
         property.SetValue(target, text);
     }
+
     private void AttachSupport()
     {
         DetachSupport();
@@ -394,11 +428,13 @@ public class ScriptEditorControl : Control
             _support = new ScriptEditorSupport(_editor, Environment);
         }
     }
+
     private void DetachSupport()
     {
         _support?.Dispose();
         _support = null;
     }
+
     private void SynchronizeText()
     {
         if (!_synchronizing && _editor != null && _editor.Text != Text)
@@ -408,6 +444,7 @@ public class ScriptEditorControl : Control
 
         SetValue(IsModifiedPropertyKey, Text != _savedText);
     }
+
     private void OnEditorTextChanged(object? sender, EventArgs e)
     {
         _synchronizing = true;
@@ -420,12 +457,14 @@ public class ScriptEditorControl : Control
             _synchronizing = false;
         }
     }
+
     private void SetRunning(bool running)
     {
         SetValue(IsRunningPropertyKey, running);
         _runCommand.NotifyCanExecuteChanged();
         _stopCommand.NotifyCanExecuteChanged();
     }
+
     private async Task RunFromCommandAsync()
     {
         try
@@ -437,6 +476,7 @@ public class ScriptEditorControl : Control
             SetValue(LastErrorPropertyKey, ex);
         }
     }
+
     private async Task SaveFromCommandAsync()
     {
         try
