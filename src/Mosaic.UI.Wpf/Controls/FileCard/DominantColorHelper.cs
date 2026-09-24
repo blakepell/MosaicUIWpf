@@ -268,12 +268,36 @@ namespace Mosaic.UI.Wpf.Controls
 
             switch ((int)(hue / 60) % 6)
             {
-                case 0: r = c; g = x; b = 0; break;
-                case 1: r = x; g = c; b = 0; break;
-                case 2: r = 0; g = c; b = x; break;
-                case 3: r = 0; g = x; b = c; break;
-                case 4: r = x; g = 0; b = c; break;
-                default: r = c; g = 0; b = x; break;
+                case 0:
+                    r = c;
+                    g = x;
+                    b = 0;
+                    break;
+                case 1:
+                    r = x;
+                    g = c;
+                    b = 0;
+                    break;
+                case 2:
+                    r = 0;
+                    g = c;
+                    b = x;
+                    break;
+                case 3:
+                    r = 0;
+                    g = x;
+                    b = c;
+                    break;
+                case 4:
+                    r = x;
+                    g = 0;
+                    b = c;
+                    break;
+                default:
+                    r = c;
+                    g = 0;
+                    b = x;
+                    break;
             }
 
             return Color.FromRgb(

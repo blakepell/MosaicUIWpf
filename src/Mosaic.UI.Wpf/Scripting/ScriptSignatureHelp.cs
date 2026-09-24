@@ -166,7 +166,11 @@ internal static class ScriptCallParser
 
                         continue;
                     case ScanMode.BlockComment:
-                        if (c == '*' && At(i + 1) == '/') { Mode = ScanMode.Code; _position++; }
+                        if (c == '*' && At(i + 1) == '/')
+                        {
+                            Mode = ScanMode.Code;
+                            _position++;
+                        }
                         continue;
                     case ScanMode.SingleQuote or ScanMode.DoubleQuote:
                         if (c == '\\')
@@ -190,7 +194,11 @@ internal static class ScriptCallParser
                     {
                         Stack.RemoveAt(Stack.Count - 1);
                     }
-                    else if (c == '$' && At(i + 1) == '{') { _position++; Stack.Add(new Frame(FrameKind.TemplateExpression, i)); }
+                    else if (c == '$' && At(i + 1) == '{')
+                    {
+                        _position++;
+                        Stack.Add(new Frame(FrameKind.TemplateExpression, i));
+                    }
                     continue;
                 }
                 if (char.IsWhiteSpace(c))
@@ -211,12 +219,24 @@ internal static class ScriptCallParser
 
                 switch (c)
                 {
-                    case '\'': Mode = ScanMode.SingleQuote; break;
-                    case '"': Mode = ScanMode.DoubleQuote; break;
-                    case '`': Stack.Add(new Frame(FrameKind.Template, i)); break;
-                    case '(': Stack.Add(new Frame(FrameKind.Paren, i)); break;
-                    case '[': Stack.Add(new Frame(FrameKind.Bracket, i)); break;
-                    case '{': Stack.Add(new Frame(IsBlock(i) ? FrameKind.Block : FrameKind.Brace, i)); break;
+                    case '\'':
+                        Mode = ScanMode.SingleQuote;
+                        break;
+                    case '"':
+                        Mode = ScanMode.DoubleQuote;
+                        break;
+                    case '`':
+                        Stack.Add(new Frame(FrameKind.Template, i));
+                        break;
+                    case '(':
+                        Stack.Add(new Frame(FrameKind.Paren, i));
+                        break;
+                    case '[':
+                        Stack.Add(new Frame(FrameKind.Bracket, i));
+                        break;
+                    case '{':
+                        Stack.Add(new Frame(IsBlock(i) ? FrameKind.Block : FrameKind.Brace, i));
+                        break;
                     case ')' or ']' or '}':
                         if (Close(c, stopDepth) is { } closed)
                         {

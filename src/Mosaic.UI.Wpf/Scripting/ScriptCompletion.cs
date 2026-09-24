@@ -171,7 +171,11 @@ public static class ScriptCompletion
             {
                 depth--;
             }
-            else if (hint[i] == ',' && depth == 0) { parts.Add(hint[start..i]); start = i + 1; }
+            else if (hint[i] == ',' && depth == 0)
+            {
+                parts.Add(hint[start..i]);
+                start = i + 1;
+            }
         }
         parts.Add(hint[start..close]);
         return parts.Select(p => p.Trim()).Where(p => p.Length > 0).Select(p =>

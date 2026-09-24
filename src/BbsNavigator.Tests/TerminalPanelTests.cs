@@ -160,6 +160,106 @@ public class TerminalPanelTests
         Assert.Empty(dock.Layout.Descendents().OfType<LayoutAnchorable>());
     });
 
+    [Fact]
+    public void RepeatedScriptsReplaceSecondLineOnFixedGrid() => RunSta(() =>
+    {
+        var dock = new DockingManager
+        {
+            Layout = new LayoutRoot { RootPanel = new LayoutPanel(new LayoutDocumentPane()) }
+        };
+        var panels = new PanelScriptCommands(dock);
+        var environment = new ScriptEnvironment();
+        environment.RegisterObject("panels", panels);
+
+        for (int run = 0; run < 100; run++)
+        {
+            RunScript(environment, """
+                if (!panels.Exists('who')) {
+                    let p = panels.CreateTool('who', "Who's Online");
+                    p.Resize(24, 80);
+                    p.SetText('Users online: 3');
+                }
+                let p2 = panels.Get('who');
+                if (p2 != null) {
+                    p2.SetLine(2, 'Last caller: Sysop');
+                }
+                """);
+
+            var panel = panels.Get("who")!;
+            Assert.Equal("Users online: 3", panel.GetLine(1));
+            Assert.Equal("Last caller: Sysop", panel.GetLine(2));
+            panel.ClearLine(2);
+            if (run % 2 == 0)
+            {
+                panels.Close("who");
+            }
+        }
+    });
+
+    [Fact]
+    public void ScriptsAppendToNewPanelsDuringDockLayout() => RunSta(() =>
+    {
+        var dock = new DockingManager
+        {
+            Theme = new Mosaic.UI.Wpf.AvalonDock.Themes.MosaicTheme(),
+            Layout = new LayoutRoot { RootPanel = new LayoutPanel { Children = { new LayoutDocumentPane(),
+                new LayoutAnchorablePane(new LayoutAnchorable
+                {
+                    Title = "Existing tool", Content = new System.Windows.Controls.TextBlock { Text = "Tool" }
+                }) { DockWidth = new System.Windows.GridLength(420), DockMinWidth = 300 } } } }
+        };
+        var window = new System.Windows.Window
+        {
+            Content = dock, Width = 1000, Height = 700,
+            Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false
+        };
+        try
+        {
+            window.Resources.MergedDictionaries.Add(new Mosaic.UI.Wpf.Themes.ThemeManager
+            {
+                Theme = Mosaic.UI.Wpf.MosaicThemeMode.Blue, Native = true, SystemColors = true
+            });
+            dock.Layout.Descendents().OfType<LayoutAnchorable>().Single().ToggleAutoHide();
+            dock.Add(new System.Windows.Controls.ContentControl { Content = "Script editor" }, "Script editor");
+            window.Show();
+            var panels = new PanelScriptCommands(dock);
+            var environment = new ScriptEnvironment();
+            environment.RegisterObject("panels", panels);
+            for (int run = 0; run < 30; run++)
+            {
+                RunScript(environment, """
+                    if (!panels.Exists('who')) {
+                        let p = panels.CreateTool('who', "Who's Online");
+                        p.SetText('Users online: 3');
+                    }
+                    let p2 = panels.Get('who');
+                    if (p2 != null) {
+                        p2.AddLine();
+                        p2.AddText('Last caller: Sysop');
+                    }
+                    """);
+                DrainLayout();
+                var panel = panels.Get("who")!;
+                Assert.True(panel.GetLine(1) == "Users online: 3",
+                    $"Run {run}: grid={panel.Rows}x{panel.Columns}, panel={panel.ActualWidth}x{panel.ActualHeight}, view={panel.Terminal.TextArea.TextView.ActualWidth}x{panel.Terminal.TextArea.TextView.ActualHeight}, text={panel.GetText()}");
+                Assert.Equal("Last caller: Sysop", panel.GetLine(2));
+                Assert.True(panel.Terminal.VerticalOffset < panel.Terminal.TextArea.TextView.DefaultLineHeight,
+                    $"Run {run}: vertical offset={panel.Terminal.VerticalOffset}, grid={panel.Rows}x{panel.Columns}");
+                panels.Close("who");
+                DrainLayout();
+            }
+        }
+        finally { window.Close(); }
+    });
+
+    private static void DrainLayout()
+    {
+        var frame = new DispatcherFrame();
+        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+            new Action(() => frame.Continue = false));
+        Dispatcher.PushFrame(frame);
+    }
+
     private static void RunScript(ScriptEnvironment environment, string code)
     {
         var frame = new DispatcherFrame();
@@ -183,3 +283,4 @@ public class TerminalPanelTests
         if (failure != null) ExceptionDispatchInfo.Capture(failure).Throw();
     }
 }
+

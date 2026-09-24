@@ -37,7 +37,7 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         private static readonly DependencyPropertyKey MaskedTextPropertyKey = DependencyProperty.RegisterReadOnly(
-            nameof(MaskedText), typeof(string), typeof(AsteriskTextBlock), 
+            nameof(MaskedText), typeof(string), typeof(AsteriskTextBlock),
             new PropertyMetadata(string.Empty));
 
         /// <summary>

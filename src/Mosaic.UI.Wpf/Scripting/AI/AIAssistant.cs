@@ -301,14 +301,14 @@ namespace Mosaic.UI.Wpf.Scripting.AI
             try
             {
                 var json = await File.ReadAllTextAsync(filePath);
-                
+
                 if (string.IsNullOrWhiteSpace(json))
                 {
                     return; // Empty file, nothing to load
                 }
 
                 var data = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-                
+
                 if (data == null)
                 {
                     return;
@@ -323,7 +323,7 @@ namespace Mosaic.UI.Wpf.Scripting.AI
                 {
                     var historyElement = (JsonElement)history;
                     var historyDict = JsonSerializer.Deserialize<Dictionary<string, List<ChatMessage>>>(historyElement.GetRawText());
-                    
+
                     if (historyDict != null)
                     {
                         foreach (var kvp in historyDict)
@@ -338,7 +338,7 @@ namespace Mosaic.UI.Wpf.Scripting.AI
                 {
                     var factsElement = (JsonElement)facts;
                     var factsDict = JsonSerializer.Deserialize<Dictionary<string, List<ChatMessage>>>(factsElement.GetRawText());
-                    
+
                     if (factsDict != null)
                     {
                         foreach (var kvp in factsDict)

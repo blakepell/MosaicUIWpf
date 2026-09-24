@@ -145,7 +145,10 @@ public sealed class ScriptEnvironment
             await Task.Run(async () => await Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken)
                 .ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
-        finally { gate.Release(); }
+        finally
+        {
+            gate.Release();
+        }
     }
 
     private void RegisterDefaults()

@@ -443,7 +443,11 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         /// </summary>
         public bool IsBracketedPasteEnabled
         {
-            get { lock (_lock) return _bracketedPaste; }
+            get
+            {
+                lock (_lock)
+                    return _bracketedPaste;
+            }
         }
 
         /// <summary>
@@ -540,7 +544,7 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 connection.DataReceived += OnConnectionDataReceived;
             }
 
-            Dispatcher.BeginInvoke(() =>
+            await Dispatcher.BeginInvoke(() =>
             {
                 OnSizeChanged();
 
@@ -1628,7 +1632,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     return;
                 case '\0':
                     return; // NUL
-                default: return;
+                default:
+                    return;
             }
         }
 
@@ -1738,7 +1743,8 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                     _scsTarget = ch;
                     _state = ParseState.EscScs;
                     return; // Don't reset to Normal - wait for designator byte
-                default: break; // unknown ESC: ignore
+                default:
+                    break; // unknown ESC: ignore
             }
             // Always set state to Normal after handling ESC except for [, ], and SCS.
             _state = ParseState.Normal;
@@ -1752,18 +1758,36 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
         {
             switch (ch)
             {
-                case 'A': CursorUp(); break;
-                case 'B': CursorDown(); break;
-                case 'C': CursorRight(); break;
-                case 'D': CursorLeft(); break;
-                case 'H': CursorHome(); break;
-                case 'I': ReverseLineFeed(); break;
-                case 'J': EraseToEndOfScreen(); break;
-                case 'K': EraseToEndOfLine(); break;
+                case 'A':
+                    CursorUp();
+                    break;
+                case 'B':
+                    CursorDown();
+                    break;
+                case 'C':
+                    CursorRight();
+                    break;
+                case 'D':
+                    CursorLeft();
+                    break;
+                case 'H':
+                    CursorHome();
+                    break;
+                case 'I':
+                    ReverseLineFeed();
+                    break;
+                case 'J':
+                    EraseToEndOfScreen();
+                    break;
+                case 'K':
+                    EraseToEndOfLine();
+                    break;
                 case 'Y':
                     _state = ParseState.EscYRow;
                     return;
-                case 'Z': SendIdentify(); break;
+                case 'Z':
+                    SendIdentify();
+                    break;
                 case '<':
                     _ansiMode = true;
                     break;
@@ -1835,18 +1859,18 @@ namespace Mosaic.UI.Wpf.Controls.VT52Terminal
                 {
                     case 'h': // DECSET
                     case 'l': // DECRST
-                    {
-                        // A single sequence may carry several modes (e.g. CSI ? 1 ; 7 h). Applying only
-                        // the first parameter silently dropped the rest.
-                        bool set = cmd == 'h';
-
-                        for (int i = 0; i < _csiParams.Count; i++)
                         {
-                            SetDecPrivateMode(_csiParams[i], set);
-                        }
+                            // A single sequence may carry several modes (e.g. CSI ? 1 ; 7 h). Applying only
+                            // the first parameter silently dropped the rest.
+                            bool set = cmd == 'h';
 
-                        break;
-                    }
+                            for (int i = 0; i < _csiParams.Count; i++)
+                            {
+                                SetDecPrivateMode(_csiParams[i], set);
+                            }
+
+                            break;
+                        }
                     case 'n': // DECDSR - device status report, private form
                         if (p0 == 6)
                         {

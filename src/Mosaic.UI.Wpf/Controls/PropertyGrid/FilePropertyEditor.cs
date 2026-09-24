@@ -24,7 +24,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 return null;
             }
-            
+
             var dlg = new OpenFileDialog
             {
                 CheckFileExists = true,

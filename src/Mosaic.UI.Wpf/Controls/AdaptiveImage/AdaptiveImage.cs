@@ -67,7 +67,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// image.
         /// </summary>
         public static readonly DependencyProperty SaturationFloorProperty = DependencyProperty.Register(
-            nameof(SaturationFloor), typeof(double), typeof(AdaptiveImage), 
+            nameof(SaturationFloor), typeof(double), typeof(AdaptiveImage),
             new FrameworkPropertyMetadata(0.15, FrameworkPropertyMetadataOptions.AffectsRender, OnThemeRelatedChanged), v => v is double and >= 0 and <= 1);
 
         /// <summary>
@@ -367,7 +367,8 @@ namespace Mosaic.UI.Wpf.Controls
 
             if (Math.Abs(max - min) < 1e-6)
             {
-                h = 0; s = 0;
+                h = 0;
+                s = 0;
                 return;
             }
 

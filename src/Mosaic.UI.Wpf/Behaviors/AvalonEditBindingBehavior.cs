@@ -206,7 +206,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         /// The selection property of the text editor.
         /// </summary>
         public static readonly DependencyProperty SelectionProperty =
-            DependencyProperty.Register(nameof(Selection), typeof((int start, int length)), typeof(AvalonTextEditorBindingBehavior), 
+            DependencyProperty.Register(nameof(Selection), typeof((int start, int length)), typeof(AvalonTextEditorBindingBehavior),
                 new FrameworkPropertyMetadata((0, 0), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectionPropertyChanged));
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         /// The cursor position property of the text editor.
         /// </summary>
         public static readonly DependencyProperty CursorPositionProperty =
-            DependencyProperty.Register(nameof(CursorPosition), typeof(int), typeof(AvalonTextEditorBindingBehavior), 
+            DependencyProperty.Register(nameof(CursorPosition), typeof(int), typeof(AvalonTextEditorBindingBehavior),
                 new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnCursorPositionPropertyChanged));
 
         /// <summary>

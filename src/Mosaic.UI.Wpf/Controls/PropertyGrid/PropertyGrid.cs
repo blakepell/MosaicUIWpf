@@ -48,9 +48,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the Properties dependency property.
         /// </summary>
         public static readonly DependencyProperty PropertiesProperty = DependencyProperty.Register(
-            nameof(Properties), 
-            typeof(ObservableCollection<PropertyItem>), 
-            typeof(PropertyGrid), 
+            nameof(Properties),
+            typeof(ObservableCollection<PropertyItem>),
+            typeof(PropertyGrid),
             new PropertyMetadata(null, OnPropertiesChanged));
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 var backingFieldAttributes = GetBackingFieldAttributes(Object, pd).ToArray();
                 var attr = GetAttribute<PropertyGridAttribute>(pd, backingFieldAttributes);
-                
+
                 if (attr is { Ignore: true })
                 {
                     continue;

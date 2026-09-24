@@ -179,7 +179,7 @@ namespace Mosaic.UI.Wpf.Controls
 
             // Create a more realistic flip animation using a continuous scale transformation
             var storyboard = new Storyboard();
-            
+
             // Animation for current presenter: scale from 1 to -1 (through 0)
             var currentAnimation = new DoubleAnimation
             {
@@ -201,10 +201,10 @@ namespace Mosaic.UI.Wpf.Controls
 
             // Set up the property paths and targets
             var scaleProperty = Direction == FlipDirection.Horizontal ? "RenderTransform.ScaleX" : "RenderTransform.ScaleY";
-            
+
             Storyboard.SetTarget(currentAnimation, currentPresenter);
             Storyboard.SetTargetProperty(currentAnimation, new PropertyPath(scaleProperty));
-            
+
             Storyboard.SetTarget(targetAnimation, targetPresenter);
             Storyboard.SetTargetProperty(targetAnimation, new PropertyPath(scaleProperty));
 

@@ -1205,11 +1205,11 @@ namespace Mosaic.UI.Wpf.Controls
                 case LineGraphTimeUnit.Days:
                     return time.Date;
                 case LineGraphTimeUnit.Weeks:
-                {
-                    var firstDay = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
-                    var offset = ((int)time.DayOfWeek - (int)firstDay + 7) % 7;
-                    return time.Date.AddDays(-offset);
-                }
+                    {
+                        var firstDay = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+                        var offset = ((int)time.DayOfWeek - (int)firstDay + 7) % 7;
+                        return time.Date.AddDays(-offset);
+                    }
                 case LineGraphTimeUnit.Months:
                     return new DateTime(time.Year, time.Month, 1, 0, 0, 0, time.Kind);
                 case LineGraphTimeUnit.Years:

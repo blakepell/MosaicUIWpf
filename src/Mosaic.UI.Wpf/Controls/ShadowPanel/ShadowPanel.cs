@@ -85,7 +85,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the <see cref="ShadowDirection"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ShadowDirectionProperty = DependencyProperty.Register(
-            nameof(ShadowDirection), typeof(double), typeof(ShadowPanel), 
+            nameof(ShadowDirection), typeof(double), typeof(ShadowPanel),
             new PropertyMetadata(315.0, OnShadowPropertyChanged));
 
         /// <summary>

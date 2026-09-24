@@ -121,5 +121,5 @@ namespace Mosaic.UI.Wpf.Controls
         {
             e.Handled = true;
         }
-    } 
+    }
 }

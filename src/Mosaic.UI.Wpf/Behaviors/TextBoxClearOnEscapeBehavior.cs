@@ -44,7 +44,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             base.OnDetaching();
             AssociatedObject.KeyDown -= OnKeyDown;
         }
-        
+
         /// <summary>
         /// Processes the OnKeyDown event for the <see cref="TextBoxBase"/>.  This will not set handled
         /// to true so that other subscribers of this will receive their event.
@@ -74,7 +74,7 @@ namespace Mosaic.UI.Wpf.Behaviors
                     {
                         // Fallback: Check if the control has a "Text" property and can be written to.
                         var textProperty = AssociatedObject.GetType().GetProperty("Text");
-                    
+
                         if (textProperty != null && textProperty.CanWrite)
                         {
                             textProperty.SetValue(AssociatedObject, string.Empty);

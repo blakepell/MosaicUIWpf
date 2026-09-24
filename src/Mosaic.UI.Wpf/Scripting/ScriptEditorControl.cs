@@ -43,8 +43,17 @@ public class ScriptEditorControl : Control
         SnippetsCommand = new RelayCommand(() => _support?.ShowCompletion(true));
         SignatureHelpCommand = new RelayCommand(() => _support?.ShowSignatureHelp());
         SetCurrentValue(EnvironmentProperty, new ScriptEnvironment());
-        Loaded += (_, _) => { _isUnloaded = false; AttachSupport(); };
-        Unloaded += (_, _) => { _isUnloaded = true; DetachSupport(); Stop(); };
+        Loaded += (_, _) =>
+        {
+            _isUnloaded = false;
+            AttachSupport();
+        };
+        Unloaded += (_, _) =>
+        {
+            _isUnloaded = true;
+            DetachSupport();
+            Stop();
+        };
         InputBindings.Add(new KeyBinding(RunCommand, Key.F5, ModifierKeys.None));
         InputBindings.Add(new KeyBinding(StopCommand, Key.F6, ModifierKeys.None));
         InputBindings.Add(new KeyBinding(StopCommand, Key.F5, ModifierKeys.Shift));
@@ -115,30 +124,36 @@ public class ScriptEditorControl : Control
     public Visibility ToolBarVisibility { get => (Visibility)GetValue(ToolBarVisibilityProperty); set => SetValue(ToolBarVisibilityProperty, value); }
 
     private static readonly DependencyPropertyKey IsRunningPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsRunning), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
+
     /// <summary>
     /// Identifies the read-only IsRunning dependency property.
     /// </summary>
     public static readonly DependencyProperty IsRunningProperty = IsRunningPropertyKey.DependencyProperty;
+    
     /// <summary>
     /// Gets whether execution is queued or running.
     /// </summary>
     public bool IsRunning => (bool)GetValue(IsRunningProperty);
 
     private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsModified), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
+    
     /// <summary>
     /// Identifies the read-only IsModified dependency property.
     /// </summary>
     public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
+    
     /// <summary>
     /// Gets whether text differs from the last loaded or saved version.
     /// </summary>
     public bool IsModified => (bool)GetValue(IsModifiedProperty);
 
     private static readonly DependencyPropertyKey LastErrorPropertyKey = DependencyProperty.RegisterReadOnly(nameof(LastError), typeof(Exception), typeof(ScriptEditorControl), new PropertyMetadata(null));
+    
     /// <summary>
     /// Identifies the read-only LastError dependency property.
     /// </summary>
     public static readonly DependencyProperty LastErrorProperty = LastErrorPropertyKey.DependencyProperty;
+    
     /// <summary>
     /// Gets the most recent execution or save error.
     /// </summary>
@@ -148,26 +163,32 @@ public class ScriptEditorControl : Control
     /// Gets the inner Mosaic editor after its template is applied.
     /// </summary>
     public SyntaxEditor? Editor => _editor;
+    
     /// <summary>
     /// Gets the run command (F5).
     /// </summary>
     public ICommand RunCommand => _runCommand;
+    
     /// <summary>
     /// Gets the cancellation command (F6 or Shift+F5).
     /// </summary>
     public ICommand StopCommand => _stopCommand;
+    
     /// <summary>
     /// Gets the save command (Ctrl+S).
     /// </summary>
     public ICommand SaveCommand { get; }
+    
     /// <summary>
     /// Gets the completion command (Ctrl+Space or Ctrl+period).
     /// </summary>
     public ICommand CompletionCommand { get; }
+    
     /// <summary>
     /// Gets the snippet command (F1).
     /// </summary>
     public ICommand SnippetsCommand { get; }
+    
     /// <summary>
     /// Gets the parameter information command (Ctrl+Shift+Space), which shows the overloads of the call around the caret.
     /// </summary>
@@ -184,14 +205,17 @@ public class ScriptEditorControl : Control
     /// Identifies the Executing routed event.
     /// </summary>
     public static readonly RoutedEvent ExecutingEvent = EventManager.RegisterRoutedEvent(nameof(Executing), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ScriptEditorControl));
+
     /// <summary>
     /// Occurs before execution, on the UI thread.
     /// </summary>
     public event RoutedEventHandler Executing { add => AddHandler(ExecutingEvent, value); remove => RemoveHandler(ExecutingEvent, value); }
+
     /// <summary>
     /// Identifies the Executed routed event.
     /// </summary>
     public static readonly RoutedEvent ExecutedEvent = EventManager.RegisterRoutedEvent(nameof(Executed), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ScriptEditorControl));
+
     /// <summary>
     /// Occurs after success, cancellation or failure, once the running state has been reset.
     /// </summary>
@@ -240,7 +264,11 @@ public class ScriptEditorControl : Control
             await environment.ExecuteAsync(code, source.Token);
         }
         catch (OperationCanceledException) when (source.IsCancellationRequested) { }
-        catch (Exception ex) { SetValue(LastErrorPropertyKey, ex); throw; }
+        catch (Exception ex)
+        {
+            SetValue(LastErrorPropertyKey, ex);
+            throw;
+        }
         finally
         {
             _execution = null;
@@ -252,7 +280,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Requests cooperative cancellation; custom .NET calls must return before execution can stop.
     /// </summary>
-    public void Stop() { Dispatcher.VerifyAccess(); _execution?.Cancel(); }
+    public void Stop()
+    {
+        Dispatcher.VerifyAccess();
+        _execution?.Cancel();
+    }
 
     /// <summary>
     /// Loads a file and marks its contents as unmodified.
@@ -303,7 +335,11 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Marks the current bound text as the saved baseline.
     /// </summary>
-    public void MarkSaved() { _savedText = Text; SetValue(IsModifiedPropertyKey, false); }
+    public void MarkSaved()
+    {
+        _savedText = Text;
+        SetValue(IsModifiedPropertyKey, false);
+    }
 
     /// <inheritdoc />
     protected override AutomationPeer OnCreateAutomationPeer() => new ScriptEditorAutomationPeer(this);
@@ -317,7 +353,11 @@ public class ScriptEditorControl : Control
             _support = new ScriptEditorSupport(_editor, Environment);
         }
     }
-    private void DetachSupport() { _support?.Dispose(); _support = null; }
+    private void DetachSupport()
+    {
+        _support?.Dispose();
+        _support = null;
+    }
     private void SynchronizeText()
     {
         if (!_synchronizing && _editor != null && _editor.Text != Text)
@@ -330,8 +370,14 @@ public class ScriptEditorControl : Control
     private void OnEditorTextChanged(object? sender, EventArgs e)
     {
         _synchronizing = true;
-        try { SetCurrentValue(TextProperty, _editor?.Text ?? string.Empty); }
-        finally { _synchronizing = false; }
+        try
+        {
+            SetCurrentValue(TextProperty, _editor?.Text ?? string.Empty);
+        }
+        finally
+        {
+            _synchronizing = false;
+        }
     }
     private void SetRunning(bool running)
     {
@@ -341,13 +387,26 @@ public class ScriptEditorControl : Control
     }
     private async Task RunFromCommandAsync()
     {
-        try { await RunAsync(); }
-        catch (Exception ex) { SetValue(LastErrorPropertyKey, ex); }
+        try
+        {
+            await RunAsync();
+        }
+        catch (Exception ex)
+        {
+            SetValue(LastErrorPropertyKey, ex);
+        }
     }
     private async Task SaveFromCommandAsync()
     {
-        try { SetValue(LastErrorPropertyKey, null); await SaveAsync(); }
-        catch (Exception ex) { SetValue(LastErrorPropertyKey, ex); }
+        try
+        {
+            SetValue(LastErrorPropertyKey, null);
+            await SaveAsync();
+        }
+        catch (Exception ex)
+        {
+            SetValue(LastErrorPropertyKey, ex);
+        }
     }
 
     private sealed class ScriptEditorAutomationPeer(ScriptEditorControl owner) : FrameworkElementAutomationPeer(owner)

@@ -990,11 +990,31 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public DateSpinner()
         {
-            this.CommandBindings.Add(new CommandBinding(OpenCommand, (_, e) => { this.Open(); e.Handled = true; }, (_, e) => e.CanExecute = this.CanInteract));
-            this.CommandBindings.Add(new CommandBinding(CloseCommand, (_, e) => { this.Close(); e.Handled = true; }, (_, e) => e.CanExecute = this.IsDropDownOpen));
-            this.CommandBindings.Add(new CommandBinding(ClearCommand, (_, e) => { this.Clear(); e.Handled = true; }, (_, e) => e.CanExecute = this.CanInteract && this.SelectedDate.HasValue));
-            this.CommandBindings.Add(new CommandBinding(ApplyCommand, (_, e) => { this.Apply(); e.Handled = true; }, (_, e) => e.CanExecute = this.IsDropDownOpen));
-            this.CommandBindings.Add(new CommandBinding(CancelCommand, (_, e) => { this.Cancel(); e.Handled = true; }, (_, e) => e.CanExecute = this.IsDropDownOpen));
+            this.CommandBindings.Add(new CommandBinding(OpenCommand, (_, e) =>
+            {
+                this.Open();
+                e.Handled = true;
+            }, (_, e) => e.CanExecute = this.CanInteract));
+            this.CommandBindings.Add(new CommandBinding(CloseCommand, (_, e) =>
+            {
+                this.Close();
+                e.Handled = true;
+            }, (_, e) => e.CanExecute = this.IsDropDownOpen));
+            this.CommandBindings.Add(new CommandBinding(ClearCommand, (_, e) =>
+            {
+                this.Clear();
+                e.Handled = true;
+            }, (_, e) => e.CanExecute = this.CanInteract && this.SelectedDate.HasValue));
+            this.CommandBindings.Add(new CommandBinding(ApplyCommand, (_, e) =>
+            {
+                this.Apply();
+                e.Handled = true;
+            }, (_, e) => e.CanExecute = this.IsDropDownOpen));
+            this.CommandBindings.Add(new CommandBinding(CancelCommand, (_, e) =>
+            {
+                this.Cancel();
+                e.Handled = true;
+            }, (_, e) => e.CanExecute = this.IsDropDownOpen));
 
             this.Loaded += this.OnSpinnerLoaded;
             this.Unloaded += this.OnSpinnerUnloaded;

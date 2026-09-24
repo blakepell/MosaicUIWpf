@@ -45,7 +45,11 @@ public class UiScriptCommands
     /// <summary>
     /// Sends keystrokes using Windows Forms SendKeys syntax.
     /// </summary>
-    public void SendKeys(string keys) => OnUi(() => { System.Windows.Forms.SendKeys.SendWait(keys); return true; });
+    public void SendKeys(string keys) => OnUi(() =>
+    {
+        System.Windows.Forms.SendKeys.SendWait(keys);
+        return true;
+    });
 
     /// <summary>
     /// Requests garbage collection.
@@ -104,7 +108,12 @@ public class UiScriptCommands
         panel.Children.Add(editor);
         window.Content = panel;
         window.Loaded += (_, _) => editor.Focus();
-        window.PreviewKeyDown += (_, e) => { if (e.Key == Key.Escape) { window.Close(); } };
+        window.PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Escape)
+            {
+                window.Close(); }
+        };
         return window.ShowDialog() == true ? editor.Text : string.Empty;
     }
 }

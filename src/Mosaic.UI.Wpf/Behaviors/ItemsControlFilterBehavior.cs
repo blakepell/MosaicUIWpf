@@ -64,7 +64,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            
+
             _searchTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(300)

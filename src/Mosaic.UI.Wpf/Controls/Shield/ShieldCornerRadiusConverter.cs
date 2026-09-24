@@ -48,7 +48,7 @@ namespace Mosaic.UI.Wpf.Controls
                     _ => new CornerRadius(0)
                 };
             }
-            
+
             return new CornerRadius(0);
         }
 

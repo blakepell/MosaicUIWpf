@@ -49,7 +49,11 @@ public class ScreenshotScriptCommands
             graphics.CopyFromScreen(x, y, 0, 0, bitmap.Size);
             return bitmap;
         }
-        catch { bitmap.Dispose(); throw; }
+        catch
+        {
+            bitmap.Dispose();
+            throw;
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

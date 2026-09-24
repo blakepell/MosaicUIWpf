@@ -1534,7 +1534,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="sender">The file-system watcher.</param>
         /// <param name="e">The file-system change details.</param>
         private void OnWatcherChanged(object sender, FileSystemEventArgs e)
-        {    
+        {
             this.Dispatcher.BeginInvoke(() =>
             {
                 _refreshTimer.Stop();

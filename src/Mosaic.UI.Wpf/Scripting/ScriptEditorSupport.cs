@@ -87,7 +87,11 @@ internal sealed class ScriptEditorSupport : IDisposable
         int offset = _editor.CaretOffset;
         string prefix = GetIdentifierBefore(offset);
         int start = offset - prefix.Length;
-        if (snippets) { Show(ScriptCompletion.GetSnippets(), offset); return; }
+        if (snippets)
+        {
+            Show(ScriptCompletion.GetSnippets(), offset);
+            return;
+        }
         if (start > 0 && _editor.Document.GetCharAt(start - 1) == '.')
         {
             // Resolves registered aliases, inferred variables and chains such as panels.Get('who').
@@ -298,7 +302,10 @@ internal sealed class ScriptEditorSupport : IDisposable
         // edge of the borderless window; NoResize plus a uniform 1px border matches ApexGate's popup.
         var window = new CompletionWindow(_editor.TextArea)
         {
-            StartOffset = start, Width = 300, ResizeMode = ResizeMode.NoResize, BorderThickness = new Thickness(1)
+            StartOffset = start,
+            Width = 300,
+            ResizeMode = ResizeMode.NoResize,
+            BorderThickness = new Thickness(1)
         };
         AddThemeResources(window);
         if (window.TryFindResource("ScriptCompletionListStyle") is Style listStyle)
@@ -315,7 +322,12 @@ internal sealed class ScriptEditorSupport : IDisposable
         }
         // Runs after the window's own handler has inserted the item: a method leaves the caret inside "()".
         window.CompletionList.InsertionRequested += (_, _) => QueueSignatureHelp(SignatureTrigger.CallStart);
-        window.Closed += (_, _) => { if (ReferenceEquals(_window, window)) { _window = null; } };
+        window.Closed += (_, _) =>
+        {
+            if (ReferenceEquals(_window, window))
+            {
+                _window = null; }
+        };
         _window = window;
         window.Show();
         if (start < _editor.CaretOffset)

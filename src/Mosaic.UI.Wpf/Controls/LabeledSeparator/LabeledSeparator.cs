@@ -47,7 +47,7 @@ namespace Mosaic.UI.Wpf.Controls
             get => (LabelPosition)GetValue(LabelPositionProperty);
             set => SetValue(LabelPositionProperty, value);
         }
-        
+
         /// <summary>
         /// Identifies the <see cref="SeparatorHeight"/> dependency property.
         /// </summary>

@@ -56,8 +56,8 @@ namespace Mosaic.UI.Wpf.Behaviors
                     {
                         AssociatedObject.DialogResult = false;
                     }
-                    catch 
-                    { 
+                    catch
+                    {
                         // Don't crash the program since it's difficult for the caller to handle an exception
                         // from a Behavior.
                     }

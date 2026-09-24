@@ -55,8 +55,11 @@ internal sealed class ScriptSignaturePopup
         _input = new InputHandler(this);
         _scroller = new ScrollViewer
         {
-            Content = _rows, MaxHeight = 220, Focusable = false,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+            Content = _rows,
+            MaxHeight = 220,
+            Focusable = false,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
         };
         _rule.SetResourceReference(FrameworkElement.StyleProperty, "ScriptCompletionRuleStyle");
         _summary.SetResourceReference(FrameworkElement.StyleProperty, "ScriptSignatureTextStyle");
@@ -65,11 +68,21 @@ internal sealed class ScriptSignaturePopup
         addResources(_root);
         _root.SetResourceReference(FrameworkElement.StyleProperty, "ScriptSignaturePopupStyle");
         AutomationProperties.SetName(_root, "Parameter information");
-        _root.SizeChanged += (_, e) => { if (e.NewSize.Width > _root.MinWidth) { _root.MinWidth = e.NewSize.Width; } };
+        _root.SizeChanged += (_, e) =>
+        {
+            if (e.NewSize.Width > _root.MinWidth)
+            {
+                _root.MinWidth = e.NewSize.Width; }
+        };
         _popup = new Popup
         {
-            Child = _root, PlacementTarget = textArea.TextView, Placement = PlacementMode.Top,
-            AllowsTransparency = true, PopupAnimation = PopupAnimation.Fade, StaysOpen = true, Focusable = false
+            Child = _root,
+            PlacementTarget = textArea.TextView,
+            Placement = PlacementMode.Top,
+            AllowsTransparency = true,
+            PopupAnimation = PopupAnimation.Fade,
+            StaysOpen = true,
+            Focusable = false
         };
     }
 
@@ -102,7 +115,11 @@ internal sealed class ScriptSignaturePopup
         UpdateDetails();
         if (!_popup.IsOpen)
         {
-            if (!Reposition()) { Close(); return; }
+            if (!Reposition())
+            {
+                Close();
+                return;
+            }
             Attach();
             _popup.IsOpen = true;
         }
@@ -127,7 +144,10 @@ internal sealed class ScriptSignaturePopup
             Help = null;
             Detach();
         }
-        finally { _isClosing = false; }
+        finally
+        {
+            _isClosing = false;
+        }
     }
 
     private void Attach()
@@ -205,7 +225,11 @@ internal sealed class ScriptSignaturePopup
             if (help.Signatures.Count > 1)
             {
                 row.Cursor = Cursors.Hand;
-                row.MouseLeftButtonDown += (_, e) => { help.Select(signature); e.Handled = true; };
+                row.MouseLeftButtonDown += (_, e) =>
+                {
+                    help.Select(signature);
+                    e.Handled = true;
+                };
             }
             _rows.Children.Add(row);
         }

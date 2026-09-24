@@ -61,7 +61,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// Identifies the Spacing dependency property.
         /// </summary>
         public static readonly DependencyProperty SpacingProperty = DependencyProperty.Register(
-            nameof(Spacing),typeof(double), typeof(SimpleStackPanel), new FrameworkPropertyMetadata(0.0,FrameworkPropertyMetadataOptions.AffectsMeasure));
+            nameof(Spacing), typeof(double), typeof(SimpleStackPanel), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
         /// <summary>
         /// Gets a value that indicates if this SimpleStackPanel has vertical
@@ -111,7 +111,10 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 var child = children[i];
 
-                if (child == null) { continue; }
+                if (child == null)
+                {
+                    continue;
+                }
 
                 bool isVisible = child.Visibility != Visibility.Collapsed;
 

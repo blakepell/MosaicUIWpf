@@ -160,9 +160,21 @@ namespace Mosaic.UI.Wpf.Controls
         public MarkdownViewer()
         {
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted));
-            this.CommandBindings.Add(new CommandBinding(FindNextCommand, (_, e) => { this.FindNext(true); e.Handled = true; }, this.OnFindNavigationCanExecute));
-            this.CommandBindings.Add(new CommandBinding(FindPreviousCommand, (_, e) => { this.FindNext(false); e.Handled = true; }, this.OnFindNavigationCanExecute));
-            this.CommandBindings.Add(new CommandBinding(CloseFindPanelCommand, (_, e) => { this.CloseFindPanel(); e.Handled = true; }));
+            this.CommandBindings.Add(new CommandBinding(FindNextCommand, (_, e) =>
+            {
+                this.FindNext(true);
+                e.Handled = true;
+            }, this.OnFindNavigationCanExecute));
+            this.CommandBindings.Add(new CommandBinding(FindPreviousCommand, (_, e) =>
+            {
+                this.FindNext(false);
+                e.Handled = true;
+            }, this.OnFindNavigationCanExecute));
+            this.CommandBindings.Add(new CommandBinding(CloseFindPanelCommand, (_, e) =>
+            {
+                this.CloseFindPanel();
+                e.Handled = true;
+            }));
 
             // These bindings are only reached when the focused element did not already claim the
             // gesture, which is what scopes Ctrl+F to a code block's own search panel when the
