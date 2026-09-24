@@ -4,6 +4,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
 using CommunityToolkit.Mvvm.Input;
@@ -104,6 +105,30 @@ public class ScriptEditorControl : Control
     public string? FilePath { get => (string?)GetValue(FilePathProperty); set => SetValue(FilePathProperty, value); }
 
     /// <summary>
+    /// Identifies the SaveObject dependency property.
+    /// </summary>
+    public static readonly DependencyProperty SaveObjectProperty = DependencyProperty.Register(nameof(SaveObject), typeof(object), typeof(ScriptEditorControl), new FrameworkPropertyMetadata(null));
+
+    /// <summary>
+    /// Gets or sets the object whose <see cref="SaveToProperty"/> receives the text on save; when both are set, saving writes to it instead of a file.
+    /// </summary>
+    public object? SaveObject
+    {
+        get => GetValue(SaveObjectProperty); 
+        set => SetValue(SaveObjectProperty, value);
+    }
+
+    /// <summary>
+    /// Identifies the SaveToProperty dependency property.
+    /// </summary>
+    public static readonly DependencyProperty SaveToPropertyProperty = DependencyProperty.Register(nameof(SaveToProperty), typeof(string), typeof(ScriptEditorControl), new FrameworkPropertyMetadata(null));
+
+    /// <summary>
+    /// Gets or sets the name of a public, writable string property on <see cref="SaveObject"/> that receives the text on save.
+    /// </summary>
+    public string? SaveToProperty { get => (string?)GetValue(SaveToPropertyProperty); set => SetValue(SaveToPropertyProperty, value); }
+
+    /// <summary>
     /// Identifies the IsReadOnly dependency property.
     /// </summary>
     public static readonly DependencyProperty IsReadOnlyProperty = DependencyProperty.Register(nameof(IsReadOnly), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
@@ -129,31 +154,31 @@ public class ScriptEditorControl : Control
     /// Identifies the read-only IsRunning dependency property.
     /// </summary>
     public static readonly DependencyProperty IsRunningProperty = IsRunningPropertyKey.DependencyProperty;
-    
+
     /// <summary>
     /// Gets whether execution is queued or running.
     /// </summary>
     public bool IsRunning => (bool)GetValue(IsRunningProperty);
 
     private static readonly DependencyPropertyKey IsModifiedPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsModified), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
-    
+
     /// <summary>
     /// Identifies the read-only IsModified dependency property.
     /// </summary>
     public static readonly DependencyProperty IsModifiedProperty = IsModifiedPropertyKey.DependencyProperty;
-    
+
     /// <summary>
     /// Gets whether text differs from the last loaded or saved version.
     /// </summary>
     public bool IsModified => (bool)GetValue(IsModifiedProperty);
 
     private static readonly DependencyPropertyKey LastErrorPropertyKey = DependencyProperty.RegisterReadOnly(nameof(LastError), typeof(Exception), typeof(ScriptEditorControl), new PropertyMetadata(null));
-    
+
     /// <summary>
     /// Identifies the read-only LastError dependency property.
     /// </summary>
     public static readonly DependencyProperty LastErrorProperty = LastErrorPropertyKey.DependencyProperty;
-    
+
     /// <summary>
     /// Gets the most recent execution or save error.
     /// </summary>
@@ -163,32 +188,32 @@ public class ScriptEditorControl : Control
     /// Gets the inner Mosaic editor after its template is applied.
     /// </summary>
     public SyntaxEditor? Editor => _editor;
-    
+
     /// <summary>
     /// Gets the run command (F5).
     /// </summary>
     public ICommand RunCommand => _runCommand;
-    
+
     /// <summary>
     /// Gets the cancellation command (F6 or Shift+F5).
     /// </summary>
     public ICommand StopCommand => _stopCommand;
-    
+
     /// <summary>
     /// Gets the save command (Ctrl+S).
     /// </summary>
     public ICommand SaveCommand { get; }
-    
+
     /// <summary>
     /// Gets the completion command (Ctrl+Space or Ctrl+period).
     /// </summary>
     public ICommand CompletionCommand { get; }
-    
+
     /// <summary>
     /// Gets the snippet command (F1).
     /// </summary>
     public ICommand SnippetsCommand { get; }
-    
+
     /// <summary>
     /// Gets the parameter information command (Ctrl+Shift+Space), which shows the overloads of the call around the caret.
     /// </summary>
@@ -301,7 +326,7 @@ public class ScriptEditorControl : Control
     }
 
     /// <summary>
-    /// Saves a text snapshot through the callback or file path, prompting for a path when needed.
+    /// Saves a text snapshot through the callback, the <see cref="SaveObject"/> property, or the file path, prompting for a path when needed.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     public async Task SaveAsync(CancellationToken cancellationToken = default)
@@ -311,6 +336,10 @@ public class ScriptEditorControl : Control
         if (SaveTextAsync != null)
         {
             await SaveTextAsync(text, cancellationToken);
+        }
+        else if (SaveObject is { } target && !string.IsNullOrWhiteSpace(SaveToProperty))
+        {
+            WriteToSaveProperty(target, SaveToProperty, text);
         }
         else
         {
@@ -344,6 +373,18 @@ public class ScriptEditorControl : Control
     /// <inheritdoc />
     protected override AutomationPeer OnCreateAutomationPeer() => new ScriptEditorAutomationPeer(this);
 
+    private static void WriteToSaveProperty(object target, string propertyName, string text)
+    {
+        var property = target.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)
+            ?? throw new InvalidOperationException($"'{target.GetType().Name}' has no public instance property named '{propertyName}'.");
+
+        if (!property.CanWrite || property.SetMethod?.IsPublic != true || !property.PropertyType.IsAssignableFrom(typeof(string)))
+        {
+            throw new InvalidOperationException($"'{target.GetType().Name}.{propertyName}' must be a publicly writable string property.");
+        }
+
+        property.SetValue(target, text);
+    }
     private void AttachSupport()
     {
         DetachSupport();

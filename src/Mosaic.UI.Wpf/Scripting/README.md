@@ -97,7 +97,13 @@ F5 runs; F6/Shift+F5 stops; Ctrl+S saves; Ctrl+G inserts a GUID. Mosaic supplies
 
 `RunAsync()` executes a text snapshot in a fresh lexical block so `let`/`const` declarations can be rerun. Execution uses a worker thread to keep the UI responsive. WPF `DispatcherObject` instances registered with `RegisterObject` retain their identity, and their property access and method calls are dispatched automatically to their owning UI thread. For example, after `environment.RegisterObject("win", mainWindow)`, scripts can use `win.Left = 0` and `win.Title = "Test"` directly. This applies to registered objects; other application bridges and unregistered objects reached through their members must handle their own UI dispatching. The `Executing` and `Executed` routed events run on the UI thread; `Executed` fires after state is reset, including on cancellation or failure. Programmatic `RunAsync()` propagates errors; toolbar commands capture them in `LastError` and display the message inline. Cancellation is cooperative: a blocking custom .NET call must return before Topaz can stop. Unloading the control requests cancellation and closes completion popups. Environments wrapping the same engine serialize their runs; direct external engine calls must be coordinated by the host. The control never disposes a supplied engine.
 
-`LoadAsync(path)` loads a file and establishes its saved baseline. `SaveAsync()` writes to `FilePath`, or asks for a path if none is set. To save into an application model instead, set:
+`LoadAsync(path)` loads a file and establishes its saved baseline. `SaveAsync()` writes to `FilePath`, or asks for a path if none is set. To write the text straight onto a model property, set `SaveObject` and `SaveToProperty` (the name of a public, writable `string` property); saving then assigns the text via reflection instead of writing a file:
+
+```xml
+<scripting:ScriptEditorControl SaveObject="{Binding SelectedMacro}" SaveToProperty="Script" />
+```
+
+For custom save logic, set a callback, which takes precedence over both:
 
 ```csharp
 editor.SaveTextAsync = async (text, token) =>

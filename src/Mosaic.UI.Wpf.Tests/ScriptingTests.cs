@@ -185,6 +185,20 @@ public class ScriptingTests
     });
 
     [Fact]
+    public void SaveWritesTextToSaveObjectProperty() => RunStaAsync(async () =>
+    {
+        var target = new TextBox();
+        var control = new ScriptEditorControl { Text = "let value = 1;", SaveObject = target, SaveToProperty = nameof(TextBox.Text) };
+        await control.SaveAsync();
+        Assert.Equal("let value = 1;", target.Text);
+        Assert.False(control.IsModified);
+        control.SaveToProperty = "Missing";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => control.SaveAsync());
+        control.SaveToProperty = nameof(TextBox.MaxLength);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => control.SaveAsync());
+    });
+
+    [Fact]
     public void MethodCompletionInsertsSingleParenthesesAndPositionsCaret() => RunStaAsync(() =>
     {
         var environment = new ScriptEnvironment();
