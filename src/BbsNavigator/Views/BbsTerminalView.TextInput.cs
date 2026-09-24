@@ -23,6 +23,19 @@ public partial class BbsTerminalView
     private bool _textPreviewOpen;
     private int _connectionEpoch;
 
+    private async void SessionCommandBox_OnCommandExecuted(object sender, Mosaic.UI.Wpf.Controls.CommandExecutedEventArgs e)
+    {
+        e.Handled = true;
+        await RunTextOperationAsync(
+            token =>
+            {
+                ScrollLockToggle.IsChecked = false;
+                Terminal.ScrollToBottom();
+                return SendPacedAsync(e.Command + "\r", 0, 0, false, token);
+            },
+            "Command sent.");
+    }
+
     /// <summary>
     /// Gets whether this terminal's transport is currently connected.
     /// </summary>

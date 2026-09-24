@@ -226,10 +226,17 @@ namespace BbsNavigator.Views
         public AppSettings Settings => _settings;
 
         /// <summary>
-        /// Moves keyboard focus to the terminal so it is ready to receive input.
+        /// Moves keyboard focus to the command box when enabled, or otherwise to the terminal.
         /// </summary>
         public void FocusTerminal()
         {
+            if (Profile.ShowCommandBox && SessionCommandBox.IsEnabled)
+            {
+                SessionCommandBox.Focus();
+                Keyboard.Focus(SessionCommandBox.TextArea);
+                return;
+            }
+
             Terminal.Focus();
             Keyboard.Focus(Terminal);
         }
@@ -371,7 +378,6 @@ namespace BbsNavigator.Views
                 await _connection.ConnectAsync(timeoutCts.Token);
                 _reconnectAttemptCount = 0;
                 UpdateStatus(BbsConnectionState.Connected, $"Connected to {_endpoint}");
-                Terminal.Focus();
                 Profile.LastConnected = DateTime.Now;
                 Profile.ConnectionCount++;
 
@@ -379,6 +385,8 @@ namespace BbsNavigator.Views
                 {
                     await RunLoginAsync(automatic: true);
                 }
+
+                FocusTerminal();
             }
             catch (OperationCanceledException) when (_lifetimeToken.IsCancellationRequested)
             {
@@ -864,6 +872,7 @@ namespace BbsNavigator.Views
             bool enabled = _connection.IsConnected && !_transferActive && _textCancellation == null;
             UploadButton.IsEnabled = enabled;
             DownloadButton.IsEnabled = enabled;
+            SessionCommandBox.IsEnabled = enabled;
             ProtocolComboBox.IsEnabled = !_transferActive;
         }
 
@@ -1291,7 +1300,7 @@ namespace BbsNavigator.Views
                     Terminal.SendKeyboardInputToConnection = true;
                     HideTransferPanel();
                     UpdateTransferButtons();
-                    Terminal.Focus();
+                    FocusTerminal();
                 }
             }
 

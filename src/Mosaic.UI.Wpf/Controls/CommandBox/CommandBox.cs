@@ -680,6 +680,30 @@ namespace Mosaic.UI.Wpf.Controls
             _watermarkRenderer = new CommandBoxWatermarkRenderer(this);
             this.TextArea.TextView.BackgroundRenderers.Add(_watermarkRenderer);
 
+            var contextMenu = new ContextMenu();
+            contextMenu.Items.Add(new MenuItem
+            {
+                Header = "Cu_t",
+                Command = ApplicationCommands.Cut,
+                CommandTarget = this.TextArea,
+                InputGestureText = "Ctrl+X"
+            });
+            contextMenu.Items.Add(new MenuItem
+            {
+                Header = "_Copy",
+                Command = ApplicationCommands.Copy,
+                CommandTarget = this.TextArea,
+                InputGestureText = "Ctrl+C"
+            });
+            contextMenu.Items.Add(new MenuItem
+            {
+                Header = "_Paste",
+                Command = ApplicationCommands.Paste,
+                CommandTarget = this.TextArea,
+                InputGestureText = "Ctrl+V"
+            });
+            this.SetCurrentValue(ContextMenuProperty, contextMenu);
+
             this.RemoveNewLineCommands();
             DataObject.AddPastingHandler(this, this.OnPasting);
 

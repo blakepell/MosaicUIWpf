@@ -20,6 +20,14 @@ namespace BbsNavigator.Models
     public partial class BbsProfile : ObservableObject
     {
         /// <summary>
+        /// Gets or sets whether the terminal displays a separate command entry box.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Show Command Box")]
+        [ObservableProperty]
+        private bool _showCommandBox;
+
+        /// <summary>
         /// Gets or sets the unique profile identifier.
         /// </summary>
         /// <value>The identifier used to associate the profile with an open session.</value>

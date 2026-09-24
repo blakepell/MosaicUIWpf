@@ -7,6 +7,7 @@
     xmlns:vt52="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
     Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <!--  Gentle entrance for the whole document when it first loads.  -->
         <Storyboard x:Key="ViewFadeIn">
             <DoubleAnimation
@@ -78,6 +79,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Border
@@ -111,8 +113,13 @@
                     Margin="4,0,12,0"
                     IsActive="False" />
                 <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <Button x:Name="StopTextButton" Content="Stop sending" Click="StopText_OnClick"
-                            Visibility="Collapsed" Margin="0,0,6,0" Padding="8,3" />
+                    <Button
+                        x:Name="StopTextButton"
+                        Margin="0,0,6,0"
+                        Padding="8,3"
+                        Click="StopText_OnClick"
+                        Content="Stop sending"
+                        Visibility="Collapsed" />
                     <Button
                         x:Name="CancelReconnectButton"
                         MinWidth="110"
@@ -218,9 +225,24 @@
             </Border>
         </Grid>
 
+        <mosaic:CommandBox
+            x:Name="SessionCommandBox"
+            Grid.Row="2"
+            Margin="4,4"
+            Padding="8,4"
+            AllowEmptyCommands="True"
+            CommandExecuted="SessionCommandBox_OnCommandExecuted"
+            FontFamily="{Binding FontFamily, ElementName=Terminal}"
+            FontSize="{Binding FontSize, ElementName=Terminal}"
+            ShowPrompt="True"
+            TrimCommand="False"
+            UseBlockCaret="True"
+            Visibility="{Binding ShowCommandBox, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Watermark="" />
+
         <!--  Session status bar: transfer actions on the left, live statistics on the right.  -->
         <Border
-            Grid.Row="2"
+            Grid.Row="3"
             Padding="6,3"
             Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundBrush}}"
             BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBorderBrush}}"
@@ -298,11 +320,15 @@
                     <mosaic:SplitButton.ContextMenu>
                         <ContextMenu>
                             <MenuItem
-                                x:Name="CaptureToggle"
+                                Header="Show Command Box"
                                 IsCheckable="True"
+                                IsChecked="{Binding ShowCommandBox, Mode=TwoWay}" />
+                            <MenuItem
+                                x:Name="CaptureToggle"
                                 Checked="CaptureToggle_OnChecked"
-                                Unchecked="CaptureToggle_OnUnchecked"
-                                ToolTip="Capture the session to a text file">
+                                IsCheckable="True"
+                                ToolTip="Capture the session to a text file"
+                                Unchecked="CaptureToggle_OnUnchecked">
                                 <MenuItem.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock
@@ -324,30 +350,30 @@
                             </MenuItem>
                             <MenuItem
                                 x:Name="DoorwayToggle"
-                                IsCheckable="True"
                                 Checked="DoorwayToggle_OnChecked"
-                                Unchecked="DoorwayToggle_OnUnchecked"
-                                ToolTip="Send DOS scan codes for Alt, function, and navigation keys">
+                                IsCheckable="True"
+                                ToolTip="Send DOS scan codes for Alt, function, and navigation keys"
+                                Unchecked="DoorwayToggle_OnUnchecked">
                                 <MenuItem.Header>
                                     <TextBlock x:Name="DoorwayText" Text="DoorWay Off" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem
                                 x:Name="KeypadToggle"
-                                IsCheckable="True"
                                 Checked="KeypadToggle_OnChecked"
-                                Unchecked="KeypadToggle_OnUnchecked"
-                                ToolTip="Make the numeric keypad send arrow and navigation keys, as if Num Lock were off">
+                                IsCheckable="True"
+                                ToolTip="Make the numeric keypad send arrow and navigation keys, as if Num Lock were off"
+                                Unchecked="KeypadToggle_OnUnchecked">
                                 <MenuItem.Header>
                                     <TextBlock x:Name="KeypadText" Text="Keypad Numbers" />
                                 </MenuItem.Header>
                             </MenuItem>
                             <MenuItem
                                 x:Name="ScrollLockToggle"
-                                IsCheckable="True"
                                 Checked="ScrollLockToggle_OnChecked"
-                                Unchecked="ScrollLockToggle_OnUnchecked"
-                                ToolTip="Keep your current scrollback position while new output arrives">
+                                IsCheckable="True"
+                                ToolTip="Keep your current scrollback position while new output arrives"
+                                Unchecked="ScrollLockToggle_OnUnchecked">
                                 <MenuItem.Header>
                                     <TextBlock x:Name="ScrollLockText" Text="Live Output" />
                                 </MenuItem.Header>
