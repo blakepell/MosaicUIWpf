@@ -5,8 +5,8 @@
     xmlns:converters="clr-namespace:BbsNavigator.Converters"
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
-    Width="560"
-    Height="840"
+    Width="1000"
+    Height="570"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -33,272 +33,296 @@
             ShowMinimizeButton="False" />
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-        <Grid Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <TextBlock
-                Grid.ColumnSpan="2"
-                Margin="0,0,0,18"
-                FontSize="20"
-                FontWeight="SemiBold"
-                Text="Connection profile" />
-            <TextBlock
-                Grid.Row="1"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Display name" />
-            <TextBox
-                x:Name="NameTextBox"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0,4"
-                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="2"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Host name" />
-            <TextBox
-                Grid.Row="2"
-                Grid.Column="1"
-                Margin="0,4"
-                Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="3"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Telnet port" />
-            <TextBox
-                x:Name="TelnetPortTextBox"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="0,4"
-                Padding="4"
-                ToolTip="The port the BBS listens on for Telnet connections. Leave blank or enter 0 when the BBS offers SSH only." />
-            <TextBlock
-                Grid.Row="4"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="SSH port" />
-            <TextBox
-                x:Name="SshPortTextBox"
-                Grid.Row="4"
-                Grid.Column="1"
-                Margin="0,4"
-                Padding="4"
-                ToolTip="The port the BBS listens on for SSH connections. Leave blank or enter 0 when the BBS does not offer SSH." />
-            <TextBlock
-                Grid.Row="5"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="SSH certificate" />
-            <Grid
-                Grid.Row="5"
-                Grid.Column="1"
-                Margin="0,4">
+            <Grid Margin="20">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="154" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.ColumnSpan="4"
+                    Margin="0,0,0,18"
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="Connection profile" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="Display name" />
                 <TextBox
-                    x:Name="CertificateTextBox"
-                    Text="{Binding SshKeyFile, UpdateSourceTrigger=PropertyChanged}"
-                    ToolTip="Optional private key file used to authenticate SSH sessions. Leave blank to authenticate with a password." />
-                <Button
+                    x:Name="NameTextBox"
+                    Grid.Row="1"
                     Grid.Column="1"
-                    Width="32"
-                    Margin="6,0,0,0"
-                    Click="BrowseCertificate_OnClick"
-                    Content="…"
-                    ToolTip="Choose a private key file" />
-                <Button
-                    Grid.Column="2"
-                    Width="32"
-                    Margin="4,0,0,0"
-                    Click="ClearCertificate_OnClick"
-                    Content="✕"
-                    ToolTip="Clear the certificate" />
-            </Grid>
-            <TextBlock
-                Grid.Row="6"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Description" />
-            <TextBox
-                Grid.Row="6"
-                Grid.Column="1"
-                Margin="0,4"
-                Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock
-                Grid.Row="7"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Text encoding" />
-            <ComboBox
-                x:Name="EncodingComboBox"
-                Grid.Row="7"
-                Grid.Column="1"
-                Margin="0,4"
-                SelectedItem="{Binding TerminalEncoding}"
-                ToolTip="CP437 renders classic DOS box-drawing and ANSI art; UTF-8 suits modern systems and MUDs.">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <TextBlock
-                Grid.Row="8"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Emulation" />
-            <ComboBox
-                x:Name="EmulationComboBox"
-                Grid.Row="8"
-                Grid.Column="1"
-                Margin="0,4"
-                SelectedItem="{Binding TerminalEmulation}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <TextBlock
-                Grid.Row="9"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Display mode" />
-            <ComboBox
-                x:Name="DisplayModeComboBox"
-                Grid.Row="9"
-                Grid.Column="1"
-                Margin="0,4"
-                SelectedItem="{Binding TerminalDisplayMode}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-
-            <TextBlock
-                Grid.Row="10"
-                Margin="0,6"
-                VerticalAlignment="Center"
-                Text="Telnet TTYPE" />
-            <TextBox
-                Grid.Row="10"
-                Grid.Column="1"
-                Margin="0,4"
-                Text="{Binding TerminalType, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="Optional terminal name reported during Telnet negotiation. Leave blank to use the emulation's normal value." />
-
-            <TextBlock
-                Grid.Row="11"
-                Margin="0,6"
-                VerticalAlignment="Top"
-                Text="Login macro" />
-            <StackPanel Grid.Row="11" Grid.Column="1" Margin="0,4">
-                <DockPanel Margin="0,0,0,5">
-                    <Button DockPanel.Dock="Right" Content="Edit steps…" Click="EditLoginSteps_OnClick" Padding="8,3" />
-                    <CheckBox Content="Use prompt-aware steps" IsChecked="{Binding UseLoginSequence}" VerticalAlignment="Center" />
-                </DockPanel>
+                    Margin="0,4"
+                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="Host name" />
                 <TextBox
-                    AcceptsReturn="True"
-                    MinHeight="50"
-                    Text="{Binding LoginMacro, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap"
-                    ToolTip="Use {USERNAME}, {PASSWORD}, and {ENTER}. The saved password remains encrypted." />
-                <CheckBox
-                    Margin="0,5,0,0"
-                    Content="Run the selected login method after Telnet connects"
-                    IsChecked="{Binding AutoLogin}" />
-            </StackPanel>
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="0,4"
+                    Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="Telnet port" />
+                <TextBox
+                    x:Name="TelnetPortTextBox"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="0,4"
+                    Padding="4"
+                    ToolTip="The port the BBS listens on for Telnet connections. Leave blank or enter 0 when the BBS offers SSH only." />
+                <TextBlock
+                    Grid.Row="4"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="SSH port" />
+                <TextBox
+                    x:Name="SshPortTextBox"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="0,4"
+                    Padding="4"
+                    ToolTip="The port the BBS listens on for SSH connections. Leave blank or enter 0 when the BBS does not offer SSH." />
+                <TextBlock
+                    Grid.Row="5"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="SSH certificate" />
+                <Grid
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        x:Name="CertificateTextBox"
+                        Text="{Binding SshKeyFile, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Optional private key file used to authenticate SSH sessions. Leave blank to authenticate with a password." />
+                    <Button
+                        Grid.Column="1"
+                        Width="32"
+                        Margin="6,0,0,0"
+                        Click="BrowseCertificate_OnClick"
+                        Content="…"
+                        ToolTip="Choose a private key file" />
+                    <Button
+                        Grid.Column="2"
+                        Width="32"
+                        Margin="4,0,0,0"
+                        Click="ClearCertificate_OnClick"
+                        Content="✕"
+                        ToolTip="Clear the certificate" />
+                </Grid>
+                <TextBlock
+                    Grid.Row="6"
+                    Margin="0,6"
+                    VerticalAlignment="Center"
+                    Text="Description" />
+                <TextBox
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Margin="0,4"
+                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Margin="24,6,0,6"
+                    VerticalAlignment="Center"
+                    Text="Text encoding" />
+                <ComboBox
+                    x:Name="EncodingComboBox"
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Margin="0,4"
+                    SelectedItem="{Binding TerminalEncoding}"
+                    ToolTip="CP437 renders classic DOS box-drawing and ANSI art; UTF-8 suits modern systems and MUDs.">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
-            <StackPanel
-                Grid.Row="12"
-                Grid.Column="1"
-                Margin="0,8,0,0"
-                VerticalAlignment="Top">
-                <CheckBox Content="Reconnect automatically after a dropped connection" IsChecked="{Binding AutoReconnect}" />
-                <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                    <TextBlock Text="Show typed characters locally" VerticalAlignment="Center" Margin="0,0,12,0" />
-                    <ComboBox x:Name="LocalEchoComboBox"
-                              MinWidth="110"
-                              SelectedItem="{Binding LocalEchoMode}"
-                              AutomationProperties.Name="Show typed characters locally"
-                              ToolTip="Automatic echoes locally until the Telnet server enables echo, and resumes if it disables echo. SSH uses remote echo. On and Off override this behavior." />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Margin="24,6,0,6"
+                    VerticalAlignment="Center"
+                    Text="Emulation" />
+                <ComboBox
+                    x:Name="EmulationComboBox"
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    Margin="0,4"
+                    SelectedItem="{Binding TerminalEmulation}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Margin="24,6,0,6"
+                    VerticalAlignment="Center"
+                    Text="Display mode" />
+                <ComboBox
+                    x:Name="DisplayModeComboBox"
+                    Grid.Row="3"
+                    Grid.Column="3"
+                    Margin="0,4"
+                    SelectedItem="{Binding TerminalDisplayMode}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={x:Static converters:EnumDescriptionConverter.Instance}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="2"
+                    Margin="24,6,0,6"
+                    VerticalAlignment="Center"
+                    Text="Telnet TTYPE" />
+                <TextBox
+                    Grid.Row="4"
+                    Grid.Column="3"
+                    Margin="0,4"
+                    Text="{Binding TerminalType, UpdateSourceTrigger=PropertyChanged}"
+                    ToolTip="Optional terminal name reported during Telnet negotiation. Leave blank to use the emulation's normal value." />
+
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="2"
+                    Margin="24,6,0,6"
+                    VerticalAlignment="Center"
+                    Text="Local echo" />
+                <ComboBox
+                    x:Name="LocalEchoComboBox"
+                    Grid.Row="5"
+                    Grid.Column="3"
+                    Margin="0,4"
+                    SelectedItem="{Binding LocalEchoMode}"
+                    AutomationProperties.Name="Show typed characters locally"
+                    ToolTip="Automatic echoes locally until the Telnet server enables echo, and resumes if it disables echo. SSH uses remote echo. On and Off override this behavior." />
+                <TextBlock
+                    Grid.Row="7"
+                    Margin="0,14,0,6"
+                    VerticalAlignment="Top"
+                    Text="Login macro" />
+                <StackPanel Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,12,0,4">
+                    <DockPanel Margin="0,0,0,5">
+                        <Button DockPanel.Dock="Right" Content="Edit steps…" Click="EditLoginSteps_OnClick" Padding="8,3" />
+                        <CheckBox IsChecked="{Binding UseLoginSequence}" VerticalAlignment="Center">
+                            <TextBlock Text="Use prompt-aware steps" TextWrapping="Wrap" />
+                        </CheckBox>
+                    </DockPanel>
+                    <TextBox
+                        AcceptsReturn="True"
+                        MinHeight="50"
+                        Text="{Binding LoginMacro, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap"
+                        ToolTip="Use {USERNAME}, {PASSWORD}, and {ENTER}. The saved password remains encrypted." />
+                    <CheckBox
+                        Margin="0,5,0,0"
+                        IsChecked="{Binding AutoLogin}">
+                        <TextBlock Text="Run the selected login method after Telnet connects" TextWrapping="Wrap" />
+                    </CheckBox>
                 </StackPanel>
-                <CheckBox
-                    Margin="0,4,0,0"
-                    Content="Send DEL (0x7F) for Backspace"
-                    IsChecked="{Binding BackspaceSendsDelete}"
-                    ToolTip="Most classic BBSs expect Ctrl-H/BS (0x08). Enable this for systems that expect DEL (0x7F)." />
-                <CheckBox
-                    Margin="0,4,0,0"
-                    Content="Use bundled CP437 font in classic 80 × 25 mode"
-                    IsChecked="{Binding UseCp437Font}"
-                    ToolTip="Turn this off to use the terminal font selected in Options, which is Cascadia Mono by default." />
-                <CheckBox
-                    Margin="0,4,0,0"
-                    Content="Start sessions in DoorWay mode"
-                    IsChecked="{Binding DoorwayMode}"
-                    ToolTip="Enable when a DOS door needs Alt, function, or navigation keys as IBM PC scan codes." />
-                <CheckBox
-                    Margin="0,4,0,0"
-                    Content="Start sessions with the numeric keypad as arrow keys"
-                    IsChecked="{Binding NumericKeypadNavigation}"
-                    ToolTip="The keypad behaves as if Num Lock were off (8 = Up, 4 = Left, 7 = Home, and so on) regardless of the keyboard's Num Lock light." />
-                <CheckBox
-                    Margin="0,4,0,0"
-                    Content="Capture sessions to a log file"
-                    IsChecked="{Binding CaptureSession}"
-                    ToolTip="Records received text, with escape sequences removed, to a log in the download folder's Logs subfolder." />
-            </StackPanel>
 
-            <StackPanel
-                Grid.Row="13"
-                Grid.ColumnSpan="2"
-                Margin="0,4,0,0"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <Button
-                    Width="90"
-                    Margin="0,0,8,0"
-                    IsCancel="True">
-                    Cancel
-                </Button>
-                <mosaic:AccentButton
-                    Width="90"
-                    AccentButtonType="ThemeAccent"
-                    Click="Save_OnClick"
-                    Content="Save"
-                    IsDefault="True" />
-            </StackPanel>
-        </Grid>
+                <StackPanel
+                    Grid.Row="8"
+                    Grid.ColumnSpan="2"
+                    Margin="0,12,0,0"
+                    VerticalAlignment="Top">
+                    <CheckBox IsChecked="{Binding AutoReconnect}">
+                        <TextBlock Text="Reconnect automatically after a dropped connection" TextWrapping="Wrap" />
+                    </CheckBox>
+                    <CheckBox
+                        Margin="0,4,0,0"
+                        IsChecked="{Binding BackspaceSendsDelete}"
+                        ToolTip="Most classic BBSs expect Ctrl-H/BS (0x08). Enable this for systems that expect DEL (0x7F).">
+                        <TextBlock Text="Send DEL (0x7F) for Backspace" TextWrapping="Wrap" />
+                    </CheckBox>
+                    <CheckBox
+                        Margin="0,4,0,0"
+                        IsChecked="{Binding UseCp437Font}"
+                        ToolTip="Turn this off to use the terminal font selected in Options, which is Cascadia Mono by default.">
+                        <TextBlock Text="Use bundled CP437 font in classic 80 × 25 mode" TextWrapping="Wrap" />
+                    </CheckBox>
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="8"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="2"
+                    Margin="24,12,0,0"
+                    VerticalAlignment="Top">
+                    <CheckBox
+                        IsChecked="{Binding DoorwayMode}"
+                        ToolTip="Enable when a DOS door needs Alt, function, or navigation keys as IBM PC scan codes.">
+                        <TextBlock Text="Start sessions in DoorWay mode" TextWrapping="Wrap" />
+                    </CheckBox>
+                    <CheckBox
+                        Margin="0,4,0,0"
+                        IsChecked="{Binding NumericKeypadNavigation}"
+                        ToolTip="The keypad behaves as if Num Lock were off (8 = Up, 4 = Left, 7 = Home, and so on) regardless of the keyboard's Num Lock light.">
+                        <TextBlock Text="Start sessions with the numeric keypad as arrow keys" TextWrapping="Wrap" />
+                    </CheckBox>
+                    <CheckBox
+                        Margin="0,4,0,0"
+                        IsChecked="{Binding CaptureSession}"
+                        ToolTip="Records received text, with escape sequences removed, to a log in the download folder's Logs subfolder.">
+                        <TextBlock Text="Capture sessions to a log file" TextWrapping="Wrap" />
+                    </CheckBox>
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="9"
+                    Grid.ColumnSpan="4"
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Width="90"
+                        Margin="0,0,8,0"
+                        IsCancel="True">
+                        Cancel
+                    </Button>
+                    <mosaic:AccentButton
+                        Width="90"
+                        AccentButtonType="ThemeAccent"
+                        Click="Save_OnClick"
+                        Content="Save"
+                        IsDefault="True" />
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Window>
