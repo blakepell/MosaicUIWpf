@@ -157,7 +157,8 @@ public sealed class ScriptEnvironment
         foreach (var (alias, type) in new (string, Type)[] {
             ("string", typeof(string)), ("int", typeof(int)), ("date", typeof(DateTime)),
             ("file", typeof(File)), ("directory", typeof(Directory)), ("double", typeof(double)),
-            ("math", typeof(Math)), ("guid", typeof(Guid)), ("StringBuilder", typeof(StringBuilder)) })
+            ("math", typeof(Math)), ("guid", typeof(Guid)), ("StringBuilder", typeof(StringBuilder)),
+            ("DataList", typeof(DataList)) })
         {
             RegisterType(type, alias);
         }

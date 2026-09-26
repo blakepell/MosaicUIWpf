@@ -59,7 +59,24 @@ editor.Environment = new ScriptEnvironment(myTopazEngine, includeDefaults: true)
 
 Values installed directly through Topaz cannot be discovered automatically. Describe those using `RegisterCompletionType`, or register them through the environment's combined registration methods. For a pre-existing globals dictionary, pass it as the `instance` argument to `RegisterCompletionType` to enable key completion. `environment.Globals` is the dictionary installed by the default setup.
 
-Default aliases: `process`, `hash`, `clipboard`, `http`, `screenshot`, `mouse`, `environ`, `log`, `ai`, `regex`, `ui`, `string`, `int`, `date`, `file`, `directory`, `double`, `math`, `guid`, `StringBuilder`, `JSON`, `globalThis`, and `globals`. The original System namespace and Argus/LINQ extension registrations are also included. AI uses the copied Ollama helper and its original local endpoint/model defaults; it makes requests only when a script calls it. UI and clipboard commands dispatch to the WPF application thread. Screenshots return caller-owned `System.Drawing.Bitmap` objects.
+Default aliases: `process`, `hash`, `clipboard`, `http`, `screenshot`, `mouse`, `environ`, `log`, `ai`, `regex`, `ui`, `string`, `int`, `date`, `file`, `directory`, `double`, `math`, `guid`, `StringBuilder`, `DataList`, `JSON`, `globalThis`, and `globals`. The original System namespace and Argus/LINQ extension registrations are also included. AI uses the copied Ollama helper and its original local endpoint/model defaults; it makes requests only when a script calls it. UI and clipboard commands dispatch to the WPF application thread. Screenshots return caller-owned `System.Drawing.Bitmap` objects.
+
+## DataList
+
+`DataList` is a `ListView`/`GridView` whose columns, header-click sorting, selection and row editing are already wired up for scripts. Every member marshals to the WPF dispatcher, so scripts can use it directly from the worker thread. Row indexes (`grid[0]`, `Remove(0)`, `SelectedIndex`, `row.Index`) are in display (sorted) order.
+
+```javascript
+var grid = new DataList("First Name", "Last Name", "Age");
+grid.BeginUpdate();                       // defer display updates for bulk adds
+var row = grid.Add("Isaac", "Pell", 17);  // one value per column; returns the row
+grid.Add({ FirstName: "John", LastName: "Butler", Age: 22 }); // or any object, resolved by property
+grid.EndUpdate();
+row["Age"] = 18;                          // edit by column name or index
+grid.Columns["Age"].Align = "Right";
+grid.Show("People");                      // or ShowDialog(), which returns the selected row
+```
+
+A column matches an object property of the same name (case-insensitive), or the name without spaces, so `"First Name"` reads `FirstName`; set `column.Property` to read a different member. `grid.AutoSize()` leaves columns that were given a fixed `Width` alone. Hosts can place `DataList.ListView` in their own layout instead of calling `Show`; it must then be accessed only on its dispatcher.
 
 ## Dock document or tool window
 
