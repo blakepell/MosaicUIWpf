@@ -396,6 +396,7 @@ namespace BbsNavigator
             Func<Task<BbsCredentials?>> credentialProvider = () => ResolveSavedCredentialsAsync(profile);
             var terminal = new BbsTerminalView(profile, Settings, transport, credentials, credentialProvider);
             terminal.EditDetailsRequested += (_, _) => EditBbs(profile);
+            terminal.ConfigureScriptEnvironment = RegisterScriptObjects;
             string title = transport == BbsTransport.Ssh ? $"{profile.Name} (SSH)" : profile.Name;
             LayoutDocument document = DockingManager.Add(terminal, title, activate: true, canClose: true);
             document.ContentId = $"bbs-{profile.Id:N}-{transport}";
@@ -874,6 +875,14 @@ namespace BbsNavigator
             }
         }
 
+        private void EditAliases_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is { } profile)
+            {
+                new AliasListWindow(profile, RegisterScriptObjects) { Owner = this }.ShowDialog();
+            }
+        }
+
         private void EditBbs(BbsProfile profile)
         {
             var editor = new BbsEditorWindow(profile) { Owner = this };
@@ -1081,6 +1090,8 @@ namespace BbsNavigator
         }
 
         private void StopSending_OnClick(object sender, RoutedEventArgs e) => ActiveTerminal?.StopSending();
+
+        private void StopAliasScripts_OnClick(object sender, RoutedEventArgs e) => ActiveTerminal?.StopAliasScripts();
 
         private void ComposeMessage_OnClick(object sender, RoutedEventArgs e)
         {

@@ -483,6 +483,7 @@ namespace BbsNavigator.Views
 
             WriteCapture(data);
             _loginPrompts.Append(data);
+            RaiseTextReceived(data);
             DetectZmodemStart(data);
 
             if (Interlocked.Exchange(ref _scrollToEndQueued, 1) != 0)

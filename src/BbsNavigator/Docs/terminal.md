@@ -169,6 +169,36 @@ The session banner shows send progress and **Stop sending**. The same stop comma
 is available on the Terminal menu. Already transmitted text cannot be recalled.
 Normal typing is paused while a login, paste, or composed-message send is active.
 
+## Aliases
+
+An alias runs a script when you type its name as the first word in a board's command
+box (turn on **Show Command Box** in the session's options). Right-click a board in the
+directory and choose **Edit Aliases…** to add, filter, or delete its aliases, and
+double-click one to edit it. Input that does not start with an enabled alias is sent to
+the board as usual.
+
+Words typed after the alias replace `%1` through `%9` in a copy of the script, `%0` is
+everything after the alias, and `%%` is a literal percent sign. Wrap text in double quotes
+to pass it as one word: `tell "Joe Smith" hello` makes `%1` equal `Joe Smith`. Values are
+escaped for use inside a string, so write `let who = "%1";`.
+
+Scripts use the same JavaScript engine as the Script Editor, plus `term`, the session that
+ran the alias:
+
+| Member | Purpose |
+| --- | --- |
+| `term.Send(text)` / `term.SendLine(text)` | Send text, without or with Enter. |
+| `term.Echo(text)` | Show a line on this screen only. |
+| `term.Status(text)` | Show a message in the status bar. |
+| `term.WaitFor(text, ms)` | Wait for the board to send text; returns `false` on timeout. |
+| `term.Sleep(ms)` | Pause the script. |
+| `term.GetScreenText()`, `term.GetLines()`, `term.GetLastLine()` | Read the screen. |
+| `term.Name`, `term.Host`, `term.IsConnected` | Describe the session. |
+
+Aliases in one session share `globals`, so one alias can store values another reads.
+Scripts run one at a time per session. Choose **Terminal → Stop Alias Scripts** to cancel
+a script that is waiting or sleeping.
+
 ## Composing messages locally
 
 Choose **Terminal → Compose Message…** for the active session, or select a saved board

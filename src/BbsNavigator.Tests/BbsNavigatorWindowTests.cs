@@ -35,8 +35,12 @@ public class BbsNavigatorWindowTests
             try
             {
                 var profile = new BbsProfile { Name = "Example BBS", Host = "example.invalid" };
+                var alias = new Alias { AliasExpression = "tell", Command = "let who = \"%1\";\nterm.SendLine(\"tell \" + who + \" %2\");", Group = "chat", Count = 3 };
+                profile.Aliases.Add(alias);
                 Window[] windows =
                 [
+                    new AliasListWindow(profile),
+                    new AliasEditorWindow((Alias)alias.Clone(), Array.Empty<Alias>()),
                     new LoginSequenceWindow(Array.Empty<LoginStep>()),
                     new TextSendWindow("Hello everyone!\r\nA message composed locally.", profile.Name, Encoding.UTF8, 5, 100),
                     new MessageComposerWindow(profile, folder, _ => Task.FromResult(false), () => { }),

@@ -1,0 +1,51 @@
+<Window x:Class="BbsNavigator.Views.AliasListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+        Title="Aliases" Width="820" Height="520" MinWidth="600" MinHeight="360"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        mosaic:WindowChromeBehavior.IsEnabled="True" mosaic:WindowChromeBehavior.CaptionHeight="0"
+        Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+        Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}">
+    <DockPanel Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+        <mosaic:WindowTitleBar DockPanel.Dock="Top" ShowMinimizeButton="False" />
+        <StackPanel DockPanel.Dock="Top" Margin="16,12">
+            <TextBlock x:Name="HeadingText" Text="Aliases" FontSize="20" />
+            <TextBlock Margin="0,6,0,0" TextWrapping="Wrap"
+                       Text="Type an alias as the first word in this board's command box to run its script. Words after it become %1, %2, … in the script; quote text to keep it together." />
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Margin="16" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Close" IsCancel="True" IsDefault="True" MinWidth="80" Padding="10,4" />
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="16,8,16,0">
+            <Button Content="Add alias" Click="Add_OnClick" Padding="10,4" />
+            <Button x:Name="EditButton" Content="Edit" Click="Edit_OnClick" Margin="8,0" Padding="10,4" />
+            <Button x:Name="DeleteButton" Content="Delete" Click="Delete_OnClick" Padding="10,4" />
+        </StackPanel>
+        <mosaic:SearchBox DockPanel.Dock="Top" Margin="16,0,16,8" Watermark="Filter aliases…">
+            <i:Interaction.Behaviors>
+                <mosaic:ItemsControlFilterBehavior TargetItemsControl="{Binding ElementName=AliasList}" />
+            </i:Interaction.Behaviors>
+        </mosaic:SearchBox>
+        <ListView x:Name="AliasList" Margin="16,0" SelectionMode="Extended"
+                  KeyDown="AliasList_OnKeyDown" MouseDoubleClick="AliasList_OnMouseDoubleClick"
+                  SelectionChanged="AliasList_OnSelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="On" Width="44">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}" ToolTip="Enabled" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Alias" Width="140" DisplayMemberBinding="{Binding AliasExpression}" />
+                    <GridViewColumn Header="Group" Width="110" DisplayMemberBinding="{Binding Group}" />
+                    <GridViewColumn Header="Uses" Width="60" DisplayMemberBinding="{Binding Count, StringFormat=N0}" />
+                    <GridViewColumn Header="Script" Width="380" DisplayMemberBinding="{Binding CommandPreview}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </DockPanel>
+</Window>

@@ -11,6 +11,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json.Serialization;
 using Cysharp.Text;
+using Mosaic.UI.Wpf.Collections;
 
 namespace BbsNavigator.Models
 {
@@ -259,6 +260,11 @@ namespace BbsNavigator.Models
         /// Gets or sets the ordered login actions. Credentials are resolved only at execution time.
         /// </summary>
         public List<LoginStep> LoginSteps { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the aliases that run scripts when entered in this board's command box.
+        /// </summary>
+        public ConcurrentObservableCollection<Alias> Aliases { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the per-board character delay, or -1 to use the application setting.

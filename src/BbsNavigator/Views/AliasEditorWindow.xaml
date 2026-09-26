@@ -1,0 +1,60 @@
+<Window x:Class="BbsNavigator.Views.AliasEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
+        xmlns:scripting="clr-namespace:Mosaic.UI.Wpf.Scripting;assembly=Mosaic.UI.Wpf"
+        Title="Edit alias" Width="1000" Height="640" MinWidth="720" MinHeight="420"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        mosaic:WindowChromeBehavior.IsEnabled="True" mosaic:WindowChromeBehavior.CaptionHeight="0"
+        Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}"
+        Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.WindowForegroundBrush}}">
+    <DockPanel Background="{DynamicResource {x:Static mosaic:MosaicTheme.WindowBackgroundBrush}}">
+        <mosaic:WindowTitleBar DockPanel.Dock="Top" ShowMinimizeButton="False" />
+        <StackPanel DockPanel.Dock="Bottom" Margin="16" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel" IsCancel="True" MinWidth="80" Margin="0,0,8,0" Padding="10,4" />
+            <Button Content="Save" Click="Save_OnClick" MinWidth="100" Padding="10,4" />
+        </StackPanel>
+        <Grid Margin="16,12,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" MinWidth="200" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" MinWidth="300" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Alias" FontWeight="SemiBold" />
+                    <TextBox x:Name="AliasTextBox" Margin="0,4,0,0"
+                             Text="{Binding AliasExpression, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="The word typed first in the command box to run this alias. It cannot contain spaces." />
+
+                    <TextBlock Margin="0,12,0,0" Text="Group" FontWeight="SemiBold" />
+                    <TextBox Margin="0,4,0,0" Text="{Binding Group, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="An optional group name used to organize aliases." />
+
+                    <TextBlock Margin="0,12,0,0" Text="Sort order" FontWeight="SemiBold" />
+                    <TextBox Margin="0,4,0,0" Text="{Binding SortOrder, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Aliases are listed by sort order, then by name." />
+
+                    <CheckBox Margin="0,14,0,0" Content="Enabled" IsChecked="{Binding Enabled}" />
+
+                    <TextBlock Margin="0,14,0,0" Text="{Binding Count, StringFormat='Used {0:N0} times'}" />
+
+                    <TextBlock Margin="0,20,0,0" Text="Script" FontWeight="SemiBold" />
+                    <TextBlock Margin="0,4,0,0" TextWrapping="Wrap" xml:space="preserve">Words typed after the alias replace %1 through %9; %0 is all of them. Quote text to keep it as one word. Use %% for a percent sign.
+
+term is the terminal that ran the alias:
+  term.SendLine("look");
+  term.Echo("Hello %1");
+  term.WaitFor("prompt", 5000);
+
+Ctrl+Space shows completions.</TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+
+            <scripting:ScriptEditorControl x:Name="ScriptEditor" Grid.Column="2"
+                                           ToolBarVisibility="Collapsed"
+                                           Text="{Binding Command, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+    </DockPanel>
+</Window>

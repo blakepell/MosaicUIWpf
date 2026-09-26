@@ -26,6 +26,11 @@ public partial class BbsTerminalView
     private async void SessionCommandBox_OnCommandExecuted(object sender, Mosaic.UI.Wpf.Controls.CommandExecutedEventArgs e)
     {
         e.Handled = true;
+        if (TryRunAlias(e.Command))
+        {
+            return;
+        }
+
         await RunTextOperationAsync(
             token =>
             {

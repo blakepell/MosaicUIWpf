@@ -145,6 +145,7 @@
             <MenuItem Header="_Terminal" SubmenuOpened="TerminalMenu_OnSubmenuOpened">
                 <MenuItem Click="ComposeMessage_OnClick" Header="_Compose Message…" />
                 <MenuItem Click="StopSending_OnClick" Header="Stop Sending Text" />
+                <MenuItem Click="StopAliasScripts_OnClick" Header="Stop _Alias Scripts" />
                 <Separator />
                 <MenuItem Click="ToggleDoorway_OnClick" Header="Toggle _DoorWay Mode" />
                 <MenuItem Click="ToggleKeypadNavigation_OnClick" Header="Toggle _Keypad Arrows" />
@@ -390,6 +391,7 @@
                                                                 IsEnabled="{Binding CanConnectSsh}" />
                                                             <Separator />
                                                             <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
+                                                            <MenuItem Click="EditAliases_OnClick" Header="Edit _Aliases…" />
                                                             <Separator />
                                                             <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />
                                                             <Separator />
