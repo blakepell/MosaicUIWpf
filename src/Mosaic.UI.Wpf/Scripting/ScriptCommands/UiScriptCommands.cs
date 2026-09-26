@@ -6,7 +6,6 @@
 
 using System.Threading.Tasks;
 using Mosaic.UI.Wpf.Controls;
-using Mosaic.UI.Wpf.Themes;
 using MessageBox = Mosaic.UI.Wpf.Controls.MessageBox;
 
 namespace Mosaic.UI.Wpf.Scripting.ScriptCommands;
@@ -21,6 +20,11 @@ public class UiScriptCommands
     /// Displays a themed alert on the application dispatcher.
     /// </summary>
     public void Alert(string message) => OnUi(() => MessageBox.Show(message, "Alert"));
+
+    /// <summary>
+    /// Displays a themed OK/Cancel confirmation and returns true when the user clicks OK.
+    /// </summary>
+    public bool Confirm(string message) => OnUi(() => MessageBox.Show(message, "Confirm", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK);
 
     /// <summary>
     /// Displays a themed input dialog and returns accepted text, or an empty string on cancel.
@@ -64,56 +68,11 @@ public class UiScriptCommands
 
     private static string ShowTextDialog(string text, bool readOnly)
     {
-        var window = new Window
+        var window = new ScriptTextWindow(text, readOnly)
         {
-            Title = readOnly ? "Script output" : "Input",
-            Width = 560,
-            Height = 340,
-            Owner = Application.Current.MainWindow,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
+            Owner = Application.Current.MainWindow
         };
-        window.SetResourceReference(Control.BackgroundProperty, MosaicTheme.WindowBackgroundBrush);
-        window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.ControlTextForegroundBrush);
-        foreach (string resource in new[] { "TextBox", "Button", "ScrollBar", "ScrollViewer" })
-        {
-            window.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Mosaic.UI.Wpf;component/Themes/Native/{resource}.xaml", UriKind.Relative) });
-        }
 
-        var panel = new DockPanel { Margin = new Thickness(12) };
-        var button = new Button
-        {
-            Content = readOnly ? "Close" : "OK",
-            IsDefault = true,
-            MinWidth = 80,
-            HorizontalAlignment = HorizontalAlignment.Right,
-            Margin = new Thickness(0, 8, 0, 0)
-        };
-        button.Click += (_, _) => window.DialogResult = true;
-        DockPanel.SetDock(button, Dock.Bottom);
-        panel.Children.Add(button);
-        if (!readOnly)
-        {
-            var prompt = new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 8) };
-            DockPanel.SetDock(prompt, Dock.Top);
-            panel.Children.Add(prompt);
-        }
-        var editor = new TextBox
-        {
-            Text = readOnly ? text : "",
-            IsReadOnly = readOnly,
-            AcceptsReturn = readOnly,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            TextWrapping = TextWrapping.Wrap
-        };
-        panel.Children.Add(editor);
-        window.Content = panel;
-        window.Loaded += (_, _) => editor.Focus();
-        window.PreviewKeyDown += (_, e) =>
-        {
-            if (e.Key == Key.Escape)
-            {
-                window.Close(); }
-        };
-        return window.ShowDialog() == true ? editor.Text : string.Empty;
+        return window.ShowDialog() == true ? window.Text : string.Empty;
     }
 }

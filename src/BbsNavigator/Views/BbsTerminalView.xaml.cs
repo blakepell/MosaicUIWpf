@@ -179,6 +179,8 @@ namespace BbsNavigator.Views
             Loaded += BbsTerminalView_OnLoaded;
             Terminal.PreviewMouseWheel += Terminal_OnPreviewMouseWheel;
             Terminal.PreviewMouseLeftButtonUp += Terminal_OnPreviewMouseLeftButtonUp;
+            Terminal.PreviewMouseLeftButtonUp += Terminal_OnMouseLeftButtonUpRedirect;
+            Terminal.GotKeyboardFocus += Terminal_OnGotKeyboardFocus;
             Terminal.TextArea.SelectionChanged += TerminalSelection_OnChanged;
 
             ProtocolComboBox.ItemsSource = Enum.GetValues<TransferProtocol>();
@@ -1465,6 +1467,8 @@ namespace BbsNavigator.Views
             Profile.PropertyChanged -= Profile_OnPropertyChanged;
             CommandManager.RemovePreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
             Terminal.PreviewMouseLeftButtonUp -= Terminal_OnPreviewMouseLeftButtonUp;
+            Terminal.PreviewMouseLeftButtonUp -= Terminal_OnMouseLeftButtonUpRedirect;
+            Terminal.GotKeyboardFocus -= Terminal_OnGotKeyboardFocus;
             Terminal.TextArea.SelectionChanged -= TerminalSelection_OnChanged;
             Terminal.Connection = null;
 

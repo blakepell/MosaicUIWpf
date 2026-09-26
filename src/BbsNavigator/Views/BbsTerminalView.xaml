@@ -321,6 +321,7 @@
                         <ContextMenu>
                             <MenuItem
                                 Header="Show Command Box"
+                                InputGestureText="Ctrl+/"
                                 IsCheckable="True"
                                 IsChecked="{Binding ShowCommandBox, Mode=TwoWay}" />
                             <MenuItem

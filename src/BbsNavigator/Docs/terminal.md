@@ -169,6 +169,16 @@ The session banner shows send progress and **Stop sending**. The same stop comma
 is available on the Terminal menu. Already transmitted text cannot be recalled.
 Normal typing is paused while a login, paste, or composed-message send is active.
 
+## Command box
+
+Turn on **Show Command Box** in the session's options, or press `Ctrl+/` in the terminal or
+command box, to type into a single line box under the screen and send it with Enter. While
+the command box is shown it receives everything you type: clicking the terminal or pressing
+a key there moves the cursor back to the box, and the key lands in the box. You can still
+drag to select screen text, and `Ctrl+C` copies a selection. Press `Ctrl+/` again to go back
+to typing directly on the terminal. The command box is unavailable, and the terminal works
+normally, while disconnected or during a file transfer.
+
 ## Aliases
 
 An alias runs a script when you type its name as the first word in a board's command
