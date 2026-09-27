@@ -392,7 +392,14 @@
                                                             <Separator />
                                                             <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
                                                             <MenuItem Click="EditAliases_OnClick" Header="Edit _Aliases…" />
-                                                            <MenuItem Click="EditOnConnectedEvent_OnClick" Header="Edit OnConnectedEvent" />
+                                                            <MenuItem Click="EditOnConnectedEvent_OnClick" Header="Edit OnConnectedEvent">
+                                                                <MenuItem.Icon>
+                                                                    <Image
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        Source="pack://application:,,,/BbsNavigator;component/Assets/lightning-48.png" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
                                                             <Separator />
                                                             <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />
                                                             <Separator />

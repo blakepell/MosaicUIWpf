@@ -20,6 +20,7 @@
     <None Remove="Assets\downloads-folder-48.png" />
     <None Remove="Assets\edit-property-48.png" />
     <None Remove="Assets\javascript-48.png" />
+    <None Remove="Assets\lightning-48.png" />
     <None Remove="Assets\minus-48.png" />
     <None Remove="Assets\network-connecting-48.png" />
     <None Remove="Assets\network-disconnected2-48.png" />
@@ -49,6 +50,7 @@
     <Resource Include="Assets\downloads-folder-48.png" />
     <Resource Include="Assets\edit-property-48.png" />
     <Resource Include="Assets\javascript-48.png" />
+    <Resource Include="Assets\lightning-48.png" />
     <Resource Include="Assets\minus-48.png" />
     <Resource Include="Assets\network-connecting-48.png" />
     <Resource Include="Assets\network-disconnected2-48.png" />
