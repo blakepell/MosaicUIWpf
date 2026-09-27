@@ -392,6 +392,7 @@
                                                             <Separator />
                                                             <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
                                                             <MenuItem Click="EditAliases_OnClick" Header="Edit _Aliases…" />
+                                                            <MenuItem Click="EditOnConnectedEvent_OnClick" Header="Edit OnConnectedEvent" />
                                                             <Separator />
                                                             <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />
                                                             <Separator />

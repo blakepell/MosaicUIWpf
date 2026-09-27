@@ -243,6 +243,13 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private bool _autoLogin;
 
+        /// <summary>
+        /// Gets or sets the script run after each successful connection, with the associated terminal exposed as <c>term</c>.
+        /// </summary>
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private string? _onConnectedEvent;
+
         /// <summary>Gets or sets the tokenized login text sent by automatic and manual login.</summary>
         [property: Category("Login")]
         [property: DisplayName("Login macro")]

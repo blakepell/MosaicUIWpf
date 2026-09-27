@@ -16,14 +16,14 @@ using System.Windows.Threading;
 namespace BbsNavigator.Common
 {
     /// <summary>
-    /// Lets an alias script read from and write to the terminal session that ran it. Alias
-    /// scripts see this object as <c>term</c>.
+    /// Lets aliases and connection scripts read from and write to the terminal session that ran them.
+    /// Scripts see this object as <c>term</c>.
     /// </summary>
     /// <remarks>
     /// Every member is safe to call from a script's worker thread. Waits end early when the
     /// session closes or its scripts are stopped.
     /// </remarks>
-    [ScriptModule(Name = "term", Description = "The terminal session that ran this alias.")]
+    [ScriptModule(Name = "term", Description = "The terminal session that ran this script.")]
     public sealed class TerminalScriptCommands
     {
         private readonly BbsTerminalView _view;

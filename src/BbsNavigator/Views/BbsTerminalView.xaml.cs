@@ -383,6 +383,12 @@ namespace BbsNavigator.Views
                 Profile.LastConnected = DateTime.Now;
                 Profile.ConnectionCount++;
 
+                await RunOnConnectedEventAsync();
+                if (_disposed || _manualDisconnect || !_connection.IsConnected)
+                {
+                    return;
+                }
+
                 if (Transport == BbsTransport.Telnet && Profile.AutoLogin)
                 {
                     await RunLoginAsync(automatic: true);
@@ -464,6 +470,7 @@ namespace BbsNavigator.Views
             Dispatcher.BeginInvoke(() =>
             {
                 StopSending();
+                StopAliasScripts();
                 if (_disposed || _manualDisconnect)
                 {
                     return;
@@ -787,6 +794,7 @@ namespace BbsNavigator.Views
             // full connect timeout, and the waiting delay would otherwise fire once it is released.
             _manualDisconnect = true;
             CancelPendingReconnect();
+            StopAliasScripts();
             await StopSendingAsync();
             try
             {

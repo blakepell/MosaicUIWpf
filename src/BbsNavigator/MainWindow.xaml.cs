@@ -39,6 +39,7 @@ namespace BbsNavigator
         private LayoutDocument? _userGuideDocument;
         private LayoutDocument? _bigListDocument;
         private LayoutDocument? _scriptEditorDocument;
+        private readonly Dictionary<Guid, LayoutDocument> _onConnectedEventDocuments = new();
         private PanelScriptCommands? _panels;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
@@ -883,6 +884,34 @@ namespace BbsNavigator
             }
         }
 
+        private void EditOnConnectedEvent_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is not { } profile)
+            {
+                return;
+            }
+
+            if (_onConnectedEventDocuments.TryGetValue(profile.Id, out var existing))
+            {
+                existing.IsActive = true;
+                return;
+            }
+
+            var editor = new ScriptEditorControl
+            {
+                SaveObject = profile,
+                SaveToProperty = nameof(BbsProfile.OnConnectedEvent),
+                Text = profile.OnConnectedEvent ?? string.Empty
+            };
+            RegisterScriptObjects(editor.Environment!);
+            editor.Environment!.RegisterCompletionType("term", typeof(TerminalScriptCommands));
+            editor.MarkSaved();
+
+            var document = DockingManager.Add(editor, $"{profile.Name} – OnConnectedEvent", activate: true, canClose: true);
+            document.ContentId = $"on-connected-event:{profile.Id}";
+            _onConnectedEventDocuments.Add(profile.Id, document);
+        }
+
         private void EditBbs(BbsProfile profile)
         {
             var editor = new BbsEditorWindow(profile) { Owner = this };
@@ -1443,7 +1472,14 @@ namespace BbsNavigator
             if (e.Document.Content is ScriptEditorControl editor)
             {
                 editor.Stop();
-                _scriptEditorDocument = null;
+                if (ReferenceEquals(e.Document, _scriptEditorDocument))
+                {
+                    _scriptEditorDocument = null;
+                }
+                else if (editor.SaveObject is BbsProfile profile)
+                {
+                    _onConnectedEventDocuments.Remove(profile.Id);
+                }
                 return;
             }
 

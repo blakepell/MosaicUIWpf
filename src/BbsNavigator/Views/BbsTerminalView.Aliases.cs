@@ -10,6 +10,7 @@
 
 using BbsNavigator.Common;
 using BbsNavigator.Models;
+using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Scripting;
 
 namespace BbsNavigator.Views;
@@ -27,7 +28,7 @@ public partial class BbsTerminalView
 
     /// <summary>
     /// Gets or sets a callback that registers application objects, such as <c>win</c> and
-    /// <c>panels</c>, into the environment alias scripts run in.
+    /// <c>panels</c>, into the environment aliases and connection scripts run in.
     /// </summary>
     public Action<ScriptEnvironment>? ConfigureScriptEnvironment { get; set; }
 
@@ -161,6 +162,39 @@ public partial class BbsTerminalView
         if (!_disposed)
         {
             ShowTransientStatus(message);
+        }
+    }
+
+    /// <summary>
+    /// Runs the profile's connection script against this session and reports script failures as error toasts.
+    /// </summary>
+    private async Task RunOnConnectedEventAsync()
+    {
+        var code = Profile.OnConnectedEvent;
+        if (_disposed || string.IsNullOrWhiteSpace(code))
+        {
+            return;
+        }
+
+        var token = _lifetimeToken;
+        try
+        {
+            _aliasCancellation ??= CancellationTokenSource.CreateLinkedTokenSource(_lifetimeToken);
+            token = _aliasCancellation.Token;
+            await GetAliasEnvironment().ExecuteAsync(code, token);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            // Closing the session or explicitly stopping scripts is not a script failure.
+        }
+        catch (Exception ex)
+        {
+            if (!_disposed)
+            {
+                var message = $"{Profile.Name}: {(ex.InnerException ?? ex).Message}";
+                var manager = ToastManager.ForElement(this) ?? ToastManager.Default;
+                manager?.Show("OnConnectedEvent failed", message, ToastSeverity.Error);
+            }
         }
     }
 
