@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
     d:DesignHeight="600"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -88,7 +89,10 @@
         </StackPanel>
         
         <!-- Description Panel -->
-        <Border Grid.Column="1" Margin="20,0,0,0" Padding="15" Background="#F5F5F5" CornerRadius="5">
+        <Border Grid.Column="1" Margin="20,0,0,0" Padding="15"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                TextElement.Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                CornerRadius="5">
             <StackPanel>
                 <TextBlock Text="About ValidationSummaryPanel" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" />
                 <TextBlock TextWrapping="Wrap" Margin="0,0,0,10">
