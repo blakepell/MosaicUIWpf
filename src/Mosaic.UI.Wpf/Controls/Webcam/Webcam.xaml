@@ -1,0 +1,71 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--  Video camera glyph drawn on a 24x24 canvas; shown while there is no frame (stopped, starting, designer).  -->
+    <Geometry x:Key="MosaicWebcamPlaceholderGeometry" po:Freeze="True">M3,6 A2,2 0 0 1 5,4 H14 A2,2 0 0 1 16,6 V18 A2,2 0 0 1 14,20 H5 A2,2 0 0 1 3,18 Z M17.5,10 L21,7.5 V16.5 L17.5,14 Z</Geometry>
+
+    <Style x:Key="{x:Type controls:Webcam}" TargetType="{x:Type controls:Webcam}">
+        <!--  The video surface is intentionally black in every theme so letterboxing reads as part of the picture.  -->
+        <Setter Property="Background" Value="Black" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Webcam}">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        ClipToBounds="True"
+                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <Grid>
+                            <Path
+                                x:Name="PART_Placeholder"
+                                Width="48"
+                                Height="48"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="{StaticResource MosaicWebcamPlaceholderGeometry}"
+                                Fill="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Opacity="0.5"
+                                Stretch="Uniform"
+                                Visibility="Collapsed" />
+                            <Image
+                                x:Name="PART_Image"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RenderTransformOrigin="0.5,0.5"
+                                Stretch="{TemplateBinding Stretch}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  Mirroring is a render transform: frame pixels are never rewritten.  -->
+                        <Trigger Property="Mirror" Value="True">
+                            <Setter TargetName="PART_Image" Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="-1" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger SourceName="PART_Image" Property="Source" Value="{x:Null}">
+                            <Setter TargetName="PART_Placeholder" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

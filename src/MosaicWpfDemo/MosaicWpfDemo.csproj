@@ -867,6 +867,13 @@
                         <Link>LinkedSources\VT52TerminalExample.xaml.cs</Link>
                 </EmbeddedResource>
 
+                <EmbeddedResource Include="Views\Examples\WebcamExample.xaml">
+                        <Link>LinkedSources\WebcamExample.xaml</Link>
+                </EmbeddedResource>
+                <EmbeddedResource Include="Views\Examples\WebcamExample.xaml.cs">
+                        <Link>LinkedSources\WebcamExample.xaml.cs</Link>
+                </EmbeddedResource>
+
 	</ItemGroup>
 
 	<ItemGroup>

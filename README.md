@@ -213,6 +213,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [VisualCaptureButton](./docs/VisualCaptureButton.md) | A button that renders a target element (including its full scroll extent) to an image and either copies it to the clipboard or saves it to a file. Backed by the `VisualCapture` utility class. |
 | [VT52Terminal](./docs/VT52Terminal.md) | A terminal emulator hosted inside an AvalonEdit TextEditor. Call Add(string) or Add(byte[]) with remote data; call SendKey/SendString for local keystrokes. Subscribe to Transmit to get bytes that the terminal sends back. |
 | [WDScrollViewer](./docs/WDScrollViewer.md) | Provides a ScrollViewer with optional animated wheel scrolling. |
+| [Webcam](./docs/Webcam.md) | Displays a live webcam feed using Windows Media Foundation only (no third-party video libraries). Device enumeration, automatic or explicit resolution selection, horizontal mirroring, frozen snapshots via CaptureFrameAsync, seamless device switching, and deterministic release of the camera on stop or unload. |
 | [WindowTitleBar](./docs/WindowTitleBar.md) | A self-contained custom title bar control for borderless/chrome-less WPF windows. Automatically wires up drag-to-move, double-click maximize/restore, and the standard window system buttons. |
 
 ## Included Behaviors

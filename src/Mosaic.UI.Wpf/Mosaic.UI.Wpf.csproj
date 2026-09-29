@@ -8,6 +8,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Webcam: Media Foundation COM calls go through vtable function pointers (Controls/Webcam/MediaFoundationInterop.cs). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Mosaic UI for WPF</Title>

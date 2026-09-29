@@ -1,0 +1,175 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.WebcamExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:themes="http://schemas.apexgate.net/wpf/mosaic-ui"
+    d:DesignHeight="600"
+    d:DesignWidth="900"
+    mc:Ignorable="d">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="260" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Transport + capture.  Play starts (or resumes), Pause freezes the last frame and releases the camera, Stop releases it.  -->
+        <ToolBar Grid.Row="0" Grid.ColumnSpan="2">
+            <mosaic:ExecutionControl
+                PauseCommand="{Binding PauseCommand}"
+                PlayCommand="{Binding PlayCommand}"
+                StopCommand="{Binding StopCommand}" />
+            <Separator />
+            <Button Command="{Binding CaptureCommand}" Content="Capture Frame" ToolTip="Take a snapshot without interrupting the camera" />
+            <Separator />
+            <TextBlock
+                Margin="6,0,4,0"
+                VerticalAlignment="Center"
+                Text="Camera:" />
+            <ComboBox
+                Width="220"
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding Devices}"
+                SelectedItem="{Binding Device, ElementName=Camera, Mode=TwoWay}"
+                ToolTip="Switching cameras while running restarts the preview on the new device" />
+            <Button Command="{Binding RefreshDevicesCommand}" Content="Refresh" />
+        </ToolBar>
+
+        <!--  Display options, bound straight to the control.  -->
+        <WrapPanel
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="0,8,0,8">
+            <CheckBox
+                Margin="0,0,16,0"
+                VerticalAlignment="Center"
+                Content="Mirror"
+                IsChecked="{Binding Mirror, ElementName=Camera}" />
+            <TextBlock
+                Margin="0,0,6,0"
+                VerticalAlignment="Center"
+                Text="Stretch:" />
+            <mosaic:EnumComboBox
+                Width="120"
+                Margin="0,0,16,0"
+                EnumType="{x:Type Stretch}"
+                SelectedValue="{Binding Stretch, ElementName=Camera, Mode=TwoWay}" />
+            <TextBlock
+                Margin="0,0,6,0"
+                VerticalAlignment="Center"
+                Text="Resolution:" />
+            <ComboBox
+                Width="170"
+                ItemsSource="{Binding AvailableResolutions, ElementName=Camera}"
+                SelectedItem="{Binding Resolution, ElementName=Camera}"
+                ToolTip="Populated once the camera is running" />
+            <Button
+                Margin="4,0,0,0"
+                Command="{Binding AutomaticResolutionCommand}"
+                Content="Automatic" />
+        </WrapPanel>
+
+        <!--  The preview.  A frozen snapshot is overlaid while paused.  -->
+        <Grid Grid.Row="2" Grid.Column="0">
+            <mosaic:Webcam
+                x:Name="Camera"
+                Error="Camera_OnError"
+                FrameReceived="Camera_OnFrameReceived"
+                Mirror="True"
+                Started="Camera_OnStarted"
+                StateChanged="Camera_OnStateChanged"
+                Stopped="Camera_OnStopped" />
+            <Image
+                RenderTransformOrigin="0.5,0.5"
+                Source="{Binding PausedFrame}"
+                Stretch="{Binding Stretch, ElementName=Camera}">
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Mirror, ElementName=Camera}" Value="True">
+                                <Setter Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="-1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+        </Grid>
+
+        <!--  Live status and event log.  -->
+        <DockPanel
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="10,0,0,0">
+            <StackPanel DockPanel.Dock="Top">
+                <TextBlock>
+                    <Run Text="State:" />
+                    <Run Foreground="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" Text="{Binding State, ElementName=Camera, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock Margin="0,4,0,0">
+                    <Run Text="Negotiated:" />
+                    <Run Text="{Binding ActualResolution, ElementName=Camera, Mode=OneWay, TargetNullValue='—'}" />
+                </TextBlock>
+                <TextBlock Margin="0,4,0,0">
+                    <Run Text="Displayed:" />
+                    <Run Text="{Binding DisplayedFramesPerSecond, Mode=OneWay}" />
+                    <Run Text="fps, dropped:" />
+                    <Run Text="{Binding DroppedFrames, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock
+                    Margin="0,10,0,4"
+                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                    Text="Events" />
+            </StackPanel>
+            <ListBox FontSize="11" ItemsSource="{Binding ActivityLog}" />
+        </DockPanel>
+
+        <!--  Snapshots taken with CaptureFrameAsync (frozen, independent of later frames).  -->
+        <DockPanel
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Margin="0,10,0,0">
+            <TextBlock
+                Margin="0,0,0,4"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="Snapshots (newest first)" />
+            <ScrollViewer
+                Height="104"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding Snapshots}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Margin="0,0,6,0"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                BorderThickness="1">
+                                <Image
+                                    Height="90"
+                                    Source="{Binding}"
+                                    Stretch="Uniform" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>
