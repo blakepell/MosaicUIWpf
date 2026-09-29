@@ -1013,6 +1013,10 @@ namespace Mosaic.UI.Wpf.Controls
 
             switch (nodeKind)
             {
+                case SqliteSchemaNodeKind.Database:
+                    this.BuildDatabaseMenu(_schemaContextMenu);
+                    break;
+
                 case SqliteSchemaNodeKind.Table:
                 case SqliteSchemaNodeKind.View:
                     this.BuildObjectMenu(_schemaContextMenu, nodeKind, node, objectName);
@@ -1030,6 +1034,74 @@ namespace Mosaic.UI.Wpf.Controls
             if (args.Cancel || _schemaContextMenu.Items.Count == 0)
             {
                 e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Builds the standard menu for the database root node.
+        /// </summary>
+        /// <param name="menu">The menu to populate.</param>
+        private void BuildDatabaseMenu(ContextMenu menu)
+        {
+            string? path = this.GetDatabaseFilePath();
+
+            // In-memory and not-yet-created databases have nothing on disk to reveal.
+            if (path == null || !File.Exists(path))
+            {
+                return;
+            }
+
+            menu.Items.Add(CreateItem("Open in Explorer", (_, _) => OpenInExplorer(path)));
+        }
+
+        /// <summary>
+        /// Resolves the on-disk path of the current database from <see cref="ConnectionString"/>, so a
+        /// connection string supplied directly works the same as <see cref="DatabaseFilePath"/>.
+        /// </summary>
+        /// <returns>The full path of the database file, or <see langword="null"/> when there isn't one.</returns>
+        private string? GetDatabaseFilePath()
+        {
+            string? connectionString = this.ConnectionString;
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                return null;
+            }
+
+            try
+            {
+                var builder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder(connectionString);
+                string dataSource = builder.DataSource;
+
+                if (string.IsNullOrWhiteSpace(dataSource)
+                    || builder.Mode == Microsoft.Data.Sqlite.SqliteOpenMode.Memory
+                    || string.Equals(dataSource, ":memory:", StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+
+                return Path.GetFullPath(dataSource);
+            }
+            catch (Exception)
+            {
+                // A malformed connection string or data source has no file to point at.
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Opens Windows Explorer on the folder containing a file with that file selected.
+        /// </summary>
+        /// <param name="path">The full path of the file to highlight.</param>
+        private static void OpenInExplorer(string path)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{path}\"") { UseShellExecute = true });
+            }
+            catch (Exception)
+            {
+                // Nothing actionable if the shell refuses to launch.
             }
         }
 
@@ -1185,7 +1257,7 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             // The database and folder nodes are declared in the template and identified by their Tag.
-            return item.Tag as string switch
+            return (item.Tag as string) switch
             {
                 "Database" => (SqliteSchemaNodeKind.Database, null, null),
                 "Tables" => (SqliteSchemaNodeKind.TablesFolder, null, null),

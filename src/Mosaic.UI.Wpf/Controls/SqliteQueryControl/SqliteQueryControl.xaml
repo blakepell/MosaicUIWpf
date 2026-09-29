@@ -190,14 +190,6 @@
                                 <!--  Declared last so it fills whatever the status block leaves.  -->
                                 <ToolBarTray Background="Transparent" IsLocked="True">
                                     <ToolBar Background="Transparent">
-                                        <controls:ExecutionControl
-                                            x:Name="PART_ExecutionControl"
-                                            PlayCommand="{Binding ExecuteQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            PlayToolTip="Execute Query (F5)"
-                                            ShowPauseButton="False"
-                                            StopCommand="{Binding CancelQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            StopToolTip="Cancel Query" />
-                                        <Separator Visibility="{Binding ShowExportOptions, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.SqliteQueryControl.BooleanToVisibility}}" />
                                         <Button
                                             x:Name="PART_SaveButton"
                                             DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"
@@ -217,6 +209,14 @@
                                             </i:Interaction.Behaviors>
                                             <Image Source="pack://application:,,,/Mosaic.UI.Wpf;component/Assets/save-32.png" Style="{StaticResource Mosaic.SqliteQueryControl.ToolBarImage}" />
                                         </Button>
+                                        <Separator Visibility="{Binding ShowExportOptions, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.SqliteQueryControl.BooleanToVisibility}}" />
+                                        <controls:ExecutionControl
+                                            x:Name="PART_ExecutionControl"
+                                            PlayCommand="{Binding ExecuteQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            PlayToolTip="Execute Query (F5)"
+                                            ShowPauseButton="False"
+                                            StopCommand="{Binding CancelQueryCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            StopToolTip="Cancel Query" />
                                     </ToolBar>
                                 </ToolBarTray>
                             </DockPanel>
