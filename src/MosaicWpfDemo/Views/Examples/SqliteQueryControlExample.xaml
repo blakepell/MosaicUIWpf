@@ -21,7 +21,7 @@
             Margin="0,0,0,8"
             Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
             TextWrapping="Wrap"
-            Text="A scratch database is created in your temp folder when this page loads. Expand the tree, right-click a table for the context menu (the last item is added by this example through the SchemaContextMenuRequested event), and press F5 or the play button to run the editor's contents. Ctrl+Space requests auto-completion; typing FROM followed by a space, or a dot after a table name or alias, triggers it automatically." />
+            Text="A scratch database is created in your temp folder when this page loads. Expand the tree, right-click a table for the context menu (the last item is added by this example through the SchemaContextMenuRequested event), and press F5 or the play button to run the editor's contents. Ctrl+Enter will run only the SQL statement the cursor is currently on. Ctrl+Space requests auto-completion; typing FROM followed by a space, or a dot after a table name or alias, triggers it automatically." />
 
         <mosaic:SqliteQueryControl x:Name="QueryControl" Grid.Row="1" SchemaContextMenuRequested="OnSchemaContextMenuRequested" />
     </Grid>

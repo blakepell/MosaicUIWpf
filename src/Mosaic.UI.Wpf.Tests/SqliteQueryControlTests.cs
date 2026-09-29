@@ -445,6 +445,36 @@ namespace Mosaic.UI.Wpf.Tests
             Assert.Equal(expected, SyntaxCompletionController.GetIdentifierBefore(document, offset));
         }
 
+        // The "|" marks the caret and is removed before the lookup; null means no statement.
+
+        [Theory]
+        [InlineData("SELECT 1;\n|SELECT 2;\nSELECT 3;", "SELECT 2;")]
+        [InlineData("SELECT 1;\nSELECT *\n  FROM t|\n  WHERE x = 1;\nSELECT 3;", "SELECT *\n  FROM t\n  WHERE x = 1;")]
+        [InlineData("SELECT 1;|", "SELECT 1;")]
+        [InlineData("SELECT 1; SELECT| 2;", "SELECT 2;")]
+        [InlineData("|SELECT 1; SELECT 2;", "SELECT 1;")]
+        [InlineData("SELECT 1\n\n|SELECT 2\n\nSELECT 3", "SELECT 2")]
+        [InlineData("SELECT 1;\n|\nSELECT 2;", null)]
+        [InlineData("SELECT 'a;\n\nb' AS x;|\nSELECT 2;", "SELECT 'a;\n\nb' AS x;")]
+        [InlineData("-- note; here\nSELECT| 1;", "-- note; here\nSELECT 1;")]
+        [InlineData("SELECT 1 /* a; b */ + 2;|", "SELECT 1 /* a; b */ + 2;")]
+        [InlineData("-- only a comment|\n\nSELECT 1;", null)]
+        [InlineData("SELECT \"a;b\", [c;d] FROM t;|", "SELECT \"a;b\", [c;d] FROM t;")]
+        [InlineData("CREATE TRIGGER tr AFTER INSERT ON t BEGIN\n  UPDATE t SET x = CASE WHEN 1 THEN 2 END;\n|  DELETE FROM u;\nEND;\nSELECT 1;",
+                    "CREATE TRIGGER tr AFTER INSERT ON t BEGIN\n  UPDATE t SET x = CASE WHEN 1 THEN 2 END;\n  DELETE FROM u;\nEND;")]
+        [InlineData("BEGIN;|\nSELECT 1;", "BEGIN;")]
+        [InlineData("SELECT 1;\r\n|SELECT 2;\r\n", "SELECT 2;")]
+        [InlineData("|", null)]
+        public void StatementLocator_FindsTheStatementOnTheCaretLine(string marked, string? expected)
+        {
+            int caret = marked.IndexOf('|');
+            string text = marked.Remove(caret, 1);
+
+            var range = SqliteStatementLocator.FindStatementAt(text, caret);
+
+            Assert.Equal(expected, range is { } r ? text.Substring(r.Start, r.Length) : null);
+        }
+
         [Fact]
         public void CompletionController_DoesNotOpenAWindowWhenTheProviderDeclines()
         {

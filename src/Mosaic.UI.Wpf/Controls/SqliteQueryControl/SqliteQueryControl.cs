@@ -37,6 +37,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// items per node without subclassing.
     ///
     /// Keyboard: F5 executes (the selection when there is one, otherwise the whole document),
+    /// Ctrl+Enter executes the selection or, without one, the statement on the caret's line, and
     /// Ctrl+Space requests completion.
     /// </remarks>
     [TemplatePart(Name = PartSchemaTree, Type = typeof(TreeView))]
@@ -333,6 +334,13 @@ namespace Mosaic.UI.Wpf.Controls
         public IAsyncRelayCommand ExecuteQueryCommand { get; }
 
         /// <summary>
+        /// Runs the current selection, or the single statement on the caret's line when nothing is
+        /// selected. Reports that it cannot execute while a query is already running or no database
+        /// is open.
+        /// </summary>
+        public IAsyncRelayCommand ExecuteCurrentStatementCommand { get; }
+
+        /// <summary>
         /// Cancels the running query. Reports that it cannot execute when nothing is running.
         /// </summary>
         public IRelayCommand CancelQueryCommand { get; }
@@ -375,6 +383,7 @@ namespace Mosaic.UI.Wpf.Controls
         public SqliteQueryControl()
         {
             this.ExecuteQueryCommand = new AsyncRelayCommand(this.ExecuteEditorQueryAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
+            this.ExecuteCurrentStatementCommand = new AsyncRelayCommand(this.ExecuteCurrentStatementAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.CancelQueryCommand = new RelayCommand(this.CancelQuery, () => this.IsQueryExecuting);
             this.RefreshSchemaCommand = new AsyncRelayCommand(this.RefreshSchemaAsync, () => !string.IsNullOrWhiteSpace(this.ConnectionString));
             this.ExportToExcelCommand = new AsyncRelayCommand(this.ExportToExcelAsync, () => !this.IsQueryExecuting && !string.IsNullOrWhiteSpace(this.ConnectionString));
@@ -490,6 +499,7 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             control.ExecuteQueryCommand.NotifyCanExecuteChanged();
+            control.ExecuteCurrentStatementCommand.NotifyCanExecuteChanged();
             control.RefreshSchemaCommand.NotifyCanExecuteChanged();
             control.NotifyExportCommandsCanExecuteChanged();
 
@@ -598,6 +608,17 @@ namespace Mosaic.UI.Wpf.Controls
                 if (this.ExecuteQueryCommand.CanExecute(null))
                 {
                     this.ExecuteQueryCommand.Execute(null);
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                if (this.ExecuteCurrentStatementCommand.CanExecute(null))
+                {
+                    this.ExecuteCurrentStatementCommand.Execute(null);
                 }
 
                 e.Handled = true;
@@ -866,6 +887,35 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Runs the editor's selection, or the statement on the caret's line when there is no
+        /// selection. A statement may span several lines and ends at a semicolon or a blank line.
+        /// </summary>
+        /// <returns>A task that completes once the query has finished.</returns>
+        private Task ExecuteCurrentStatementAsync()
+        {
+            if (_sqlEditor == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (_sqlEditor.SelectionLength > 0)
+            {
+                return this.ExecuteQueryAsync(_sqlEditor.SelectedText);
+            }
+
+            string text = _sqlEditor.Text;
+            var statement = SqliteStatementLocator.FindStatementAt(text, _sqlEditor.CaretOffset);
+
+            if (statement is not { } range)
+            {
+                this.StatusText = "No statement at the cursor.";
+                return Task.CompletedTask;
+            }
+
+            return this.ExecuteQueryAsync(text.Substring(range.Start, range.Length));
+        }
+
+        /// <summary>
         /// Executes SQL against the open database and shows the first result set in the grid.
         /// </summary>
         /// <param name="sql">The SQL to run.</param>
@@ -960,6 +1010,7 @@ namespace Mosaic.UI.Wpf.Controls
         {
             this.IsQueryExecuting = executing;
             this.ExecuteQueryCommand.NotifyCanExecuteChanged();
+            this.ExecuteCurrentStatementCommand.NotifyCanExecuteChanged();
             this.CancelQueryCommand.NotifyCanExecuteChanged();
             this.NotifyExportCommandsCanExecuteChanged();
         }
