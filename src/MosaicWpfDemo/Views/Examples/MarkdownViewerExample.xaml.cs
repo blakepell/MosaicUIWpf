@@ -8,8 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.IO;
 using System.Text;
 using System.Windows;
+using Microsoft.Win32;
 using Mosaic.UI.Wpf.Controls;
 
 namespace MosaicWpfDemo.Views.Examples
@@ -21,6 +23,80 @@ namespace MosaicWpfDemo.Views.Examples
             InitializeComponent();
 
             this.Viewer.Markdown = SampleMarkdown;
+        }
+
+        /// <summary>
+        /// The primary split button action: prompts for a file and saves as RTF or XPS based on the
+        /// file type the user picks.
+        /// </summary>
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAs("Rich Text Format (*.rtf)|*.rtf|XPS Document (*.xps)|*.xps", ".rtf");
+        }
+
+        private void SaveAsRtf_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAs("Rich Text Format (*.rtf)|*.rtf", ".rtf");
+        }
+
+        private void SaveAsXps_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAs("XPS Document (*.xps)|*.xps", ".xps");
+        }
+
+        /// <summary>
+        /// Prints the rendered document. Choosing "Microsoft Print to PDF" in the print dialog
+        /// produces a PDF.
+        /// </summary>
+        private void Print_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                this.Viewer.Print(description: "Markdown Preview");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Print Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Prompts for a destination file and saves the viewer's contents in the format matching
+        /// the chosen file's extension.
+        /// </summary>
+        /// <param name="filter">The save dialog's file type filter.</param>
+        /// <param name="defaultExtension">The extension used when the user does not type one.</param>
+        private void SaveAs(string filter, string defaultExtension)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Title = "Save Markdown Document",
+                FileName = "Markdown Preview",
+                Filter = filter,
+                DefaultExt = defaultExtension,
+                AddExtension = true
+            };
+
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+            {
+                return;
+            }
+
+            try
+            {
+                if (string.Equals(Path.GetExtension(dialog.FileName), ".xps", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.Viewer.SaveAsXps(dialog.FileName);
+                }
+                else
+                {
+                    this.Viewer.SaveAsRtf(dialog.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
