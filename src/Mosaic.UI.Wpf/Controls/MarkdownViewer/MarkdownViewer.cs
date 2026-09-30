@@ -9,6 +9,8 @@
  */
 
 using System.Windows.Documents;
+using System.Windows.Xps.Packaging;
+using Mosaic.UI.Wpf.Themes;
 using DocHyperlink = System.Windows.Documents.Hyperlink;
 
 // ReSharper disable CheckNamespace
@@ -49,6 +51,21 @@ namespace Mosaic.UI.Wpf.Controls
         /// The largest base font size reachable with Ctrl+mouse-wheel zoom.
         /// </summary>
         private const double MaximumZoomFontSize = 32;
+
+        /// <summary>
+        /// The width of a US Letter page, in device-independent pixels, used by <see cref="SaveAsXps"/>.
+        /// </summary>
+        private const double LetterPageWidth = 8.5 * 96;
+
+        /// <summary>
+        /// The height of a US Letter page, in device-independent pixels, used by <see cref="SaveAsXps"/>.
+        /// </summary>
+        private const double LetterPageHeight = 11 * 96;
+
+        /// <summary>
+        /// The margin, in device-independent pixels (half an inch), around exported and printed pages.
+        /// </summary>
+        private const double PageMargin = 48;
 
         /// <summary>
         /// The name of the <see cref="RichTextBox"/> template part that hosts the rendered document.
@@ -1487,6 +1504,194 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             SetValue(FindStatusTextPropertyKey, status);
+        }
+
+        /// <summary>
+        /// Saves the current <see cref="Markdown"/> source text to a file as UTF-8.
+        /// </summary>
+        /// <param name="path">The path of the file to create or overwrite.</param>
+        public void SaveAsMarkdown(string path)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(path);
+            File.WriteAllText(path, Markdown ?? string.Empty, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Saves the rendered document to a Rich Text Format (RTF) file. Code blocks are written as
+        /// monospace paragraphs, and the light theme colors are used regardless of the active theme.
+        /// </summary>
+        /// <param name="path">The path of the file to create or overwrite.</param>
+        public void SaveAsRtf(string path)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(path);
+
+            var document = CreateExportDocument();
+            var range = new TextRange(document.ContentStart, document.ContentEnd);
+
+            using var stream = File.Create(path);
+            range.Save(stream, DataFormats.Rtf);
+        }
+
+        /// <summary>
+        /// Saves the rendered document to an XPS file paginated for US Letter paper with half-inch
+        /// margins. Code blocks are written as monospace paragraphs, and the light theme colors are
+        /// used regardless of the active theme.
+        /// </summary>
+        /// <param name="path">The path of the file to create or overwrite.</param>
+        public void SaveAsXps(string path)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(path);
+
+            var document = CreateExportDocument();
+            ApplyPageLayout(document, LetterPageWidth, LetterPageHeight);
+
+            // An XPS package opened on an existing file would be appended to rather than replaced.
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            using var xps = new XpsDocument(path, FileAccess.ReadWrite);
+            var writer = XpsDocument.CreateXpsDocumentWriter(xps);
+            writer.Write(((IDocumentPaginatorSource)document).DocumentPaginator);
+        }
+
+        /// <summary>
+        /// Prints the rendered document. Code blocks are printed as monospace paragraphs, and the
+        /// light theme colors are used regardless of the active theme.
+        /// </summary>
+        /// <param name="showDialog">
+        /// Whether to show the print dialog so the user can choose a printer and settings. When
+        /// <c>false</c>, the document is sent to the default printer.
+        /// </param>
+        /// <param name="description">The name of the print job shown in the print queue.</param>
+        /// <returns>
+        /// <c>true</c> when the document was sent to the printer; <c>false</c> when the user
+        /// cancelled the print dialog.
+        /// </returns>
+        public bool Print(bool showDialog = true, string description = "Markdown Document")
+        {
+            var dialog = new PrintDialog();
+
+            if (showDialog && dialog.ShowDialog() != true)
+            {
+                return false;
+            }
+
+            var document = CreateExportDocument();
+            ApplyPageLayout(document, dialog.PrintableAreaWidth, dialog.PrintableAreaHeight);
+            dialog.PrintDocument(((IDocumentPaginatorSource)document).DocumentPaginator, description);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Renders the current <see cref="Markdown"/> into a new document for export. The document
+        /// is separate from the one on screen, so paginating it leaves the viewer's layout alone.
+        /// </summary>
+        /// <returns>A detached <see cref="FlowDocument"/> styled for paper or other applications.</returns>
+        private FlowDocument CreateExportDocument()
+        {
+            FlowDocument document;
+
+            try
+            {
+                document = MarkdownFlowDocumentRenderer.RenderForExport(
+                    Markdown,
+                    _resolvedSource ?? _storageFolderUri,
+                    _storageFolderUri,
+                    HeadingBottomSpacing);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                document = CreateFallbackDocument(Markdown);
+            }
+
+            // Exports are read on paper or in other applications, so the rendered theme references
+            // resolve against the light palette rather than the active (possibly dark) theme.
+            try
+            {
+                document.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.Palette });
+                document.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = ThemeDictionaryUris.Light });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            document.FontFamily = FontFamily;
+            document.FontSize = FontSize;
+            document.SetResourceReference(FlowDocument.ForegroundProperty, MosaicTheme.ControlForegroundBrush);
+
+            // The theme brushes are resource references whose colors are themselves dynamic
+            // resources, which the RTF serializer cannot write, so every themed color would be
+            // dropped. Each one is replaced with a frozen snapshot of the value it resolves to.
+            MaterializeResourceReferences(document);
+
+            return document;
+        }
+
+        /// <summary>
+        /// Replaces every expression-backed local value (such as a resource reference) and every
+        /// unfrozen freezable (such as a brush whose color is a dynamic resource) in an element and
+        /// its logical descendants with a frozen snapshot of the value it currently resolves to.
+        /// </summary>
+        /// <param name="element">The root element to process.</param>
+        private static void MaterializeResourceReferences(DependencyObject element)
+        {
+            var resolved = new List<(DependencyProperty Property, object Value)>();
+            var enumerator = element.GetLocalValueEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                var entry = enumerator.Current;
+
+                if (entry.Property.ReadOnly)
+                {
+                    continue;
+                }
+
+                object value = entry.Value is Expression ? element.GetValue(entry.Property) : entry.Value;
+
+                if (value is Freezable { IsFrozen: false } freezable)
+                {
+                    value = freezable.GetCurrentValueAsFrozen();
+                }
+
+                if (!ReferenceEquals(value, entry.Value))
+                {
+                    resolved.Add((entry.Property, value));
+                }
+            }
+
+            foreach (var (property, value) in resolved)
+            {
+                element.SetValue(property, value);
+            }
+
+            foreach (object child in LogicalTreeHelper.GetChildren(element))
+            {
+                if (child is DependencyObject dependencyObject)
+                {
+                    MaterializeResourceReferences(dependencyObject);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sizes a document to a page so its paginator lays it out as a single column with margins.
+        /// </summary>
+        /// <param name="document">The document to lay out.</param>
+        /// <param name="pageWidth">The page width in device-independent pixels.</param>
+        /// <param name="pageHeight">The page height in device-independent pixels.</param>
+        private static void ApplyPageLayout(FlowDocument document, double pageWidth, double pageHeight)
+        {
+            document.PageWidth = pageWidth;
+            document.PageHeight = pageHeight;
+            document.PagePadding = new Thickness(PageMargin);
+            document.ColumnGap = 0;
+            document.ColumnWidth = pageWidth;
         }
 
         /// <summary>

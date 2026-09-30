@@ -55,7 +55,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="HeadingBottomSpacing">
         /// The space, in device-independent pixels, left below each rendered heading.
         /// </param>
-        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing);
+        /// <param name="PlainCodeBlocks">
+        /// Whether multi-line code blocks are rendered as monospace paragraphs rather than hosted
+        /// in an embedded <see cref="SyntaxEditor"/>. Export formats such as RTF cannot carry
+        /// embedded controls, so exported documents use plain paragraphs instead.
+        /// </param>
+        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing, bool PlainCodeBlocks = false);
 
         /// <summary>
         /// The default space, in device-independent pixels, left below each rendered heading.
@@ -147,6 +152,27 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Renders the supplied Markdown text into a <see cref="FlowDocument"/> suitable for export
+        /// (RTF, XPS, or printing). The output matches <see cref="Render(string?, Uri?, Uri?, double)"/>
+        /// except that code blocks are always monospace paragraphs, since embedded controls cannot
+        /// be serialized to RTF and do not paginate reliably.
+        /// </summary>
+        /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
+        /// <param name="baseUri">The absolute URI relative links and images are resolved against, if any.</param>
+        /// <param name="imageBaseUri">An additional base URI tried for relative images, if any.</param>
+        /// <param name="headingBottomSpacing">The space, in device-independent pixels, left below each heading.</param>
+        /// <returns>A <see cref="FlowDocument"/> representing the parsed Markdown.</returns>
+        internal static FlowDocument RenderForExport(string? markdown, Uri? baseUri, Uri? imageBaseUri, double headingBottomSpacing)
+        {
+            if (double.IsNaN(headingBottomSpacing) || double.IsInfinity(headingBottomSpacing) || headingBottomSpacing < 0)
+            {
+                headingBottomSpacing = 0;
+            }
+
+            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing, PlainCodeBlocks: true));
+        }
+
+        /// <summary>
         /// Renders the supplied Markdown text using an already-built resolution context.
         /// </summary>
         private static FlowDocument Render(string? markdown, RenderContext context)
@@ -192,7 +218,7 @@ namespace Mosaic.UI.Wpf.Controls
                 case MarkdigTable table:
                     return RenderTable(table, context);
                 case CodeBlock code:
-                    return RenderCodeBlock(code);
+                    return RenderCodeBlock(code, context);
                 case ThematicBreakBlock:
                     return RenderThematicBreak();
                 case HtmlBlock html:
@@ -408,11 +434,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// supported language (<c>```csharp</c>) and displayed as plain text when it does not.
         /// Single-line blocks stay a lightweight monospace, shaded paragraph.
         /// </summary>
-        private static WpfBlock RenderCodeBlock(CodeBlock code)
+        private static WpfBlock RenderCodeBlock(CodeBlock code, RenderContext context)
         {
             string text = GetCodeBlockText(code);
 
-            if (text.Contains('\n'))
+            if (!context.PlainCodeBlocks && text.Contains('\n'))
             {
                 var editorBlock = TryRenderCodeBlockEditor(text, (code as FencedCodeBlock)?.Info);
 
