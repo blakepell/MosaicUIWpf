@@ -120,6 +120,34 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Fact]
+        public void SaveAsAndPrintMenusAreEnabledByDefault()
+        {
+            RunSta(() =>
+            {
+                var viewer = new MarkdownViewer();
+
+                Assert.True(viewer.IsSaveAsMenuEnabled);
+                Assert.True(viewer.IsPrintMenuEnabled);
+                Assert.True(MarkdownViewer.SaveAsRtfCommand.CanExecute(null, viewer));
+                Assert.True(MarkdownViewer.SaveAsXpsCommand.CanExecute(null, viewer));
+                Assert.True(System.Windows.Input.ApplicationCommands.Print.CanExecute(null, viewer));
+            });
+        }
+
+        [Fact]
+        public void DisablingTheMenusDisablesTheirCommands()
+        {
+            RunSta(() =>
+            {
+                var viewer = new MarkdownViewer { IsSaveAsMenuEnabled = false, IsPrintMenuEnabled = false };
+
+                Assert.False(MarkdownViewer.SaveAsRtfCommand.CanExecute(null, viewer));
+                Assert.False(MarkdownViewer.SaveAsXpsCommand.CanExecute(null, viewer));
+                Assert.False(System.Windows.Input.ApplicationCommands.Print.CanExecute(null, viewer));
+            });
+        }
+
         private static string TempFile(string extension)
         {
             return Path.Combine(Path.GetTempPath(), $"MarkdownViewerExport-{Guid.NewGuid():N}{extension}");

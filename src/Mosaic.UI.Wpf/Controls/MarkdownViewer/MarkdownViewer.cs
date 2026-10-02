@@ -8,8 +8,11 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Media.Media3D;
 using System.Windows.Xps.Packaging;
+using Microsoft.Win32;
 using Mosaic.UI.Wpf.Themes;
 using DocHyperlink = System.Windows.Documents.Hyperlink;
 
@@ -35,6 +38,12 @@ namespace Mosaic.UI.Wpf.Controls
     /// gesture is scoped to the focused control: pressed inside a code block it opens that editor's
     /// own search panel, and pressed anywhere else it opens the viewer's find bar, which searches
     /// the document text and the text of every embedded code block editor.
+    /// </para>
+    /// <para>
+    /// The context menu offers Copy and Select All, a <c>Save As</c> submenu that exports the
+    /// rendered document as RTF or XPS, and a <c>Print</c> item (also <c>Ctrl+P</c>) whose dialog
+    /// can target Microsoft Print to PDF. <see cref="IsSaveAsMenuEnabled"/> and
+    /// <see cref="IsPrintMenuEnabled"/> turn the export and print options off.
     /// </para>
     /// </remarks>
     [TemplatePart(Name = PartRichTextBox, Type = typeof(RichTextBox))]
@@ -157,6 +166,12 @@ namespace Mosaic.UI.Wpf.Controls
         private bool _settingMarkdownFromSource;
 
         /// <summary>
+        /// The viewer's built-in context menu, repopulated each time it opens. A menu assigned by the
+        /// consumer replaces it and is left untouched.
+        /// </summary>
+        private readonly ContextMenu _contextMenu;
+
+        /// <summary>
         /// Initializes static metadata for the <see cref="MarkdownViewer"/> class.
         /// </summary>
         static MarkdownViewer()
@@ -192,6 +207,28 @@ namespace Mosaic.UI.Wpf.Controls
                 this.CloseFindPanel();
                 e.Handled = true;
             }));
+            this.CommandBindings.Add(new CommandBinding(SaveAsRtfCommand, (_, e) =>
+            {
+                this.PromptSaveAs("Rich Text Format (*.rtf)|*.rtf", ".rtf", this.SaveAsRtf);
+                e.Handled = true;
+            }, this.OnSaveAsCanExecute));
+            this.CommandBindings.Add(new CommandBinding(SaveAsXpsCommand, (_, e) =>
+            {
+                this.PromptSaveAs("XPS Document (*.xps)|*.xps", ".xps", this.SaveAsXps);
+                e.Handled = true;
+            }, this.OnSaveAsCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Print, this.OnPrintCommandExecuted, (_, e) =>
+            {
+                e.CanExecute = this.IsPrintMenuEnabled;
+                e.Handled = true;
+            }));
+
+            // One menu instance serves both the viewer and the rich text box: sharing it with the
+            // rich text box replaces the text editor's built-in menu, and assigning it to the viewer
+            // keeps it reachable when IsCopyEnabled makes the rich text box hit-test invisible.
+            _contextMenu = new ContextMenu();
+            this.ContextMenu = _contextMenu;
+            this.ContextMenuOpening += this.OnContextMenuOpening;
 
             // These bindings are only reached when the focused element did not already claim the
             // gesture, which is what scopes Ctrl+F to a code block's own search panel when the
@@ -215,6 +252,61 @@ namespace Mosaic.UI.Wpf.Controls
         /// Closes the find bar and clears its highlights.
         /// </summary>
         public static readonly RoutedUICommand CloseFindPanelCommand = new("Close", nameof(CloseFindPanelCommand), typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Prompts for a file name and saves the rendered document as Rich Text Format (RTF).
+        /// Available while <see cref="IsSaveAsMenuEnabled"/> is <c>true</c>.
+        /// </summary>
+        public static readonly RoutedUICommand SaveAsRtfCommand = new("RTF", nameof(SaveAsRtfCommand), typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Prompts for a file name and saves the rendered document as XPS. Available while
+        /// <see cref="IsSaveAsMenuEnabled"/> is <c>true</c>.
+        /// </summary>
+        public static readonly RoutedUICommand SaveAsXpsCommand = new("XPS", nameof(SaveAsXpsCommand), typeof(MarkdownViewer));
+
+        /// <summary>
+        /// Identifies the <see cref="IsSaveAsMenuEnabled"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsSaveAsMenuEnabledProperty = DependencyProperty.Register(
+            nameof(IsSaveAsMenuEnabled),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the context menu offers a <c>Save As</c> submenu
+        /// for exporting the rendered document as RTF or XPS. Defaults to <c>true</c>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the context menu offers a Save As submenu for exporting to RTF or XPS.")]
+        public bool IsSaveAsMenuEnabled
+        {
+            get => (bool)GetValue(IsSaveAsMenuEnabledProperty);
+            set => SetValue(IsSaveAsMenuEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="IsPrintMenuEnabled"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsPrintMenuEnabledProperty = DependencyProperty.Register(
+            nameof(IsPrintMenuEnabled),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the context menu offers a <c>Print</c> item and
+        /// <c>Ctrl+P</c> prints the document. The print dialog lets the user choose a printer such
+        /// as Microsoft Print to PDF. Defaults to <c>true</c>.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the context menu offers a Print item and Ctrl+P prints the document.")]
+        public bool IsPrintMenuEnabled
+        {
+            get => (bool)GetValue(IsPrintMenuEnabledProperty);
+            set => SetValue(IsPrintMenuEnabledProperty, value);
+        }
 
         /// <summary>
         /// Identifies the <see cref="Markdown"/> dependency property.
@@ -570,6 +662,10 @@ namespace Mosaic.UI.Wpf.Controls
                 // whole document, so the hand cursor over a link is applied here for the same reason.
                 _richTextBox.QueryCursor -= OnRichTextBoxQueryCursor;
                 _richTextBox.QueryCursor += OnRichTextBoxQueryCursor;
+
+                // Without a menu of its own the rich text box would open the text editor's built-in
+                // Cut/Copy/Paste menu, so it shares whichever menu the viewer has.
+                _richTextBox.SetBinding(ContextMenuProperty, new Binding(nameof(ContextMenu)) { Source = this });
             }
 
             _findTextBox = GetTemplateChild(PartFindTextBox) as TextBox;
@@ -1504,6 +1600,166 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             SetValue(FindStatusTextPropertyKey, status);
+        }
+
+        /// <summary>
+        /// Rebuilds the built-in context menu immediately before it is displayed so it reflects the
+        /// current <see cref="IsCopyEnabled"/>, <see cref="IsDocumentReadOnly"/>,
+        /// <see cref="IsSaveAsMenuEnabled"/>, and <see cref="IsPrintMenuEnabled"/> values.
+        /// </summary>
+        private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            // The event also bubbles up from code block editors, which open their own menu, and a
+            // menu assigned by the consumer is theirs to populate.
+            if (!ReferenceEquals(ContextMenu, _contextMenu) || !IsOwnContextMenuTarget(e.OriginalSource as DependencyObject))
+            {
+                return;
+            }
+
+            var menu = _contextMenu;
+            menu.Items.Clear();
+
+            if (IsCopyEnabled && _richTextBox != null)
+            {
+                if (!IsDocumentReadOnly)
+                {
+                    menu.Items.Add(CreateItem("Cut", ApplicationCommands.Cut, _richTextBox, "Ctrl+X"));
+                }
+
+                menu.Items.Add(CreateItem("Copy", ApplicationCommands.Copy, _richTextBox, "Ctrl+C"));
+
+                if (!IsDocumentReadOnly)
+                {
+                    menu.Items.Add(CreateItem("Paste", ApplicationCommands.Paste, _richTextBox, "Ctrl+V"));
+                }
+
+                menu.Items.Add(new Separator());
+                menu.Items.Add(CreateItem("Select All", ApplicationCommands.SelectAll, _richTextBox, "Ctrl+A"));
+            }
+
+            if ((IsSaveAsMenuEnabled || IsPrintMenuEnabled) && menu.Items.Count > 0)
+            {
+                menu.Items.Add(new Separator());
+            }
+
+            if (IsSaveAsMenuEnabled)
+            {
+                var saveAs = new MenuItem { Header = "Save As" };
+                saveAs.Items.Add(CreateItem("RTF", SaveAsRtfCommand, this));
+                saveAs.Items.Add(CreateItem("XPS", SaveAsXpsCommand, this));
+                menu.Items.Add(saveAs);
+            }
+
+            if (IsPrintMenuEnabled)
+            {
+                menu.Items.Add(CreateItem("Print", ApplicationCommands.Print, this, "Ctrl+P"));
+            }
+
+            // An empty menu would open as a bare, item-less popup.
+            if (menu.Items.Count == 0)
+            {
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Reports whether a context menu request from the supplied element opens the viewer's own
+        /// menu rather than one belonging to a nested element such as a code block editor.
+        /// </summary>
+        /// <param name="element">The element the request originated from.</param>
+        private bool IsOwnContextMenuTarget(DependencyObject? element)
+        {
+            while (element != null && !ReferenceEquals(element, this))
+            {
+                if (element is FrameworkElement { ContextMenu: { } menu } && !ReferenceEquals(menu, _contextMenu))
+                {
+                    return false;
+                }
+
+                element = element is Visual or Visual3D
+                    ? VisualTreeHelper.GetParent(element) ?? LogicalTreeHelper.GetParent(element)
+                    : LogicalTreeHelper.GetParent(element);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a command-backed context menu item.
+        /// </summary>
+        /// <param name="header">The item header text.</param>
+        /// <param name="command">The command to invoke.</param>
+        /// <param name="target">The element the command is routed to.</param>
+        /// <param name="inputGestureText">The shortcut text to display.</param>
+        /// <returns>A configured menu item.</returns>
+        private static MenuItem CreateItem(string header, ICommand command, IInputElement target, string? inputGestureText = null)
+        {
+            return new MenuItem
+            {
+                Header = header,
+                Command = command,
+                CommandTarget = target,
+                InputGestureText = inputGestureText
+            };
+        }
+
+        /// <summary>
+        /// Reports whether the Save As commands are available.
+        /// </summary>
+        private void OnSaveAsCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsSaveAsMenuEnabled;
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Prints the document in response to <see cref="ApplicationCommands.Print"/>, showing the
+        /// print dialog so the user can choose a printer such as Microsoft Print to PDF.
+        /// </summary>
+        private void OnPrintCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            try
+            {
+                Print();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show($"The document could not be printed.\r\n\r\n{ex.Message}", "Print", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Prompts the user for a file name and saves the document with the supplied export method.
+        /// </summary>
+        /// <param name="filter">The save dialog's file type filter.</param>
+        /// <param name="defaultExtension">The extension appended when the user omits one.</param>
+        /// <param name="save">The export method that writes the file.</param>
+        private void PromptSaveAs(string filter, string defaultExtension, Action<string> save)
+        {
+            var dialog = new SaveFileDialog
+            {
+                Filter = $"{filter}|All Files (*.*)|*.*",
+                DefaultExt = defaultExtension,
+                AddExtension = true
+            };
+
+            if (dialog.ShowDialog() != true)
+            {
+                return;
+            }
+
+            try
+            {
+                save(dialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                MessageBox.Show($"The document could not be saved.\r\n\r\n{ex.Message}", "Save As", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
