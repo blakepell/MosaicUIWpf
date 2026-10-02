@@ -250,6 +250,22 @@ namespace BbsNavigator.Models
         [ObservableProperty]
         private string? _onConnectedEvent;
 
+        /// <summary>
+        /// Gets or sets whether aliases entered in this board's command box are processed.
+        /// </summary>
+        [property: Category("Terminal")]
+        [property: DisplayName("Enable aliases")]
+        [property: Description("When disabled, alias names are sent to the BBS as typed instead of running their scripts.")]
+        [ObservableProperty]
+        private bool _aliasesEnabled = true;
+
+        /// <summary>
+        /// Gets or sets free-form markdown notes about this BBS.
+        /// </summary>
+        [property: Browsable(false)]
+        [ObservableProperty]
+        private string? _notes;
+
         /// <summary>Gets or sets the tokenized login text sent by automatic and manual login.</summary>
         [property: Category("Login")]
         [property: DisplayName("Login macro")]

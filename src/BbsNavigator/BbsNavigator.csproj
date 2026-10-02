@@ -6,9 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>2026.09.27.1</Version>
-    <AssemblyVersion>2026.09.27.1</AssemblyVersion>
-    <FileVersion>2026.09.27.1</FileVersion>
+    <Version>2026.10.1.1</Version>
+    <AssemblyVersion>2026.10.1.1</AssemblyVersion>
+    <FileVersion>2026.10.1.1</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\add-48.png" />

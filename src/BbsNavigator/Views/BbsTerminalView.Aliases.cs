@@ -57,7 +57,7 @@ public partial class BbsTerminalView
     /// <returns><see langword="true"/> when an enabled alias matched and its script was started.</returns>
     private bool TryRunAlias(string input)
     {
-        if (Profile.Aliases.Count == 0 || !AliasInput.TryParse(input, out string name, out var arguments, out string remainder))
+        if (!Profile.AliasesEnabled || Profile.Aliases.Count == 0 || !AliasInput.TryParse(input, out string name, out var arguments, out string remainder))
         {
             return false;
         }

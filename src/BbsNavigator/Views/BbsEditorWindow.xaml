@@ -6,7 +6,7 @@
     xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"
     Title="BBS Connection"
     Width="1000"
-    Height="570"
+    Height="595"
     mosaic:WindowChromeBehavior.CaptionHeight="0"
     mosaic:WindowChromeBehavior.CornerRadius="10"
     mosaic:WindowChromeBehavior.GlassFrameThickness="0"
@@ -259,7 +259,7 @@
 
                 <StackPanel
                     Grid.Row="8"
-                    Grid.ColumnSpan="2"
+                    Grid.Column="1"
                     Margin="0,12,0,0"
                     VerticalAlignment="Top">
                     <CheckBox IsChecked="{Binding AutoReconnect}">
@@ -277,12 +277,17 @@
                         ToolTip="Turn this off to use the terminal font selected in Options, which is Cascadia Mono by default.">
                         <TextBlock Text="Use bundled CP437 font in classic 80 × 25 mode" TextWrapping="Wrap" />
                     </CheckBox>
+                    <CheckBox
+                        Margin="0,4,0,0"
+                        IsChecked="{Binding AliasesEnabled}"
+                        ToolTip="When off, alias names typed in the command box are sent to the BBS as-is instead of running their scripts.">
+                        <TextBlock Text="Enable aliases" TextWrapping="Wrap" />
+                    </CheckBox>
                 </StackPanel>
                 <StackPanel
                     Grid.Row="8"
-                    Grid.Column="2"
-                    Grid.ColumnSpan="2"
-                    Margin="24,12,0,0"
+                    Grid.Column="3"
+                    Margin="0,12,0,0"
                     VerticalAlignment="Top">
                     <CheckBox
                         IsChecked="{Binding DoorwayMode}"

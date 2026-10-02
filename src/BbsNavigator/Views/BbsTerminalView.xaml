@@ -325,6 +325,11 @@
                                 IsCheckable="True"
                                 IsChecked="{Binding ShowCommandBox, Mode=TwoWay}" />
                             <MenuItem
+                                Header="Aliases Enabled"
+                                IsCheckable="True"
+                                IsChecked="{Binding AliasesEnabled, Mode=TwoWay}"
+                                ToolTip="When off, alias names typed in the command box are sent to the BBS as-is instead of running their scripts" />
+                            <MenuItem
                                 x:Name="CaptureToggle"
                                 Checked="CaptureToggle_OnChecked"
                                 IsCheckable="True"

@@ -146,7 +146,10 @@ public partial class BbsTerminalView
     /// <summary>
     /// Reviews and sends prepared text using this board's encoding and pacing preferences.
     /// </summary>
-    public async Task<bool> SendPreparedTextAsync(string text, bool preview = true)
+    /// <param name="text">The text to send.</param>
+    /// <param name="preview">Whether to show the review window before sending.</param>
+    /// <param name="confirmed">Invoked once the text is approved, just before sending starts.</param>
+    public async Task<bool> SendPreparedTextAsync(string text, bool preview = true, Action? confirmed = null)
     {
         if (_disposed || !_connection.IsConnected || _transferActive || _textCancellation != null || _textPreviewOpen)
         {
@@ -183,6 +186,7 @@ public partial class BbsTerminalView
             return false;
         }
 
+        confirmed?.Invoke();
         return await RunTextOperationAsync(async token =>
         {
             bool bracketed = Terminal.IsBracketedPasteEnabled;

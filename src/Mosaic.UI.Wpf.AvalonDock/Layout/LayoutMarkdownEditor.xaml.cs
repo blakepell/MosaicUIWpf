@@ -92,6 +92,26 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
         }
 
         /// <summary>
+        /// Gets or sets the object whose <see cref="SaveToProperty"/> receives the text on save. When both are set,
+        /// saving writes to that property instead of a file.
+        /// </summary>
+        public object? SaveObject
+        {
+            get => this.Editor.SaveObject;
+            set => this.Editor.SaveObject = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the name of a public, writable string property on <see cref="SaveObject"/> that receives
+        /// the text on save.
+        /// </summary>
+        public string? SaveToProperty
+        {
+            get => this.Editor.SaveToProperty;
+            set => this.Editor.SaveToProperty = value;
+        }
+
+        /// <summary>
         /// Raised before a save operation begins. Set <see cref="CancelEventArgs.Cancel"/> to cancel the save.
         /// The supplied <see cref="DocumentSavingEventArgs"/> exposes this document and its target file path so the
         /// caller can inspect the current state of the control before the save occurs.

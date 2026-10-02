@@ -23,16 +23,18 @@ namespace BbsNavigator.Views;
 public partial class MessageComposerWindow : Window
 {
     private readonly MessageDraftStore _store;
-    private readonly Func<string, Task<bool>> _send;
+    private readonly Func<string, Action, Task<bool>> _send;
     private readonly Action _stop;
     private readonly DispatcherTimer _saveTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
     private bool _loaded;
     private bool _dirty;
+    private bool _closingForSend;
 
     /// <summary>
     /// Initializes a new instance of the MessageComposerWindow class.
     /// </summary>
-    public MessageComposerWindow(BbsProfile profile, string dataFolder, Func<string, Task<bool>> send, Action stop)
+    /// <param name="send">Sends the text; the action closes this window once the text is approved.</param>
+    public MessageComposerWindow(BbsProfile profile, string dataFolder, Func<string, Action, Task<bool>> send, Action stop)
     {
         _store = new(dataFolder, profile.Id);
         _send = send;
@@ -59,7 +61,8 @@ public partial class MessageComposerWindow : Window
                     "The latest draft could not be saved. Close and discard the unsaved changes?",
                     "Unsaved draft", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes;
             }
-            if (!e.Cancel) _stop();
+            // Closing because the text was approved must not abort the send that is starting.
+            if (!e.Cancel && !_closingForSend) _stop();
         };
     }
 
@@ -109,11 +112,18 @@ public partial class MessageComposerWindow : Window
         StopButton.IsEnabled = true;
         try
         {
-            bool sent = await _send(TerminalText.Wrap(DraftBox.Text, columns));
+            bool sent = await _send(TerminalText.Wrap(DraftBox.Text, columns), CloseForSend);
             DraftStatus.Text = sent ? "Text sent; your draft is still saved." : "Text not sent completely; your draft is still saved.";
         }
         catch (Exception ex) { DraftStatus.Text = $"Could not send: {ex.Message}"; }
         finally { SendButton.IsEnabled = true; StopButton.IsEnabled = false; }
+    }
+
+    private void CloseForSend()
+    {
+        _closingForSend = true;
+        Close();
+        _closingForSend = false;
     }
 
     private void Stop_OnClick(object sender, RoutedEventArgs e) => _stop();

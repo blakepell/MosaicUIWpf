@@ -40,6 +40,7 @@ namespace BbsNavigator
         private LayoutDocument? _bigListDocument;
         private LayoutDocument? _scriptEditorDocument;
         private readonly Dictionary<Guid, LayoutDocument> _onConnectedEventDocuments = new();
+        private readonly Dictionary<Guid, LayoutMarkdownEditor> _notesDocuments = new();
         private PanelScriptCommands? _panels;
         private bool _shutdownStarted;
         private bool _shutdownComplete;
@@ -912,6 +913,41 @@ namespace BbsNavigator
             _onConnectedEventDocuments.Add(profile.Id, document);
         }
 
+        private void EditNotes_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is not { } profile)
+            {
+                return;
+            }
+
+            if (_notesDocuments.TryGetValue(profile.Id, out var existing))
+            {
+                existing.IsActive = true;
+                return;
+            }
+
+            var document = new LayoutMarkdownEditor($"{profile.Name} – Notes")
+            {
+                SaveObject = profile,
+                SaveToProperty = nameof(BbsProfile.Notes),
+                Text = profile.Notes ?? string.Empty,
+                ContentId = $"notes:{profile.Id}",
+                CanClose = true
+            };
+            document.IsModified = false;
+
+            var pane = DockingManager.Layout?.LastFocusedDocument?.Parent as LayoutDocumentPane
+                ?? DockingManager.Layout?.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+            if (pane is null)
+            {
+                return;
+            }
+
+            pane.Children.Add(document);
+            document.IsActive = true;
+            _notesDocuments.Add(profile.Id, document);
+        }
+
         private void EditBbs(BbsProfile profile)
         {
             var editor = new BbsEditorWindow(profile) { Owner = this };
@@ -946,6 +982,7 @@ namespace BbsNavigator
             profile.DoorwayMode = editor.Profile.DoorwayMode;
             profile.NumericKeypadNavigation = editor.Profile.NumericKeypadNavigation;
             profile.CaptureSession = editor.Profile.CaptureSession;
+            profile.AliasesEnabled = editor.Profile.AliasesEnabled;
             profile.AutoLogin = editor.Profile.AutoLogin;
             profile.LoginMacro = editor.Profile.LoginMacro;
             profile.UseLoginSequence = editor.Profile.UseLoginSequence;
@@ -1132,7 +1169,7 @@ namespace BbsNavigator
                 : GetDocuments(profile).Select(d => d.Content).OfType<BbsTerminalView>().FirstOrDefault(t => t.IsConnected);
             string folder = Settings.ApplicationDataFolder ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apps", "BBSNavigator");
             BbsTerminalView? sendingTerminal = null;
-            var composer = new MessageComposerWindow(profile, folder, async text =>
+            var composer = new MessageComposerWindow(profile, folder, async (text, confirmed) =>
             {
                 var terminal = FindTerminal();
                 if (terminal == null)
@@ -1141,7 +1178,7 @@ namespace BbsNavigator
                     return false;
                 }
                 sendingTerminal = terminal;
-                try { return await terminal.SendPreparedTextAsync(text); }
+                try { return await terminal.SendPreparedTextAsync(text, true, confirmed); }
                 finally { sendingTerminal = null; }
             }, () => sendingTerminal?.StopSending()) { Owner = this };
             _composers[profile.Id] = composer;
@@ -1480,6 +1517,12 @@ namespace BbsNavigator
                 {
                     _onConnectedEventDocuments.Remove(profile.Id);
                 }
+                return;
+            }
+
+            if (e.Document is LayoutMarkdownEditor { SaveObject: BbsProfile notesProfile })
+            {
+                _notesDocuments.Remove(notesProfile.Id);
                 return;
             }
 

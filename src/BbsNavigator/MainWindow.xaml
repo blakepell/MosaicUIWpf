@@ -400,6 +400,7 @@
                                                                         Source="pack://application:,,,/BbsNavigator;component/Assets/lightning-48.png" />
                                                                 </MenuItem.Icon>
                                                             </MenuItem>
+                                                            <MenuItem Click="EditNotes_OnClick" Header="_Notes…" />
                                                             <Separator />
                                                             <MenuItem Click="ToggleFavorite_OnClick" Header="_Toggle Favorite" />
                                                             <Separator />

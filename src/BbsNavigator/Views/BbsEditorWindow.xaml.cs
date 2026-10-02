@@ -46,6 +46,7 @@ namespace BbsNavigator.Views
                 DoorwayMode = profile?.DoorwayMode ?? false,
                 NumericKeypadNavigation = profile?.NumericKeypadNavigation ?? false,
                 CaptureSession = profile?.CaptureSession ?? false,
+                AliasesEnabled = profile?.AliasesEnabled ?? true,
                 AutoLogin = profile?.AutoLogin ?? false,
                 LoginMacro = profile?.LoginMacro ?? "{USERNAME}{ENTER}{PASSWORD}{ENTER}",
                 UseLoginSequence = profile?.UseLoginSequence ?? false,

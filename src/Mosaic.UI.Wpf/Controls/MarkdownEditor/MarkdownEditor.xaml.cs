@@ -227,6 +227,48 @@ namespace Mosaic.UI.Wpf.Controls
             set => this.SetValue(CustomMenuToolTipProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="SaveObject"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SaveObjectProperty = DependencyProperty.Register(
+            nameof(SaveObject),
+            typeof(object),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the object whose <see cref="SaveToProperty"/> receives the text on save. When both are set,
+        /// <see cref="Save()"/> and <see cref="SaveAsync"/> write to that property instead of a file.
+        /// </summary>
+        [Category("Common")]
+        [Description("The object whose SaveToProperty receives the markdown text when the document is saved.")]
+        public object? SaveObject
+        {
+            get => this.GetValue(SaveObjectProperty);
+            set => this.SetValue(SaveObjectProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="SaveToProperty"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SaveToPropertyProperty = DependencyProperty.Register(
+            nameof(SaveToProperty),
+            typeof(string),
+            typeof(MarkdownEditor),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the name of a public, writable string property on <see cref="SaveObject"/> that receives
+        /// the text on save.
+        /// </summary>
+        [Category("Common")]
+        [Description("The name of a public, writable string property on SaveObject that receives the text on save.")]
+        public string? SaveToProperty
+        {
+            get => (string?)this.GetValue(SaveToPropertyProperty);
+            set => this.SetValue(SaveToPropertyProperty, value);
+        }
+
         #endregion
 
         /// <summary>
@@ -338,12 +380,18 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Saves the document to its current <see cref="FilePath"/>. If no path is set, this is a no-op;
-        /// use <see cref="SaveAsAsync"/> to prompt the user for a destination.
+        /// Saves the document to the <see cref="SaveObject"/> property when one is configured, otherwise to its
+        /// current <see cref="FilePath"/>. If neither is set, this is a no-op; use <see cref="SaveAsAsync"/> to
+        /// prompt the user for a destination.
         /// </summary>
         public void Save()
         {
             if (this.RaiseSavingCancelled())
+            {
+                return;
+            }
+
+            if (this.TrySaveToObject())
             {
                 return;
             }
@@ -357,12 +405,19 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Asynchronously saves the document to its current <see cref="FilePath"/>, prompting for a
-        /// destination when no path has been set.
+        /// Asynchronously saves the document to the <see cref="SaveObject"/> property when one is configured,
+        /// otherwise to its current <see cref="FilePath"/>, prompting for a destination when no path has been set.
         /// </summary>
         public async Task SaveAsync()
         {
-            if (!string.IsNullOrWhiteSpace(this.FilePath))
+            if (this.SaveObject != null && !string.IsNullOrWhiteSpace(this.SaveToProperty))
+            {
+                if (!this.RaiseSavingCancelled())
+                {
+                    this.TrySaveToObject();
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(this.FilePath))
             {
                 if (this.RaiseSavingCancelled())
                 {
@@ -405,6 +460,32 @@ namespace Mosaic.UI.Wpf.Controls
             this.FileName = Path.GetFileName(dialog.FileName);
             this.IsModified = false;
             this.RaiseSaved(dialog.FileName);
+        }
+
+        /// <summary>
+        /// Writes the text to <see cref="SaveToProperty"/> on <see cref="SaveObject"/> when both are configured.
+        /// </summary>
+        /// <returns><c>true</c> if the text was written to the object; <c>false</c> if no save object is configured.</returns>
+        /// <exception cref="InvalidOperationException">The named property is missing or is not a publicly writable string property.</exception>
+        private bool TrySaveToObject()
+        {
+            if (this.SaveObject is not { } target || string.IsNullOrWhiteSpace(this.SaveToProperty))
+            {
+                return false;
+            }
+
+            var property = target.GetType().GetProperty(this.SaveToProperty, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                ?? throw new InvalidOperationException($"'{target.GetType().Name}' has no public instance property named '{this.SaveToProperty}'.");
+
+            if (!property.CanWrite || property.SetMethod?.IsPublic != true || !property.PropertyType.IsAssignableFrom(typeof(string)))
+            {
+                throw new InvalidOperationException($"'{target.GetType().Name}.{this.SaveToProperty}' must be a publicly writable string property.");
+            }
+
+            property.SetValue(target, this.Editor.Text);
+            this.IsModified = false;
+            this.RaiseSaved(this.FilePath ?? string.Empty);
+            return true;
         }
 
         /// <summary>
