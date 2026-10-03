@@ -10,8 +10,8 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Mosaic.UI.Wpf.Scripting.ScriptCommands;
-using Tenray.Topaz;
-using Tenray.Topaz.API;
+using Mosaic.UI.Scripting;
+using Mosaic.UI.Scripting.API;
 
 namespace Mosaic.UI.Wpf.Scripting;
 
@@ -25,7 +25,7 @@ namespace Mosaic.UI.Wpf.Scripting;
 /// </remarks>
 public sealed class ScriptEnvironment
 {
-    private static readonly ConditionalWeakTable<TopazEngine, SemaphoreSlim> EngineLocks = new();
+    private static readonly ConditionalWeakTable<ScriptEngine, SemaphoreSlim> EngineLocks = new();
     private readonly Dictionary<string, ScriptRegistration> _registrations = new(StringComparer.Ordinal);
 
     /// <summary>
@@ -33,9 +33,9 @@ public sealed class ScriptEnvironment
     /// </summary>
     /// <param name="engine">An existing engine, or null to create a configured default.</param>
     /// <param name="includeDefaults">Whether to install default bridges into an existing engine.</param>
-    public ScriptEnvironment(TopazEngine? engine = null, bool includeDefaults = false)
+    public ScriptEnvironment(ScriptEngine? engine = null, bool includeDefaults = false)
     {
-        Engine = engine ?? new TopazEngine();
+        Engine = engine ?? new ScriptEngine();
         Registrations = new ReadOnlyDictionary<string, ScriptRegistration>(_registrations);
         if (engine == null || includeDefaults)
         {
@@ -46,7 +46,7 @@ public sealed class ScriptEnvironment
     /// <summary>
     /// Gets the engine used to execute scripts.
     /// </summary>
-    public TopazEngine Engine { get; }
+    public ScriptEngine Engine { get; }
 
     /// <summary>
     /// Gets the globals belonging to this environment; the default setup exposes them as globals.

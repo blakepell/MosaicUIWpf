@@ -1,0 +1,254 @@
+﻿using Xunit;
+using Mosaic.UI.Scripting.API;
+using Mosaic.UI.Scripting.Options;
+
+namespace Mosaic.UI.Scripting.Test;
+
+public sealed class VariableScopeTests
+{
+    [Fact]
+    public void VarScopeLoop()
+    {
+        var engine = new ScriptEngine();
+        engine.Options.NoUndefined = true;
+        engine.Options.VarScopeBehavior = VarScopeBehavior.FunctionScope;
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+function equals(a,b) { if (a !== b) throw `${a ?? 'null'} != ${b ?? 'null'}` }
+function f1() { { { { d = 9; equals(d,9) } equals(d,9) } } model.d = d } f1()
+function f1() { { { { var g = 9; equals(g,9) } equals(g,9) } } model.g = g } f1()
+function f2() { { { { let m = 9; equals(m,9) } equals(m,null) } } model.m = m } f2()
+function f3() { { { { const u = 9; equals(u,9) } equals(u,null) } } model.u = u } f3()
+");
+        Assert.Equal(9, model.d);
+        Assert.Equal(9, model.g);
+        Assert.Null(model.m);
+        Assert.Null(model.u);
+    }
+
+    [Fact]
+    public void ClosureTest()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+function makeFunc() {
+    var name = 'Mozilla';
+    function displayName()
+    {
+        model.name = name;
+    }
+    return displayName;
+}
+var myFunc = makeFunc();
+myFunc();
+
+function makeAdder(x) {
+  return function(y) {
+    return x + y;
+  };
+}
+
+var add5 = makeAdder(5)
+var add10 = makeAdder(10)
+
+model.a = add5(2)
+model.b = add10(2)
+");
+        Assert.Equal("Mozilla", model.name);
+        Assert.Equal(7, model.a);
+        Assert.Equal(12, model.b);
+    }
+
+    [Fact]
+    public void ClosurePrivateMethods()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+var counter = (function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+
+    decrement: function() {
+      changeBy(-1);
+    },
+
+    value: function() {
+      return privateCounter;
+    }
+  };
+})();
+if (changeBy !== undefined)
+    throw 'changeBy is defined'
+model.a = counter.value()
+counter.increment();
+counter.increment();
+model.b = counter.value()
+counter.decrement();
+model.c = counter.value()
+");
+        Assert.Equal(0, model.a);
+        Assert.Equal(2, model.b);
+        Assert.Equal(1, model.c);
+    }
+
+    [Fact]
+    public void ClosureScopeChain()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+var e = 10;
+function sum(a){
+  return function(b){
+    return function(c){
+      // outer functions scope
+      return function(d){
+        // local scope
+        return a + b + c + d + e;
+      }
+    }
+  }
+}
+model.a = sum(1)(2)(3)(4)
+");
+        Assert.Equal(20, model.a);
+    }
+
+    [Fact]
+    public void ClosureScopeChain2()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+var e = 10;
+function sum(a){
+  return function sum2(b){
+    return function sum3(c){
+      // outer functions scope
+      return function sum4(d){
+        // local scope
+        return a + b + c + d + e;
+      }
+    }
+  }
+}
+
+if (sum2 !== undefined)
+    throw 'sum2 is defined'
+var sum2 = sum(1);
+var sum3 = sum2(2);
+var sum4 = sum3(3);
+var result = sum4(4);
+model.a = result
+");
+        Assert.Equal(20, model.a);
+    }
+
+    [Fact]
+    public void InvalidateLocalCache1()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+var a = 1
+{
+    model.a1 = a
+    let a = 2
+    model.a2 = a
+}
+");
+        Assert.Equal(1, model.a1);
+        Assert.Equal(2, model.a2);
+    }
+
+    [Fact]
+    public void InvalidateLocalCache2()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+var a = 1
+model.a1 = a
+{
+    let a = 2
+    model.a2 = a
+}
+");
+        Assert.Equal(1, model.a1);
+        Assert.Equal(2, model.a2);
+    }
+
+    [Fact]
+    public void InvalidateLocalCache3()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+function f1(key) {
+    var a = key
+    {
+        model['a' + key] = a
+        let a = key+1
+        model['b' + key] = a
+    }
+}
+f1(1)
+f1(2)
+");
+        Assert.Equal(1, model.a1);
+        Assert.Equal(2, model.b1);
+        Assert.Equal(2, model.a2);
+        Assert.Equal(3, model.b2);
+    }
+
+    [Fact]
+    public void InvalidateLocalCache4()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+function f1(key) {
+    var a = key
+    {
+        model['a' + key] = a
+        let a = key+1
+        model['b' + key] = a
+        {
+            model['c' + key] = a
+            let a = key+1
+            model['d' + key] = a
+        }
+    }
+}
+f1(1)
+f1(2)
+");
+        Assert.Equal(1, model.a1);
+        Assert.Equal(2, model.b1);
+        Assert.Equal(2, model.a2);
+        Assert.Equal(3, model.b2);
+
+        Assert.Equal(2, model.c1);
+        Assert.Equal(2, model.d1);
+        Assert.Equal(3, model.c2);
+        Assert.Equal(3, model.d2);
+    }
+}

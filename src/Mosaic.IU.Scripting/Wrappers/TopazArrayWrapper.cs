@@ -1,0 +1,38 @@
+﻿using Mosaic.UI.Scripting.API;
+using Mosaic.UI.Scripting.Core;
+
+namespace Mosaic.UI.Scripting
+{
+    internal sealed class TopazArrayWrapper
+    {
+        internal ScriptExecutor ScriptExecutor { get; }
+
+        internal IJsArray WrappedArray { get; }
+
+        bool isUnwrapped;
+
+        internal TopazArrayWrapper(ScriptExecutor scriptExecutor, IJsArray array)
+        {
+            ScriptExecutor = scriptExecutor;
+            WrappedArray = array;
+        }
+
+        internal object UnwrapArray()
+        {
+            var array = WrappedArray;
+            if (array == null)
+            {
+                return null;
+            }
+
+            if (isUnwrapped)
+            {
+                return array;
+            }
+
+            WrappedArray.UnwrapArray(ScriptExecutor);
+            isUnwrapped = true;
+            return array;
+        }
+    }
+}

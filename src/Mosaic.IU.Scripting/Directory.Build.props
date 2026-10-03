@@ -1,0 +1,29 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Copyright>Ahmed Yasin Koculu</Copyright>
+    <Authors>Ahmed Yasin Koculu</Authors>
+    <PackageId>Topaz</PackageId>
+    <Title>Topaz</Title>
+    <ProductVersion>1.4.1.0</ProductVersion>
+    <Version>1.4.1.0</Version>
+    <Authors>Ahmed Yasin Koculu</Authors>
+    <AssemblyTitle>Topaz</AssemblyTitle>
+    <Description>Multithreaded Javascript Engine for .NET</Description>
+    <Summmary>High performance, lightweight, customizable Javascript Engine.</Summmary>
+    <PackageTags>high-performance, javascript, engine, interpreter, es5, es2015, es6, ecmascript, interop</PackageTags>
+    <ReleaseNotes></ReleaseNotes>
+    <Company>koculu</Company>
+
+    <PackageProjectUrl>https://github.com/koculu/topaz</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <DebugType>portable</DebugType>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>

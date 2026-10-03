@@ -5,7 +5,7 @@
  */
 
 using System.Windows.Threading;
-using Tenray.Topaz.Interop;
+using Mosaic.UI.Scripting.Interop;
 
 namespace Mosaic.UI.Wpf.Scripting;
 
