@@ -196,6 +196,78 @@ model.c = new StringBuilder('y').ToString()
     }
 
     [Fact]
+    public void IncludeStatementImportsNamespace()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+include System.Text
+include System.Collections.Generic;
+var sb = new StringBuilder('x')
+var list = new List(StringBuilder)
+list.Add(sb)
+model.a = list
+");
+        Assert.IsType<List<StringBuilder>>(model.a);
+        Assert.Equal(new[] { "System.Text", "System.Collections.Generic" }, engine.ImportedNamespaces);
+    }
+
+    [Fact]
+    public void IncludeStatementWorksInAsyncScriptsAndBlocks()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScriptAsync(@"
+function make() {
+    include System.Text
+    return new StringBuilder('inner')
+}
+model.a = make().ToString()
+").GetAwaiter().GetResult();
+        Assert.Equal("inner", model.a);
+    }
+
+    [Fact]
+    public void IncludeRemainsAnOrdinaryIdentifierElsewhere()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        engine.ExecuteScript(@"
+function include(x) { return x + 1 }
+model.a = include(1)
+var include2 = include
+include = 5
+model.b = include
+model.c = include2(2)
+");
+        Assert.Equal(2, model.a);
+        Assert.Equal(5, model.b);
+        Assert.Equal(3, model.c);
+        Assert.Empty(engine.ImportedNamespaces);
+    }
+
+    [Fact]
+    public void IncludeFilterCanRejectNamespaces()
+    {
+        var engine = new ScriptEngine();
+        engine.Options.IncludeFilter = ns => ns == "System.Text";
+        engine.ExecuteScript("include System.Text");
+        var ex = Assert.Throws<TopazException>(() => engine.ExecuteScript("include System.IO"));
+        Assert.Contains("System.IO", ex.Message);
+        Assert.Equal(new[] { "System.Text" }, engine.ImportedNamespaces);
+    }
+
+    [Fact]
+    public void IncompleteIncludeIsASyntaxError()
+    {
+        var engine = new ScriptEngine();
+        Assert.ThrowsAny<Exception>(() => engine.ExecuteScript("include System."));
+    }
+
+    [Fact]
     public void TypeGroupProxyForwardsStaticMembersToNonGenericType()
     {
         var engine = new ScriptEngine();

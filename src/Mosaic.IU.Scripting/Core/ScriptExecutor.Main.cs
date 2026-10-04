@@ -304,6 +304,7 @@ namespace Mosaic.UI.Scripting.Core
                 Nodes.WhileStatement => WhileStatementHandler.Execute(this, statement, token),
                 Nodes.ForOfStatement => ForOfStatementHandler.Execute(this, statement, token),
                 Nodes.ValueWrapper => ((ValueWrapper)statement).Value,
+                Nodes.IncludeStatement => IncludeStatementHandler.Execute(this, statement),
                 Nodes.EmptyStatement => GetNullOrUndefined(),
                 // Nodes.CatchClause => DONE,
                 // Nodes.Program => DONE,
@@ -393,6 +394,7 @@ namespace Mosaic.UI.Scripting.Core
                 Nodes.WhileStatement => await WhileStatementHandler.ExecuteAsync(this, statement, token),
                 Nodes.ForOfStatement => await ForOfStatementHandler.ExecuteAsync(this, statement, token),
                 Nodes.ValueWrapper => ((ValueWrapper)statement).Value,
+                Nodes.IncludeStatement => IncludeStatementHandler.Execute(this, statement),
                 Nodes.EmptyStatement => GetNullOrUndefined(),
                 _ => ThrowNotImplemented(this, statement)
             };

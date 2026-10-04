@@ -84,6 +84,12 @@ namespace Mosaic.UI.Scripting.Interop
             lock (sync)
             {
                 var existing = imports.FindIndex(x => x.Namespace == @namespace);
+                if (existing >= 0 && ReferenceEquals(imports[existing].Whitelist, whitelist))
+                {
+                    // Scripts re-run their include statements, so an unchanged import keeps the cached index.
+                    return;
+                }
+
                 if (existing >= 0)
                 {
                     // Re-importing keeps the original precedence but takes the new whitelist.

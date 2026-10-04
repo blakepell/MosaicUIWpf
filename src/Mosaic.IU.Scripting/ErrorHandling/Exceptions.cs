@@ -122,6 +122,11 @@ namespace Mosaic.UI.Scripting.ErrorHandling
             throw new TopazException($"{statement} is not supported.");
         }
 
+        internal static void ThrowIncludeIsNotAllowed(string @namespace)
+        {
+            throw new TopazException($"include {@namespace} is not allowed.");
+        }
+
         internal static void ThrowRestElementMustBeLastElement()
         {
             throw new TopazException("SyntaxError: Rest element must be last element");

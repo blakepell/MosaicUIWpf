@@ -71,6 +71,7 @@
         ExportAllDeclaration,
         ExportDefaultDeclaration,
         ClassExpression,
-        ValueWrapper
+        ValueWrapper,
+        IncludeStatement
     };
 }

@@ -1,4 +1,5 @@
-﻿using Esprima;
+﻿using System;
+using Esprima;
 
 namespace Mosaic.UI.Scripting.Options
 {
@@ -103,5 +104,13 @@ namespace Mosaic.UI.Scripting.Options
         /// Default value is false.
         /// </summary>
         public bool DefineSpecialArgumentsObjectOnEachFunctionCall { get; set; }
+
+        /// <summary>
+        /// Decides whether a script's <c>include Some.Namespace</c> statement may import a namespace.
+        /// The default, null, allows every namespace (System.Reflection still requires
+        /// <see cref="SecurityPolicy.EnableReflection"/>). Return false to reject an include,
+        /// or use <c>_ =&gt; false</c> to disable the statement. Host calls to Imports are not filtered.
+        /// </summary>
+        public Func<string, bool> IncludeFilter { get; set; }
     }
 }

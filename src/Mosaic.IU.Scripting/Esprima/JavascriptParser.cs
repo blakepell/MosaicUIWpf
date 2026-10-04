@@ -2469,12 +2469,57 @@ namespace Esprima
                         break;
                 }
             }
+            else if (MatchInclude())
+            {
+                statement = ParseIncludeStatement();
+            }
             else
             {
                 statement = ParseStatement();
             }
 
             return statement;
+        }
+
+        // Mosaic extension: include System.Text
+        // 'include' is contextual, so include(x), include = 1 and include on its own line keep their meaning.
+
+        private bool MatchInclude()
+        {
+            var match = MatchContextualKeyword("include");
+            if (match)
+            {
+                var state = _scanner.SaveState();
+                _scanner.ScanComments();
+                var next = _scanner.Lex();
+                _scanner.RestoreState(state);
+
+                match = state.LineNumber == next.LineNumber && next.Type == TokenType.Identifier;
+            }
+
+            return match;
+        }
+
+        private IncludeStatement ParseIncludeStatement()
+        {
+            var node = CreateNode();
+            NextToken(); // 'include', already ensured by MatchInclude
+
+            var token = NextToken();
+            var name = (string?)token.Value;
+            while (Match("."))
+            {
+                NextToken();
+                token = NextToken();
+                if (!IsIdentifierName(token))
+                {
+                    return ThrowUnexpectedToken<IncludeStatement>(token);
+                }
+                name += "." + (string?)token.Value;
+            }
+
+            ConsumeSemicolon();
+            return Finalize(node, new IncludeStatement(name!));
         }
 
         private BlockStatement ParseBlock()

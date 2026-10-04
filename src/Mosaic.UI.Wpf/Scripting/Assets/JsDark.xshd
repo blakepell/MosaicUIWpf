@@ -97,6 +97,7 @@
       <Word>goto</Word>
       <Word>implements</Word>
       <Word>import</Word>
+      <Word>include</Word>
       <Word>instanceof</Word>
       <Word>int</Word>
       <Word>interface</Word>
