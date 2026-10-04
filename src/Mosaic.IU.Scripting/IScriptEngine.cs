@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Mosaic.UI.Scripting.Interop;
@@ -160,6 +161,12 @@ namespace Mosaic.UI.Scripting
         public void AddNamespace(string @namespace, IReadOnlySet<string> whitelist, bool allowSubNamespaces = false);
 
         /// <summary>
+        /// A snapshot of the extension methods scripts can call: those added with <see cref="AddExtensionMethods"/>
+        /// and those of the extension classes in imported namespaces. A new list is returned after a change.
+        /// </summary>
+        IReadOnlyList<MethodInfo> ExtensionMethods { get; }
+
+        /// <summary>
         /// The namespaces imported with <see cref="Imports(string[])"/>, in precedence order.
         /// </summary>
         IReadOnlyList<string> ImportedNamespaces { get; }
@@ -174,6 +181,7 @@ namespace Mosaic.UI.Scripting
         /// the constructor picks the arity from the number of leading type arguments,
         /// eg: new Dictionary(String, Int32).
         /// Like AddNamespace without a whitelist, this exposes every public type in the namespace.
+        /// The extension methods of the static classes in the namespace become callable on any value, like a C# using.
         /// Types in System.Reflection are not resolved unless SecurityPolicy.EnableReflection is set.
         /// </summary>
         /// <param name="namespaces">The full names of the namespaces, eg: System.Collections.Generic.</param>

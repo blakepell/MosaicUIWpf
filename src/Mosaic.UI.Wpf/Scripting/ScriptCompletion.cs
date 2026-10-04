@@ -4,6 +4,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Runtime.CompilerServices;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -34,16 +35,21 @@ public static class ScriptCompletion
     /// <param name="environment">The registration source.</param>
     /// <param name="alias">The member access qualifier.</param>
     public static IReadOnlyList<ICompletionData> GetMembers(ScriptEnvironment environment, string alias) =>
-        environment.TryGetRegistration(alias, out var registration) ? GetMembers(ScriptValueType.From(registration)) : [];
+        environment.TryGetRegistration(alias, out var registration) ? GetMembers(ScriptValueType.From(registration), environment.ExtensionMethods) : [];
 
     /// <summary>
     /// Gets methods, overload signatures, properties, fields and live dictionary keys for a registered or inferred value.
     /// </summary>
     /// <param name="value">The member access target.</param>
-    internal static IReadOnlyList<ICompletionData> GetMembers(ScriptValueType value)
+    /// <param name="extensions">The extension methods in scope; those that apply to an inferred instance are listed with
+    /// its methods. A registered alias lists only its own members, so a module is not crowded by extensions on object.</param>
+    internal static IReadOnlyList<ICompletionData> GetMembers(ScriptValueType value, IReadOnlyList<MethodInfo>? extensions = null)
     {
         var result = new List<ICompletionData>();
         var flags = MemberFlags(value);
+        MethodInfo[] extensionMethods = value.IsStatic || value.Registration != null || extensions == null ? []
+            : GetExtensionMethods(value.Type, extensions).Where(Visible).ToArray();
+        var isExtension = new HashSet<MethodInfo>(extensionMethods);
         if (value.Registration?.Instance is IEnumerable<KeyValuePair<string, object>> dictionary)
         {
             foreach (var pair in dictionary.OrderBy(p => p.Key, StringComparer.Ordinal))
@@ -52,14 +58,17 @@ public static class ScriptCompletion
                     new ScriptCompletionDescription("Global", pair.Value?.GetType().Name ?? "null", $"Current value: {pair.Value}")));
             }
         }
-        foreach (var group in value.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).GroupBy(m => m.Name))
+        // The engine calls instance methods and extension methods of the same name as one overload set.
+        foreach (var group in value.Type.GetMethods(flags).Where(m => !m.IsSpecialName && Visible(m)).Concat(extensionMethods).GroupBy(m => m.Name))
         {
             var methods = group.ToArray();
+            bool extensionsOnly = methods.All(isExtension.Contains);
             string returnType = string.Join(" | ", methods.Select(ReturnTypeName).Distinct(StringComparer.Ordinal));
             string summary = methods.Select(Description).FirstOrDefault(d => d.Length > 0) ?? string.Empty;
-            result.Add(new ScriptCompletionData(group.Key, ScriptCompletionKind.Method,
-                new ScriptCompletionDescription("Method", returnType, summary, string.Join("\n", methods.Select(Signature))))
-            { IsMethod = true, HasParameters = methods.Any(m => m.GetParameters().Length > 0) });
+            result.Add(new ScriptCompletionData(group.Key, extensionsOnly ? ScriptCompletionKind.ExtensionMethod : ScriptCompletionKind.Method,
+                new ScriptCompletionDescription(extensionsOnly ? "Extension Method" : "Method", returnType, summary,
+                    string.Join("\n", methods.Select(m => Signature(m, isExtension.Contains(m))))))
+            { IsMethod = true, HasParameters = methods.Any(m => m.GetParameters().Length > (isExtension.Contains(m) ? 1 : 0)) });
         }
         foreach (var property in value.Type.GetProperties(flags).Where(p => Visible(p) && p.GetIndexParameters().Length == 0))
         {
@@ -122,11 +131,138 @@ public static class ScriptCompletion
                 return [];
             }
 
+            var extensions = value.IsStatic ? [] : GetExtensionMethods(value.Type, environment.ExtensionMethods)
+                .Where(m => m.Name == call.Name && Visible(m))
+                .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key, true));
             signatures = value.Type.GetMethods(MemberFlags(value))
                 .Where(m => m.Name == call.Name && !m.IsSpecialName && Visible(m))
-                .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key));
+                .Select(m => CreateSignature(m, ReturnTypeName(m), call.Key))
+                .Concat(extensions);
         }
         return signatures.OrderBy(s => s.Parameters.Count).ThenBy(s => s.HasParamsArray).ToArray();
+    }
+
+    /// <summary>
+    /// Gets the extension methods that can be called on an instance of a type. A generic method is closed over
+    /// the type arguments its receiver determines, eg: Where on List&lt;string&gt; takes Func&lt;string, bool&gt;;
+    /// when the receiver does not determine all of them it is returned open.
+    /// </summary>
+    /// <param name="receiver">The type of the value the method is called on.</param>
+    /// <param name="extensions">The extension methods in scope.</param>
+    internal static IEnumerable<MethodInfo> GetExtensionMethods(Type receiver, IReadOnlyList<MethodInfo> extensions)
+    {
+        foreach (var method in extensions)
+        {
+            var parameters = method.GetParameters();
+            if (parameters.Length == 0)
+            {
+                continue;
+            }
+
+            if (!method.IsGenericMethodDefinition)
+            {
+                if (parameters[0].ParameterType.IsAssignableFrom(receiver))
+                {
+                    yield return method;
+                }
+
+                continue;
+            }
+
+            var bindings = new Dictionary<Type, Type>();
+            if (!Unify(parameters[0].ParameterType, receiver, bindings))
+            {
+                continue;
+            }
+
+            var arguments = method.GetGenericArguments();
+            if (!arguments.All(bindings.ContainsKey))
+            {
+                yield return method;
+                continue;
+            }
+
+            MethodInfo? closed;
+            try
+            {
+                closed = method.MakeGenericMethod(arguments.Select(a => bindings[a]).ToArray());
+            }
+            catch (ArgumentException)
+            {
+                // The receiver violates a constraint, eg: where T : struct.
+                closed = null;
+            }
+
+            if (closed != null)
+            {
+                yield return closed;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Matches a parameter type that may contain generic parameters against an argument type, recording the bindings.
+    /// </summary>
+    private static bool Unify(Type parameter, Type argument, Dictionary<Type, Type> bindings)
+    {
+        if (parameter.IsGenericParameter)
+        {
+            if (bindings.TryGetValue(parameter, out var bound))
+            {
+                return bound == argument;
+            }
+
+            bindings[parameter] = argument;
+            return true;
+        }
+
+        if (!parameter.ContainsGenericParameters)
+        {
+            return parameter.IsAssignableFrom(argument);
+        }
+
+        if (parameter.IsArray)
+        {
+            return argument.IsArray && parameter.GetArrayRank() == argument.GetArrayRank() &&
+                Unify(parameter.GetElementType()!, argument.GetElementType()!, bindings);
+        }
+
+        if (!parameter.IsGenericType)
+        {
+            return false;
+        }
+
+        // The argument, a base type or an implemented interface built from the same generic definition, eg: IEnumerable<T>.
+        var definition = parameter.GetGenericTypeDefinition();
+        var candidates = new List<Type>();
+        for (var type = argument; type != null; type = type.BaseType)
+        {
+            candidates.Add(type);
+        }
+
+        candidates.AddRange(argument.GetInterfaces());
+        foreach (var candidate in candidates.Where(c => c.IsGenericType && c.GetGenericTypeDefinition() == definition))
+        {
+            var attempt = new Dictionary<Type, Type>(bindings);
+            var expected = parameter.GetGenericArguments();
+            var actual = candidate.GetGenericArguments();
+            bool matched = true;
+            for (int i = 0; i < expected.Length && matched; i++)
+            {
+                matched = expected[i].ContainsGenericParameters ? Unify(expected[i], actual[i], attempt) : expected[i] == actual[i];
+            }
+
+            if (matched)
+            {
+                foreach (var (key, value) in attempt)
+                {
+                    bindings[key] = value;
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
 
     internal static bool Visible(MemberInfo member) => member.DeclaringType != typeof(object) &&
@@ -138,9 +274,10 @@ public static class ScriptCompletion
     internal static BindingFlags MemberFlags(ScriptValueType value) => BindingFlags.Public | BindingFlags.FlattenHierarchy |
         (value.IsStatic ? BindingFlags.Static : BindingFlags.Instance | (value.Registration != null ? BindingFlags.Static : 0));
 
-    private static ScriptSignature CreateSignature(MethodBase method, string returnType, string name)
+    private static ScriptSignature CreateSignature(MethodBase method, string returnType, string name, bool isExtension = false)
     {
-        var parameters = method.GetParameters();
+        // An extension method's first parameter is the value it is called on.
+        var parameters = method.GetParameters().Skip(isExtension ? 1 : 0).ToArray();
         bool hasParamsArray = parameters.Length > 0 && parameters[^1].IsDefined(typeof(ParamArrayAttribute));
         var items = ParseHint(method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.AutoCompleteHint)
             ?? parameters.Select(p => new ScriptSignatureParameter(TypeName(p.ParameterType), p.Name ?? string.Empty,
@@ -202,8 +339,8 @@ public static class ScriptCompletion
     private static string ReturnTypeName(MethodInfo method) =>
         method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.ReturnTypeHint ?? TypeName(method.ReturnType);
 
-    private static string Signature(MethodInfo method) => method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.AutoCompleteHint
-        ?? $"{method.Name}({string.Join(", ", method.GetParameters().Select(p => $"{TypeName(p.ParameterType)} {p.Name}"))})";
+    private static string Signature(MethodInfo method, bool isExtension) => method.GetCustomAttribute<ScriptModuleMethodAttribute>()?.AutoCompleteHint
+        ?? $"{(isExtension ? "(extension) " : "")}{method.Name}({string.Join(", ", method.GetParameters().Skip(isExtension ? 1 : 0).Select(p => $"{TypeName(p.ParameterType)} {p.Name}"))})";
 
     private static string TypeName(Type type) => type.IsGenericType
         ? $"{type.Name.Split('`')[0]}<{string.Join(", ", type.GetGenericArguments().Select(TypeName))}>" : type.Name;
@@ -212,7 +349,7 @@ public static class ScriptCompletion
 /// <summary>
 /// The category of a completion entry, which selects its icon and icon color.
 /// </summary>
-internal enum ScriptCompletionKind { Module, Class, Method, Property, Field, Global, Snippet }
+internal enum ScriptCompletionKind { Module, Class, Method, ExtensionMethod, Property, Field, Global, Snippet }
 
 /// <summary>
 /// The metadata shown in the completion tool tip; rendered by ScriptCompletionDescriptionTemplate.

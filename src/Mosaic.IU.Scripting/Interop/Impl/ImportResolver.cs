@@ -13,6 +13,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Mosaic.UI.Scripting.Options;
 
@@ -74,7 +75,8 @@ namespace Mosaic.UI.Scripting.Interop
             }
         }
 
-        internal void Add(string @namespace, IReadOnlySet<string> whitelist)
+        /// <returns>False when the namespace was already imported with the same whitelist.</returns>
+        internal bool Add(string @namespace, IReadOnlySet<string> whitelist)
         {
             if (string.IsNullOrWhiteSpace(@namespace))
             {
@@ -87,7 +89,7 @@ namespace Mosaic.UI.Scripting.Interop
                 if (existing >= 0 && ReferenceEquals(imports[existing].Whitelist, whitelist))
                 {
                     // Scripts re-run their include statements, so an unchanged import keeps the cached index.
-                    return;
+                    return false;
                 }
 
                 if (existing >= 0)
@@ -100,7 +102,23 @@ namespace Mosaic.UI.Scripting.Interop
                     imports.Add(new NamespaceImport(@namespace, whitelist));
                 }
                 Invalidate();
+                return true;
             }
+        }
+
+        /// <summary>
+        /// Gets the public static classes in a namespace that declare extension methods, honoring the whitelist,
+        /// so importing a namespace brings its extension methods into scope like a C# using directive.
+        /// </summary>
+        /// <param name="namespace">The full name of the namespace; sub namespaces are not included.</param>
+        /// <param name="whitelist">The full type names that are allowed, or null for every type.</param>
+        internal static IEnumerable<Type> GetExtensionTypes(string @namespace, IReadOnlySet<string> whitelist)
+        {
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(GetExportedTypes)
+                .Where(type => type.IsPublic && type.IsAbstract && type.IsSealed && type.Namespace == @namespace &&
+                    (whitelist == null || whitelist.Contains(type.Namespace + "." + GetSimpleName(type))) &&
+                    type.IsDefined(typeof(ExtensionAttribute), false));
         }
 
         internal void Clear()
@@ -269,7 +287,7 @@ namespace Mosaic.UI.Scripting.Interop
             return tick < 0 ? name : name.Substring(0, tick);
         }
 
-        private static bool IsReflectionNamespace(string @namespace)
+        internal static bool IsReflectionNamespace(string @namespace)
         {
             return @namespace != null &&
                 (@namespace == "System.Reflection" || @namespace.StartsWith("System.Reflection.", StringComparison.Ordinal));

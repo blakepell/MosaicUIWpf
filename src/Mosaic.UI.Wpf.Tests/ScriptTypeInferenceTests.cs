@@ -111,6 +111,32 @@ public class ScriptTypeInferenceTests
         Assert.Equal(typeof(System.IO.StringWriter), ScriptTypeInference.ResolveTarget(environment, text, text.Length - 1)?.Type);
     }
 
+    [Fact]
+    public async Task IncludedExtensionMethodsCompleteOnInferredInstances()
+    {
+        var environment = CreateEnvironment();
+        const string text = "let s = 'abc';\ns.";
+        var target = ScriptTypeInference.ResolveTarget(environment, text, text.Length - 1)!.Value;
+        Assert.DoesNotContain(ScriptCompletion.GetMembers(target, environment.ExtensionMethods), m => m.Text == "Shout");
+
+        await environment.ExecuteAsync("include Mosaic.UI.Wpf.Tests.ScriptImportedExtensions;");
+
+        var shout = Assert.Single(ScriptCompletion.GetMembers(target, environment.ExtensionMethods), m => m.Text == "Shout");
+        Assert.Equal(ScriptCompletionKind.ExtensionMethod, ((ScriptCompletionData)shout).Kind);
+        Assert.Contains("(extension) Shout(Int32 count)", shout.Description.ToString());
+        // Registered aliases list only their own members.
+        Assert.DoesNotContain(ScriptCompletion.GetMembers(environment, "panels"), m => m.Text == "Second");
+
+        var signature = Assert.Single(ScriptCompletion.GetSignatures(environment, new ScriptCallContext(0, 0, "s", "Shout", false), target));
+        Assert.Equal("count", Assert.Single(signature.Parameters).Name);
+
+        const string chained = "let s = 'abc';\ns.Shout(2).";
+        Assert.Equal(typeof(string), ScriptTypeInference.ResolveTarget(environment, chained, chained.Length - 1)?.Type);
+        // A generic extension is closed over the receiver: Second<Panel> on List<Panel> returns a Panel.
+        const string generic = "let p = panels.Items.Second();\np.";
+        Assert.Equal(typeof(Panel), ScriptTypeInference.ResolveTarget(environment, generic, generic.Length - 1)?.Type);
+    }
+
     private static ScriptValueType? Resolve(string source)
     {
         int caret = source.IndexOf('|');

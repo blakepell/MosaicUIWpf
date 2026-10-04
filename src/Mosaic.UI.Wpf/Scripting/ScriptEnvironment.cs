@@ -60,6 +60,12 @@ public sealed class ScriptEnvironment
     public IReadOnlyDictionary<string, ScriptRegistration> Registrations { get; }
 
     /// <summary>
+    /// Gets the extension methods scripts can currently call: the defaults, those added to the engine, and those
+    /// of namespaces imported by Import or a script's include statement. A new list is returned after a change.
+    /// </summary>
+    public IReadOnlyList<MethodInfo> ExtensionMethods => Engine.ExtensionMethods;
+
+    /// <summary>
     /// Occurs when a registration is added or replaced.
     /// </summary>
     public event EventHandler? RegistrationsChanged;

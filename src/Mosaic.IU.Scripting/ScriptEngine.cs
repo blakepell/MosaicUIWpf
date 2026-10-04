@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Mosaic.UI.Scripting.Core;
@@ -18,6 +19,11 @@ namespace Mosaic.UI.Scripting
         private readonly ExtensionMethodRegistry extensionMethodRegistry;
 
         private readonly ImportResolver importResolver;
+
+        /// <summary>
+        /// Extension classes registered by imports, removed again by <see cref="ClearImports"/>.
+        /// </summary>
+        private readonly List<Type> importedExtensionTypes = new();
 
         public int Id { get; }
 
@@ -127,6 +133,8 @@ namespace Mosaic.UI.Scripting
             proxy.AddSubNameSpaces(parts.AsSpan(1), whitelist, allowSubNamespaces);
         }
 
+        public IReadOnlyList<MethodInfo> ExtensionMethods => extensionMethodRegistry.ExtensionMethods;
+
         public IReadOnlyList<string> ImportedNamespaces => importResolver.Namespaces;
 
         public void Imports(params string[] namespaces)
@@ -134,18 +142,52 @@ namespace Mosaic.UI.Scripting
             ArgumentNullException.ThrowIfNull(namespaces);
             foreach (var @namespace in namespaces)
             {
-                importResolver.Add(@namespace, null);
+                Import(@namespace, null);
             }
         }
 
         public void Imports(string @namespace, IReadOnlySet<string> whitelist)
         {
-            importResolver.Add(@namespace, whitelist);
+            Import(@namespace, whitelist);
         }
 
         public void ClearImports()
         {
             importResolver.Clear();
+            lock (importedExtensionTypes)
+            {
+                foreach (var type in importedExtensionTypes)
+                {
+                    extensionMethodRegistry.RemoveType(type);
+                }
+                importedExtensionTypes.Clear();
+            }
+        }
+
+        private void Import(string @namespace, IReadOnlySet<string> whitelist)
+        {
+            if (!importResolver.Add(@namespace, whitelist))
+            {
+                return;
+            }
+
+            if (ImportResolver.IsReflectionNamespace(@namespace) &&
+                !Options.SecurityPolicy.HasFlag(SecurityPolicy.EnableReflection))
+            {
+                return;
+            }
+
+            lock (importedExtensionTypes)
+            {
+                foreach (var type in ImportResolver.GetExtensionTypes(@namespace, whitelist))
+                {
+                    // A type the host already added stays when the imports are cleared.
+                    if (extensionMethodRegistry.AddType(type))
+                    {
+                        importedExtensionTypes.Add(type);
+                    }
+                }
+            }
         }
 
         public bool TryResolveImport(string name, out ITypeProxy typeProxy)

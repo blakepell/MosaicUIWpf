@@ -261,6 +261,25 @@ model.c = include2(2)
     }
 
     [Fact]
+    public void IncludeBringsExtensionMethodsIntoScopeUntilImportsAreCleared()
+    {
+        var engine = new ScriptEngine();
+        dynamic model = new JsObject();
+        engine.SetValue("model", model);
+        Assert.DoesNotContain(engine.ExtensionMethods, m => m.Name == "Shout");
+        Assert.ThrowsAny<Exception>(() => engine.ExecuteScript("model.a = 'hi'.Shout()"));
+
+        var before = engine.ExtensionMethods;
+        engine.ExecuteScript("include Mosaic.UI.Scripting.Test.ImportedExtensions\nmodel.a = 'hi'.Shout()");
+        Assert.Equal("HI!", model.a);
+        Assert.NotSame(before, engine.ExtensionMethods);
+        Assert.Contains(engine.ExtensionMethods, m => m.Name == "Shout");
+
+        engine.ClearImports();
+        Assert.DoesNotContain(engine.ExtensionMethods, m => m.Name == "Shout");
+    }
+
+    [Fact]
     public void IncompleteIncludeIsASyntaxError()
     {
         var engine = new ScriptEngine();

@@ -21,6 +21,10 @@ internal sealed class ScriptEditorSupport : IDisposable
     private CompletionWindow? _window;
     private readonly DependencyPropertyDescriptor _themeDescriptor = DependencyPropertyDescriptor.FromProperty(SyntaxEditor.ThemeProperty, typeof(SyntaxEditor));
     private readonly Dictionary<string, IReadOnlyList<ScriptSignature>> _signatures = new(StringComparer.Ordinal);
+    /// <summary>
+    /// The extension methods the cached signatures were built from; an include run by a script replaces the list.
+    /// </summary>
+    private IReadOnlyList<MethodInfo>? _signatureExtensions;
     private ScriptSignaturePopup? _signaturePopup;
     private MosaicThemeMode _signaturePopupTheme;
     private TextAnchor? _callAnchor;
@@ -96,7 +100,7 @@ internal sealed class ScriptEditorSupport : IDisposable
         {
             // Resolves registered aliases, inferred variables and chains such as panels.Get('who').
             var target = ScriptTypeInference.ResolveTarget(_environment, _editor.Document.Text, start - 1);
-            Show(target is { } value ? ScriptCompletion.GetMembers(value) : [], start);
+            Show(target is { } value ? ScriptCompletion.GetMembers(value, _environment.ExtensionMethods) : [], start);
         }
         else
         {
@@ -270,6 +274,13 @@ internal sealed class ScriptEditorSupport : IDisposable
 
             target = value;
             key = $"{value.Type.AssemblyQualifiedName}|{value.IsStatic}|{value.Registration != null}|{call.Key}";
+        }
+
+        var extensions = _environment.ExtensionMethods;
+        if (!ReferenceEquals(extensions, _signatureExtensions))
+        {
+            _signatures.Clear();
+            _signatureExtensions = extensions;
         }
 
         if (!_signatures.TryGetValue(key, out var signatures))

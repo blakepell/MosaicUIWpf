@@ -159,12 +159,14 @@ internal static class ScriptTypeInference
     }
 
     /// <summary>
-    /// Maps a reflected type to what a script sees: nullable values unwrap, and void or object are unknown.
+    /// Maps a reflected type to what a script sees: nullable values unwrap, and void, object or a type that still
+    /// has unbound generic parameters (the result of an open generic extension method) are unknown.
     /// </summary>
     private static ScriptValueType? Instance(Type? type)
     {
         type = type == null ? null : Nullable.GetUnderlyingType(type) ?? type;
-        return type == null || type == typeof(void) || type == typeof(object) ? null : new ScriptValueType(type, false);
+        return type == null || type == typeof(void) || type == typeof(object) || type.ContainsGenericParameters
+            ? null : new ScriptValueType(type, false);
     }
 
     private static Type? Awaited(Type type)
@@ -208,9 +210,9 @@ internal static class ScriptTypeInference
         return enumerable?.GetGenericArguments()[0];
     }
 
-    private static bool Accepts(MethodInfo method, int argumentCount)
+    private static bool Accepts(MethodInfo method, int argumentCount, bool isExtension)
     {
-        var parameters = method.GetParameters();
+        var parameters = method.GetParameters().Skip(isExtension ? 1 : 0).ToArray();
         bool hasParamsArray = parameters.Length > 0 && parameters[^1].IsDefined(typeof(ParamArrayAttribute));
         int required = parameters.Count(p => !p.IsOptional && !p.IsDefined(typeof(ParamArrayAttribute)));
         return argumentCount >= required && (hasParamsArray || argumentCount <= parameters.Length);
@@ -540,19 +542,24 @@ internal static class ScriptTypeInference
             return environment.TryGetRegistration(name, out var registration) ? ScriptValueType.From(registration) : null;
         }
 
-        private static ScriptValueType? ResolveMethod(ScriptValueType target, string name, int argumentCount)
+        private ScriptValueType? ResolveMethod(ScriptValueType target, string name, int argumentCount)
         {
+            var extensions = target.IsStatic ? [] : ScriptCompletion.GetExtensionMethods(target.Type, environment.ExtensionMethods)
+                .Where(m => m.Name == name && ScriptCompletion.Visible(m))
+                .Select(m => (Method: m, IsExtension: true));
             var methods = target.Type.GetMethods(ScriptCompletion.MemberFlags(target))
                 .Where(m => m.Name == name && !m.IsSpecialName && ScriptCompletion.Visible(m))
-                .OrderBy(m => m.GetParameters().Length).ToArray();
+                .Select(m => (Method: m, IsExtension: false))
+                .Concat(extensions)
+                .OrderBy(m => m.Method.GetParameters().Length - (m.IsExtension ? 1 : 0)).ToArray();
             if (argumentCount < 0)
             {
                 // The arguments are unknown, so only a return type shared by every overload is certain.
-                var returnTypes = methods.Select(ReturnType).Distinct().ToArray();
+                var returnTypes = methods.Select(m => ReturnType(m.Method)).Distinct().ToArray();
                 return returnTypes.Length == 1 ? Instance(returnTypes[0]) : null;
             }
 
-            var method = methods.FirstOrDefault(m => Accepts(m, argumentCount)) ?? methods.FirstOrDefault();
+            var method = methods.FirstOrDefault(m => Accepts(m.Method, argumentCount, m.IsExtension)).Method ?? methods.FirstOrDefault().Method;
             return method == null ? null : Instance(ReturnType(method));
         }
 
