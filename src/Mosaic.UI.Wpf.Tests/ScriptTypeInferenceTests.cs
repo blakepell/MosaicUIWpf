@@ -100,6 +100,17 @@ public class ScriptTypeInferenceTests
         Assert.False(variables.ContainsKey("inner"));
     }
 
+    [Fact]
+    public void ImportedNamespacesResolveShortTypeNames()
+    {
+        var environment = CreateEnvironment();
+        const string text = "let w = new StringWriter();\nw.";
+        Assert.Null(ScriptTypeInference.ResolveTarget(environment, text, text.Length - 1));
+
+        environment.Import("System.IO");
+        Assert.Equal(typeof(System.IO.StringWriter), ScriptTypeInference.ResolveTarget(environment, text, text.Length - 1)?.Type);
+    }
+
     private static ScriptValueType? Resolve(string source)
     {
         int caret = source.IndexOf('|');

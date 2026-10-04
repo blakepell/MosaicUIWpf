@@ -160,6 +160,48 @@ namespace Mosaic.UI.Scripting
         public void AddNamespace(string @namespace, IReadOnlySet<string> whitelist, bool allowSubNamespaces = false);
 
         /// <summary>
+        /// The namespaces imported with <see cref="Imports(string[])"/>, in precedence order.
+        /// </summary>
+        IReadOnlyList<string> ImportedNamespaces { get; }
+
+        /// <summary>
+        /// Imports namespaces so their types can be used by their short name, like a C# using directive.
+        /// eg: after Imports("System.Text") a script can write new StringBuilder()
+        /// and System.Text.StringBuilder still works where the namespace is exposed with AddNamespace.
+        /// A name is only resolved through the imports when no variable or registered global has it,
+        /// and when two imports contain the same name the namespace imported first wins.
+        /// Types that differ only in generic arity (Action, Action`1, ...) share one name;
+        /// the constructor picks the arity from the number of leading type arguments,
+        /// eg: new Dictionary(String, Int32).
+        /// Like AddNamespace without a whitelist, this exposes every public type in the namespace.
+        /// Types in System.Reflection are not resolved unless SecurityPolicy.EnableReflection is set.
+        /// </summary>
+        /// <param name="namespaces">The full names of the namespaces, eg: System.Collections.Generic.</param>
+        void Imports(params string[] namespaces);
+
+        /// <summary>
+        /// Imports a namespace, restricted to the given types.
+        /// </summary>
+        /// <param name="namespace">The full name of the namespace.</param>
+        /// <param name="whitelist">The full type names that are allowed, without the generic arity suffix,
+        /// eg: System.Collections.Generic.Dictionary. Null allows every public type.</param>
+        void Imports(string @namespace, IReadOnlySet<string> whitelist);
+
+        /// <summary>
+        /// Removes every imported namespace. Values already captured by scripts are unaffected.
+        /// </summary>
+        void ClearImports();
+
+        /// <summary>
+        /// Resolves a short type name through the imported namespaces without executing a script.
+        /// Useful for tooling such as editors that infer types for completion.
+        /// </summary>
+        /// <param name="name">The short type name, eg: StringBuilder.</param>
+        /// <param name="typeProxy">The type proxy the script would see.</param>
+        /// <returns>True if an imported namespace contains the name.</returns>
+        bool TryResolveImport(string name, out ITypeProxy typeProxy);
+
+        /// <summary>
         /// Gets the value of the variable that is defined in the global scope.
         /// </summary>
         /// <param name="name">The name of the variable.</param>

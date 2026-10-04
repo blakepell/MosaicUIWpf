@@ -6,6 +6,7 @@
 
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -127,6 +128,38 @@ public sealed class ScriptEnvironment
         ArgumentNullException.ThrowIfNull(type);
         _registrations[alias] = new ScriptRegistration(alias, type, isType, instance);
         RegistrationsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Imports namespaces so scripts can use their types by short name, eg: new StringBuilder()
+    /// after Import("System.Text"). Script variables and registered aliases take precedence.
+    /// </summary>
+    /// <param name="namespaces">The full names of the namespaces, in precedence order.</param>
+    public void Import(params string[] namespaces)
+    {
+        Engine.Imports(namespaces);
+    }
+
+    /// <summary>
+    /// Gets a registered alias, falling back to a type resolved through the engine's imported namespaces.
+    /// </summary>
+    /// <param name="alias">The script name.</param>
+    /// <param name="registration">The registration, or a type registration for an imported name.</param>
+    public bool TryGetRegistration(string alias, [NotNullWhen(true)] out ScriptRegistration? registration)
+    {
+        if (_registrations.TryGetValue(alias, out registration))
+        {
+            return true;
+        }
+
+        if (Engine.TryResolveImport(alias, out var typeProxy) && typeProxy.ProxiedType is { } type)
+        {
+            registration = new ScriptRegistration(alias, type, true, null);
+            return true;
+        }
+
+        registration = null;
+        return false;
     }
 
     /// <summary>

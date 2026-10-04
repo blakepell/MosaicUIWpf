@@ -34,7 +34,7 @@ public static class ScriptCompletion
     /// <param name="environment">The registration source.</param>
     /// <param name="alias">The member access qualifier.</param>
     public static IReadOnlyList<ICompletionData> GetMembers(ScriptEnvironment environment, string alias) =>
-        environment.Registrations.TryGetValue(alias, out var registration) ? GetMembers(ScriptValueType.From(registration)) : [];
+        environment.TryGetRegistration(alias, out var registration) ? GetMembers(ScriptValueType.From(registration)) : [];
 
     /// <summary>
     /// Gets methods, overload signatures, properties, fields and live dictionary keys for a registered or inferred value.
@@ -94,7 +94,7 @@ public static class ScriptCompletion
     /// <param name="environment">The registration source.</param>
     /// <param name="call">The call surrounding the caret.</param>
     internal static IReadOnlyList<ScriptSignature> GetSignatures(ScriptEnvironment environment, ScriptCallContext call) =>
-        GetSignatures(environment, call, call.Qualifier != null && environment.Registrations.TryGetValue(call.Qualifier, out var registration)
+        GetSignatures(environment, call, call.Qualifier != null && environment.TryGetRegistration(call.Qualifier, out var registration)
             ? ScriptValueType.From(registration) : null);
 
     /// <summary>
@@ -108,7 +108,7 @@ public static class ScriptCompletion
         IEnumerable<ScriptSignature> signatures;
         if (call.IsConstructor)
         {
-            if (!environment.Registrations.TryGetValue(call.Name, out var type) || !type.IsType || type.Type.IsAbstract)
+            if (!environment.TryGetRegistration(call.Name, out var type) || !type.IsType || type.Type.IsAbstract)
             {
                 return [];
             }

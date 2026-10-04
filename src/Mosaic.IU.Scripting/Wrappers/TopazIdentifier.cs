@@ -60,6 +60,11 @@ namespace Mosaic.UI.Scripting
                     Cache = new CacheEntry(variable, scopeId);
                     value = variable.Value;
                 }
+                else if (scriptExecutor.ScriptEngine.TryResolveImport(Name, out var importedType))
+                {
+                    // Not cached locally: a later declaration with this name must shadow the import.
+                    return importedType;
+                }
             }
             if (value == null)
             {

@@ -83,6 +83,11 @@ namespace Mosaic.UI.Scripting.Core
                 scope = scope.ParentScope;
             }
 
+            if (ScriptEngine.TryResolveImport(name, out var importedType))
+            {
+                return importedType;
+            }
+
             if (Options.AllowUndefinedReferenceAccess)
             {
                 return Options.NoUndefined ? null : Undefined.Value;

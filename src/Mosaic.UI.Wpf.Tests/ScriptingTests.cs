@@ -15,7 +15,7 @@ using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Scripting;
 using Mosaic.UI.Wpf.Scripting.ScriptCommands;
 using Mosaic.UI.Wpf.Themes;
-using Tenray.Topaz;
+using Mosaic.UI.Scripting;
 using Xunit;
 
 namespace Mosaic.UI.Wpf.Tests;
@@ -42,7 +42,7 @@ public class ScriptingTests
     [Fact]
     public async Task SuppliedEngineRetainsValuesAndAllowsExplicitDefaultSetup()
     {
-        var engine = new TopazEngine();
+        var engine = new ScriptEngine();
         var bridge = new AppCommands();
         engine.SetValue("app", bridge);
         var environment = new ScriptEnvironment(engine);

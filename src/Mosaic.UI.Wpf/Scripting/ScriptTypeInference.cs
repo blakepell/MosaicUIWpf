@@ -320,7 +320,7 @@ internal static class ScriptTypeInference
                 }
 
                 var type = isQualified ? FindType(name)
-                    : environment.Registrations.TryGetValue(name, out var registration) && registration.IsType ? registration.Type : null;
+                    : environment.TryGetRegistration(name, out var registration) && registration.IsType ? registration.Type : null;
                 value = type == null ? null : new ScriptValueType(type, false);
                 if (At(i).Is("(") && !SkipGroup(ref i))
                 {
@@ -537,7 +537,7 @@ internal static class ScriptTypeInference
                     return value;
                 }
             }
-            return environment.Registrations.TryGetValue(name, out var registration) ? ScriptValueType.From(registration) : null;
+            return environment.TryGetRegistration(name, out var registration) ? ScriptValueType.From(registration) : null;
         }
 
         private static ScriptValueType? ResolveMethod(ScriptValueType target, string name, int argumentCount)

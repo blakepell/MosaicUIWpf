@@ -31,6 +31,7 @@ namespace Mosaic.UI.Wpf.Controls
         private ImageSource? _cachedOriginal;
         private ImageSource? _lastApplied;
         private bool _isUpdatingSource; // Flag to prevent recursion
+        private bool _subscribedToThemeChanged;
 
         /// <summary>
         /// Identifies the <see cref="MosaicThemeMode"/> dependency property.
@@ -107,11 +108,48 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public AdaptiveImage()
         {
-            // If the app has its own theme change event, hook it up here.  The caller
-            // may or may not use our ThemeChanged event, but this is what we provide.
-            ThemeManager.ThemeChanged += MosaicApp_ThemeChanged;
             var theme = AppServices.GetRequiredService<ThemeManager>();
             this.MosaicThemeMode = theme.Theme;
+
+            // ThemeManager.ThemeChanged is static, so only listen while in a visual tree; otherwise
+            // the event roots every image ever created and calls into ones owned by dead threads.
+            this.Loaded += this.OnLoaded;
+            this.Unloaded += this.OnUnloaded;
+        }
+
+        /// <summary>
+        /// Subscribes to theme changes and catches up on any change made while the image was unloaded.
+        /// </summary>
+        /// <param name="sender">The source of the loaded event.</param>
+        /// <param name="e">The event data for the load operation.</param>
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (!_subscribedToThemeChanged)
+            {
+                ThemeManager.ThemeChanged += this.MosaicApp_ThemeChanged;
+                _subscribedToThemeChanged = true;
+            }
+
+            this.MosaicThemeMode = AppServices.GetRequiredService<ThemeManager>().Theme;
+        }
+
+        /// <summary>
+        /// Unsubscribes from theme changes so the image does not outlive its visual tree.
+        /// </summary>
+        /// <param name="sender">The source of the unloaded event.</param>
+        /// <param name="e">The event data for the unload operation.</param>
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            this.UnsubscribeFromThemeChanged();
+        }
+
+        private void UnsubscribeFromThemeChanged()
+        {
+            if (_subscribedToThemeChanged)
+            {
+                ThemeManager.ThemeChanged -= this.MosaicApp_ThemeChanged;
+                _subscribedToThemeChanged = false;
+            }
         }
 
         /// <summary>
@@ -121,6 +159,19 @@ namespace Mosaic.UI.Wpf.Controls
         /// <param name="e">The new theme mode.</param>
         private void MosaicApp_ThemeChanged(object? sender, MosaicThemeMode e)
         {
+            // The theme can be changed from another UI thread, which owns a different dispatcher.
+            if (!this.CheckAccess())
+            {
+                if (this.Dispatcher.HasShutdownStarted)
+                {
+                    this.UnsubscribeFromThemeChanged();
+                    return;
+                }
+
+                this.Dispatcher.BeginInvoke(() => this.MosaicApp_ThemeChanged(sender, e));
+                return;
+            }
+
             this.MosaicThemeMode = e;
             InvalidateAdaptive();
         }

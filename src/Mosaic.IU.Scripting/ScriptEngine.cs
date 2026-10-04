@@ -17,6 +17,8 @@ namespace Mosaic.UI.Scripting
 
         private readonly ExtensionMethodRegistry extensionMethodRegistry;
 
+        private readonly ImportResolver importResolver;
+
         public int Id { get; }
 
         public bool IsThreadSafe => GlobalScope.IsThreadSafe;
@@ -65,6 +67,7 @@ namespace Mosaic.UI.Scripting
             DefaultObjectProxy = setup.DefaultObjectProxy ?? new ObjectProxyUsingReflection(null, extensionMethodRegistry, ValueConverter, MemberInfoProvider);
             DelegateInvoker = setup.DelegateInvoker ?? new DelegateInvoker(ValueConverter);
             MemberAccessPolicy = setup.MemberAccessPolicy ?? new DefaultMemberAccessPolicy(this);
+            importResolver = new ImportResolver(this);
         }
 
         public void ExecuteScript(string code, CancellationToken token = default)
@@ -122,6 +125,32 @@ namespace Mosaic.UI.Scripting
                 proxy,
                 VariableKind.Const);
             proxy.AddSubNameSpaces(parts.AsSpan(1), whitelist, allowSubNamespaces);
+        }
+
+        public IReadOnlyList<string> ImportedNamespaces => importResolver.Namespaces;
+
+        public void Imports(params string[] namespaces)
+        {
+            ArgumentNullException.ThrowIfNull(namespaces);
+            foreach (var @namespace in namespaces)
+            {
+                importResolver.Add(@namespace, null);
+            }
+        }
+
+        public void Imports(string @namespace, IReadOnlySet<string> whitelist)
+        {
+            importResolver.Add(@namespace, whitelist);
+        }
+
+        public void ClearImports()
+        {
+            importResolver.Clear();
+        }
+
+        public bool TryResolveImport(string name, out ITypeProxy typeProxy)
+        {
+            return importResolver.TryResolve(name, out typeProxy);
         }
 
         public object GetValue(string name)
