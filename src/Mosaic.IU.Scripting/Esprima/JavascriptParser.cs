@@ -3298,6 +3298,78 @@ namespace Esprima
                     : Finalize(node, new ForOfStatement(left, right!, body, @await));
         }
 
+        // Mosaic extension: a C# style foreach loop that iterates the values of a collection.
+        //   foreach (let item in items) { }
+        //   foreach (const item of items) { }
+        //   foreach (var item = items) { }
+        // 'foreach' is contextual, it is only a loop when followed by '(' and a declaration keyword so
+        // foreach(x) and foreach = 1 keep their meaning.  It is parsed into a ForOfStatement so it runs
+        // exactly like for...of (values, not keys, even when 'in' is used).
+
+        private bool MatchForEach()
+        {
+            if (!MatchContextualKeyword("foreach"))
+            {
+                return false;
+            }
+
+            var state = _scanner.SaveState();
+            _scanner.ScanComments();
+            var paren = _scanner.Lex();
+            _scanner.ScanComments();
+            var kind = _scanner.Lex();
+            _scanner.RestoreState(state);
+
+            return paren.Type == TokenType.Punctuator && (string?)paren.Value == "("
+                && kind.Type == TokenType.Keyword
+                && ((string?)kind.Value == "let" || (string?)kind.Value == "const" || (string?)kind.Value == "var");
+        }
+
+        private ForOfStatement ParseForEachStatement()
+        {
+            var node = CreateNode();
+            NextToken(); // 'foreach', already ensured by MatchForEach
+            Expect("(");
+
+            var declarationNode = CreateNode();
+            var kind = ParseVariableDeclarationKind((string?)NextToken().Value);
+
+            var declaratorNode = CreateNode();
+            var parameters = new ArrayList<Token>();
+            var id = ParsePattern(ref parameters, kind);
+
+            if (_context.Strict && id.Type == Nodes.Identifier && Scanner.IsRestrictedWord(id.As<Identifier>().Name))
+            {
+                TolerateError(Messages.StrictVarName);
+            }
+
+            var declarations = new ArrayList<VariableDeclarator>(1)
+            {
+                Finalize(declaratorNode, new VariableDeclarator(id, null))
+            };
+
+            var left = Finalize(declarationNode, new VariableDeclaration(NodeList.From(ref declarations), kind));
+
+            if (MatchKeyword("in") || MatchContextualKeyword("of") || Match("="))
+            {
+                NextToken();
+            }
+            else
+            {
+                return ThrowUnexpectedToken<ForOfStatement>(_lookahead);
+            }
+
+            var right = ParseAssignmentExpression();
+            Expect(")");
+
+            var previousInIteration = _context.InIteration;
+            _context.InIteration = true;
+            var body = IsolateCoverGrammar(parseStatement);
+            _context.InIteration = previousInIteration;
+
+            return Finalize(node, new ForOfStatement(left, right, body, false));
+        }
+
         // https://tc39.github.io/ecma262/#sec-continue-statement
 
         private ContinueStatement ParseContinueStatement()
@@ -3681,7 +3753,15 @@ namespace Esprima
                     break;
 
                 case TokenType.Identifier:
-                    statement = MatchAsyncFunction() ? ParseFunctionDeclaration() : ParseLabelledStatement();
+                    if (MatchForEach())
+                    {
+                        statement = ParseForEachStatement();
+                    }
+                    else
+                    {
+                        statement = MatchAsyncFunction() ? ParseFunctionDeclaration() : ParseLabelledStatement();
+                    }
+
                     break;
 
                 case TokenType.Keyword:
