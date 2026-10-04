@@ -210,4 +210,9 @@
     <Resource Include="Assets\vs-image-32.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Scripting\ScriptCommands\Docs\**\*.md" />
+    <Resource Include="Scripting\ScriptCommands\Docs\**\*.md" />
+  </ItemGroup>
+
 </Project>

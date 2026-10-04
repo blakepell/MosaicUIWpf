@@ -25,6 +25,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Docs\Application-Objects.md" />
+    <None Remove="Docs\Arrays-and-Objects.md" />
+    <None Remove="Docs\Compatibility.md" />
+    <None Remove="Docs\Control-Flow.md" />
+    <None Remove="Docs\Errors-and-Async.md" />
+    <None Remove="Docs\Functions.md" />
+    <None Remove="Docs\Getting-Started.md" />
+    <None Remove="Docs\Include.md" />
+    <None Remove="Docs\LINQ.md" />
+    <None Remove="Docs\README.md" />
+    <None Remove="Docs\Recipes.md" />
+    <None Remove="Docs\Variables-and-Operators.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Esprima\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath>\3rdParty\</PackagePath>
@@ -40,7 +55,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Docs\" />
+    <Resource Include="Docs\Application-Objects.md" />
+    <Resource Include="Docs\Arrays-and-Objects.md" />
+    <Resource Include="Docs\Compatibility.md" />
+    <Resource Include="Docs\Control-Flow.md" />
+    <Resource Include="Docs\Errors-and-Async.md" />
+    <Resource Include="Docs\Functions.md" />
+    <Resource Include="Docs\Getting-Started.md" />
+    <Resource Include="Docs\Include.md" />
+    <Resource Include="Docs\LINQ.md" />
+    <Resource Include="Docs\README.md" />
+    <Resource Include="Docs\Recipes.md" />
+    <Resource Include="Docs\Variables-and-Operators.md" />
   </ItemGroup>
 
 </Project>
