@@ -39,4 +39,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Docs\" />
+  </ItemGroup>
+
 </Project>
