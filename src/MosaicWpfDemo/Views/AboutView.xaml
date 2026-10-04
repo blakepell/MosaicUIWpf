@@ -359,6 +359,20 @@
                         FontSize="12"
                         NavigateUri="https://github.com/JMHeartley/WPF-Chart-Controls"
                         Text="https://github.com/JMHeartley/WPF-Chart-Controls" />
+
+                    <TextBlock
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        Text="Topaz Multi-threaded JS Engine" />
+                    <controls:Hyperlink
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Margin="20,5,0,0"
+                        FontSize="12"
+                        NavigateUri="https://github.com/koculu/topaz"
+                        Text="https://github.com/koculu/topaz" />
                 </Grid>
 
             </StackPanel>
