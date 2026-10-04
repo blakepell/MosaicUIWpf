@@ -17,7 +17,7 @@ using Mosaic.UI.Scripting.API;
 namespace Mosaic.UI.Wpf.Scripting;
 
 /// <summary>
-/// Owns the registrations shared by a Topaz engine and its editors.
+/// Owns the registrations shared by a script engine and its editors.
 /// </summary>
 /// <remarks>
 /// Register on the UI thread before executing scripts. A supplied engine is not reset or disposed.
@@ -174,7 +174,7 @@ public sealed class ScriptEnvironment
         await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            // Topaz can execute CPU-bound script synchronously before its first await.
+            // Script engine can execute CPU-bound script synchronously before its first await.
             await Task.Run(async () => await Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken)
                 .ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }

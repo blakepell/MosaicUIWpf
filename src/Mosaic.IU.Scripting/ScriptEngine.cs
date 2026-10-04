@@ -11,7 +11,7 @@ namespace Mosaic.UI.Scripting
 {
     public sealed class ScriptEngine : IScriptEngine
     {
-        private static int lastTopazEngineId;
+        private static int lastScriptEngineId;
 
         private readonly ScriptExecutor globalScope;
 
@@ -23,7 +23,7 @@ namespace Mosaic.UI.Scripting
 
         public bool IsThreadSafe => GlobalScope.IsThreadSafe;
 
-        public TopazEngineOptions Options { get; set; }
+        public ScriptEngineOptions Options { get; set; }
 
         public IScriptEngineScope GlobalScope => globalScope;
 
@@ -50,7 +50,7 @@ namespace Mosaic.UI.Scripting
                 setup = new ScriptEngineSetup();
             }
 
-            Id = Interlocked.Increment(ref lastTopazEngineId);
+            Id = Interlocked.Increment(ref lastScriptEngineId);
             globalScope = new ScriptExecutor(this, setup.IsThreadSafe);
             var optionsHasGiven = setup.Options != null;
             Options = setup.Options ?? PresetOptions.FriendlyStyle;

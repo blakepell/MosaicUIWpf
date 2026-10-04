@@ -244,24 +244,24 @@ namespace Mosaic.UI.Scripting.Core
             object reference,
             object value)
         {
-            if (reference is TopazIdentifier identifier)
+            if (reference is ScriptIdentifier identifier)
             {
                 identifier.SetVariableValue(this, value);
                 return;
             }
 
-            if (reference is TopazMemberAccessor topazMemberAccessor)
+            if (reference is ScriptMemberAccessor scriptMemberAccessor)
             {
-                if (topazMemberAccessor.Optional)
+                if (scriptMemberAccessor.Optional)
                 {
-                    Exceptions.ThrowInvalidLeftHandSideInAssignment(topazMemberAccessor.ToString());
+                    Exceptions.ThrowInvalidLeftHandSideInAssignment(scriptMemberAccessor.ToString());
                 }
 
                 SetMemberValue(
-                    topazMemberAccessor.Instance,
-                    topazMemberAccessor.Property,
+                    scriptMemberAccessor.Instance,
+                    scriptMemberAccessor.Property,
                     value,
-                    topazMemberAccessor.Computed);
+                    scriptMemberAccessor.Computed);
                 return;
             }
             Exceptions.ThrowExpectsReferenceValueOnLeftSideOfAssignment(reference, value, this);

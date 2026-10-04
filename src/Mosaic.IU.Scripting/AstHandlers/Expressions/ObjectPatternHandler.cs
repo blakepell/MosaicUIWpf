@@ -16,7 +16,7 @@ namespace Mosaic.UI.Scripting.Expressions
             Action<object, object, CancellationToken> callback, 
             CancellationToken token)
         {
-            var topazEngine = scriptExecutor.ScriptEngine;
+            var ScriptEngine = scriptExecutor.ScriptEngine;
             var scope = scriptExecutor;
             var props = objectPattern.Properties;
             var len = props.Count;
@@ -27,13 +27,13 @@ namespace Mosaic.UI.Scripting.Expressions
                 if (p is RestElement restElement)
                 {
                     var arg = scriptExecutor.ExecuteStatement(restElement.Argument, token);
-                    if (arg is TopazIdentifier topazIdentifier)
+                    if (arg is ScriptIdentifier scriptIdentifier)
                     {
-                        topazIdentifier.InvalidateLocalCache();
-                        if (topazEngine
+                        scriptIdentifier.InvalidateLocalCache();
+                        if (ScriptEngine
                             .TryGetObjectMember(
                                 value,
-                                topazIdentifier.Name,
+                                scriptIdentifier.Name,
                                 out var item))
                         {
                             callback(arg, item, token);
@@ -49,10 +49,10 @@ namespace Mosaic.UI.Scripting.Expressions
                     {
                         key = scriptExecutor.GetValue(key);
                     }
-                    else if (key is TopazIdentifier topazIdentifier)
+                    else if (key is ScriptIdentifier scriptIdentifier)
                     {
-                        topazIdentifier.InvalidateLocalCache();
-                        key = topazIdentifier.Name;
+                        scriptIdentifier.InvalidateLocalCache();
+                        key = scriptIdentifier.Name;
                     }
                     var keyString = key.ToString();
                     if (keyString == null)
@@ -65,7 +65,7 @@ namespace Mosaic.UI.Scripting.Expressions
                     {
                         if (prop.Value is ArrayPattern nestedArrayPattern)
                         {
-                            if (!topazEngine
+                            if (!ScriptEngine
                                     .TryGetObjectMember(
                                         value, keyString, out var nestedValue))
                             {
@@ -82,7 +82,7 @@ namespace Mosaic.UI.Scripting.Expressions
                         }
                         else if (prop.Value is ObjectPattern nestedObjectPattern)
                         {
-                            if (!topazEngine
+                            if (!ScriptEngine
                                     .TryGetObjectMember(
                                         value, keyString, out var nestedValue))
                             {
@@ -103,7 +103,7 @@ namespace Mosaic.UI.Scripting.Expressions
                                 .ExecuteExpressionAndGetValue(assignmentPattern.Right, token);
                         }
                     }
-                    if (topazEngine
+                    if (ScriptEngine
                         .TryGetObjectMember(value, keyString, out var item))
                     {
                         callback(left, item, token);

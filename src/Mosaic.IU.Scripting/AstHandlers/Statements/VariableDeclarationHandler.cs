@@ -59,7 +59,7 @@ namespace Mosaic.UI.Scripting.Statements
                         token);
                     continue;
                 }
-                var identifier = (TopazIdentifier)scriptExecutor.ExecuteStatement(id, token);
+                var identifier = (ScriptIdentifier)scriptExecutor.ExecuteStatement(id, token);
                 var init = declaration.Init;
                 object value;
                 if (init != null)

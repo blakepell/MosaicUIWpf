@@ -10,7 +10,7 @@
     FilePath="{Binding ScriptPath, Mode=TwoWay}" />
 ```
 
-Omit `Environment` for a separate, preconfigured Topaz engine per control. The control preserves the application's `DataContext`. `Text`, `Environment`, `FilePath`, `IsReadOnly`, and `ToolBarVisibility` are dependency properties; `IsModified`, `IsRunning`, and `LastError` are read-only dependency properties. `Editor` exposes the inner `SyntaxEditor` after template application. A replacement template should provide `PART_Editor` of that type.
+Omit `Environment` for a separate, preconfigured script engine per control. The control preserves the application's `DataContext`. `Text`, `Environment`, `FilePath`, `IsReadOnly`, and `ToolBarVisibility` are dependency properties; `IsModified`, `IsRunning`, and `LastError` are read-only dependency properties. `Editor` exposes the inner `SyntaxEditor` after template application. A replacement template should provide `PART_Editor` of that type.
 
 ## Application commands and types
 
@@ -48,16 +48,16 @@ Completion offers modules with Ctrl+Space/Ctrl+period, members after `.`, constr
 ## Existing engine
 
 ```csharp
-var environment = new ScriptEnvironment(myTopazEngine);
+var environment = new ScriptEnvironment(myScriptEngine);
 // An existing engine is preserved, with no implicit default registration.
 environment.RegisterCompletionType("app", typeof(ApplicationCommands));
 editor.Environment = environment;
 
 // Alternatively, explicitly install the standard bridges into your engine:
-editor.Environment = new ScriptEnvironment(myTopazEngine, includeDefaults: true);
+editor.Environment = new ScriptEnvironment(myScriptEngine, includeDefaults: true);
 ```
 
-Values installed directly through Topaz cannot be discovered automatically. Describe those using `RegisterCompletionType`, or register them through the environment's combined registration methods. For a pre-existing globals dictionary, pass it as the `instance` argument to `RegisterCompletionType` to enable key completion. `environment.Globals` is the dictionary installed by the default setup.
+Values installed directly through the script engine cannot be discovered automatically. Describe those using `RegisterCompletionType`, or register them through the environment's combined registration methods. For a pre-existing globals dictionary, pass it as the `instance` argument to `RegisterCompletionType` to enable key completion. `environment.Globals` is the dictionary installed by the default setup.
 
 Default aliases: `process`, `hash`, `clipboard`, `http`, `screenshot`, `mouse`, `environ`, `log`, `ai`, `regex`, `ui`, `string`, `int`, `date`, `file`, `directory`, `double`, `math`, `guid`, `StringBuilder`, `DataList`, `JSON`, `globalThis`, and `globals`. The original System namespace and Argus/LINQ extension registrations are also included. AI uses the copied Ollama helper and its original local endpoint/model defaults; it makes requests only when a script calls it. UI and clipboard commands dispatch to the WPF application thread. Screenshots return caller-owned `System.Drawing.Bitmap` objects.
 
@@ -112,7 +112,7 @@ The same control can be the content of either Mosaic AvalonDock layout item. Eac
 
 F5 runs; F6/Shift+F5 stops; Ctrl+S saves; Ctrl+G inserts a GUID. Mosaic supplies search, editing context menus, commenting, and its normal editor keyboard behavior. `RunCommand`, `StopCommand`, `SaveCommand`, `CompletionCommand`, and `SnippetsCommand` can also be bound to host menus.
 
-`RunAsync()` executes a text snapshot in a fresh lexical block so `let`/`const` declarations can be rerun. Execution uses a worker thread to keep the UI responsive. WPF `DispatcherObject` instances registered with `RegisterObject` retain their identity, and their property access and method calls are dispatched automatically to their owning UI thread. For example, after `environment.RegisterObject("win", mainWindow)`, scripts can use `win.Left = 0` and `win.Title = "Test"` directly. This applies to registered objects; other application bridges and unregistered objects reached through their members must handle their own UI dispatching. The `Executing` and `Executed` routed events run on the UI thread; `Executed` fires after state is reset, including on cancellation or failure. Programmatic `RunAsync()` propagates errors; toolbar commands capture them in `LastError` and display the message inline. Cancellation is cooperative: a blocking custom .NET call must return before Topaz can stop. Unloading the control requests cancellation and closes completion popups. Environments wrapping the same engine serialize their runs; direct external engine calls must be coordinated by the host. The control never disposes a supplied engine.
+`RunAsync()` executes a text snapshot in a fresh lexical block so `let`/`const` declarations can be rerun. Execution uses a worker thread to keep the UI responsive. WPF `DispatcherObject` instances registered with `RegisterObject` retain their identity, and their property access and method calls are dispatched automatically to their owning UI thread. For example, after `environment.RegisterObject("win", mainWindow)`, scripts can use `win.Left = 0` and `win.Title = "Test"` directly. This applies to registered objects; other application bridges and unregistered objects reached through their members must handle their own UI dispatching. The `Executing` and `Executed` routed events run on the UI thread; `Executed` fires after state is reset, including on cancellation or failure. Programmatic `RunAsync()` propagates errors; toolbar commands capture them in `LastError` and display the message inline. Cancellation is cooperative: a blocking custom .NET call must return before the script engine can stop. Unloading the control requests cancellation and closes completion popups. Environments wrapping the same engine serialize their runs; direct external engine calls must be coordinated by the host. The control never disposes a supplied engine.
 
 `LoadAsync(path)` loads a file and establishes its saved baseline. `SaveAsync()` writes to `FilePath`, or asks for a path if none is set. To write the text straight onto a model property, set `SaveObject` and `SaveToProperty` (the name of a public, writable `string` property); saving then assigns the text via reflection instead of writing a file:
 

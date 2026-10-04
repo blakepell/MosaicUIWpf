@@ -2,7 +2,7 @@
 
 namespace Mosaic.UI.Scripting
 {
-    internal sealed class TopazMemberAccessor
+    internal sealed class ScriptMemberAccessor
     {
         internal object Instance { get; }
 
@@ -12,7 +12,7 @@ namespace Mosaic.UI.Scripting
 
         internal bool Optional { get; }
 
-        internal TopazMemberAccessor(object instance, object property, bool computed, bool optional)
+        internal ScriptMemberAccessor(object instance, object property, bool computed, bool optional)
         {
             Instance = instance;
             Property = property;

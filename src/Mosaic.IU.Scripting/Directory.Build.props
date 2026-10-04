@@ -1,21 +1,17 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
   <PropertyGroup>
-    <Copyright>Ahmed Yasin Koculu</Copyright>
-    <Authors>Ahmed Yasin Koculu</Authors>
-    <PackageId>Topaz</PackageId>
-    <Title>Topaz</Title>
-    <ProductVersion>1.4.1.0</ProductVersion>
-    <Version>1.4.1.0</Version>
-    <Authors>Ahmed Yasin Koculu</Authors>
-    <AssemblyTitle>Topaz</AssemblyTitle>
-    <Description>Multithreaded Javascript Engine for .NET</Description>
-    <Summmary>High performance, lightweight, customizable Javascript Engine.</Summmary>
-    <PackageTags>high-performance, javascript, engine, interpreter, es5, es2015, es6, ecmascript, interop</PackageTags>
-    <ReleaseNotes></ReleaseNotes>
-    <Company>koculu</Company>
+    <Copyright>2026</Copyright>
+    <Authors>Ahmed Yasin Koculu, Blake Pell</Authors>
+    <PackageId>Mosaic.UI.Scripting</PackageId>
+    <Title>Mosaic.UI.Scripting</Title>
+    <ProductVersion>2026.10.4.1</ProductVersion>
+    <Version>2026.10.4.1</Version>
+    <AssemblyTitle>Mosaic.UI.Scripting</AssemblyTitle>
+    <Description>Multithreaded Extended Javascript Engine for .NET</Description>
+    <Summmary>Customizable Javascript Engine for use with MosaicUIWpf.</Summmary>
+    <PackageTags>mosaic, javascript, engine, interpreter, es5, es2015, es6, ecmascript, interop</PackageTags>
 
-    <PackageProjectUrl>https://github.com/koculu/topaz</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/blakepell/MosaicUIWpf</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

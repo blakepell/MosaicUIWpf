@@ -59,7 +59,7 @@ model.b = new StringBuilder('short').ToString()
     {
         var engine = new ScriptEngine();
         engine.Options.AllowUndefinedReferenceAccess = false;
-        Assert.Throws<TopazException>(() => engine.ExecuteScript("var sb = new StringBuilder()"));
+        Assert.Throws<ScriptException>(() => engine.ExecuteScript("var sb = new StringBuilder()"));
     }
 
     [Fact]
@@ -255,7 +255,7 @@ model.c = include2(2)
         var engine = new ScriptEngine();
         engine.Options.IncludeFilter = ns => ns == "System.Text";
         engine.ExecuteScript("include System.Text");
-        var ex = Assert.Throws<TopazException>(() => engine.ExecuteScript("include System.IO"));
+        var ex = Assert.Throws<ScriptException>(() => engine.ExecuteScript("include System.IO"));
         Assert.Contains("System.IO", ex.Message);
         Assert.Equal(new[] { "System.Text" }, engine.ImportedNamespaces);
     }

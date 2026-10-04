@@ -46,7 +46,7 @@ namespace Mosaic.UI.Scripting.Expressions
             // in an array.
             // Unwrap will happen in the first GetValue statement once.
             // And this is the stage where the array is actually used in an expression.            
-            return new TopazArrayWrapper(scriptExecutor, result);
+            return new ScriptArrayWrapper(scriptExecutor, result);
         }
     }
 }

@@ -31,7 +31,7 @@ catch(err) {
 ");
         Assert.Same(Undefined.Value, model["a"]);
         Assert.Same(Undefined.Value, model["m"]);
-        Assert.IsAssignableFrom<TopazException>(model.b);
+        Assert.IsAssignableFrom<ScriptException>(model.b);
         Assert.Same(Undefined.Value, model["newDateTime"]);
     }
 

@@ -3,7 +3,7 @@ using Esprima;
 
 namespace Mosaic.UI.Scripting.Options
 {
-    public sealed class TopazEngineOptions
+    public sealed class ScriptEngineOptions
     {
         public SecurityPolicy SecurityPolicy { get; set; } = SecurityPolicy.Default;
 
@@ -41,7 +41,7 @@ namespace Mosaic.UI.Scripting.Options
 
         /// <summary>
         /// C# is a type-safe language but Javascript is not.
-        /// Topaz encapsulates the differences by using auto type conversions.
+        /// The script engine encapsulates the differences by using auto type conversions.
         /// If you want explicit behavior for literal number evaluation,
         /// you can use this option.
         /// 
@@ -89,7 +89,7 @@ namespace Mosaic.UI.Scripting.Options
         public bool NumbersAreConvertedToDoubleInArithmeticOperations { get; set; } = true;
 
         /// <summary>
-        /// If true and TopazEngine is thread safe,
+        /// If true and ScriptEngine is thread safe,
         /// If false, javascript objects are not thread safe.
         /// 
         /// Default value is based on Engine's thread safety.

@@ -150,17 +150,17 @@ namespace Mosaic.UI.Scripting.Interop
             var argTypes = type.GetTypeInfo().GenericTypeArguments;
             if (args == null || args.Count == 0)
             {
-                throw new TopazException("Cannot create delegate with no arguments.");
+                throw new ScriptException("Cannot create delegate with no arguments.");
             }
 
             var arg = args[0];
-            if (arg is not ScriptFunction topazFunction)
+            if (arg is not ScriptFunction scriptFunction)
             {
-                throw new TopazException("Delegate constructor requires Javascript function.");
+                throw new ScriptException("Delegate constructor requires Javascript function.");
             }
 
             return DynamicDelagateFactory.CreateDynamicDelegate(argTypes, returnType,
-                (x) => topazFunction.Execute(x, default), ValueConverter);
+                (x) => scriptFunction.Execute(x, default), ValueConverter);
         }
 
         private object CallGenericConstructor(Type type, IReadOnlyList<object> args)

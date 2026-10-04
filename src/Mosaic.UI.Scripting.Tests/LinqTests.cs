@@ -64,11 +64,11 @@ items
         engine.AddExtensionMethods(typeof(MyExtensions));
         engine.SetValue("model", model);
         engine.ExecuteScript(@"
-model.a = 'Hello world, from Topaz Script!'.WordCount();
-model.b = 'Hello world, from Topaz Script!'.WordCountGeneric(3);
-model.c = 'Hello world, from Topaz Script!'.WordCountGeneric(5.2);
+model.a = 'Hello world, from the script engine!'.WordCount();
+model.b = 'Hello world, from the script engine!'.WordCountGeneric(3);
+model.c = 'Hello world, from the script engine!'.WordCountGeneric(5.2);
 var k = 3
-model.d = 'Hello world, from Topaz Script!'.GenericArguments(k.GetType()).WordCountGeneric(7.2)
+model.d = 'Hello world, from the script engine!'.GenericArguments(k.GetType()).WordCountGeneric(7.2)
 ");
         Assert.Equal(5, model.a);
         Assert.Equal(8, model.b);

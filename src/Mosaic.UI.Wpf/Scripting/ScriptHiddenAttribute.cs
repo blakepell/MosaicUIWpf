@@ -11,7 +11,7 @@
 namespace Mosaic.UI.Wpf.Scripting
 {
     /// <summary>
-    /// Hides a member from editor completion; it does not restrict access through Topaz.
+    /// Hides a member from editor completion; it does not restrict access through the script engine.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
     public sealed class ScriptHiddenAttribute : Attribute

@@ -16,9 +16,9 @@ namespace Mosaic.UI.Scripting.Core
                 DefineVariable(identifier, value, kind, state);
                 return;
             }
-            if (identifierOrReference is TopazIdentifier topazIdentifier)
+            if (identifierOrReference is ScriptIdentifier scriptIdentifier)
             {
-                DefineVariable(topazIdentifier, value, kind, state);
+                DefineVariable(scriptIdentifier, value, kind, state);
                 return;
             }
             if (identifierOrReference is string str)
@@ -51,19 +51,19 @@ namespace Mosaic.UI.Scripting.Core
         }
 
         internal void DefineVariable(
-            TopazIdentifier topazIdentifier,
+            ScriptIdentifier scriptIdentifier,
             object value,
             VariableKind kind,
             VariableState state = VariableState.None)
         {
-            if (topazIdentifier == null)
+            if (scriptIdentifier == null)
             {
                 return;
             }
 
-            var name = topazIdentifier.Name;
+            var name = scriptIdentifier.Name;
             DefineVariable(name, value, kind, state);
-            topazIdentifier.InvalidateLocalCache();
+            scriptIdentifier.InvalidateLocalCache();
         }
 
         internal void DefineVariable(
@@ -79,7 +79,7 @@ namespace Mosaic.UI.Scripting.Core
 
             var name = identifier.Name;
             DefineVariable(name, value, kind, state);
-            identifier.TopazIdentifier.InvalidateLocalCache();
+            identifier.ScriptIdentifier.InvalidateLocalCache();
         }
     }
 }

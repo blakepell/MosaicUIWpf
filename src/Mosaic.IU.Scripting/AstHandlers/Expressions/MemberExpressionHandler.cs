@@ -11,7 +11,7 @@ namespace Mosaic.UI.Scripting.Expressions
             var expr = (MemberExpression)expression;
             var obj = scriptExecutor.ExecuteStatement(expr.Object, token);
             var prop = scriptExecutor.ExecuteStatement(expr.Property, token);
-            return new TopazMemberAccessor(obj, prop, expr.Computed, expr.Optional);
+            return new ScriptMemberAccessor(obj, prop, expr.Computed, expr.Optional);
         }
     }
 }

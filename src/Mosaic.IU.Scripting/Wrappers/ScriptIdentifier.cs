@@ -3,7 +3,7 @@ using Mosaic.UI.Scripting.ErrorHandling;
 
 namespace Mosaic.UI.Scripting
 {
-    internal sealed class TopazIdentifier
+    internal sealed class ScriptIdentifier
     {
         private sealed class CacheEntry
         {
@@ -27,7 +27,7 @@ namespace Mosaic.UI.Scripting
         /// </summary>
         CacheEntry Cache;
 
-        internal TopazIdentifier(string name)
+        internal ScriptIdentifier(string name)
         {
             Name = name;
             Cache = CacheEntry.EmptyEntry;

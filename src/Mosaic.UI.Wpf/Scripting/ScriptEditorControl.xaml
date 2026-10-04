@@ -1,12 +1,16 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:scripting="clr-namespace:Mosaic.UI.Wpf.Scripting"
-                    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
-                    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:scripting="clr-namespace:Mosaic.UI.Wpf.Scripting"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/ExecutionControl/ExecutionControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    <Style x:Key="Mosaic.ScriptEditor.Button" TargetType="Button" BasedOn="{StaticResource MosaicExecutionButtonStyle}">
+    <Style
+        x:Key="Mosaic.ScriptEditor.Button"
+        BasedOn="{StaticResource MosaicExecutionButtonStyle}"
+        TargetType="Button">
         <Setter Property="Width" Value="28" />
         <Setter Property="Height" Value="28" />
         <Setter Property="Padding" Value="5" />
@@ -20,29 +24,54 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type scripting:ScriptEditorControl}">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Margin="3" Visibility="{TemplateBinding ToolBarVisibility}">
-                                <Button Style="{StaticResource Mosaic.ScriptEditor.Button}" Command="{Binding SaveCommand, RelativeSource={RelativeSource TemplatedParent}}" ToolTip="Save (Ctrl+S)" AutomationProperties.Name="Save script">
+                            <StackPanel
+                                Margin="3"
+                                Orientation="Horizontal"
+                                Visibility="{TemplateBinding ToolBarVisibility}">
+                                <Button
+                                    AutomationProperties.Name="Save script"
+                                    Command="{Binding SaveCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Style="{StaticResource Mosaic.ScriptEditor.Button}"
+                                    ToolTip="Save (Ctrl+S)">
                                     <Image Source="/Mosaic.UI.Wpf;component/Scripting/Assets/vs-save-16.png" />
                                 </Button>
-                                <Separator Style="{DynamicResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="4,4" />
-                                <!--  Topaz cannot pause a running script, so the pause button is hidden.  -->
-                                <controls:ExecutionControl VerticalAlignment="Center" ButtonPadding="5" ShowPauseButton="False"
-                                                           PlayCommand="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}" PlayToolTip="Run (F5)"
-                                                           StopCommand="{Binding StopCommand, RelativeSource={RelativeSource TemplatedParent}}" StopToolTip="Stop (F6)"
-                                                           AutomationProperties.Name="Script execution" />
+                                <Separator Margin="4,4" Style="{DynamicResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                                <!--  Script engine cannot pause a running script, so the pause button is hidden.  -->
+                                <controls:ExecutionControl
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Script execution"
+                                    ButtonPadding="5"
+                                    PlayCommand="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                    PlayToolTip="Run (F5)"
+                                    ShowPauseButton="False"
+                                    StopCommand="{Binding StopCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                    StopToolTip="Stop (F6)" />
                             </StackPanel>
-                            <controls:SyntaxEditor x:Name="PART_Editor" Grid.Row="1" Language="JavaScript" ShowLineNumbers="True"
-                                                   FontFamily="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}" FontSize="{TemplateBinding FontSize}" Padding="5"
-                                                   IsReadOnly="{TemplateBinding IsReadOnly}" AutomationProperties.Name="JavaScript source" />
-                            <TextBlock Grid.Row="2" Text="{Binding LastError.Message, RelativeSource={RelativeSource TemplatedParent}}"
-                                       Foreground="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}" TextWrapping="Wrap" />
+                            <controls:SyntaxEditor
+                                x:Name="PART_Editor"
+                                Grid.Row="1"
+                                Padding="5"
+                                AutomationProperties.Name="JavaScript source"
+                                FontFamily="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}"
+                                FontSize="{TemplateBinding FontSize}"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                Language="JavaScript"
+                                ShowLineNumbers="True" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ErrorBrush}}"
+                                Text="{Binding LastError.Message, RelativeSource={RelativeSource TemplatedParent}}"
+                                TextWrapping="Wrap" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

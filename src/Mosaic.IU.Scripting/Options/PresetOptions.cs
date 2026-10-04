@@ -5,7 +5,7 @@
         /// <summary>
         /// Default style
         /// </summary>
-        public static TopazEngineOptions FriendlyStyle =>
+        public static ScriptEngineOptions FriendlyStyle =>
             new()
             {
                 AllowNullReferenceMemberAccess = true,
@@ -17,7 +17,7 @@
                 VarScopeBehavior = VarScopeBehavior.FunctionScope
             };
 
-        public static TopazEngineOptions EcmaJavascript =>
+        public static ScriptEngineOptions EcmaJavascript =>
             new()
             {
                 AllowNullReferenceMemberAccess = false,
@@ -29,7 +29,7 @@
                 VarScopeBehavior = VarScopeBehavior.FunctionScope
             };
     
-        public static TopazEngineOptions EarlyErrorCatchStyle =>
+        public static ScriptEngineOptions EarlyErrorCatchStyle =>
             new()
             {
                 AllowNullReferenceMemberAccess = false,

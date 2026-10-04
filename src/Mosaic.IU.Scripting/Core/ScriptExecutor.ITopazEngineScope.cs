@@ -42,7 +42,7 @@ namespace Mosaic.UI.Scripting.Core
         object IScriptEngineScope.InvokeFunction(string name, CancellationToken token, params object[] args)
         {
             return CallFunction(
-                new TopazIdentifier(name),
+                new ScriptIdentifier(name),
                 args.ToArray(), false, token);
         }
 
@@ -100,7 +100,7 @@ namespace Mosaic.UI.Scripting.Core
         async Task<object> IScriptEngineScope.InvokeFunctionAsync(string name, CancellationToken token, params object[] args)
         {
             return await CallFunctionAsync(
-                new TopazIdentifier(name),
+                new ScriptIdentifier(name),
                 args.ToArray(), false, token);
         }
 

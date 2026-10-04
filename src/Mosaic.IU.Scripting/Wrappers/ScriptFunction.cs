@@ -322,7 +322,7 @@ namespace Mosaic.UI.Scripting
                 throw new NotSupportedException();
             }
 
-            var topazParameters =
+            var scriptParameters =
                 expr1?.Params ??
                 expr2?.Params ??
                 expr3.Params;
@@ -330,8 +330,8 @@ namespace Mosaic.UI.Scripting
             var argTypes = conversionType.GetTypeInfo().GenericTypeArguments;
             var returnType = conversionType.GetMethod("Invoke").ReturnType;
             var isVoid = returnType == typeof(void);
-            if (isVoid && argTypes.Length != topazParameters.Count ||
-                !isVoid && argTypes.Length - 1 != topazParameters.Count
+            if (isVoid && argTypes.Length != scriptParameters.Count ||
+                !isVoid && argTypes.Length - 1 != scriptParameters.Count
                )
             {
                 throw new NotSupportedException();

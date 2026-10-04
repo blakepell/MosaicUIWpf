@@ -34,7 +34,7 @@ namespace Mosaic.UI.Scripting.Interop
                 .FirstOrDefault();
             if (targetMethod == null)
             {
-                throw new TopazException($"Can not create dynamic delegate. Argument length {args.Length} is not supported.");
+                throw new ScriptException($"Can not create dynamic delegate. Argument length {args.Length} is not supported.");
             }
 
             var parameters = new ParameterExpression[args.Length];

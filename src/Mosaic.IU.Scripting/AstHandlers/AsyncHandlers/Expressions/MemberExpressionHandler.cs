@@ -12,7 +12,7 @@ namespace Mosaic.UI.Scripting.Expressions
             var expr = (MemberExpression)expression;
             var obj = await scriptExecutor.ExecuteStatementAsync(expr.Object, token);
             var prop = await scriptExecutor.ExecuteStatementAsync(expr.Property, token);
-            return new TopazMemberAccessor(obj, prop, expr.Computed, expr.Optional);
+            return new ScriptMemberAccessor(obj, prop, expr.Computed, expr.Optional);
         }
     }
 }

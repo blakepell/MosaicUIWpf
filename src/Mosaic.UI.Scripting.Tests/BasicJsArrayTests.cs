@@ -495,7 +495,7 @@ catch(err) {
         Assert.Equal(100, model.c);
         Assert.Equal(50, model.d);
         Assert.Equal(1, model.e);
-        Assert.Equal(typeof(TopazException), model.f.InnerException.GetType());
+        Assert.Equal(typeof(ScriptException), model.f.InnerException.GetType());
     }
 
     [Theory]
@@ -528,7 +528,7 @@ catch(err) {
         Assert.Equal(100, model.c);
         Assert.Equal(50, model.d);
         Assert.Equal(1, model.e);
-        Assert.Equal(typeof(TopazException), model.f.InnerException.GetType());
+        Assert.Equal(typeof(ScriptException), model.f.InnerException.GetType());
     }
 
     [Theory]

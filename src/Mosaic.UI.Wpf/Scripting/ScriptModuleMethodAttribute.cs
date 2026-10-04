@@ -12,7 +12,7 @@ namespace Mosaic.UI.Wpf.Scripting
 {
     /// <summary>
     /// Supplies completion descriptions and signature hints for a public .NET script member.
-    /// This attribute is metadata and does not rename or restrict members in Topaz.
+    /// This attribute is metadata and does not rename or restrict members in the script engine.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
     public sealed class ScriptModuleMethodAttribute : Attribute

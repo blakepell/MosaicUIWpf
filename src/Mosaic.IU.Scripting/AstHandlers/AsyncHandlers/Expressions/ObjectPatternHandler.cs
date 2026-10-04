@@ -17,7 +17,7 @@ namespace Mosaic.UI.Scripting.Expressions
             Func<object, object, CancellationToken, ValueTask> callback,
             CancellationToken token)
         {
-            var topazEngine = scriptExecutor.ScriptEngine;
+            var scriptEngine = scriptExecutor.ScriptEngine;
             var scope = scriptExecutor;
             var props = objectPattern.Properties;
             var len = props.Count;
@@ -29,11 +29,11 @@ namespace Mosaic.UI.Scripting.Expressions
                 {
                     var arg = await scriptExecutor
                         .ExecuteStatementAsync(restElement.Argument, token);
-                    if (arg is TopazIdentifier topazIdentifier)
+                    if (arg is ScriptIdentifier scriptIdentifier)
                     {
-                        topazIdentifier.InvalidateLocalCache();
-                        if (topazEngine
-                            .TryGetObjectMember(value, topazIdentifier.Name,
+                        scriptIdentifier.InvalidateLocalCache();
+                        if (scriptEngine
+                            .TryGetObjectMember(value, scriptIdentifier.Name,
                                 out var item, false))
                         {
                             await callback(arg, item, token);
@@ -49,10 +49,10 @@ namespace Mosaic.UI.Scripting.Expressions
                     {
                         key = scriptExecutor.GetValue(key);
                     }
-                    else if (key is TopazIdentifier topazIdentifier)
+                    else if (key is ScriptIdentifier scriptIdentifier)
                     {
-                        topazIdentifier.InvalidateLocalCache();
-                        key = topazIdentifier.Name;
+                        scriptIdentifier.InvalidateLocalCache();
+                        key = scriptIdentifier.Name;
                     }
                     var keyString = key.ToString();
                     if (keyString == null)
@@ -65,7 +65,7 @@ namespace Mosaic.UI.Scripting.Expressions
                     {
                         if (prop.Value is ArrayPattern nestedArrayPattern)
                         {
-                            if (!topazEngine
+                            if (!scriptEngine
                                     .TryGetObjectMember(
                                         value, keyString, out var nestedValue))
                             {
@@ -82,7 +82,7 @@ namespace Mosaic.UI.Scripting.Expressions
                         }
                         else if (prop.Value is ObjectPattern nestedObjectPattern)
                         {
-                            if (!topazEngine
+                            if (!scriptEngine
                                     .TryGetObjectMember(
                                         value, keyString, out var nestedValue))
                             {
@@ -103,7 +103,7 @@ namespace Mosaic.UI.Scripting.Expressions
                                 .ExecuteExpressionAndGetValueAsync(assignmentPattern.Right, token);
                         }
                     }
-                    if (topazEngine
+                    if (scriptEngine
                         .TryGetObjectMember(value, keyString, out var item))
                     {
                         await callback(left, item, token);

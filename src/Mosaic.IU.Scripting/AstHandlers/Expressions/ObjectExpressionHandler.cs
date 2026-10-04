@@ -28,10 +28,10 @@ namespace Mosaic.UI.Scripting.Expressions
                     {
                         key = scriptExecutor.GetValue(key);
                     }
-                    else if (key is TopazIdentifier topazIdentifier)
+                    else if (key is ScriptIdentifier scriptIdentifier)
                     {
-                        topazIdentifier.InvalidateLocalCache();
-                        key = topazIdentifier.Name;
+                        scriptIdentifier.InvalidateLocalCache();
+                        key = scriptIdentifier.Name;
                     }
                     if (prop.Kind == PropertyKind.Init || prop.Kind == PropertyKind.Data)
                     {
@@ -63,7 +63,7 @@ namespace Mosaic.UI.Scripting.Expressions
             // in an object.
             // Unwrap will happen in the first GetValue statement once.
             // And this is the stage where the object is actually used in an expression.
-            return new TopazObjectWrapper(scriptExecutor, obj);
+            return new ScriptObjectWrapper(scriptExecutor, obj);
         }
     }
 }

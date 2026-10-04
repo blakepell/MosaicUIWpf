@@ -3,7 +3,7 @@ using Mosaic.UI.Scripting.Core;
 
 namespace Mosaic.UI.Scripting
 {
-    internal sealed class TopazObjectWrapper
+    internal sealed class ScriptObjectWrapper
     {
         internal ScriptExecutor ScriptExecutor { get; }
 
@@ -11,7 +11,7 @@ namespace Mosaic.UI.Scripting
 
         bool isUnwrapped;
 
-        internal TopazObjectWrapper(
+        internal ScriptObjectWrapper(
             ScriptExecutor scriptExecutor,
             IJsObject value)
         {

@@ -4,14 +4,14 @@ using Mosaic.UI.Scripting.Options;
 namespace Mosaic.UI.Scripting
 {
     /// <summary>
-    /// Initialization properties for TopazEngine constructor.
-    /// If you don't set some property in the setup, TopazEngine will use default implementation.
+    /// Initialization properties for ScriptEngine constructor.
+    /// If you don't set some property in the setup, ScriptEngine will use default implementation.
     /// </summary>
     public sealed class ScriptEngineSetup
     {
         public bool IsThreadSafe { get; set; } = true;
 
-        public TopazEngineOptions Options { get; set; }
+        public ScriptEngineOptions Options { get; set; }
 
         public IObjectProxyRegistry ObjectProxyRegistry { get; set; }
 

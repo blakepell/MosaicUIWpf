@@ -57,7 +57,7 @@ namespace Mosaic.UI.Scripting.Core
         /// </summary>
         internal DictionarySlim<string, Variable> UnsafeVariables;
 
-        internal TopazEngineOptions Options => ScriptEngine.Options;
+        internal ScriptEngineOptions Options => ScriptEngine.Options;
 
         internal ScriptExecutor(ScriptEngine scriptEngine, bool isThreadSafe = true)
         {
@@ -264,7 +264,7 @@ namespace Mosaic.UI.Scripting.Core
             return statement.Type switch
             {
                 Nodes.Literal => LiteralHandler.Execute(this, statement),
-                Nodes.Identifier => ((Identifier)statement).TopazIdentifier,
+                Nodes.Identifier => ((Identifier)statement).ScriptIdentifier,
                 Nodes.AssignmentExpression => AssignmentExpressionHandler.Execute(this, statement, token),
                 Nodes.ArrayExpression => ArrayExpressionHandler.Execute(this, statement, token),
                 Nodes.BinaryExpression => BinaryExpressionHandler.Execute(this, statement, token),
@@ -353,7 +353,7 @@ namespace Mosaic.UI.Scripting.Core
             return statement.Type switch
             {
                 Nodes.Literal => LiteralHandler.Execute(this, statement),
-                Nodes.Identifier => ((Identifier)statement).TopazIdentifier,
+                Nodes.Identifier => ((Identifier)statement).ScriptIdentifier,
                 Nodes.AssignmentExpression => await AssignmentExpressionHandler.ExecuteAsync(this, statement, token),
                 Nodes.ArrayExpression => await ArrayExpressionHandler.ExecuteAsync(this, statement, token),
                 Nodes.BinaryExpression => await BinaryExpressionHandler.ExecuteAsync(this, statement, token),

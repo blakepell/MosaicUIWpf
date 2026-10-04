@@ -61,7 +61,7 @@ namespace Mosaic.UI.Scripting.Statements
                         token);
                     continue;
                 }
-                var identifier = (TopazIdentifier)await scriptExecutor.ExecuteStatementAsync(id, token);
+                var identifier = (ScriptIdentifier)await scriptExecutor.ExecuteStatementAsync(id, token);
                 var init = declaration.Init;
                 object value;
                 if (init != null)

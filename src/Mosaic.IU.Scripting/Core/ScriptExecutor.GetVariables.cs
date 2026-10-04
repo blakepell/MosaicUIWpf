@@ -99,19 +99,19 @@ namespace Mosaic.UI.Scripting.Core
 
         internal object GetValue(object value)
         {
-            if (value is TopazIdentifier identifier)
+            if (value is ScriptIdentifier identifier)
             {
                 return identifier.GetVariableValue(this);
             }
-            else if (value is TopazMemberAccessor memberAccessor)
+            else if (value is ScriptMemberAccessor memberAccessor)
             {
                 return memberAccessor.Execute(this);
             }
-            else if (value is TopazArrayWrapper arrayWrapper)
+            else if (value is ScriptArrayWrapper arrayWrapper)
             {
                 value = arrayWrapper.UnwrapArray();
             }
-            else if (value is TopazObjectWrapper objectWrapper)
+            else if (value is ScriptObjectWrapper objectWrapper)
             {
                 value = objectWrapper.UnwrapObject();
             }
@@ -121,7 +121,7 @@ namespace Mosaic.UI.Scripting.Core
 
         internal object GetVariableNameOrValue(object value, bool getVariableName)
         {
-            if (getVariableName && value is TopazIdentifier identifier)
+            if (getVariableName && value is ScriptIdentifier identifier)
             {
                 return identifier.Name;
             }

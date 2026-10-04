@@ -21,9 +21,9 @@ namespace Mosaic.UI.Scripting.Core
                 Exceptions.ThrowFunctionIsNotDefined(callee, this);
             }
 
-            if (value is ScriptFunction topazFunction)
+            if (value is ScriptFunction scriptFunction)
             {
-                return topazFunction.Execute(args, token);
+                return scriptFunction.Execute(args, token);
             }
 
             if (value is IInvokable invokable)
@@ -47,9 +47,9 @@ namespace Mosaic.UI.Scripting.Core
                 Exceptions.ThrowFunctionIsNotDefined(callee, this);
             }
 
-            if (value is ScriptFunction topazFunction)
+            if (value is ScriptFunction scriptFunction)
             {
-                return await topazFunction.ExecuteAsync(args, token);
+                return await scriptFunction.ExecuteAsync(args, token);
             }
 
             if (value is IInvokable invokable)

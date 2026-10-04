@@ -10,7 +10,7 @@ using Mosaic.UI.Scripting.Interop;
 namespace Mosaic.UI.Wpf.Scripting;
 
 /// <summary>
-/// Marshals Topaz member access to a registered WPF object's owning dispatcher.
+/// Marshals member access to a registered WPF object's owning dispatcher.
 /// </summary>
 internal sealed class DispatcherObjectScriptProxy(IObjectProxy inner, IObjectProxy fallback) : IObjectProxy
 {
@@ -26,7 +26,7 @@ internal sealed class DispatcherObjectScriptProxy(IObjectProxy inner, IObjectPro
                 found = fallback.TryGetObjectMember(instance, member, out memberValue, isIndexedProperty);
             }
 
-            // Topaz retrieves a method before invoking it; both operations need the dispatcher.
+            // Script engine retrieves a method before invoking it; both operations need the dispatcher.
             if (memberValue is IInvokable method)
             {
                 memberValue = new DispatcherInvokable(dispatcher, method);

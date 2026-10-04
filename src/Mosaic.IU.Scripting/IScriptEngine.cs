@@ -22,7 +22,7 @@ namespace Mosaic.UI.Scripting
         /// <summary>
         /// Engine Options.
         /// </summary>
-        TopazEngineOptions Options { get; set; }
+        ScriptEngineOptions Options { get; set; }
 
         /// <summary>
         /// Global Scope.
