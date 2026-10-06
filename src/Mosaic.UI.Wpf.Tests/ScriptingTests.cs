@@ -22,6 +22,36 @@ namespace Mosaic.UI.Wpf.Tests;
 
 public class ScriptingTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ScriptsCanOverlapOnTheSameEngine(bool separateEnvironments)
+    {
+        var engine = new ScriptEngine();
+        var environment = new ScriptEnvironment(engine);
+        var triggerEnvironment = separateEnvironments ? new ScriptEnvironment(engine) : environment;
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        engine.SetValue("aliasStarted", (Action)(() => entered.TrySetResult()));
+        engine.SetValue("waitForTrigger", (Func<Task>)(() => release.Task));
+        engine.SetValue("triggerArrived", (Action)(() => release.TrySetResult()));
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
+        var alias = environment.ExecuteAsync("let local = 1; aliasStarted(); await waitForTrigger();", cancellation.Token);
+        Task trigger = Task.CompletedTask;
+        try
+        {
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            trigger = triggerEnvironment.ExecuteAsync("let local = 2; triggerArrived();", cancellation.Token);
+            await Task.WhenAll(alias, trigger).WaitAsync(TimeSpan.FromSeconds(5));
+        }
+        finally
+        {
+            release.TrySetResult();
+            await Task.WhenAll(alias, trigger);
+        }
+    }
+
     [Fact]
     public async Task DefaultsAndCustomBridgesExecuteRepeatedlyWithoutCrossEnvironmentPollution()
     {

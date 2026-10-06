@@ -44,7 +44,6 @@
       <Pack>True</Pack>
       <PackagePath>\3rdParty\</PackagePath>
     </None>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

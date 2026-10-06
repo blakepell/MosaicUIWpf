@@ -7,7 +7,6 @@
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Mosaic.UI.Wpf.Scripting.ScriptCommands;
@@ -21,12 +20,12 @@ namespace Mosaic.UI.Wpf.Scripting;
 /// </summary>
 /// <remarks>
 /// Register on the UI thread before executing scripts. A supplied engine is not reset or disposed.
-/// Use RegisterCompletionType for values already installed in that engine. Editors sharing an engine
-/// serialize execution, but direct calls to the engine remain the caller's responsibility.
+/// Use RegisterCompletionType for values already installed in that engine. Script executions may overlap,
+/// including across environments sharing an engine. Use a thread-safe engine for concurrent execution;
+/// synchronization of shared script state and registered objects remains the caller's responsibility.
 /// </remarks>
 public sealed class ScriptEnvironment
 {
-    private static readonly ConditionalWeakTable<ScriptEngine, SemaphoreSlim> EngineLocks = new();
     private readonly Dictionary<string, ScriptRegistration> _registrations = new(StringComparer.Ordinal);
 
     /// <summary>
@@ -169,25 +168,19 @@ public sealed class ScriptEnvironment
     }
 
     /// <summary>
-    /// Executes in a fresh lexical block so let and const declarations can be run repeatedly.
+    /// Executes on a worker thread in a fresh lexical block so let and const declarations can be run repeatedly.
     /// </summary>
+    /// <remarks>
+    /// Calls may execute concurrently on the same engine; this method does not serialize script runs.
+    /// </remarks>
     /// <param name="code">The script source.</param>
     /// <param name="cancellationToken">A cancellation token for queued and executing work.</param>
     public async Task ExecuteAsync(string code, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(code);
-        var gate = EngineLocks.GetValue(Engine, _ => new SemaphoreSlim(1, 1));
-        await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
-        try
-        {
-            // Script engine can execute CPU-bound script synchronously before its first await.
-            await Task.Run(async () => await Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken)
-                .ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
-        }
-        finally
-        {
-            gate.Release();
-        }
+        // Script engine can execute CPU-bound script synchronously before its first await.
+        await Task.Run(() => Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     private void RegisterDefaults()
