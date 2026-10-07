@@ -14,7 +14,13 @@
         the exact type, so a ListBox style would never reach AvalonEdit's derived list.
     -->
 
-    <Style TargetType="{x:Type ListBoxItem}">
+    <!--
+        Applied through the list's ItemContainerStyle rather than implicitly. Filtering replaces the list's
+        ItemsSource on every keystroke, which detaches the old containers from the window; an implicit style
+        is then lost and the stock ListBoxItem style's FindAncestor ItemsControl bindings log errors. An
+        ItemContainerStyle is set on each container directly, so it stays with the container.
+    -->
+    <Style x:Key="CompletionListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
         <Setter Property="MinHeight" Value="20" />
         <Setter Property="Padding" Value="6,2" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -63,6 +69,7 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.MonospaceFontFamily}}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource CompletionListBoxItemStyle}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
     </Style>
 

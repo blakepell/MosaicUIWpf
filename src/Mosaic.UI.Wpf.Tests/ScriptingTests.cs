@@ -4,6 +4,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -258,6 +259,44 @@ public class ScriptingTests
     });
 
     [Fact]
+    public void FilteringCompletionsDoesNotLogContentAlignmentBindingErrors() => RunStaAsync(async () =>
+    {
+        var listener = new BindingErrorListener();
+        PresentationTraceSources.Refresh();
+        PresentationTraceSources.DataBindingSource.Listeners.Add(listener);
+        PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Error;
+        var window = new Window { Width = 300, Height = 300, ShowActivated = false, WindowStyle = WindowStyle.None };
+        try
+        {
+            ScriptEditorSupport.AddThemeResources(window, MosaicThemeMode.Dark);
+            var list = new CompletionList { Style = (Style)window.FindResource("ScriptCompletionListStyle") };
+            foreach (string name in new[] { "Clear", "Close", "Columns", "Count", "DataList", "Date", "Debug", "Delete", "Dialog", "Dispatch" })
+            {
+                list.CompletionData.Add(new TestCompletionData(name));
+            }
+
+            window.Content = list;
+            window.Show();
+            window.UpdateLayout();
+
+            // Each keystroke filters the list, which replaces the ListBox's ItemsSource and detaches its containers.
+            foreach (string typed in new[] { "D", "Da", "Dat", "DataL" })
+            {
+                list.SelectItem(typed);
+                window.UpdateLayout();
+                await Dispatcher.Yield(DispatcherPriority.Background);
+            }
+
+            Assert.DoesNotContain(listener.Messages, m => m.Contains("ContentAlignment", StringComparison.Ordinal));
+        }
+        finally
+        {
+            window.Close();
+            PresentationTraceSources.DataBindingSource.Listeners.Remove(listener);
+        }
+    });
+
+    [Fact]
     public void RetemplatingDetachesTheOldEditorAndUnloadingCancelsExecution() => RunStaAsync(async () =>
     {
         var control = Realize(new ScriptEditorControl { Text = "let count = 0;" }, MosaicThemeMode.Dark);
@@ -454,6 +493,23 @@ public class ScriptingTests
     }
 
     public class AppValue { public string Name => "Example"; }
+
+    private sealed class TestCompletionData(string text) : ICompletionData
+    {
+        public System.Windows.Media.ImageSource? Image => null;
+        public string Text => text;
+        public object Content => text;
+        public object Description => text;
+        public double Priority => 0;
+        public void Complete(ICSharpCode.AvalonEdit.Editing.TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs) { }
+    }
+
+    private sealed class BindingErrorListener : System.Diagnostics.TraceListener
+    {
+        public System.Collections.Concurrent.ConcurrentQueue<string> Messages { get; } = new();
+        public override void Write(string? message) { }
+        public override void WriteLine(string? message) { if (message != null) Messages.Enqueue(message); }
+    }
 
     public class ExampleViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
