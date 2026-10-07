@@ -72,9 +72,10 @@
                                                         VerticalAlignment="Center"
                                                         RenderOptions.BitmapScalingMode="HighQuality"
                                                         Source="{Binding Icon}" />
+                                                    <!--  Follow the row's inherited foreground (like the other columns) so selected rows switch to the selection foreground.  -->
                                                     <controls:EditableTextBlock
                                                         VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                                                        Foreground="{Binding (TextElement.Foreground), RelativeSource={RelativeSource AncestorType={x:Type GridViewRowPresenter}}}"
                                                         IsDoubleClickToEditEnabled="False"
                                                         Text="{Binding Name}"
                                                         ToolTip="{Binding FullPath}"

@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Mosaic.UI.Wpf.Controls.Scripting;
+using Mosaic.UI.Wpf.Controls.Scripting.DataList;
 using Mosaic.UI.Wpf.Scripting;
 using Xunit;
 

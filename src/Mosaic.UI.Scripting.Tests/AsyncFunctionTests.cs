@@ -1,9 +1,9 @@
 ﻿using Xunit;
 using System;
 using System.Net.Http;
-using Mosaic.UI.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.API;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class AsyncFunctionTests
 {

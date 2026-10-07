@@ -1,16 +1,13 @@
 ﻿using Xunit;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Mosaic.UI.Scripting.API;
-using Mosaic.UI.Scripting.Interop;
+using Mosaic.UI.Wpf.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.Interop;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class AwaitTests
 {

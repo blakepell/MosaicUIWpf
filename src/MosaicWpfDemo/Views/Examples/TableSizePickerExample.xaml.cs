@@ -8,10 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Themes;
 

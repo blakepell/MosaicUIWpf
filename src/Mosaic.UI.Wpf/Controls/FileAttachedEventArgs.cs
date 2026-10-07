@@ -8,8 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
-
 namespace Mosaic.UI.Wpf.Controls
 {
     /// <summary>

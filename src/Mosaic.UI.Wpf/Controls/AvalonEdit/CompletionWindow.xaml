@@ -9,7 +9,7 @@
         SyntaxCompletionController. The completion window is a separate top level Window, so it never
         inherits the host control's resource scope; the DynamicResource lookups below fall through to
         Application.Current.Resources, where the consuming application's ThemeManager lives.
-
+        
         The list style targets CompletionListBox rather than ListBox: WPF implicit styles are keyed on
         the exact type, so a ListBox style would never reach AvalonEdit's derived list.
     -->

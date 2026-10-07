@@ -11,7 +11,6 @@
 using Microsoft.Xaml.Behaviors;
 using System.Globalization;
 using System.Windows.Documents;
-using System.Windows.Threading;
 
 namespace Mosaic.UI.Wpf.Behaviors
 {

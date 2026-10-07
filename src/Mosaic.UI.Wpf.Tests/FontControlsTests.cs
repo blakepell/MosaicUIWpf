@@ -9,7 +9,6 @@
  */
 
 using System.Runtime.ExceptionServices;
-using System.Windows;
 using System.Windows.Media;
 using Mosaic.UI.Wpf.Controls;
 using Xunit;

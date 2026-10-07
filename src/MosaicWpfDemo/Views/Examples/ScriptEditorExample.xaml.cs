@@ -36,16 +36,24 @@ namespace MosaicWpfDemo.Views.Examples
                 // Click Run or press F5 to execute this script.
                 const numbers = [10, 20, 30];
                 let total = 0;
-
+                
                 for (const number of numbers) {
                     total += number;
                 }
-
+                
+                let answer = ui.Confirm("Would you like to update the label on the UI?");
+                
                 // vm is the example's view model; setting its property updates the bound label above.
-                vm.TestLabel = "This was set from JavaScript. The total is " + total + ".";
-
-                // The built-in ui module provides themed dialogs.
-                ui.Alert("Hello from Mosaic! The total is " + total + ".");
+                if (answer) {
+                	vm.TestLabel = "This was set from JavaScript. The total is " + total + ".";
+                
+                	// The built-in ui module provides themed dialogs.
+                	ui.Alert("Hello from Mosaic! The total is " + total + ". The label has been updated");	
+                }
+                else {
+                	// The built-in ui module provides themed dialogs.
+                	ui.Alert("Hello from Mosaic! The total is " + total + ". The label was NOT updated");
+                }
                 """;
         }
     }

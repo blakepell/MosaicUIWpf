@@ -36,8 +36,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BbsNavigator.Tests", "src\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mosaic.UI.Scripting.Tests", "src\Mosaic.UI.Scripting.Tests\Mosaic.UI.Scripting.Tests.csproj", "{182E0171-2AC9-ED59-B1FB-C215537AD51D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mosaic.UI.Scripting", "src\Mosaic.IU.Scripting\Mosaic.UI.Scripting.csproj", "{DB12EDBA-6609-DBFD-3810-5340392EFEE2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -192,18 +190,6 @@ Global
 		{182E0171-2AC9-ED59-B1FB-C215537AD51D}.Release|x64.Build.0 = Release|Any CPU
 		{182E0171-2AC9-ED59-B1FB-C215537AD51D}.Release|x86.ActiveCfg = Release|Any CPU
 		{182E0171-2AC9-ED59-B1FB-C215537AD51D}.Release|x86.Build.0 = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|x64.Build.0 = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Debug|x86.Build.0 = Debug|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|x64.ActiveCfg = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|x64.Build.0 = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|x86.ActiveCfg = Release|Any CPU
-		{DB12EDBA-6609-DBFD-3810-5340392EFEE2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

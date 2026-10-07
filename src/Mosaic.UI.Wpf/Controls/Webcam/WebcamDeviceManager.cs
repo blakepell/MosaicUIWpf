@@ -10,7 +10,6 @@
 
 // ReSharper disable CheckNamespace
 
-using System.Threading.Tasks;
 using Mosaic.UI.Wpf.Common;
 using static Mosaic.UI.Wpf.Controls.MediaFoundationInterop;
 

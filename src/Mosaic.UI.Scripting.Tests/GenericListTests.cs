@@ -1,8 +1,8 @@
 ﻿using Xunit;
 using System.Collections.Generic;
-using Mosaic.UI.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.API;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class GenericListTests
 {

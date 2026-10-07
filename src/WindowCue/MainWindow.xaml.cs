@@ -294,7 +294,7 @@ namespace WindowCue
 
         private void RemoveAll_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = System.Windows.MessageBox.Show(
                 "Remove all pinned items?",
                 "Remove All",
                 MessageBoxButton.YesNo,

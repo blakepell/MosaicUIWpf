@@ -84,6 +84,7 @@
                     Header="_New File"
                     InputGestureText="Ctrl+N" />
                 <MenuItem Command="{Binding NewMarkdownFileCommand}" Header="New _Markdown File" />
+                <MenuItem Command="{Binding NewMosaicScriptCommand}" Header="New Mosaic _Script" />
                 <Separator />
                 <MenuItem
                     Command="{Binding OpenFileCommand}"

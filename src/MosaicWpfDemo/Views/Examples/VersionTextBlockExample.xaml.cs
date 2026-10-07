@@ -8,9 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
-using System.Windows.Input;
-
 namespace MosaicWpfDemo.Views.Examples
 {
     public partial class VersionTextBlockExample

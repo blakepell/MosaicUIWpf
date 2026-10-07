@@ -9,12 +9,12 @@
  */
 
 using BbsNavigator.Models;
-using Mosaic.UI.Wpf.Scripting;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Mosaic.UI.Wpf.Controls.Scripting;
 
 namespace BbsNavigator.Views;
 

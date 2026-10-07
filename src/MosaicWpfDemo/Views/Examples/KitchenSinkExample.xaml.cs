@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using Mosaic.UI.Wpf.Controls;
 using System.Windows.Media;
 
 namespace MosaicWpfDemo.Views.Examples

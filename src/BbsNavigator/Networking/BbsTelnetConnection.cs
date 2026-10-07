@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using Mosaic.UI.Wpf.Controls.VT52Terminal;
 using System.Buffers;
 using System.IO;
 using System.Net.Sockets;

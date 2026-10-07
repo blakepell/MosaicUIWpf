@@ -9,7 +9,6 @@
  */
 
 using Mosaic.UI.Wpf.Interfaces;
-using System.ComponentModel;
 
 namespace Mosaic.UI.Wpf.Controls
 {

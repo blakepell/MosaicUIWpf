@@ -1,0 +1,68 @@
+﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Mosaic.UI.Wpf.Scripting.ErrorHandling;
+using Mosaic.UI.Wpf.Scripting.Interop;
+
+namespace Mosaic.UI.Wpf.Scripting.Core
+{
+    internal sealed partial class ScriptExecutor
+    {
+        internal object CallFunction(object callee, IReadOnlyList<object> args, bool optional, CancellationToken token)
+        {
+            var value = GetValue(callee);
+            if (value == null)
+            {
+                if (optional)
+                {
+                    return GetNullOrUndefined();
+                }
+
+                Exceptions.ThrowFunctionIsNotDefined(callee, this);
+            }
+
+            if (value is ScriptFunction scriptFunction)
+            {
+                return scriptFunction.Execute(args, token);
+            }
+
+            if (value is IInvokable invokable)
+            {
+                return invokable.Invoke(args);
+            }
+
+            return ScriptEngine.DelegateInvoker.Invoke(value, args);
+        }
+
+        internal async ValueTask<object> CallFunctionAsync(object callee, IReadOnlyList<object> args, bool optional, CancellationToken token)
+        {
+            var value = GetValue(callee);
+            if (value == null)
+            {
+                if (optional)
+                {
+                    return GetNullOrUndefined();
+                }
+
+                Exceptions.ThrowFunctionIsNotDefined(callee, this);
+            }
+
+            if (value is ScriptFunction scriptFunction)
+            {
+                return await scriptFunction.ExecuteAsync(args, token);
+            }
+
+            if (value is IInvokable invokable)
+            {
+                return invokable.Invoke(args);
+            }
+
+            return ScriptEngine.DelegateInvoker.Invoke(value, args);
+        }
+
+        internal object GetNullOrUndefined()
+        {
+            return Options.NoUndefined ? null : Undefined.Value;
+        }
+    }
+}

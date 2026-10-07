@@ -8,7 +8,7 @@
         Application.Resources instead of loading it per-instance, this is essential.
     -->
     <ContextMenu x:Key="VT52TerminalContextMenu" x:Shared="false">
-        <!-- Copy the terminal selection even when a command box or another control has focus. -->
+        <!--  Copy the terminal selection even when a command box or another control has focus.  -->
         <MenuItem
             Command="{x:Static vt:VT52Terminal.CopyTextCommand}"
             CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"

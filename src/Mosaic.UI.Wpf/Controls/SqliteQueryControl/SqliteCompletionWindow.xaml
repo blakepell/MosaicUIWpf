@@ -6,10 +6,10 @@
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Scripting/ScriptCompletionWindow.xaml" />
+        <ResourceDictionary Source="/Mosaic.UI.Wpf;component/Controls/Scripting/ScriptCompletionWindow.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- Simple schema symbols on a 16-unit grid. -->
+    <!--  Simple schema symbols on a 16-unit grid.  -->
     <Geometry x:Key="SqliteTableGeometry" po:Freeze="True">M1,1H15V15H1Z M2,2V5H14V2Z M2,6V9H5V6Z M6,6V9H14V6Z M2,10V14H5V10Z M6,10V14H14V10Z</Geometry>
     <Geometry x:Key="SqliteViewGeometry" po:Freeze="True">M1,1H12V4H15V15H4V12H1Z M2,2V5H4V4H11V2Z M2,6V11H4V6Z M5,5V8H14V5Z M5,9V14H8V9Z M9,9V14H14V9Z</Geometry>
     <Geometry x:Key="SqliteColumnGeometry" po:Freeze="True">M4,1H12V15H4Z M5,2V5H11V2Z M5,6V9H11V6Z M5,10V14H11V10Z</Geometry>
@@ -17,13 +17,31 @@
 
     <DataTemplate x:Key="SqliteCompletionItemTemplate">
         <DockPanel HorizontalAlignment="Stretch">
-            <Path x:Name="Icon" Width="16" Height="16" Margin="0,0,5,0"
-                  VerticalAlignment="Center" DockPanel.Dock="Left" Stretch="Uniform" SnapsToDevicePixels="True"
-                  Data="{StaticResource SqliteColumnGeometry}" Fill="{DynamicResource ScriptCompletionPropertyBrush}" />
-            <TextBlock x:Name="Detail" MaxWidth="150" Margin="10,0,0,0" VerticalAlignment="Center"
-                       DockPanel.Dock="Right" Foreground="{DynamicResource ScriptCompletionDetailBrush}"
-                       Text="{Binding Detail, Mode=OneTime}" TextAlignment="Right" TextTrimming="CharacterEllipsis" />
-            <TextBlock VerticalAlignment="Center" Text="{Binding Text, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
+            <Path
+                x:Name="Icon"
+                Width="16"
+                Height="16"
+                Margin="0,0,5,0"
+                VerticalAlignment="Center"
+                Data="{StaticResource SqliteColumnGeometry}"
+                DockPanel.Dock="Left"
+                Fill="{DynamicResource ScriptCompletionPropertyBrush}"
+                SnapsToDevicePixels="True"
+                Stretch="Uniform" />
+            <TextBlock
+                x:Name="Detail"
+                MaxWidth="150"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Foreground="{DynamicResource ScriptCompletionDetailBrush}"
+                Text="{Binding Detail, Mode=OneTime}"
+                TextAlignment="Right"
+                TextTrimming="CharacterEllipsis" />
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{Binding Text, Mode=OneTime}"
+                TextTrimming="CharacterEllipsis" />
         </DockPanel>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Kind, Mode=OneTime}" Value="Table">
@@ -45,8 +63,10 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <Style x:Key="SqliteCompletionListStyle" TargetType="{x:Type completion:CompletionList}"
-           BasedOn="{StaticResource ScriptCompletionListStyle}">
+    <Style
+        x:Key="SqliteCompletionListStyle"
+        BasedOn="{StaticResource ScriptCompletionListStyle}"
+        TargetType="{x:Type completion:CompletionList}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type completion:CompletionList}">

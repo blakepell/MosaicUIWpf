@@ -8,10 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-
 namespace Mosaic.UI.Wpf.Themes
 {
     /// <summary>

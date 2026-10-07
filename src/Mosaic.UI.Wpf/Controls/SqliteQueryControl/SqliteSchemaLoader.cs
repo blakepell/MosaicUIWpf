@@ -11,7 +11,6 @@
 using Microsoft.Data.Sqlite;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Threading.Tasks;
 
 // ReSharper disable CheckNamespace
 

@@ -11,7 +11,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using Argus.Memory;
-using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Themes;
 using MosaicWpfDemo.Common;
 using MosaicMosaicThemeMode = Mosaic.UI.Wpf.MosaicThemeMode;

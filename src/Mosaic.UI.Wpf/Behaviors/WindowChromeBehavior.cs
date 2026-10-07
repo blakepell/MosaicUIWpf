@@ -10,9 +10,7 @@
 
 using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Themes;
-using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Shell;
 
 namespace Mosaic.UI.Wpf.Behaviors

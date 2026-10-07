@@ -1,9 +1,8 @@
-﻿using Mosaic.UI.Scripting;
-using Xunit;
-using Mosaic.UI.Scripting.API;
-using Mosaic.UI.Scripting.Options;
+﻿using Xunit;
+using Mosaic.UI.Wpf.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.Options;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class FunctionTests
 {

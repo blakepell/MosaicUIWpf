@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class CancellationTests
 {

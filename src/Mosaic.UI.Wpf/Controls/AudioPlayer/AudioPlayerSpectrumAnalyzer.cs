@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Threading.Tasks;
 using Mosaic.UI.Wpf.Controls.WaveformVisualizer;
 
 // ReSharper disable CheckNamespace

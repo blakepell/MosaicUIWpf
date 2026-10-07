@@ -28,7 +28,8 @@ namespace MosaicTextEditor.Models
             [".md"] = EditorDocumentKind.Markdown,
             [".markdown"] = EditorDocumentKind.Markdown,
             [".mdown"] = EditorDocumentKind.Markdown,
-            [".mkd"] = EditorDocumentKind.Markdown
+            [".mkd"] = EditorDocumentKind.Markdown,
+            [".mosx"] = EditorDocumentKind.Script
         };
 
         /// <summary>

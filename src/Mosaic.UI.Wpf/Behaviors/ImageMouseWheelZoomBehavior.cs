@@ -9,7 +9,6 @@
  */
 
 using Microsoft.Xaml.Behaviors;
-using System.ComponentModel;
 
 namespace Mosaic.UI.Wpf.Behaviors
 {

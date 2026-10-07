@@ -9,7 +9,7 @@
  */
 
 using System.Text;
-using Mosaic.UI.Wpf.Scripting;
+using Mosaic.UI.Wpf.Controls.Scripting;
 using Xunit;
 
 namespace Mosaic.UI.Wpf.Tests;

@@ -9,7 +9,6 @@
  */
 
 using Microsoft.Xaml.Behaviors;
-using System.Diagnostics;
 using System.Windows.Controls.Primitives;
 
 namespace Mosaic.UI.Wpf.Behaviors

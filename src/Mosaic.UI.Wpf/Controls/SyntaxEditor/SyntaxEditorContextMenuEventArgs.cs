@@ -8,8 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
-using System.Windows.Controls;
+
 
 // ReSharper disable CheckNamespace
 

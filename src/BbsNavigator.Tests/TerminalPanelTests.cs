@@ -12,7 +12,7 @@ using BbsNavigator.Common;
 using BbsNavigator.Views;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
-using Mosaic.UI.Wpf.Scripting;
+using Mosaic.UI.Wpf.Controls.Scripting;
 using System.Runtime.ExceptionServices;
 using System.Windows.Threading;
 using Xunit;

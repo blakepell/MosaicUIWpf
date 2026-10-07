@@ -1,10 +1,8 @@
 ﻿using Xunit;
-using System.Collections;
 using System.Text.RegularExpressions;
-using Mosaic.UI.Scripting;
-using Mosaic.UI.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.API;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class AddNamespaceTests
 {

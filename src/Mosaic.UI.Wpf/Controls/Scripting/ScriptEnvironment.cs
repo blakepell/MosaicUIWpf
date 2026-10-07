@@ -1,0 +1,234 @@
+/*
+ * Mosaic UI for WPF
+ * @project lead      : Blake Pell
+ * @license           : MIT - https://opensource.org/license/mit/
+ */
+
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using Mosaic.UI.Wpf.Controls.Scripting.ScriptCommands;
+using Mosaic.UI.Wpf.Scripting;
+using Mosaic.UI.Wpf.Scripting.API;
+
+namespace Mosaic.UI.Wpf.Controls.Scripting;
+
+/// <summary>
+/// Owns the registrations shared by a script engine and its editors.
+/// </summary>
+/// <remarks>
+/// Register on the UI thread before executing scripts. A supplied engine is not reset or disposed.
+/// Use RegisterCompletionType for values already installed in that engine. Script executions may overlap,
+/// including across environments sharing an engine. Use a thread-safe engine for concurrent execution;
+/// synchronization of shared script state and registered objects remains the caller's responsibility.
+/// </remarks>
+public sealed class ScriptEnvironment
+{
+    private readonly Dictionary<string, ScriptRegistration> _registrations = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Initializes a new instance of the ScriptEnvironment class.
+    /// </summary>
+    /// <param name="engine">An existing engine, or null to create a configured default.</param>
+    /// <param name="includeDefaults">Whether to install default bridges into an existing engine.</param>
+    public ScriptEnvironment(ScriptEngine? engine = null, bool includeDefaults = false)
+    {
+        Engine = engine ?? new ScriptEngine();
+        Registrations = new ReadOnlyDictionary<string, ScriptRegistration>(_registrations);
+        if (engine == null || includeDefaults)
+        {
+            RegisterDefaults();
+        }
+    }
+
+    /// <summary>
+    /// Gets the engine used to execute scripts.
+    /// </summary>
+    public ScriptEngine Engine { get; }
+
+    /// <summary>
+    /// Gets the globals belonging to this environment; the default setup exposes them as globals.
+    /// </summary>
+    public ConcurrentDictionary<string, object> Globals { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Gets the aliases available for completion and highlighting.
+    /// </summary>
+    public IReadOnlyDictionary<string, ScriptRegistration> Registrations { get; }
+
+    /// <summary>
+    /// Gets the extension methods scripts can currently call: the defaults, those added to the engine, and those
+    /// of namespaces imported by Import or a script's include statement. A new list is returned after a change.
+    /// </summary>
+    public IReadOnlyList<MethodInfo> ExtensionMethods => Engine.ExtensionMethods;
+
+    /// <summary>
+    /// Occurs when a registration is added or replaced.
+    /// </summary>
+    public event EventHandler? RegistrationsChanged;
+
+    /// <summary>
+    /// Registers a constructible or static .NET type in both the engine and editor.
+    /// </summary>
+    /// <param name="type">The type to expose.</param>
+    /// <param name="alias">An optional script name, defaulting to ScriptModuleAttribute.Name or the type name.</param>
+    public void RegisterType(Type type, string? alias = null)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        alias = ResolveAlias(type, alias);
+        Engine.AddType(type, alias);
+        RegisterCompletionType(alias, type, true);
+    }
+
+    /// <summary>
+    /// Registers an object, including derived application command bridges, in the engine and editor.
+    /// </summary>
+    /// <remarks>
+    /// Registered WPF dispatcher objects retain their identity. Property access and method calls
+    /// are marshalled to the object's dispatcher while the script continues to run on a worker thread.
+    /// </remarks>
+    /// <param name="alias">The script name to add or replace.</param>
+    /// <param name="instance">The object exposed under that name.</param>
+    public void RegisterObject(string alias, object instance)
+    {
+        ValidateAlias(alias);
+        ArgumentNullException.ThrowIfNull(instance);
+        if (instance is DispatcherObject)
+        {
+            var registry = Engine.ObjectProxyRegistry;
+            registry.TryGetObjectProxy(instance, out var existingProxy);
+            if (existingProxy is not DispatcherObjectScriptProxy)
+            {
+                var proxy = new DispatcherObjectScriptProxy(existingProxy ?? Engine.DefaultObjectProxy, Engine.DefaultObjectProxy);
+                registry.RemoveObjectProxy(instance.GetType());
+                registry.AddObjectProxy(instance.GetType(), proxy);
+            }
+        }
+        Engine.SetValue(alias, instance);
+        RegisterCompletionType(alias, instance.GetType(), false, instance);
+    }
+
+    /// <summary>
+    /// Registers an attributed command object using its module name.
+    /// </summary>
+    /// <param name="instance">The application command object.</param>
+    public void RegisterModule(object instance)
+    {
+        ArgumentNullException.ThrowIfNull(instance);
+        RegisterObject(ResolveAlias(instance.GetType(), null), instance);
+    }
+
+    /// <summary>
+    /// Describes a value already present in a caller-supplied engine without replacing it.
+    /// </summary>
+    /// <param name="alias">The script name.</param>
+    /// <param name="type">The exposed type.</param>
+    /// <param name="isType">Whether the alias represents a .NET type rather than an instance.</param>
+    /// <param name="instance">An optional instance for dictionary key completion.</param>
+    public void RegisterCompletionType(string alias, Type type, bool isType = false, object? instance = null)
+    {
+        ValidateAlias(alias);
+        ArgumentNullException.ThrowIfNull(type);
+        _registrations[alias] = new ScriptRegistration(alias, type, isType, instance);
+        RegistrationsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Imports namespaces so scripts can use their types by short name, eg: new StringBuilder()
+    /// after Import("System.Text"). Script variables and registered aliases take precedence.
+    /// </summary>
+    /// <param name="namespaces">The full names of the namespaces, in precedence order.</param>
+    public void Import(params string[] namespaces)
+    {
+        Engine.Imports(namespaces);
+    }
+
+    /// <summary>
+    /// Gets a registered alias, falling back to a type resolved through the engine's imported namespaces.
+    /// </summary>
+    /// <param name="alias">The script name.</param>
+    /// <param name="registration">The registration, or a type registration for an imported name.</param>
+    public bool TryGetRegistration(string alias, [NotNullWhen(true)] out ScriptRegistration? registration)
+    {
+        if (_registrations.TryGetValue(alias, out registration))
+        {
+            return true;
+        }
+
+        if (Engine.TryResolveImport(alias, out var typeProxy) && typeProxy.ProxiedType is { } type)
+        {
+            registration = new ScriptRegistration(alias, type, true, null);
+            return true;
+        }
+
+        registration = null;
+        return false;
+    }
+
+    /// <summary>
+    /// Executes on a worker thread in a fresh lexical block so let and const declarations can be run repeatedly.
+    /// </summary>
+    /// <remarks>
+    /// Calls may execute concurrently on the same engine; this method does not serialize script runs.
+    /// </remarks>
+    /// <param name="code">The script source.</param>
+    /// <param name="cancellationToken">A cancellation token for queued and executing work.</param>
+    public async Task ExecuteAsync(string code, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(code);
+        // Script engine can execute CPU-bound script synchronously before its first await.
+        await Task.Run(() => Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken),
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private void RegisterDefaults()
+    {
+        Engine.AddNamespace("System", null, true);
+        foreach (var (alias, type) in new (string, Type)[] {
+            ("string", typeof(string)), ("int", typeof(int)), ("date", typeof(DateTime)),
+            ("file", typeof(File)), ("directory", typeof(Directory)), ("double", typeof(double)),
+            ("math", typeof(Math)), ("guid", typeof(Guid)), ("StringBuilder", typeof(StringBuilder)),
+            ("DataList", typeof(Mosaic.UI.Wpf.Controls.Scripting.DataList.DataList)) })
+        {
+            RegisterType(type, alias);
+        }
+
+        RegisterObject("JSON", new JSONObject());
+        RegisterObject("globalThis", new GlobalThis(Engine.GlobalScope));
+        RegisterObject("globals", Globals);
+        Engine.AddExtensionMethods(typeof(StringExtensions));
+        Engine.AddExtensionMethods(typeof(NumericExtensions));
+        Engine.AddExtensionMethods(typeof(ObjectExtensions));
+        Engine.AddExtensionMethods(typeof(Enumerable));
+        foreach (var module in new object[] { new ProcessScriptCommands(), new HashScriptCommands(),
+            new ClipboardScriptCommands(), new HttpScriptCommands(), new ScreenshotScriptCommands(),
+            new MouseScriptCommands(), new EnvironmentScriptCommands(), new LogScriptCommands(),
+            new AiScriptCommands(), new RegexScriptCommands(), new UiScriptCommands() })
+        {
+            RegisterModule(module);
+        }
+    }
+
+    private static string ResolveAlias(Type type, string? alias)
+    {
+        alias ??= type.GetCustomAttribute<ScriptModuleAttribute>()?.Name ?? type.Name;
+        ValidateAlias(alias);
+        return alias;
+    }
+
+    private static void ValidateAlias(string alias)
+    {
+        if (string.IsNullOrWhiteSpace(alias) || !Regex.IsMatch(alias, @"^[$\p{L}_][$\p{L}\p{N}_]*$"))
+        {
+            throw new ArgumentException("A script alias must be a JavaScript identifier.", nameof(alias));
+        }
+    }
+}
+
+/// <summary>
+/// Describes an alias exposed to scripting and completion.
+/// </summary>
+/// <param name="Alias">The JavaScript identifier.</param>
+/// <param name="Type">The reflected .NET type.</param>
+/// <param name="IsType">Whether this is a type alias.</param>
+/// <param name="Instance">The optional registered instance.</param>
+public sealed record ScriptRegistration(string Alias, Type Type, bool IsType, object? Instance);

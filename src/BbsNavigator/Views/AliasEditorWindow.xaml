@@ -52,7 +52,7 @@ Ctrl+Space shows completions.</TextBlock>
                 </StackPanel>
             </ScrollViewer>
 
-            <scripting:ScriptEditorControl x:Name="ScriptEditor" Grid.Column="2"
+            <mosaic:ScriptEditorControl x:Name="ScriptEditor" Grid.Column="2"
                                            ToolBarVisibility="Collapsed"
                                            Text="{Binding Command, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>

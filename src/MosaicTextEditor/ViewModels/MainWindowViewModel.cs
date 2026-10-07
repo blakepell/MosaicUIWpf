@@ -10,6 +10,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Mosaic.UI.Wpf.Controls;
 using MosaicTextEditor.Common;
 using MosaicTextEditor.Models;
 using MosaicTextEditor.Services;
@@ -27,6 +28,7 @@ namespace MosaicTextEditor.ViewModels
         private const int RecentLimit = 10;
         private int _untitledCount = 1;
         private int _untitledMarkdownCount = 1;
+        private int _untitledScriptCount = 1;
         private readonly AppSettings _appSettings;
         private readonly IEditorDialogService _dialogService;
         private readonly Dictionary<string, EditorDocument> _openDocumentsByPath = new(StringComparer.OrdinalIgnoreCase);
@@ -155,6 +157,13 @@ namespace MosaicTextEditor.ViewModels
         private void NewMarkdownFile()
         {
             var document = EditorDocument.CreateMarkdown($"Untitled Markdown {_untitledMarkdownCount++}.md", _appSettings);
+            this.AddDocument(document);
+        }
+
+        [RelayCommand]
+        private void NewMosaicScript()
+        {
+            var document = EditorDocument.CreateScript($"Untitled Mosaic Script {_untitledScriptCount++}.mosx", _appSettings);
             this.AddDocument(document);
         }
 
@@ -347,6 +356,19 @@ namespace MosaicTextEditor.ViewModels
 
         private void AddDocument(EditorDocument document)
         {
+            if (document.EditorControl is ScriptEditorControl scriptEditor)
+            {
+                scriptEditor.SaveTextAsync = async (_, cancellationToken) =>
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (!await this.SaveDocumentWithPromptAsync(document))
+                    {
+                        // Prevent the control from marking a cancelled or failed save as successful.
+                        throw new OperationCanceledException("The script save did not complete.");
+                    }
+                };
+            }
+
             this.OpenDocuments.Add(document);
             document.PropertyChanged += this.EditorDocument_OnPropertyChanged;
             this.UpdateOpenPath(document, oldPath: null);

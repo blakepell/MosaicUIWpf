@@ -8,11 +8,8 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;

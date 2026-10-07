@@ -14,7 +14,6 @@ using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Interfaces;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;

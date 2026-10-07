@@ -10,7 +10,6 @@
 
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using Mosaic.UI.Wpf.Behaviors;
 using Mosaic.UI.Wpf.Themes;

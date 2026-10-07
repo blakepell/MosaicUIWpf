@@ -1,12 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using Argus.Extensions;
 using Argus.Memory;
 using Markdig;
 using Microsoft.Web.WebView2.Core;
-using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Themes;
 
 namespace MosaicWpfDemo.Controls

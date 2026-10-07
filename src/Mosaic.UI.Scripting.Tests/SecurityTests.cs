@@ -1,10 +1,10 @@
 ﻿using Xunit;
 using System;
 using System.Reflection;
-using Mosaic.UI.Scripting.API;
-using Mosaic.UI.Scripting.Options;
+using Mosaic.UI.Wpf.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.Options;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class SecurityTests
 {

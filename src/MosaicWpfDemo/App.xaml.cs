@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.IO;
 using Mosaic.UI.Wpf;
 using System.Windows;
 using MosaicWpfDemo.Common;

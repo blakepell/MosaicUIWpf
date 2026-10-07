@@ -23,6 +23,11 @@ namespace MosaicTextEditor.Models
         /// <summary>
         /// A Mosaic markdown editor document.
         /// </summary>
-        Markdown
+        Markdown,
+
+        /// <summary>
+        /// A Mosaic script editor document.
+        /// </summary>
+        Script
     }
 }

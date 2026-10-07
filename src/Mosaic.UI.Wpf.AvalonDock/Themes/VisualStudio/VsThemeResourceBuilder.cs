@@ -1,7 +1,6 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using Mosaic.UI.Wpf.AvalonDock.Controls;
 using Mosaic.UI.Wpf.AvalonDock.Themes.VisualStudio;
 
 namespace Mosaic.UI.Wpf.AvalonDock.Themes

@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <AssemblyVersion>2026.10.7.1</AssemblyVersion>
-    <FileVersion>2026.10.7.1</FileVersion>
-    <PackageVersion>2026.10.7.1</PackageVersion>
+    <AssemblyVersion>2026.10.10.1</AssemblyVersion>
+    <FileVersion>2026.10.10.1</FileVersion>
+    <PackageVersion>2026.10.10.1</PackageVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -118,8 +118,8 @@
 
   <ItemGroup>
     <!-- Syntax highlighting definitions loaded at runtime by SyntaxEditor via GetManifestResourceStream. -->
-    <EmbeddedResource Include="Scripting\Assets\*.xshd" />
-    <Resource Include="Scripting\Assets\*.png" />
+    <EmbeddedResource Include="Controls\Scripting\Assets\*.xshd" />
+    <Resource Include="Controls\Scripting\Assets\*.png" />
     <EmbeddedResource Include="Assets\SyntaxEditor\Json.Light.xshd" />
     <EmbeddedResource Include="Assets\SyntaxEditor\Json.Dark.xshd" />
     <EmbeddedResource Include="Assets\SyntaxEditor\CSharp.Light.xshd" />
@@ -159,7 +159,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mosaic.IU.Scripting\Mosaic.UI.Scripting.csproj" />
+    <!-- Ship the scripting reference and bundled parser license with the main package. -->
+    <None Update="Scripting\README.md" Pack="true" PackagePath="Scripting\README.md" />
+    <None Update="Scripting\Docs\*.md" Pack="true" PackagePath="Scripting\Docs\%(Filename)%(Extension)" />
+    <None Update="Scripting\Esprima\LICENSE.txt" Pack="true" PackagePath="3rdParty\Esprima\LICENSE.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -189,10 +192,12 @@
     <Resource Include="Assets\vs-find-next-16.png" />
     <Resource Include="Assets\vs-find-previous-16.png" />
     <Resource Include="Assets\vs-lock-16.png" />
+    <Resource Include="Assets\vs-play-16.png" />
     <Resource Include="Assets\vs-save-16.png" />
     <Resource Include="Assets\vs-browser-32.png" />
     <Resource Include="Assets\vs-bold-32.png" />
     <Resource Include="Assets\vs-italics-32.png" />
+    <Resource Include="Assets\vs-stop-16.png" />
     <Resource Include="Assets\vs-strike-through-32.png" />
     <Resource Include="Assets\vs-code-32.png" />
     <Resource Include="Assets\vs-code-1-32.png" />
@@ -211,8 +216,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Scripting\ScriptCommands\Docs\**\*.md" />
-    <Resource Include="Scripting\ScriptCommands\Docs\**\*.md" />
+    <None Remove="Controls\Scripting\ScriptCommands\Docs\**\*.md" />
+    <Resource Include="Controls\Scripting\ScriptCommands\Docs\**\*.md" />
   </ItemGroup>
 
 </Project>

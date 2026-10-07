@@ -36,9 +36,12 @@ namespace MosaicTextEditor.Services
         /// <inheritdoc />
         public string? ShowSaveFileDialog(EditorDocument document, string? initialDirectory)
         {
-            string filter = document.Kind == EditorDocumentKind.Markdown
-                ? "Markdown Files (*.md;*.markdown)|*.md;*.markdown|Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-                : "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
+            string filter = document.Kind switch
+            {
+                EditorDocumentKind.Markdown => "Markdown Files (*.md;*.markdown)|*.md;*.markdown|Text Files (*.txt)|*.txt|All Files (*.*)|*.*",
+                EditorDocumentKind.Script => "Mosaic Script Files (*.mosx)|*.mosx|All Files (*.*)|*.*",
+                _ => "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
+            };
 
             var dialog = new SaveFileDialog
             {
@@ -55,6 +58,10 @@ namespace MosaicTextEditor.Services
             if (document.Kind == EditorDocumentKind.Markdown)
             {
                 dialog.DefaultExt = ".md";
+            }
+            else if (document.Kind == EditorDocumentKind.Script)
+            {
+                dialog.DefaultExt = ".mosx";
             }
 
             return dialog.ShowDialog() == true ? dialog.FileName : null;

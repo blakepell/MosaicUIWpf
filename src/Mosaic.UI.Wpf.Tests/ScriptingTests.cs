@@ -13,11 +13,11 @@ using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using Mosaic.UI.Wpf.Controls;
-using Mosaic.UI.Wpf.Scripting;
-using Mosaic.UI.Wpf.Scripting.ScriptCommands;
 using Mosaic.UI.Wpf.Themes;
-using Mosaic.UI.Scripting;
+using Mosaic.UI.Wpf.Scripting;
 using Xunit;
+using Mosaic.UI.Wpf.Controls.Scripting;
+using Mosaic.UI.Wpf.Controls.Scripting.ScriptCommands;
 
 namespace Mosaic.UI.Wpf.Tests;
 
@@ -248,7 +248,7 @@ public class ScriptingTests
     [Fact]
     public void CompletionWindowResourcesLoadAndTemplateTheList() => RunStaAsync(() =>
     {
-        var resources = new ResourceDictionary { Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Scripting/ScriptCompletionWindow.xaml", UriKind.Absolute) };
+        var resources = new ResourceDictionary { Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/Scripting/ScriptCompletionWindow.xaml", UriKind.Absolute) };
         var list = new CompletionList { Style = Assert.IsType<Style>(resources["ScriptCompletionListStyle"]) };
         Assert.True(list.ApplyTemplate());
         Assert.NotNull(list.ListBox);
@@ -461,7 +461,7 @@ public class ScriptingTests
     private static ScriptEditorControl Realize(ScriptEditorControl control, MosaicThemeMode theme)
     {
         control.Resources.MergedDictionaries.Add(new ThemeManager { Theme = theme });
-        var dictionary = new ResourceDictionary { Source = new Uri("/Mosaic.UI.Wpf;component/Scripting/ScriptEditorControl.xaml", UriKind.Relative) };
+        var dictionary = new ResourceDictionary { Source = new Uri("/Mosaic.UI.Wpf;component/Controls/Scripting/ScriptEditorControl.xaml", UriKind.Relative) };
         control.Style = (Style)dictionary[typeof(ScriptEditorControl)];
         control.Measure(new Size(800, 500));
         control.Arrange(new Rect(0, 0, 800, 500));

@@ -14,8 +14,8 @@
             VerticalAlignment="Center"
             Text="{Binding Title, ElementName=Root}" />
         <Border
-            MinWidth="16"
             Height="16"
+            MinWidth="16"
             Padding="4,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"

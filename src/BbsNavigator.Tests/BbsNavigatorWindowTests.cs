@@ -43,7 +43,7 @@ public class BbsNavigatorWindowTests
                     new AliasEditorWindow((Alias)alias.Clone(), Array.Empty<Alias>()),
                     new LoginSequenceWindow(Array.Empty<LoginStep>()),
                     new TextSendWindow("Hello everyone!\r\nA message composed locally.", profile.Name, Encoding.UTF8, 5, 100),
-                    new MessageComposerWindow(profile, folder, _ => Task.FromResult(false), () => { }),
+                    new MessageComposerWindow(profile, folder, (_, _) => Task.FromResult(false), () => { }),
                     new BbsEditorWindow(profile)
                 ];
                 string screenshots = Path.Combine(AppContext.BaseDirectory, "bbs-window-previews");

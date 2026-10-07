@@ -30,6 +30,7 @@ namespace MosaicTextEditor.Models
     {
         private readonly MarkdownEditor? _markdownEditor;
         private readonly SyntaxEditor? _syntaxEditor;
+        private readonly ScriptEditorControl? _scriptEditor;
         private readonly LayoutMarkdownEditor? _layoutMarkdownEditor;
         private readonly LayoutSyntaxEditor? _layoutSyntaxEditor;
         private bool _suppressModified;
@@ -60,6 +61,27 @@ namespace MosaicTextEditor.Models
                 this.LayoutDocument = _layoutMarkdownEditor;
                 this.EditorControl = _markdownEditor;
             }
+            else if (kind == EditorDocumentKind.Script)
+            {
+                _scriptEditor = new ScriptEditorControl();
+                BindingOperations.SetBinding(_scriptEditor, Control.FontSizeProperty, new Binding(nameof(AppSettings.FontSize))
+                {
+                    Source = appSettings,
+                    Mode = BindingMode.OneWay
+                });
+                DependencyPropertyDescriptor.FromProperty(ScriptEditorControl.IsModifiedProperty, typeof(ScriptEditorControl))
+                    ?.AddValueChanged(_scriptEditor, this.ScriptEditor_OnModifiedChanged);
+
+                this.LayoutDocument = new LayoutDocument { Content = _scriptEditor };
+                this.EditorControl = _scriptEditor;
+                this.LayoutDocument.Closed += (_, _) =>
+                {
+                    DependencyPropertyDescriptor.FromProperty(ScriptEditorControl.IsModifiedProperty, typeof(ScriptEditorControl))
+                        ?.RemoveValueChanged(_scriptEditor, this.ScriptEditor_OnModifiedChanged);
+                    _scriptEditor.SaveTextAsync = null;
+                    _scriptEditor.Stop();
+                };
+            }
             else
             {
                 _layoutSyntaxEditor = new LayoutSyntaxEditor(fileName);
@@ -75,16 +97,6 @@ namespace MosaicTextEditor.Models
                     ?.AddValueChanged(_layoutSyntaxEditor, this.LayoutSyntaxEditor_OnDependencyPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(LayoutSyntaxEditor.FilePathProperty, typeof(LayoutSyntaxEditor))
                     ?.AddValueChanged(_layoutSyntaxEditor, this.LayoutSyntaxEditor_OnDependencyPropertyChanged);
-
-                var wordWrapButton = new ToggleButton
-                {
-                    Content = "Wrap",
-                    ToolTip = "Toggle word wrap",
-                    Padding = new Thickness(6, 2, 6, 2)
-                };
-                wordWrapButton.Checked += (_, _) => _syntaxEditor.WordWrap = true;
-                wordWrapButton.Unchecked += (_, _) => _syntaxEditor.WordWrap = false;
-                _layoutSyntaxEditor.AdditionalToolBarItems.Add(wordWrapButton);
 
                 _layoutSyntaxEditor.OnSaving += this.LayoutEditor_OnSaving;
                 _layoutSyntaxEditor.OnSaved += this.LayoutEditor_OnSaved;
@@ -114,7 +126,8 @@ namespace MosaicTextEditor.Models
         /// <summary>
         /// Gets the current syntax language for syntax editor documents.
         /// </summary>
-        public SyntaxLanguage Language => _syntaxEditor?.Language ?? SyntaxLanguage.Markdown;
+        public SyntaxLanguage Language => _syntaxEditor?.Language
+            ?? (this.Kind == EditorDocumentKind.Script ? SyntaxLanguage.JavaScript : SyntaxLanguage.Markdown);
 
         /// <summary>
         /// Gets or sets the full path this document is saved to.
@@ -151,6 +164,11 @@ namespace MosaicTextEditor.Models
         public static EditorDocument CreateMarkdown(string fileName, AppSettings appSettings) => new(EditorDocumentKind.Markdown, fileName, appSettings);
 
         /// <summary>
+        /// Creates a blank Mosaic script editor document.
+        /// </summary>
+        public static EditorDocument CreateScript(string fileName, AppSettings appSettings) => new(EditorDocumentKind.Script, fileName, appSettings);
+
+        /// <summary>
         /// Loads the specified file into the editor surface resolved for its type (e.g. markdown files
         /// open in the markdown editor); files without a specialized editor open in the syntax editor.
         /// </summary>
@@ -176,7 +194,7 @@ namespace MosaicTextEditor.Models
                 return _markdownEditor.Text;
             }
 
-            return _syntaxEditor?.Text ?? string.Empty;
+            return _scriptEditor?.Text ?? _syntaxEditor?.Text ?? string.Empty;
         }
 
         /// <summary>
@@ -193,6 +211,14 @@ namespace MosaicTextEditor.Models
                 {
                     _markdownEditor.Text = text;
                     _markdownEditor.IsModified = markModified;
+                }
+                else if (_scriptEditor != null)
+                {
+                    _scriptEditor.Text = text;
+                    if (!markModified)
+                    {
+                        _scriptEditor.MarkSaved();
+                    }
                 }
                 else if (_syntaxEditor != null)
                 {
@@ -233,6 +259,7 @@ namespace MosaicTextEditor.Models
             string fullPath = Path.GetFullPath(path);
             await File.WriteAllTextAsync(fullPath, this.GetText());
             this.SetFilePath(fullPath);
+            _scriptEditor?.MarkSaved();
             this.IsModified = false;
 
             if (_markdownEditor != null)
@@ -258,6 +285,11 @@ namespace MosaicTextEditor.Models
         {
             this.FilePath = Path.GetFullPath(path);
             this.FileName = Path.GetFileName(path);
+
+            if (_scriptEditor != null)
+            {
+                _scriptEditor.FilePath = this.FilePath;
+            }
 
             if (_syntaxEditor != null)
             {
@@ -327,6 +359,14 @@ namespace MosaicTextEditor.Models
             }
         }
 
+        private void ScriptEditor_OnModifiedChanged(object? sender, EventArgs e)
+        {
+            if (!_suppressModified && _scriptEditor != null)
+            {
+                this.IsModified = _scriptEditor.IsModified;
+            }
+        }
+
         private void LayoutEditor_OnSaving(object? sender, DocumentSavingEventArgs e)
         {
             Logger.LogInfo($"OnSaving fired for '{e.FilePath ?? this.FileName}'.");
@@ -386,6 +426,11 @@ namespace MosaicTextEditor.Models
                 : this.FileName;
 
             this.Title = this.IsModified ? baseName + "*" : baseName;
+            if (this.LayoutDocument != null)
+            {
+                this.LayoutDocument.Title = this.Title;
+                this.LayoutDocument.Description = this.FilePath ?? this.FileName;
+            }
         }
 
         private static T? FindVisualChild<T>(DependencyObject parent)

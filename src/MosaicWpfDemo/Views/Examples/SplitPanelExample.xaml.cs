@@ -10,7 +10,6 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using Mosaic.UI.Wpf.Controls;
 
 namespace MosaicWpfDemo.Views.Examples
 {

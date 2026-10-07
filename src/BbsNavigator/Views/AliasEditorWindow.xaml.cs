@@ -10,10 +10,10 @@
 
 using BbsNavigator.Common;
 using BbsNavigator.Models;
-using Mosaic.UI.Wpf.Scripting;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Mosaic.UI.Wpf.Controls.Scripting;
 
 namespace BbsNavigator.Views;
 

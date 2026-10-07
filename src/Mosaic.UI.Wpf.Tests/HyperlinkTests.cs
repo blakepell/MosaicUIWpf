@@ -13,7 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
-using Mosaic.UI.Wpf.Controls;
 using Xunit;
 using Hyperlink = Mosaic.UI.Wpf.Controls.Hyperlink;
 

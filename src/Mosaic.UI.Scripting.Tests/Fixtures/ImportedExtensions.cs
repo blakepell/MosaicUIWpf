@@ -8,10 +8,10 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-namespace Mosaic.UI.Scripting.Test.ImportedExtensions;
+namespace Mosaic.UI.Wpf.Scripting.Test.ImportedExtensions;
 
 /// <summary>
-/// Extension methods that are only callable after <c>include Mosaic.UI.Scripting.Test.ImportedExtensions</c>.
+/// Extension methods that are only callable after <c>include Mosaic.UI.Wpf.Scripting.Test.ImportedExtensions</c>.
 /// </summary>
 public static class ShoutExtensions
 {

@@ -1,0 +1,28 @@
+using Expression = Esprima.Ast.Expression;
+using Esprima.Ast;
+using System.Threading;
+using Mosaic.UI.Wpf.Scripting.Core;
+
+namespace Mosaic.UI.Wpf.Scripting.Expressions
+{
+    internal static partial class SequenceExpressionHandler
+    {
+        internal static object Execute(ScriptExecutor scriptExecutor, Node expression, CancellationToken token)
+        {
+            var expr = (SequenceExpression)expression;
+            var list = expr.Expressions;
+            var len = list.Count;
+            object result = null;
+            for (var i = 0; i < len; ++i)
+            {
+                token.ThrowIfCancellationRequested();
+                result = scriptExecutor.ExecuteStatement(list[i], token);
+                if (result is ReturnWrapper)
+                {
+                    return result;
+                }
+            }
+            return result;
+        }
+    }
+}

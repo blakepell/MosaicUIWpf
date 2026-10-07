@@ -20,7 +20,6 @@ using BbsNavigator.Common;
 using BbsNavigator.Models;
 using BbsNavigator.Views;
 using Mosaic.UI.Wpf.Controls;
-using Mosaic.UI.Wpf.Scripting;
 using Mosaic.UI.Wpf.Themes;
 using Xunit;
 

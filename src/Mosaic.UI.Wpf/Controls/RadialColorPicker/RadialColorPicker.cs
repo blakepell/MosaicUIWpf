@@ -13,7 +13,6 @@
 using System.Globalization;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Mosaic.UI.Wpf.Cache;
 
 namespace Mosaic.UI.Wpf.Controls

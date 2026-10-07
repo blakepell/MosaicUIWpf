@@ -10,9 +10,7 @@
 
 // ReSharper disable CheckNamespace
 
-using System.Threading.Tasks;
 using System.Windows.Automation.Peers;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
 using Mosaic.UI.Wpf.Common;
 

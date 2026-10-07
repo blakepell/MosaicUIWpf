@@ -5,8 +5,7 @@
  */
 
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Mosaic.UI.Wpf.Scripting;
-using Mosaic.UI.Wpf.Themes;
+using Mosaic.UI.Wpf.Controls.Scripting;
 
 namespace Mosaic.UI.Wpf.Controls;
 

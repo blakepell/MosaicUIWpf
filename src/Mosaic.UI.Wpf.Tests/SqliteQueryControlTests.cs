@@ -11,7 +11,6 @@
 using Argus.Memory;
 using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Data.Sqlite;
-using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Themes;
 using System.IO;

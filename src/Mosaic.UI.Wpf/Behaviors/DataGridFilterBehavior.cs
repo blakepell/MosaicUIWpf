@@ -9,10 +9,8 @@
  */
 
 using Microsoft.Xaml.Behaviors;
-using System.ComponentModel;
 using System.Data;
 using System.Globalization;
-using System.Text;
 using System.Windows.Data;
 
 namespace Mosaic.UI.Wpf.Behaviors

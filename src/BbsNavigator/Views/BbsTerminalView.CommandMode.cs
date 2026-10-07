@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 

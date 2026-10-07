@@ -12,12 +12,11 @@ using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Mosaic.UI.Scripting.API;
-using Mosaic.UI.Scripting.ErrorHandling;
-using Mosaic.UI.Scripting.Interop;
-using Mosaic.UI.Scripting.Options;
+using Mosaic.UI.Wpf.Scripting.API;
+using Mosaic.UI.Wpf.Scripting.Interop;
+using Mosaic.UI.Wpf.Scripting.Options;
 
-namespace Mosaic.UI.Scripting.Test;
+namespace Mosaic.UI.Wpf.Scripting.Test;
 
 public sealed class ImportsTests
 {
@@ -270,7 +269,7 @@ model.c = include2(2)
         Assert.ThrowsAny<Exception>(() => engine.ExecuteScript("model.a = 'hi'.Shout()"));
 
         var before = engine.ExtensionMethods;
-        engine.ExecuteScript("include Mosaic.UI.Scripting.Test.ImportedExtensions\nmodel.a = 'hi'.Shout()");
+        engine.ExecuteScript("include Mosaic.UI.Wpf.Scripting.Test.ImportedExtensions\nmodel.a = 'hi'.Shout()");
         Assert.Equal("HI!", model.a);
         Assert.NotSame(before, engine.ExtensionMethods);
         Assert.Contains(engine.ExtensionMethods, m => m.Name == "Shout");

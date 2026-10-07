@@ -15,15 +15,16 @@ using BbsNavigator.Views;
 using Mosaic.UI.Wpf;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
-using Mosaic.UI.Wpf.Scripting;
 using Mosaic.UI.Wpf.Themes;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Mosaic.UI.Wpf.Controls;
+using Mosaic.UI.Wpf.Controls.Scripting;
+using DocumentClosedEventArgs = Mosaic.UI.Wpf.AvalonDock.DocumentClosedEventArgs;
 
 namespace BbsNavigator
 {

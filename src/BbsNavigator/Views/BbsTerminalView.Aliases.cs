@@ -11,7 +11,7 @@
 using BbsNavigator.Common;
 using BbsNavigator.Models;
 using Mosaic.UI.Wpf.Controls;
-using Mosaic.UI.Wpf.Scripting;
+using Mosaic.UI.Wpf.Controls.Scripting;
 
 namespace BbsNavigator.Views;
 

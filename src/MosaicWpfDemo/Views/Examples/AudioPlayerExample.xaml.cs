@@ -8,7 +8,6 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
-using System;
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;

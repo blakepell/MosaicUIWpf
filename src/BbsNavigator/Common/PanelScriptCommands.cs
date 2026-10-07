@@ -11,8 +11,8 @@
 using BbsNavigator.Views;
 using Mosaic.UI.Wpf.AvalonDock;
 using Mosaic.UI.Wpf.AvalonDock.Layout;
-using Mosaic.UI.Wpf.Scripting;
 using System.Windows.Threading;
+using Mosaic.UI.Wpf.Controls.Scripting;
 
 namespace BbsNavigator.Common
 {

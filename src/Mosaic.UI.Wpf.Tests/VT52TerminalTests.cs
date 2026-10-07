@@ -9,7 +9,6 @@
  */
 
 using System.Runtime.ExceptionServices;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Mosaic.UI.Wpf.Controls.VT52Terminal;
