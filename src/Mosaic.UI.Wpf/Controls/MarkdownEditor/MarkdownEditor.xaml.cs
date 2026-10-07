@@ -1380,43 +1380,56 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Continues a markdown list on the next line when Enter is pressed inside a list item.
+        /// Continues a markdown list when Enter is pressed inside a list item. When the caret is at the
+        /// start of the item (anywhere up to just after the marker), the item's content is pushed down onto
+        /// a new item and the caret stays on the current, now empty, item. Anywhere else on the line a new
+        /// item is started on the next line.
         /// </summary>
         private bool HandleEnterKey()
         {
             try
             {
-                var line = this.Editor.Document.GetLineByOffset(this.Editor.CaretOffset);
-                string fullText = this.Editor.Document.GetText(line.Offset, line.Length);
-                string lineText = fullText.TrimStart();
+                var document = this.Editor.Document;
+                var line = document.GetLineByOffset(this.Editor.CaretOffset);
+                string lineText = document.GetText(line.Offset, line.Length);
 
-                // An empty list item ("- " or "1. ") ends the list: clear the marker and stop,
+                // An empty list item ("- ", "* " or "1. ") ends the list: clear the marker and stop,
                 // mirroring the behavior of the Escape key.
-                if (Regex.IsMatch(lineText, @"^-\s*$") || Regex.IsMatch(lineText, @"^\d+\.\s*$"))
+                if (Regex.IsMatch(lineText, @"^\s*([-*]|\d+\.)\s*$"))
                 {
-                    this.Editor.Document.Remove(line.Offset, line.Length);
+                    document.Remove(line.Offset, line.Length);
                     return true;
                 }
 
-                if (Regex.IsMatch(lineText, @"^-\s+"))
+                var match = Regex.Match(lineText, @"^(\s*)([-*]|(\d+)\.)\s+");
+
+                if (!match.Success)
                 {
-                    string leadingWhitespace = fullText.Substring(0, fullText.Length - lineText.Length);
-                    string insert = $"\r\n{leadingWhitespace}- ";
-                    this.Editor.Document.Insert(line.EndOffset, insert);
-                    this.Editor.CaretOffset = line.EndOffset + insert.Length;
-                    return true;
+                    return false;
                 }
 
-                var orderedMatch = Regex.Match(lineText, @"^(\d+)\.\s+");
-                if (orderedMatch.Success)
+                string leadingWhitespace = match.Groups[1].Value;
+                string nextMarker = match.Groups[3].Success
+                    ? $"{(int.TryParse(match.Groups[3].Value, out int number) ? number + 1 : 1)}."
+                    : match.Groups[2].Value;
+                string insert = $"\r\n{leadingWhitespace}{nextMarker} ";
+                int contentOffset = line.Offset + match.Length;
+
+                if (this.Editor.CaretOffset <= contentOffset)
                 {
-                    string leadingWhitespace = fullText.Substring(0, fullText.Length - lineText.Length);
-                    int next = int.TryParse(orderedMatch.Groups[1].Value, out int number) ? number + 1 : 1;
-                    string insert = $"\r\n{leadingWhitespace}{next}. ";
-                    this.Editor.Document.Insert(line.EndOffset, insert);
-                    this.Editor.CaretOffset = line.EndOffset + insert.Length;
-                    return true;
+                    // Caret is at the start of the item: move its content down to a new item and leave the
+                    // caret one space after the marker on the current line.
+                    document.Insert(contentOffset, insert);
+                    this.Editor.CaretOffset = contentOffset;
                 }
+                else
+                {
+                    int endOffset = line.EndOffset;
+                    document.Insert(endOffset, insert);
+                    this.Editor.CaretOffset = endOffset + insert.Length;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
