@@ -76,6 +76,7 @@ namespace BbsNavigator.Common
                     BbsSortField.LastConnected => Nullable.Compare(x.LastConnected, y.LastConnected),
                     BbsSortField.ConnectionCount => x.ConnectionCount.CompareTo(y.ConnectionCount),
                     BbsSortField.Host => StringComparer.OrdinalIgnoreCase.Compare(x.Host, y.Host),
+                    BbsSortField.HasCredentials => x.HasCredentials.CompareTo(y.HasCredentials),
                     _ => 0
                 };
             }

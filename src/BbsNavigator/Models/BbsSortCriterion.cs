@@ -43,7 +43,13 @@ namespace BbsNavigator.Models
         /// <summary>
         /// Sort by host name.
         /// </summary>
-        Host
+        Host,
+
+        /// <summary>
+        /// Sort by whether encrypted login credentials are stored for the BBS.
+        /// </summary>
+        [Description("Has Credentials Stored")]
+        HasCredentials
     }
 
     /// <summary>
