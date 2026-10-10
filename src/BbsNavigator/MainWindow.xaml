@@ -112,6 +112,14 @@
                             Source="pack://application:,,,/BbsNavigator;component/Assets/archive-48.png" />
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Click="OpenSettingsFolder_OnClick" Header="Open Settings _Folder in Explorer">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="16"
+                            Height="16"
+                            Source="pack://application:,,,/BbsNavigator;component/Assets/open-48.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem Click="Exit_OnClick" Header="E_xit" />
             </MenuItem>

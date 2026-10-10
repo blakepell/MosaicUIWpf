@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.IO;
 using Argus.Memory;
 using BbsNavigator.Common;
 using BbsNavigator.Models;
@@ -1497,6 +1498,23 @@ namespace BbsNavigator
                     "BBS Navigator",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        private void OpenSettingsFolder_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string folder = AppServices.GetRequiredService<JsonFileService>().FolderPath;
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(folder) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Mosaic.UI.Wpf.Controls.MessageBox.Show(
+                    $"The settings folder could not be opened.\n\n{ex.Message}",
+                    "BBS Navigator",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
             }
         }
 

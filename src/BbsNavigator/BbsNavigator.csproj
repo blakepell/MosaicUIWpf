@@ -24,6 +24,7 @@
     <None Remove="Assets\minus-48.png" />
     <None Remove="Assets\network-connecting-48.png" />
     <None Remove="Assets\network-disconnected2-48.png" />
+    <None Remove="Assets\open-48.png" />
     <None Remove="Assets\PxPlus_IBM_VGA8.ttf" />
     <None Remove="Assets\question-48.png" />
     <None Remove="Assets\save2-32.png" />
@@ -33,6 +34,7 @@
     <None Remove="Assets\terminal-48.png" />
     <None Remove="Assets\theme2-48.png" />
     <None Remove="Assets\up-arrow-purple-48.png" />
+    <None Remove="Assets\user-badge-48.png" />
     <None Remove="Docs\*.md" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +56,7 @@
     <Resource Include="Assets\minus-48.png" />
     <Resource Include="Assets\network-connecting-48.png" />
     <Resource Include="Assets\network-disconnected2-48.png" />
+    <Resource Include="Assets\open-48.png" />
     <Resource Include="Assets\PxPlus_IBM_VGA8.ttf" />
     <Resource Include="Assets\question-48.png" />
     <Resource Include="Assets\save2-32.png" />
@@ -63,6 +66,7 @@
     <Resource Include="Assets\terminal-48.png" />
     <Resource Include="Assets\theme2-48.png" />
     <Resource Include="Assets\up-arrow-purple-48.png" />
+    <Resource Include="Assets\user-badge-48.png" />
     <Resource Include="Docs\*.md" />
   </ItemGroup>
   <ItemGroup>
