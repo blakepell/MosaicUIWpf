@@ -199,6 +199,12 @@ namespace BbsNavigator
 
         private async void BbsTree_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            // A double-click on the credential badge is meant for the badge, not a connect.
+            if (e.OriginalSource is FrameworkElement { Name: "CredentialBadge" })
+            {
+                return;
+            }
+
             if (SelectedProfile is { } profile)
             {
                 e.Handled = true;
@@ -327,6 +333,12 @@ namespace BbsNavigator
             }
 
             new CredentialViewerWindow(profile, credentials) { Owner = this }.ShowDialog();
+        }
+
+        private void CredentialBadge_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
+            ViewCredentials_OnClick(sender, e);
         }
 
         private static Task<BbsCredentials?> DecryptCredentialsAsync(BbsProfile profile, string passphrase)

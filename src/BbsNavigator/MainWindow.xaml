@@ -447,16 +447,31 @@
                                                             Height="18"
                                                             Margin="0,2,8,0"
                                                             HorizontalAlignment="Left"
+                                                            Cursor="Hand"
                                                             IsChecked="{Binding Favorite, Mode=TwoWay}"
                                                             Symbol="&#x2605;"
                                                             SymbolSize="14"
                                                             ToolTip="Favorite" />
-                                                        <TextBlock
-                                                            Grid.Column="1"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Text="{Binding Name}"
-                                                            TextTrimming="CharacterEllipsis" />
+                                                        <!--  Left-aligned so the badge sits right after the name, while a long name still trims.  -->
+                                                        <DockPanel Grid.Column="1" HorizontalAlignment="Left">
+                                                            <Image
+                                                                x:Name="CredentialBadge"
+                                                                Width="16"
+                                                                Height="16"
+                                                                Margin="6,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                Cursor="Hand"
+                                                                DockPanel.Dock="Right"
+                                                                MouseLeftButtonUp="CredentialBadge_OnMouseLeftButtonUp"
+                                                                Source="pack://application:,,,/BbsNavigator;component/Assets/user-badge-48.png"
+                                                                ToolTip="View Credentials"
+                                                                Visibility="Collapsed" />
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding Name}"
+                                                                TextTrimming="CharacterEllipsis" />
+                                                        </DockPanel>
                                                         <mosaic:Shield
                                                             x:Name="EndpointShield"
                                                             Grid.Row="1"
@@ -469,6 +484,9 @@
                                                     </Grid>
                                                 </Border>
                                                 <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding HasCredentials}" Value="True">
+                                                        <Setter TargetName="CredentialBadge" Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
                                                     <!--  A board reachable over both transports is called out on its shield.  -->
                                                     <DataTrigger Binding="{Binding CanConnectTelnetAndSsh}" Value="True">
                                                         <Setter TargetName="EndpointShield" Property="ValueBackgroundBrush" Value="#FF1F5FA8" />
