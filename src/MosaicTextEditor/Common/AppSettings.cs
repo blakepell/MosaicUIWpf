@@ -74,12 +74,22 @@ namespace MosaicTextEditor.Common
         private ObservableCollection<WindowViewState> _windowViewStates = new();
 
         /// <summary>
+        /// Whether the file explorer opens the last opened folder on startup.
+        /// </summary>
+        [property: Category("File Explorer")]
+        [property: DisplayName("Restore Last Folder")]
+        [property: Description("Whether the file explorer opens the last opened folder on startup.")]
+        [property: Browsable(true)]
+        [ObservableProperty]
+        private bool _restoreLastFolder = true;
+
+        /// <summary>
         /// The most recently opened file explorer folder.
         /// </summary>
-        [property: Category("File System")]
+        [property: Category("File Explorer")]
         [property: DisplayName("Last Folder")]
         [property: Description("The last folder opened in the file explorer.")]
-        [property: Browsable(false)]
+        [property: Browsable(true)]
         [ObservableProperty]
         private string? _lastFolder;
 

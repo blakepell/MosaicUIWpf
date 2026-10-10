@@ -106,9 +106,21 @@ namespace MosaicTextEditor.ViewModels
         /// <param name="startupPath">Optional startup path.</param>
         public async Task InitializeAsync(string? startupPath)
         {
-            if (!string.IsNullOrWhiteSpace(startupPath) && File.Exists(startupPath))
+            if (_appSettings.RestoreLastFolder && !string.IsNullOrWhiteSpace(_appSettings.LastFolder) && Directory.Exists(_appSettings.LastFolder))
             {
-                await this.OpenFilePathAsync(startupPath);
+                this.CurrentFolder = _appSettings.LastFolder;
+            }
+
+            if (!string.IsNullOrWhiteSpace(startupPath))
+            {
+                if (Directory.Exists(startupPath))
+                {
+                    this.SetFolder(Path.GetFullPath(startupPath));
+                }
+                else if (File.Exists(startupPath))
+                {
+                    await this.OpenFilePathAsync(startupPath);
+                }
             }
 
             if (this.OpenDocuments.Count == 0)
@@ -198,10 +210,7 @@ namespace MosaicTextEditor.ViewModels
                 return;
             }
 
-            this.CurrentFolder = folder;
-            _appSettings.LastFolder = folder;
-            this.AddRecentFolder(folder);
-            this.StatusText = $"Opened folder: {folder}";
+            this.SetFolder(folder);
         }
 
         [RelayCommand]
@@ -212,6 +221,15 @@ namespace MosaicTextEditor.ViewModels
                 return;
             }
 
+            this.SetFolder(folder);
+        }
+
+        /// <summary>
+        /// Points the file explorer at a folder and records it as the last and most recent folder.
+        /// </summary>
+        /// <param name="folder">The folder to open.</param>
+        private void SetFolder(string folder)
+        {
             this.CurrentFolder = folder;
             _appSettings.LastFolder = folder;
             this.AddRecentFolder(folder);
