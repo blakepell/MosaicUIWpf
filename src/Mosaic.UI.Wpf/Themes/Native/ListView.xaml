@@ -274,9 +274,22 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="true">
-                        <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid>
+                            <GridViewRowPresenter x:Name="GridViewRow"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ContentPresenter x:Name="ItemContent" Visibility="Collapsed"
+                                              ContentSource="Content"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" Value="{x:Null}">
+                            <Setter TargetName="GridViewRow" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ItemContent" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />

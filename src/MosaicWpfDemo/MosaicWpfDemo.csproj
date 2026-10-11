@@ -832,6 +832,13 @@
 			<Link>LinkedSources\RelativePanelExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\PullToRefreshWrapperExample.xaml">
+			<Link>LinkedSources\PullToRefreshWrapperExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\PullToRefreshWrapperExample.xaml.cs">
+			<Link>LinkedSources\PullToRefreshWrapperExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\RadialProgressBarExample.xaml">
 			<Link>LinkedSources\RadialProgressBarExample.xaml</Link>
 		</EmbeddedResource>

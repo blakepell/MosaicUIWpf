@@ -1003,6 +1003,21 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Pull to Refresh  -->
+                <mosaic:SideMenuItem ContentType="{x:Type views:ShellView}" ContentTypeIsSingleton="True"
+                                    ImageSource="/Assets/collage-48.png" Text="Pull to Refresh">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Pull to Refresh" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.PullToRefreshWrapperExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.PullToRefreshWrapperExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:PullToRefreshWrapper}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:PullToRefreshWrapperExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/collage-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <!--  Radial Progress Bar  -->
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"

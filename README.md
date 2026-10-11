@@ -176,6 +176,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [NumericTextBox](./docs/NumericTextBox.md) | TextBox that only allows digits, minus sign and a decimal point. |
 | [PieChart](./docs/PieChart.md) | An observable pie chart with an automatic palette, configurable legend placement, and click events and command support for slices. |
 | [ProgressRing](./docs/ProgressRing.md) | A progress ring component to indicate that a long running process is occurring. |
+| [PullToRefreshWrapper](./docs/PullToRefreshWrapper.md) | Wraps scrollable content with mouse and touch pull-to-refresh, command support, and a radial pie indicator. |
 | [PropertyGrid](./docs/PropertyGrid.md) | A control that displays the properties of an object in a grid format. |
 | [RadialColorPicker](./docs/RadialColorPicker.md) | A full HSV wheel color editor with synchronized color, brush, hex, RGBA channel, and optional alpha values. |
 | [RadialColorPickerBox](./docs/RadialColorPickerBox.md) | A compact swatch and hex field with a drop-down RadialColorPicker for property panels and forms. |
