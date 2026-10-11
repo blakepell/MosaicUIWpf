@@ -171,6 +171,7 @@ namespace BbsNavigator.Views
             CommandManager.AddPreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
             profile.PropertyChanged += Profile_OnPropertyChanged;
             Terminal.FontSize = settings.FontSize;
+            settings.PropertyChanged += Settings_OnPropertyChanged;
             // The encoding items must exist before the profile becomes the DataContext, or the
             // two-way SelectedItem binding would have nothing to resolve the saved value against.
             EncodingComboBox.ItemsSource = Enum.GetValues<BbsEncoding>();
@@ -557,6 +558,23 @@ namespace BbsNavigator.Views
             {
                 Terminal.LocalEcho = Profile.LocalEcho
                     ?? (_connection is BbsTelnetConnection telnet && !telnet.RemoteEchoEnabled);
+            }
+        }
+
+        private void Settings_OnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (e.PropertyName == nameof(AppSettings.FontSize))
+            {
+                double size = Math.Clamp(_settings.FontSize, 8, 32);
+                if (Terminal.FontSize != size)
+                {
+                    Terminal.FontSize = size;
+                }
             }
         }
 
@@ -1472,6 +1490,7 @@ namespace BbsNavigator.Views
             }
 
             Profile.PropertyChanged -= Profile_OnPropertyChanged;
+            _settings.PropertyChanged -= Settings_OnPropertyChanged;
             CommandManager.RemovePreviewExecutedHandler(Terminal, TerminalCommand_OnPreviewExecuted);
             Terminal.PreviewMouseLeftButtonUp -= Terminal_OnPreviewMouseLeftButtonUp;
             Terminal.PreviewMouseLeftButtonUp -= Terminal_OnMouseLeftButtonUpRedirect;
