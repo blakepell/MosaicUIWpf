@@ -10,6 +10,9 @@
 
 using ICSharpCode.AvalonEdit.Snippets;
 using Markdig;
+using Markdig.Renderers.Html;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using Microsoft.Win32;
 using Mosaic.UI.Wpf.Interfaces;
 using System.Windows.Media.Imaging;
@@ -272,10 +275,8 @@ namespace Mosaic.UI.Wpf.Controls
         #endregion
 
         /// <summary>
-        /// Gets the caller supplied menu items hosted by the split button at the end of the toolbar. The
-        /// split button (and its leading separator) stays collapsed while this collection is empty and
-        /// becomes visible as soon as it contains an item, so a host can extend the editor's toolbar
-        /// without re-templating it.
+        /// Gets the menu items hosted by the split button at the end of the toolbar, including the built-in
+        /// table-of-contents action. Hosts can append their own actions without re-templating the editor.
         /// </summary>
         /// <remarks>
         /// Items may be populated in XAML as the content of a <c>MarkdownEditor.CustomMenuItems</c>
@@ -653,6 +654,15 @@ namespace Mosaic.UI.Wpf.Controls
         /// the caller's menu down.
         /// </summary>
         private void CustomMenuButton_Click(object sender, RoutedEventArgs e) => this.CustomMenuButton.IsDropDownOpen = true;
+
+        /// <summary>
+        /// Prompts for heading depth and nesting before inserting a table of contents.
+        /// </summary>
+        private async void CreateTableOfContentsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.CloseTableSizePopup();
+            await this.ShowTableOfContentsDialogAsync();
+        }
 
         #endregion
 
@@ -1050,6 +1060,153 @@ namespace Mosaic.UI.Wpf.Controls
             if (result == true)
             {
                 this.InsertTable(ParsePositiveInt(columnsBox.Text, 3), ParsePositiveInt(rowsBox.Text, 3));
+            }
+        }
+
+        /// <summary>
+        /// Shows the table-of-contents options. Only an explicit confirmation changes the document.
+        /// </summary>
+        private async Task ShowTableOfContentsDialogAsync()
+        {
+            var dialog = new ModalDialog
+            {
+                Title = "Create in Page Table of Contents",
+                Description = "Choose the deepest heading level to include. The table of contents is inserted at the caret.",
+                CloseOnBackdropClick = true,
+                FontSize = 13,
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true
+            };
+
+            var levels = new ComboBox { ItemsSource = Enumerable.Range(1, 6), SelectedItem = 2, MinWidth = 80 };
+            System.Windows.Automation.AutomationProperties.SetName(levels, "Heading levels");
+            var label = new Label { Content = "Heading _levels", Target = levels, Padding = new Thickness(0, 0, 0, 4) };
+            var nested = new CheckBox { Content = "_Nested table of contents", IsChecked = true, Margin = new Thickness(0, 12, 0, 16) };
+
+            var cancel = new Button { Content = "Cancel", MinWidth = 90, Margin = new Thickness(0, 0, 8, 0), IsCancel = true };
+            cancel.Click += (_, _) => dialog.Close(false);
+            var create = new AccentButton { Content = "Create", MinWidth = 90, IsDefault = true };
+            create.Click += (_, _) => dialog.Close(true);
+            var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+            buttons.Children.Add(cancel);
+            buttons.Children.Add(create);
+
+            var panel = new StackPanel();
+            panel.Children.Add(label);
+            panel.Children.Add(levels);
+            panel.Children.Add(nested);
+            panel.Children.Add(buttons);
+            dialog.Content = panel;
+
+            var document = this.Editor.Document;
+            int selectionStart = this.Editor.SelectionStart;
+            int selectionLength = this.Editor.SelectionLength;
+            var host = Window.GetWindow(this)?.Content as UIElement ?? this;
+
+            if (await dialog.ShowAsync(host) == true && ReferenceEquals(document, this.Editor.Document))
+            {
+                this.Editor.Select(selectionStart, selectionLength);
+                this.InsertTableOfContents((int)levels.SelectedItem, nested.IsChecked == true);
+            }
+        }
+
+        /// <summary>
+        /// Inserts Markdown links to document headings at the caret, replacing any selected text.
+        /// Does nothing when no headings match the requested depth.
+        /// </summary>
+        /// <param name="levels">The deepest heading level to include, clamped to 1-6.</param>
+        /// <param name="nested">Whether child headings are nested beneath their preceding parents.</param>
+        public void InsertTableOfContents(int levels = 2, bool nested = true)
+        {
+            string source = this.Editor.Text;
+            string newline = source.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+            string contents = CreateTableOfContents(source, Math.Clamp(levels, 1, 6), nested, newline);
+
+            if (contents.Length == 0)
+            {
+                return;
+            }
+
+            int start = this.Editor.SelectionStart;
+            int length = this.Editor.SelectionLength;
+            string before = source[..start];
+            string after = source[(start + length)..];
+            string prefix = before.Length == 0 || before.EndsWith(newline + newline, StringComparison.Ordinal)
+                ? string.Empty : before.EndsWith(newline, StringComparison.Ordinal) ? newline : newline + newline;
+            string suffix = after.StartsWith(newline, StringComparison.Ordinal) ? string.Empty : newline;
+            string insertion = prefix + contents + suffix;
+            this.Editor.Document.Replace(start, length, insertion);
+            this.Editor.CaretOffset = start + insertion.Length;
+            this.Editor.Focus();
+        }
+
+        /// <summary>
+        /// Builds links using the same heading identifiers as the editor's HTML preview, excluding code blocks.
+        /// A stack of preceding heading levels handles missing levels without creating orphan nested lists.
+        /// </summary>
+        private static string CreateTableOfContents(string source, int levels, bool nested, string newline)
+        {
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UsePipeTables().Build();
+            var document = Markdown.Parse(source, pipeline);
+            var parents = new Stack<int>();
+            var contents = new StringBuilder();
+
+            foreach (var heading in document.Descendants<HeadingBlock>().Where(heading => heading.Level <= levels))
+            {
+                string? id = heading.GetAttributes().Id;
+                if (string.IsNullOrEmpty(id))
+                {
+                    continue;
+                }
+
+                while (parents.Count > 0 && parents.Peek() >= heading.Level)
+                {
+                    parents.Pop();
+                }
+
+                var title = new StringBuilder();
+                if (heading.Inline != null)
+                {
+                    AppendHeadingText(title, heading.Inline);
+                }
+
+                string label = Regex.Replace(title.ToString(), @"([\\`*{}_\[\]<>!])", @"\$1");
+                contents.Append(' ', nested ? parents.Count * 4 : 0);
+                contents.Append("- [").Append(label).Append("](#").Append(Uri.EscapeDataString(id)).Append(')').Append(newline);
+                parents.Push(heading.Level);
+            }
+
+            return contents.ToString();
+        }
+
+        /// <summary>
+        /// Collects visible heading text without carrying inline formatting or link destinations into TOC labels.
+        /// </summary>
+        private static void AppendHeadingText(StringBuilder text, Markdig.Syntax.Inlines.Inline inline)
+        {
+            switch (inline)
+            {
+                case LiteralInline literal:
+                    text.Append(literal.Content);
+                    break;
+                case CodeInline code:
+                    text.Append(code.Content);
+                    break;
+                case HtmlEntityInline entity:
+                    text.Append(entity.Transcoded);
+                    break;
+                case AutolinkInline autolink:
+                    text.Append(autolink.Url);
+                    break;
+                case LineBreakInline:
+                    text.Append(' ');
+                    break;
+                case ContainerInline container:
+                    foreach (var child in container)
+                    {
+                        AppendHeadingText(text, child);
+                    }
+                    break;
             }
         }
 

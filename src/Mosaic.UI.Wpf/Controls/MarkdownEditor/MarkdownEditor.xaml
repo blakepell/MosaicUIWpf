@@ -329,7 +329,7 @@
                 <Separator Visibility="{Binding ContextMenu.HasItems, ElementName=CustomMenuButton, Converter={x:Static converters:BoolToVisibilityConverter.Instance}}" />
 
                 <!--
-                    Host for the caller's CustomMenuItems, which is this ContextMenu's own Items collection
+                    Host for built-in actions and the caller's CustomMenuItems, which is this ContextMenu's own Items collection
                     (items added to it become real logical children, which an ItemsSource would not give them
                     until the menu first opened). HasItems keeps the slot collapsed until there is something
                     to show.
@@ -354,7 +354,11 @@
                             Stretch="Uniform" />
                     </controls:SplitButton.Content>
                     <controls:SplitButton.ContextMenu>
-                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" />
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem
+                                Click="CreateTableOfContentsButton_Click"
+                                Header="Create in Page Table of Contents" />
+                        </ContextMenu>
                     </controls:SplitButton.ContextMenu>
                 </controls:SplitButton>
             </ToolBar>
