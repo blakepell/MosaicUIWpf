@@ -14,8 +14,9 @@ namespace Mosaic.UI.Wpf.Controls.Scripting
     /// Marks a class as a script module or one that can be accessed from the scripting
     /// engine.
     /// </summary>
+    /// <remarks>Not sealed, so a host library can derive its own attribute type that the editor also recognizes.</remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class ScriptModuleAttribute : Attribute
+    public class ScriptModuleAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the name of the module.

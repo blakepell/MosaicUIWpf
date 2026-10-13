@@ -20,6 +20,10 @@
         /// <summary>
         /// High Contrast Mode
         /// </summary>
-        HighContrast
+        HighContrast,
+        /// <summary>
+        /// Black Mode: true black window and text surfaces with gray borders.
+        /// </summary>
+        Black
     }
 }

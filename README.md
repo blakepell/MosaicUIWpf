@@ -53,7 +53,7 @@ Or search for **MosaicUIWpf** in the Visual Studio NuGet Package Manager.
 </wpf:MosaicApp>
 ```
 
-Set `Theme` to `"Light"`, `"Dark"`, or `"HighContrast"`. Set `Native="True"` to restyle built-in WPF controls. Set `SystemColors="True"` to integrate with the OS accent color.
+Set `Theme` to `"Light"`, `"Dark"`, `"Black"`, `"Blue"`, or `"HighContrast"`. Set `Native="True"` to restyle built-in WPF controls. Set `SystemColors="True"` to integrate with the OS accent color.
 
 **2. Update `MainWindow.xaml`** to apply the window chrome behavior and Mosaic theme brushes:
 

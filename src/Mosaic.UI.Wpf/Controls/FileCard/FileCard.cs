@@ -32,7 +32,7 @@ namespace Mosaic.UI.Wpf.Controls
     /// <para>
     /// With <see cref="IsTintEnabled"/> set the card background is washed with a small amount of the icon's
     /// dominant hue. The wash is always mixed into the active theme's control background color, so the card
-    /// stays inside the Light, Dark, or Blue palette rather than painting an arbitrary color.
+    /// stays inside the Light, Dark, Black, or Blue palette rather than painting an arbitrary color.
     /// </para>
     /// </remarks>
     [DefaultProperty(nameof(FilePath))]

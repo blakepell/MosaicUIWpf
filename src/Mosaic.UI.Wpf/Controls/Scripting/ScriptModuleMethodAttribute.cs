@@ -14,8 +14,9 @@ namespace Mosaic.UI.Wpf.Controls.Scripting
     /// Supplies completion descriptions and signature hints for a public .NET script member.
     /// This attribute is metadata and does not rename or restrict members in the script engine.
     /// </summary>
+    /// <remarks>Not sealed, so a host library can derive its own attribute type that the editor also recognizes.</remarks>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-    public sealed class ScriptModuleMethodAttribute : Attribute
+    public class ScriptModuleMethodAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the name of the function in the module (defaults to member name)

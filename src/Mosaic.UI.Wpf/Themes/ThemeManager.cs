@@ -286,6 +286,7 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.Light => MosaicThemeMode.Dark,
                 MosaicThemeMode.Dark => MosaicThemeMode.Light,
                 MosaicThemeMode.Blue => MosaicThemeMode.Light,
+                MosaicThemeMode.Black => MosaicThemeMode.Light,
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light
             };
@@ -295,14 +296,15 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// Cycles through Light, Dark, Blue, and HighContrast themes.
+        /// Cycles through Light, Dark, Black, Blue, and HighContrast themes.
         /// </summary>
         public void CycleTheme()
         {
             Theme = Theme switch
             {
                 MosaicThemeMode.Light => MosaicThemeMode.Dark,
-                MosaicThemeMode.Dark => MosaicThemeMode.Blue,
+                MosaicThemeMode.Dark => MosaicThemeMode.Black,
+                MosaicThemeMode.Black => MosaicThemeMode.Blue,
                 MosaicThemeMode.Blue => MosaicThemeMode.HighContrast,
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light

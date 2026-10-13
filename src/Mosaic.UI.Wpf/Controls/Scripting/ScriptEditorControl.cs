@@ -41,7 +41,6 @@ public class ScriptEditorControl : Control
         CompletionCommand = new RelayCommand(() => _support?.ShowCompletion());
         SnippetsCommand = new RelayCommand(() => _support?.ShowCompletion(true));
         SignatureHelpCommand = new RelayCommand(() => _support?.ShowSignatureHelp());
-        SetCurrentValue(EnvironmentProperty, new ScriptEnvironment());
         Loaded += (_, _) =>
         {
             _isUnloaded = false;
@@ -51,7 +50,10 @@ public class ScriptEditorControl : Control
         {
             _isUnloaded = true;
             DetachSupport();
-            Stop();
+            if (StopOnUnload)
+            {
+                Stop();
+            }
         };
         InputBindings.Add(new KeyBinding(RunCommand, Key.F5, ModifierKeys.None));
         InputBindings.Add(new KeyBinding(StopCommand, Key.F6, ModifierKeys.None));
@@ -78,6 +80,10 @@ public class ScriptEditorControl : Control
     /// <summary>
     /// Gets or sets the engine and registration context; null disables execution and completion.
     /// </summary>
+    /// <remarks>
+    /// When never set, a separate default environment is created as the template is applied, so a host that
+    /// supplies its own environment does not pay for an unused engine.
+    /// </remarks>
     public ScriptEnvironment? Environment
     {
         get => (ScriptEnvironment?)GetValue(EnvironmentProperty);
@@ -166,6 +172,21 @@ public class ScriptEditorControl : Control
     {
         get => (Visibility)GetValue(ToolBarVisibilityProperty);
         set => SetValue(ToolBarVisibilityProperty, value);
+    }
+
+    /// <summary>
+    /// Identifies the StopOnUnload dependency property.
+    /// </summary>
+    public static readonly DependencyProperty StopOnUnloadProperty = DependencyProperty.Register(nameof(StopOnUnload), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(true));
+
+    /// <summary>
+    /// Gets or sets whether unloading the control cancels a running script. Hosts that unload content they keep,
+    /// such as tabbed documents switching tabs, can turn this off and call <see cref="Stop"/> when closing.
+    /// </summary>
+    public bool StopOnUnload
+    {
+        get => (bool)GetValue(StopOnUnloadProperty);
+        set => SetValue(StopOnUnloadProperty, value);
     }
 
     private static readonly DependencyPropertyKey IsRunningPropertyKey = DependencyProperty.RegisterReadOnly(nameof(IsRunning), typeof(bool), typeof(ScriptEditorControl), new PropertyMetadata(false));
@@ -284,6 +305,7 @@ public class ScriptEditorControl : Control
         }
 
         base.OnApplyTemplate();
+        EnsureDefaultEnvironment();
         _editor = GetTemplateChild("PART_Editor") as SyntaxEditor;
         if (_editor != null)
         {
@@ -305,6 +327,7 @@ public class ScriptEditorControl : Control
             return;
         }
 
+        EnsureDefaultEnvironment();
         var environment = Environment ?? throw new InvalidOperationException("A scripting environment is required.");
         string code = Text;
         using var source = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -415,6 +438,18 @@ public class ScriptEditorControl : Control
         }
 
         property.SetValue(target, text);
+    }
+
+    /// <summary>
+    /// Creates the separate default environment, only when the host has not set or bound one (an explicit null
+    /// keeps execution and completion disabled).
+    /// </summary>
+    private void EnsureDefaultEnvironment()
+    {
+        if (Environment == null && DependencyPropertyHelper.GetValueSource(this, EnvironmentProperty).BaseValueSource == BaseValueSource.Default)
+        {
+            SetCurrentValue(EnvironmentProperty, new ScriptEnvironment());
+        }
     }
 
     private void AttachSupport()

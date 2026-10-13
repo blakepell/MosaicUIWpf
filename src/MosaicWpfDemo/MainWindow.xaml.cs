@@ -38,7 +38,7 @@ namespace WpfDemo
         {
             var theme = AppServices.GetRequiredService<ThemeManager>();
             theme.CycleTheme();
-
+            
             if (AppServices.IsRegistered<AppSettings>())
             {
                 var appSettings = AppServices.GetRequiredService<AppSettings>();

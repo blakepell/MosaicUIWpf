@@ -55,7 +55,7 @@
                     Width="48"
                     Click="ButtonToggleTheme_OnClick"
                     Style="{DynamicResource {x:Static theme:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Cycle themes (Light, Dark, Blue, High Contrast)">
+                    ToolTip="Cycle themes (Light, Dark, Black, Blue, High Contrast)">
                     <Button.ContentTemplate>
                         <DataTemplate>
                             <Viewbox Width="16" Height="16">

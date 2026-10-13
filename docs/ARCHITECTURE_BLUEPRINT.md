@@ -42,7 +42,7 @@ This document defines the baseline architecture for building enterprise-grade, e
 ### Resource dictionary composition
 - `ThemeManager` composition order:
 1. Foundation tokens (typography, shared primitives)
-2. Theme colors (`Light` / `Dark` / `HighContrast`)
+2. Theme colors (`Light` / `Dark` / `Black` / `Blue` / `HighContrast`)
 3. Optional system color overrides
 4. Generic control templates
 5. Optional native control styles

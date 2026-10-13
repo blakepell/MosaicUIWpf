@@ -13,8 +13,9 @@ namespace Mosaic.UI.Wpf.Controls.Scripting
     /// <summary>
     /// Hides a member from editor completion; it does not restrict access through the script engine.
     /// </summary>
+    /// <remarks>Not sealed, so a host library can derive its own attribute type that the editor also recognizes.</remarks>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
-    public sealed class ScriptHiddenAttribute : Attribute
+    public class ScriptHiddenAttribute : Attribute
     {
 
     }

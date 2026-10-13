@@ -452,6 +452,92 @@ public class ScriptingTests
         control.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
     });
 
+    [Fact]
+    public void EditorCreatesADefaultEnvironmentOnlyWhenTheHostSuppliesNone() => RunStaAsync(() =>
+    {
+        var supplied = new ScriptEnvironment(new ScriptEngine());
+        Assert.Same(supplied, Realize(new ScriptEditorControl { Environment = supplied }, MosaicThemeMode.Dark).Environment);
+
+        var unset = new ScriptEditorControl();
+        Assert.Null(unset.Environment);
+        Assert.NotNull(Realize(unset, MosaicThemeMode.Dark).Environment);
+
+        Assert.Null(Realize(new ScriptEditorControl { Environment = null }, MosaicThemeMode.Dark).Environment);
+        return Task.CompletedTask;
+    });
+
+    [Fact]
+    public void ExecutionCanStayOnTheCallingThread() => RunStaAsync(async () =>
+    {
+        int uiThread = Environment.CurrentManagedThreadId;
+        int scriptThread = 0;
+        var engine = new ScriptEngine();
+        engine.SetValue("capture", (Action)(() => scriptThread = Environment.CurrentManagedThreadId));
+
+        await new ScriptEnvironment(engine).ExecuteAsync("capture();");
+        Assert.NotEqual(uiThread, scriptThread);
+
+        await new ScriptEnvironment(engine) { ExecuteOnWorkerThread = false }.ExecuteAsync("let value = 1; capture();");
+        Assert.Equal(uiThread, scriptThread);
+        Assert.Equal(uiThread, Environment.CurrentManagedThreadId);
+    });
+
+    [Fact]
+    public void EditorsOfOneEnvironmentShareHighlightingUntilRegistrationsChange() => RunStaAsync(() =>
+    {
+        var environment = new ScriptEnvironment(new ScriptEngine());
+        var first = Realize(new ScriptEditorControl { Environment = environment }, MosaicThemeMode.Dark);
+        var second = Realize(new ScriptEditorControl { Environment = environment }, MosaicThemeMode.Dark);
+        var baseline = first.Editor!.SyntaxHighlighting;
+        Assert.Same(baseline, second.Editor!.SyntaxHighlighting);
+
+        environment.RegisterObject("app", new AppCommands());
+        Assert.NotSame(baseline, first.Editor.SyntaxHighlighting);
+        Assert.Same(first.Editor.SyntaxHighlighting, second.Editor.SyntaxHighlighting);
+        Assert.Contains(second.Editor.SyntaxHighlighting.MainRuleSet.Rules, r => r.Regex.IsMatch("app"));
+
+        var other = Realize(new ScriptEditorControl { Environment = new ScriptEnvironment(new ScriptEngine()) }, MosaicThemeMode.Dark);
+        Assert.NotSame(first.Editor.SyntaxHighlighting, other.Editor!.SyntaxHighlighting);
+        return Task.CompletedTask;
+    });
+
+    [Fact]
+    public void UnloadingKeepsRunningWhenStopOnUnloadIsOff() => RunStaAsync(async () =>
+    {
+        var control = Realize(new ScriptEditorControl { StopOnUnload = false, Text = "while (true) {}" }, MosaicThemeMode.Dark);
+        var run = control.RunAsync();
+        control.RaiseEvent(new RoutedEventArgs(FrameworkElement.UnloadedEvent));
+        await Task.Delay(100);
+        Assert.True(control.IsRunning);
+        control.Stop();
+        await run.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.False(control.IsRunning);
+    });
+
+    [Fact]
+    public void CompletionRecognizesDerivedHostAttributes() => RunStaAsync(() =>
+    {
+        var environment = new ScriptEnvironment(new ScriptEngine());
+        environment.RegisterObject("host", new HostCommands());
+        var members = ScriptCompletion.GetMembers(environment, "host");
+        Assert.Contains(members, m => m.Text == nameof(HostCommands.Visible));
+        Assert.DoesNotContain(members, m => m.Text == nameof(HostCommands.Hidden));
+        return Task.CompletedTask;
+    });
+
+    private sealed class HostMethodAttribute : ScriptModuleMethodAttribute;
+
+    private sealed class HostHiddenAttribute : ScriptHiddenAttribute;
+
+    public class HostCommands
+    {
+        [HostMethod(Description = "Shown in completion")]
+        public void Visible() { }
+
+        [HostHidden]
+        public void Hidden() { }
+    }
+
     private static ScriptCallContext? FindCall(string source)
     {
         int caret = source.IndexOf('|');

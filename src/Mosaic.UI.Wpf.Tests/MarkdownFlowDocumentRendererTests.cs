@@ -13,6 +13,7 @@ using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using Mosaic.UI.Wpf.Controls;
 using Xunit;
 
@@ -341,6 +342,47 @@ namespace Mosaic.UI.Wpf.Tests
                 Assert.True(
                     editor.ActualHeight > richTextBox.ActualHeight,
                     $"Expected the editor to render its whole document; it was {editor.ActualHeight} tall inside a {richTextBox.ActualHeight} tall viewer.");
+            });
+        }
+
+        [Fact]
+        public void ImplicitHostStylesDoNotRestyleTheViewerSurface()
+        {
+            RunSta(() =>
+            {
+                // Another UI framework's implicit styles: a RichTextBox template that paints its own
+                // background, and a FlowDocument style that recolors the text.
+                var foreignTemplate = new ControlTemplate(typeof(RichTextBox))
+                {
+                    VisualTree = new FrameworkElementFactory(typeof(Border), "ForeignBorder")
+                };
+                foreignTemplate.VisualTree.SetValue(Border.BackgroundProperty, Brushes.Black);
+
+                var richTextBoxStyle = new Style(typeof(RichTextBox));
+                richTextBoxStyle.Setters.Add(new Setter(Control.TemplateProperty, foreignTemplate));
+                richTextBoxStyle.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Black));
+
+                var documentStyle = new Style(typeof(FlowDocument));
+                documentStyle.Setters.Add(new Setter(FlowDocument.BackgroundProperty, Brushes.Black));
+                documentStyle.Setters.Add(new Setter(FlowDocument.ForegroundProperty, Brushes.Red));
+
+                var viewer = new MarkdownViewer { Markdown = "# Title\n\nBody text.", Foreground = Brushes.White };
+                var host = new Border { Child = viewer };
+                host.Resources.Add(typeof(RichTextBox), richTextBoxStyle);
+                host.Resources.Add(typeof(FlowDocument), documentStyle);
+
+                var richTextBox = Realize(viewer);
+                richTextBox.ApplyTemplate();
+
+                Assert.NotSame(richTextBoxStyle, richTextBox.Style);
+                Assert.Null(richTextBox.Template.FindName("ForeignBorder", richTextBox));
+                Assert.Equal(Colors.Transparent, ((SolidColorBrush)richTextBox.Background).Color);
+                Assert.Equal(Colors.Transparent, ((SolidColorBrush)richTextBox.Document.Background).Color);
+                Assert.Same(Brushes.White, richTextBox.Document.Foreground);
+
+                // An override by the application after rendering still reaches the document.
+                viewer.Foreground = Brushes.Yellow;
+                Assert.Same(Brushes.Yellow, richTextBox.Document.Foreground);
             });
         }
 

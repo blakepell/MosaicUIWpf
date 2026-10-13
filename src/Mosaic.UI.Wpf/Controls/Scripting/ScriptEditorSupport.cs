@@ -4,6 +4,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using System.Runtime.CompilerServices;
 using System.Xml;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
@@ -398,21 +399,54 @@ internal sealed class ScriptEditorSupport : IDisposable
         }
     }
 
+    /// <summary>
+    /// Highlighting definitions built per environment and theme. Editors attach again on every Loaded (a tab
+    /// switch, re-docking), and each build reflects over every registered type, so editors of one environment
+    /// share a definition until its registrations change. Definitions are not mutated once built.
+    /// </summary>
+    private static readonly ConditionalWeakTable<ScriptEnvironment, HighlightingCache> HighlightingCaches = new();
+
+    private sealed class HighlightingCache
+    {
+        public int Version = -1;
+        public readonly Dictionary<MosaicThemeMode, IHighlightingDefinition> Definitions = new();
+    }
+
     private void RefreshHighlighting(object? sender, EventArgs e)
     {
         _editor.Dispatcher.VerifyAccess();
         Close();
         _signatures.Clear();
-        string suffix = _editor.Theme == MosaicThemeMode.Light ? "Light" : "Dark";
+        var cache = HighlightingCaches.GetValue(_environment, _ => new HighlightingCache());
+        lock (cache)
+        {
+            if (cache.Version != _environment.Version)
+            {
+                cache.Definitions.Clear();
+                cache.Version = _environment.Version;
+            }
+
+            if (!cache.Definitions.TryGetValue(_editor.Theme, out var definition))
+            {
+                cache.Definitions[_editor.Theme] = definition = CreateHighlighting(_environment, _editor.Theme);
+            }
+
+            _editor.SyntaxHighlighting = definition;
+        }
+    }
+
+    private static IHighlightingDefinition CreateHighlighting(ScriptEnvironment environment, MosaicThemeMode theme)
+    {
+        string suffix = theme == MosaicThemeMode.Light ? "Light" : "Dark";
         using var stream = typeof(ScriptEditorSupport).Assembly.GetManifestResourceStream($"Mosaic.UI.Wpf.Controls.Scripting.Assets.Js{suffix}.xshd")!;
         using var reader = XmlReader.Create(stream);
         // Never mutate SyntaxEditor's cached definitions: each environment has different aliases.
         var definition = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-        var methods = _environment.Registrations.Values.SelectMany(r => r.Type.GetMethods())
+        var methods = environment.Registrations.Values.SelectMany(r => r.Type.GetMethods())
             .Where(m => !m.IsSpecialName && ScriptCompletion.Visible(m)).Select(m => m.Name).Distinct();
         Color methodColor = suffix == "Light" ? Color.FromRgb(121, 94, 38) : Color.FromRgb(220, 220, 142);
         Color moduleColor = suffix == "Light" ? Color.FromRgb(38, 127, 153) : Color.FromRgb(78, 201, 176);
-        if (_editor.Theme == MosaicThemeMode.HighContrast)
+        if (theme == MosaicThemeMode.HighContrast)
         {
             methodColor = moduleColor = SystemColors.WindowTextColor;
             foreach (var color in definition.NamedHighlightingColors)
@@ -421,8 +455,8 @@ internal sealed class ScriptEditorSupport : IDisposable
             }
         }
         AddRule(methods, methodColor);
-        AddRule(_environment.Registrations.Keys, moduleColor);
-        _editor.SyntaxHighlighting = definition;
+        AddRule(environment.Registrations.Keys, moduleColor);
+        return definition;
 
         void AddRule(IEnumerable<string> names, Color color)
         {

@@ -62,6 +62,18 @@ public sealed class ScriptEnvironment
     public IReadOnlyList<MethodInfo> ExtensionMethods => Engine.ExtensionMethods;
 
     /// <summary>
+    /// Gets or sets whether <see cref="ExecuteAsync"/> moves execution to a worker thread (the default). Set it to
+    /// false when registered objects must be used on the calling (UI) thread; CPU-bound script work then runs on
+    /// that thread until the script's first await, as it does when calling the engine directly.
+    /// </summary>
+    public bool ExecuteOnWorkerThread { get; set; } = true;
+
+    /// <summary>
+    /// Incremented whenever a registration is added or replaced, so editors can share work derived from them.
+    /// </summary>
+    internal int Version { get; private set; }
+
+    /// <summary>
     /// Occurs when a registration is added or replaced.
     /// </summary>
     public event EventHandler? RegistrationsChanged;
@@ -129,6 +141,7 @@ public sealed class ScriptEnvironment
         ValidateAlias(alias);
         ArgumentNullException.ThrowIfNull(type);
         _registrations[alias] = new ScriptRegistration(alias, type, isType, instance);
+        Version++;
         RegistrationsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -165,7 +178,8 @@ public sealed class ScriptEnvironment
     }
 
     /// <summary>
-    /// Executes on a worker thread in a fresh lexical block so let and const declarations can be run repeatedly.
+    /// Executes in a fresh lexical block so let and const declarations can be run repeatedly, on a worker
+    /// thread unless <see cref="ExecuteOnWorkerThread"/> is false.
     /// </summary>
     /// <remarks>
     /// Calls may execute concurrently on the same engine; this method does not serialize script runs.
@@ -175,8 +189,16 @@ public sealed class ScriptEnvironment
     public async Task ExecuteAsync(string code, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(code);
+        string block = "{\n" + code + "\n}";
+        if (!ExecuteOnWorkerThread)
+        {
+            // Continuations return to the caller's context, which is what objects bound to it expect.
+            await Engine.ExecuteScriptAsync(block, cancellationToken);
+            return;
+        }
+
         // Script engine can execute CPU-bound script synchronously before its first await.
-        await Task.Run(() => Engine.ExecuteScriptAsync("{\n" + code + "\n}", cancellationToken),
+        await Task.Run(() => Engine.ExecuteScriptAsync(block, cancellationToken),
             cancellationToken).ConfigureAwait(false);
     }
 

@@ -1260,10 +1260,14 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             // Inherit the control's typography and colors so the document honors the active theme.
+            // The values are bound rather than copied so a theme switch or a later override by the
+            // application reaches the rendered document. The background stays transparent so the
+            // viewer's own Background (or whatever hosts it) shows through consistently.
             document.PagePadding = new Thickness(0);
-            document.FontFamily = _richTextBox.FontFamily;
-            document.FontSize = _richTextBox.FontSize;
-            document.Foreground = _richTextBox.Foreground;
+            document.Background = Brushes.Transparent;
+            document.SetBinding(FlowDocument.FontFamilyProperty, new Binding(nameof(FontFamily)) { Source = _richTextBox });
+            document.SetBinding(FlowDocument.FontSizeProperty, new Binding(nameof(FontSize)) { Source = _richTextBox });
+            document.SetBinding(FlowDocument.ForegroundProperty, new Binding(nameof(Foreground)) { Source = _richTextBox });
 
             _richTextBox.Document = document;
 

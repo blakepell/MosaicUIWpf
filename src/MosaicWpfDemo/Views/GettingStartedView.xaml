@@ -58,7 +58,7 @@
 
                 <TextBlock Style="{StaticResource StepTitleStyle}" Text="2. Configure App.xaml" />
                 <TextBlock
-                    Text="Use MosaicApp as the application base and merge ThemeManager into the application resources. Choose Light, Dark, or HighContrast for Theme; Native and SystemColors are optional."
+                    Text="Use MosaicApp as the application base and merge ThemeManager into the application resources. Choose Light, Dark, Black, Blue, or HighContrast for Theme; Native and SystemColors are optional."
                     TextWrapping="Wrap" />
                 <mosaic:SyntaxEditor
                     x:Name="AppXamlEditor"
