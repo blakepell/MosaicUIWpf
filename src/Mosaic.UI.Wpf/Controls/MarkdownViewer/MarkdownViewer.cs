@@ -827,9 +827,10 @@ namespace Mosaic.UI.Wpf.Controls
 
             if (!resolved.IsAbsoluteUri)
             {
-                // In-page anchors are not supported; ignore them rather than failing.
+                // In-page anchors scroll the matching heading into view instead of navigating.
                 if (resolved.OriginalString.StartsWith("#", StringComparison.Ordinal))
                 {
+                    ScrollToAnchor(resolved.OriginalString);
                     return;
                 }
 
@@ -858,6 +859,101 @@ namespace Mosaic.UI.Wpf.Controls
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls the heading identified by <paramref name="anchor"/> to the top of the viewer, the
+        /// same way a browser follows an in-page <c>#fragment</c> link. Heading identifiers are the
+        /// ones Markdig generates (for example <c>## Event Links</c> becomes <c>event-links</c>) or an
+        /// explicit <c>{#custom-id}</c> attribute; an exact match wins over a case-insensitive one.
+        /// </summary>
+        /// <param name="anchor">The heading identifier, with or without a leading <c>#</c>; may be URL-escaped.</param>
+        /// <returns><c>true</c> when a matching heading was found; otherwise <c>false</c>.</returns>
+        public bool ScrollToAnchor(string? anchor)
+        {
+            if (_richTextBox?.Document == null || string.IsNullOrWhiteSpace(anchor))
+            {
+                return false;
+            }
+
+            string id = Uri.UnescapeDataString(anchor.TrimStart('#'));
+
+            if (id.Length == 0)
+            {
+                return false;
+            }
+
+            var headings = new List<(TextElement Element, string Id)>();
+            CollectHeadings(_richTextBox.Document, headings);
+
+            var target = headings.FirstOrDefault(h => string.Equals(h.Id, id, StringComparison.Ordinal)).Element
+                         ?? headings.FirstOrDefault(h => string.Equals(h.Id, id, StringComparison.OrdinalIgnoreCase)).Element;
+
+            if (target == null)
+            {
+                return false;
+            }
+
+            // Right after a render the document may not have been laid out yet, in which case the
+            // heading has no position to scroll to; try again once layout has run.
+            if (!ScrollElementToTop(target))
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => ScrollElementToTop(target)));
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Collects every rendered heading in the logical tree below <paramref name="element"/>, in
+        /// document order, so headings nested inside quotes or list items are found too.
+        /// </summary>
+        private static void CollectHeadings(DependencyObject element, List<(TextElement Element, string Id)> headings)
+        {
+            foreach (var child in LogicalTreeHelper.GetChildren(element).OfType<FrameworkContentElement>())
+            {
+                if (child is TextElement textElement && MarkdownFlowDocumentRenderer.GetHeadingId(textElement) is { Length: > 0 } id)
+                {
+                    headings.Add((textElement, id));
+                    continue;
+                }
+
+                CollectHeadings(child, headings);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls the viewer so the top of <paramref name="element"/> sits at the top of the viewport.
+        /// </summary>
+        /// <param name="element">The element to reveal.</param>
+        /// <returns><c>false</c> when the element has not been laid out yet; otherwise <c>true</c>.</returns>
+        private bool ScrollElementToTop(TextElement element)
+        {
+            if (_richTextBox == null || _richTextBox.ViewportHeight <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                var rect = element.ContentStart.GetCharacterRect(LogicalDirection.Forward);
+
+                if (rect.IsEmpty)
+                {
+                    return false;
+                }
+
+                // Leave the heading's own top margin visible above it so it does not sit flush
+                // against the edge of the viewport.
+                double margin = element is Block block ? block.Margin.Top : 0;
+                _richTextBox.ScrollToVerticalOffset(Math.Max(0, _richTextBox.VerticalOffset + rect.Top - margin));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                return false;
             }
         }
 

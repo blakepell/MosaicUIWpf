@@ -9,6 +9,7 @@
  */
 
 using Markdig;
+using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Mosaic.UI.Wpf.Themes;
@@ -74,6 +75,41 @@ namespace Mosaic.UI.Wpf.Controls
         /// hosting <see cref="MarkdownViewer"/> can raise <see cref="MarkdownViewer.EventRaised"/>.
         /// </summary>
         public const string EventLinkPrefix = "@";
+
+        /// <summary>
+        /// Identifies the <c>HeadingId</c> attached property, which carries the anchor identifier of a
+        /// rendered heading paragraph. Identifiers come from Markdig's auto-identifier extension (for
+        /// example <c>## Event Links</c> becomes <c>event-links</c>) or from an explicit
+        /// <c>{#custom-id}</c> attribute, so in-page links such as <c>[Jump](#event-links)</c> can be
+        /// resolved to the heading they target.
+        /// </summary>
+        public static readonly DependencyProperty HeadingIdProperty = DependencyProperty.RegisterAttached(
+            "HeadingId",
+            typeof(string),
+            typeof(MarkdownFlowDocumentRenderer),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets the anchor identifier of a rendered heading.
+        /// </summary>
+        /// <param name="element">The rendered heading element.</param>
+        /// <returns>The heading's anchor identifier, or <c>null</c> when the element is not a heading.</returns>
+        public static string? GetHeadingId(DependencyObject element)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            return (string?)element.GetValue(HeadingIdProperty);
+        }
+
+        /// <summary>
+        /// Sets the anchor identifier of a rendered heading.
+        /// </summary>
+        /// <param name="element">The rendered heading element.</param>
+        /// <param name="value">The anchor identifier.</param>
+        public static void SetHeadingId(DependencyObject element, string? value)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            element.SetValue(HeadingIdProperty, value);
+        }
 
         /// <summary>
         /// Renders the supplied Markdown text into a <see cref="FlowDocument"/>.
@@ -240,6 +276,13 @@ namespace Mosaic.UI.Wpf.Controls
                 FontSize = HeadingFontSize(heading.Level),
                 Margin = new Thickness(0, heading.Level <= 2 ? 12 : 8, 0, context.HeadingBottomSpacing)
             };
+
+            string? id = heading.GetAttributes().Id;
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                SetHeadingId(paragraph, id);
+            }
 
             AddInlines(paragraph.Inlines, heading.Inline, context);
             return paragraph;

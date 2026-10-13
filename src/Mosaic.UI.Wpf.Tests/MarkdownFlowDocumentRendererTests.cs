@@ -193,6 +193,51 @@ namespace Mosaic.UI.Wpf.Tests
         }
 
         [Fact]
+        public void HeadingsCarryGeneratedExplicitAndDeduplicatedIds()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("## Event Links\n\n## Getting Started {#start}\n\n## Notes\n\n## Notes\n\nBody");
+                var ids = document.Blocks.OfType<Paragraph>().Select(MarkdownFlowDocumentRenderer.GetHeadingId).ToArray();
+
+                Assert.Equal(new[] { "event-links", "start", "notes", "notes-1", null }, ids);
+            });
+        }
+
+        [Fact]
+        public void AnchorLinkStaysRelativeEvenWhenABaseUriIsSupplied()
+        {
+            RunSta(() =>
+            {
+                var baseUri = new Uri("https://example.com/docs/index.md");
+                var document = MarkdownFlowDocumentRenderer.Render("[Jump](#event-links)", baseUri);
+                var hyperlink = document.Blocks.OfType<Paragraph>().Single().Inlines.OfType<System.Windows.Documents.Hyperlink>().Single();
+
+                Assert.NotNull(hyperlink.NavigateUri);
+                Assert.False(hyperlink.NavigateUri!.IsAbsoluteUri);
+                Assert.Equal("#event-links", hyperlink.NavigateUri.OriginalString);
+            });
+        }
+
+        [Fact]
+        public void ScrollToAnchorScrollsAFarHeadingIntoView()
+        {
+            RunSta(() =>
+            {
+                string filler = string.Concat(Enumerable.Repeat("Filler paragraph.\n\n", 80));
+                var viewer = new MarkdownViewer { Markdown = $"# Top\n\n{filler}## Far Away\n\nEnd" };
+                var richTextBox = Realize(viewer);
+                richTextBox.UpdateLayout();
+
+                Assert.False(viewer.ScrollToAnchor("#missing"));
+                Assert.True(viewer.ScrollToAnchor("#FAR-AWAY"));
+
+                richTextBox.UpdateLayout();
+                Assert.True(richTextBox.VerticalOffset > 0);
+            });
+        }
+
+        [Fact]
         public void EventLinkParsesNameAndDecodedParameters()
         {
             Assert.True(MarkdownEventRaisedEventArgs.TryParse("@ShowArticle?keyword=bpell&title=Hello%20World&tag=a+b", out var name, out var parameters));

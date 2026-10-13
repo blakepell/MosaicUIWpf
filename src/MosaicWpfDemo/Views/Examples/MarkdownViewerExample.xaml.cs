@@ -128,14 +128,26 @@ namespace MosaicWpfDemo.Views.Examples
         }
 
         /// <summary>
-        /// A sample document exercising headings, emphasis, lists, code, quotes, tables, links, and
-        /// @-prefixed event links.
+        /// A sample document exercising headings, emphasis, lists, code, quotes, tables, links,
+        /// @-prefixed event links, and #-prefixed in-page anchor links.
         /// </summary>
         private const string SampleMarkdown =
             """
             # Markdown Preview
 
             This is **bold**, this is *italic*, and this is `inline code`.
+
+            ## Table of Contents
+
+            Links that start with `#` are in-page anchors: clicking one scrolls the matching heading
+            into view. Heading identifiers are generated from the heading text (`## Event Links`
+            becomes `#event-links`), or can be set explicitly with `{#custom-id}`.
+
+            - [Code Blocks](#code-blocks)
+            - [Table](#table)
+            - [Event Links](#event-links)
+            - [Release Notes](#release-notes)
+            - [Image](#image)
 
             ## List
 
@@ -150,6 +162,8 @@ namespace MosaicWpfDemo.Views.Examples
             3. Three
 
             > This is a block quote.
+
+            ## Code Blocks
 
             ```csharp
             public static void Main()
@@ -182,6 +196,43 @@ namespace MosaicWpfDemo.Views.Examples
             - [Blake's Articles](@ShowArticle?keyword=bpell)
             - [Search two terms](@Search?term=wpf&term2=markdown&page=2)
             - [Refresh (no parameters)](@Refresh)
+
+            ## Release Notes
+
+            The sections below are filler so the document is tall enough to scroll, which shows the
+            table of contents links jumping to headings far down the page.
+
+            ### Version 3.0
+
+            - Added in-page anchor links. A link such as `[Image](#image)` scrolls the heading into view.
+            - Headings accept an explicit identifier: `## Getting Started {#start}`.
+            - Duplicate headings get unique identifiers (`#notes`, `#notes-1`, `#notes-2`).
+
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante
+            venenatis dapibus posuere velit aliquet. Donec ullamcorper nulla non metus auctor fringilla.
+            Cras mattis consectetur purus sit amet fermentum.
+
+            ### Version 2.0
+
+            - The find bar (Ctrl+F) searches the document and every embedded code block.
+            - Save As exports the rendered document as RTF or XPS.
+            - Ctrl+mouse wheel zooms the document.
+
+            Maecenas sed diam eget risus varius blandit sit amet non magna. Vestibulum id ligula porta
+            felis euismod semper. Nullam quis risus eget urna mollis ornare vel eu leo. Aenean lacinia
+            bibendum nulla sed consectetur.
+
+            ### Version 1.0
+
+            - Initial release of the WPF-native Markdown viewer.
+            - Headings, emphasis, lists, quotes, tables, links, and images.
+
+            Etiam porta sem malesuada magna mollis euismod. Vivamus sagittis lacus vel augue laoreet
+            rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus, nisi erat porttitor
+            ligula, eget lacinia odio sem nec elit. Praesent commodo cursus magna, vel scelerisque nisl
+            consectetur et.
+
+            [Back to the Table of Contents](#table-of-contents)
 
             ## Image
 
