@@ -30,8 +30,8 @@ have used since the dial-up era.
 | Stop a paste or login | Click **Stop sending** in the session banner or use the Terminal menu. |
 | Zoom the terminal font | Hold `Ctrl` and scroll the mouse wheel |
 | Zoom this guide | Point at the guide, hold `Ctrl`, and scroll the mouse wheel |
-| Choose a theme | **Setup → Theme → Light, Dark, or Blue** |
-| Quick-toggle light/dark | The ◐ button in the title bar |
+| Choose a theme | **Setup → Theme → Light, Dark, Black, or Blue** |
+| Cycle themes | The ◐ button in the title bar |
 | Open this guide | **Help → User Guide** |
 
 The guide opens as the first document when BBS Navigator starts. Links in the contents

@@ -149,8 +149,8 @@ namespace BbsNavigator
         }
 
         /// <summary>
-        /// Cycles the title bar theme button through the three themes the client ships with:
-        /// Blue (the default) to Light to Dark and back to Blue.
+        /// Cycles the title bar theme button through the four themes the client ships with:
+        /// Blue (the default) to Light to Dark to Black and back to Blue.
         /// </summary>
         private void ToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
@@ -160,6 +160,7 @@ namespace BbsNavigator
             {
                 MosaicThemeMode.Blue => MosaicThemeMode.Light,
                 MosaicThemeMode.Light => MosaicThemeMode.Dark,
+                MosaicThemeMode.Dark => MosaicThemeMode.Black,
                 _ => MosaicThemeMode.Blue
             };
         }
@@ -172,6 +173,11 @@ namespace BbsNavigator
         private void DarkTheme_OnClick(object sender, RoutedEventArgs e)
         {
             SetTheme(MosaicThemeMode.Dark);
+        }
+
+        private void BlackTheme_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetTheme(MosaicThemeMode.Black);
         }
 
         private void BlueTheme_OnClick(object sender, RoutedEventArgs e)
@@ -194,6 +200,7 @@ namespace BbsNavigator
         {
             LightThemeMenuItem.IsChecked = theme == MosaicThemeMode.Light;
             DarkThemeMenuItem.IsChecked = theme == MosaicThemeMode.Dark;
+            BlackThemeMenuItem.IsChecked = theme == MosaicThemeMode.Black;
             BlueThemeMenuItem.IsChecked = theme == MosaicThemeMode.Blue;
         }
 
