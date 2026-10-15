@@ -898,6 +898,19 @@ namespace BbsNavigator
             }
         }
 
+        /// <summary>
+        /// Opens the selected board's trigger list.
+        /// </summary>
+        /// <param name="sender">The menu item.</param>
+        /// <param name="e">The routed event arguments.</param>
+        private void EditTriggers_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (GetContextProfile(sender) is { } profile)
+            {
+                new TriggerListWindow(profile, RegisterScriptObjects) { Owner = this }.ShowDialog();
+            }
+        }
+
         private void EditAliases_OnClick(object sender, RoutedEventArgs e)
         {
             if (GetContextProfile(sender) is { } profile)

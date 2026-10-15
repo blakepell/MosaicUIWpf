@@ -356,6 +356,8 @@ namespace BbsNavigator.Views
                 }
 
                 _manualDisconnect = false;
+                Interlocked.Increment(ref _triggerGeneration);
+                _triggerLines.Reset();
 
                 // A session dropped mid-screen can leave a scroll region, origin mode, or a partial
                 // escape sequence behind that would trap the new session's output on the last line.
@@ -493,6 +495,14 @@ namespace BbsNavigator.Views
             WriteCapture(data);
             _loginPrompts.Append(data);
             RaiseTextReceived(data);
+            int triggerGeneration = Volatile.Read(ref _triggerGeneration);
+            Dispatcher.BeginInvoke(() =>
+            {
+                if (triggerGeneration == _triggerGeneration)
+                {
+                    ProcessTriggerText(data);
+                }
+            });
             DetectZmodemStart(data);
 
             if (Interlocked.Exchange(ref _scrollToEndQueued, 1) != 0)

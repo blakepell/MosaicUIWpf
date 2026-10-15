@@ -16,7 +16,7 @@ using Mosaic.UI.Wpf.Controls.Scripting;
 namespace BbsNavigator.Common
 {
     /// <summary>
-    /// Lets aliases and connection scripts read from and write to the terminal session that ran them.
+    /// Lets aliases, triggers, and connection scripts read from and write to the terminal session that ran them.
     /// Scripts see this object as <c>term</c>.
     /// </summary>
     /// <remarks>

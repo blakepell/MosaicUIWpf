@@ -28,7 +28,7 @@ public partial class BbsTerminalView
 
     /// <summary>
     /// Gets or sets a callback that registers application objects, such as <c>win</c> and
-    /// <c>panels</c>, into the environment aliases and connection scripts run in.
+    /// <c>panels</c>, into the environment aliases, triggers, and connection scripts run in.
     /// </summary>
     public Action<ScriptEnvironment>? ConfigureScriptEnvironment { get; set; }
 
@@ -43,7 +43,7 @@ public partial class BbsTerminalView
     internal string ScreenText => Terminal.Text;
 
     /// <summary>
-    /// Cancels every running alias script for this session. Scripts stop at their next wait or send.
+    /// Cancels running alias, trigger, and connection scripts for this session. Scripts stop at their next wait or send.
     /// </summary>
     public void StopAliasScripts()
     {
@@ -75,7 +75,14 @@ public partial class BbsTerminalView
         return true;
     }
 
-    private async Task RunAliasAsync(string name, string code)
+    /// <summary>
+    /// Runs alias or trigger source in the shared session environment and reports failures.
+    /// </summary>
+    /// <param name="name">The alias or trigger name.</param>
+    /// <param name="code">The expanded script source.</param>
+    /// <param name="kind">The label used when reporting script errors.</param>
+    /// <returns>A task that completes when the script finishes.</returns>
+    private async Task RunAliasAsync(string name, string code, string kind = "Alias")
     {
         if (_disposed)
         {
@@ -93,20 +100,20 @@ public partial class BbsTerminalView
         {
             if (!_disposed)
             {
-                ShowTransientStatus($"Alias '{name}' stopped.");
+                ShowTransientStatus($"{kind} '{name}' stopped.");
             }
         }
         catch (Exception ex)
         {
             if (!_disposed)
             {
-                ShowTransientStatus($"Alias '{name}' failed: {(ex.InnerException ?? ex).Message}");
+                ShowTransientStatus($"{kind} '{name}' failed: {(ex.InnerException ?? ex).Message}");
             }
         }
     }
 
     /// <summary>
-    /// Gets the environment shared by this session's alias scripts, so values stored in
+    /// Gets the environment shared by this session's scripts, so values stored in
     /// <c>globals</c> by one alias are visible to the next.
     /// </summary>
     private ScriptEnvironment GetAliasEnvironment()

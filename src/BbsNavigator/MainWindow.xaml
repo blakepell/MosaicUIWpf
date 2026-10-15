@@ -153,7 +153,7 @@
             <MenuItem Header="_Terminal" SubmenuOpened="TerminalMenu_OnSubmenuOpened">
                 <MenuItem Click="ComposeMessage_OnClick" Header="_Compose Message…" />
                 <MenuItem Click="StopSending_OnClick" Header="Stop Sending Text" />
-                <MenuItem Click="StopAliasScripts_OnClick" Header="Stop _Alias Scripts" />
+                <MenuItem Click="StopAliasScripts_OnClick" Header="Stop _Scripts" />
                 <Separator />
                 <MenuItem Click="ToggleDoorway_OnClick" Header="Toggle _DoorWay Mode" />
                 <MenuItem Click="ToggleKeypadNavigation_OnClick" Header="Toggle _Keypad Arrows" />
@@ -289,6 +289,7 @@
             BorderThickness="1,0,1,1">
             <ad:DockingManager
                 x:Name="DockingManager"
+                x:FieldModifier="public"
                 ActiveContentChanged="DockingManager_OnActiveContentChanged"
                 DocumentClosed="DockingManager_OnDocumentClosed">
                 <ad:DockingManager.Theme>
@@ -405,6 +406,7 @@
                                                             <Separator />
                                                             <MenuItem Click="EditBbsDetails_OnClick" Header="_Edit BBS Details…" />
                                                             <MenuItem Click="EditAliases_OnClick" Header="Edit _Aliases…" />
+                                                            <MenuItem Click="EditTriggers_OnClick" Header="Edit _Triggers…" />
                                                             <MenuItem Click="EditOnConnectedEvent_OnClick" Header="Edit OnConnectedEvent">
                                                                 <MenuItem.Icon>
                                                                     <Image

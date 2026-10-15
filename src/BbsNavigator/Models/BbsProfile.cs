@@ -290,6 +290,17 @@ namespace BbsNavigator.Models
         public ConcurrentObservableCollection<Alias> Aliases { get; set; } = new();
 
         /// <summary>
+        /// Gets or sets the triggers for complete received lines. Mutate this collection on the UI dispatcher.
+        /// </summary>
+        public System.Collections.ObjectModel.ObservableCollection<Trigger> Triggers { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether received lines can start trigger scripts.
+        /// </summary>
+        [ObservableProperty]
+        private bool _triggersEnabled = true;
+
+        /// <summary>
         /// Gets or sets the per-board character delay, or -1 to use the application setting.
         /// </summary>
         public int PasteCharacterDelayOverride { get; set; } = -1;

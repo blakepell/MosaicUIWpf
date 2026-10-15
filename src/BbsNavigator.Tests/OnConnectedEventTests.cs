@@ -105,6 +105,80 @@ public class OnConnectedEventTests
         });
     }
 
+    /// <summary>
+    /// Verifies incoming lines reach trigger scripts with their originating terminal reference.
+    /// </summary>
+    [Fact]
+    public void ReceivedLineRunsTriggerAndSendsCapturedTextThroughTerm()
+    {
+        RunStaAsync(async () =>
+        {
+            using var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var profile = new BbsProfile
+            {
+                Name = "Trigger connection",
+                Host = "127.0.0.1",
+                Port = ((IPEndPoint)listener.LocalEndpoint).Port,
+                AutoReconnect = false,
+                TerminalEncoding = BbsEncoding.Utf8
+            };
+            var trigger = new BbsNavigator.Models.Trigger
+            {
+                Name = "Collect item",
+                Pattern = @"^You see (.+)\.$",
+                Command = "term.SendLine(\"get %1\"); term.Status(\"%0\");",
+                DisableAfterTriggered = true
+            };
+            profile.Triggers.Add(trigger);
+            await using var terminal = new BbsTerminalView(profile, new AppSettings());
+            await terminal.ConnectAsync();
+            using var peer = await listener.AcceptTcpClientAsync();
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            var stream = peer.GetStream();
+            await stream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("\x1b[3"), deadline.Token);
+            await stream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("2mYou see sword.\x1b[0m"), deadline.Token);
+            await Task.Delay(50, deadline.Token);
+            Assert.Equal(0, trigger.Count);
+            await stream.WriteAsync(System.Text.Encoding.UTF8.GetBytes("\r\n"), deadline.Token);
+            var received = new System.Text.StringBuilder();
+            var buffer = new byte[1024];
+            while (!received.ToString().Contains("get sword\r", StringComparison.Ordinal))
+            {
+                int count = await stream.ReadAsync(buffer, deadline.Token);
+                Assert.True(count > 0);
+                received.Append(System.Text.Encoding.UTF8.GetString(buffer, 0, count));
+            }
+
+            Assert.Equal(1, trigger.Count);
+            Assert.False(trigger.Enabled);
+        });
+    }
+
+    /// <summary>
+    /// Verifies trigger windows load their script editor and list bindings on the dispatcher.
+    /// </summary>
+    [Fact]
+    public void TriggerWindowsLoadWithScriptCompletionAndObservableItems()
+    {
+        RunStaAsync(() =>
+        {
+            var profile = new BbsProfile();
+            var trigger = new BbsNavigator.Models.Trigger { Name = "Example", Pattern = "(item)", Command = "term.Echo(\"%1\");" };
+            profile.Triggers.Add(trigger);
+            var list = new TriggerListWindow(profile);
+            var editor = new TriggerEditorWindow((BbsNavigator.Models.Trigger)trigger.Clone());
+            var items = Assert.IsType<System.Windows.Controls.ListView>(list.FindName("TriggerList"));
+            Assert.Same(profile.Triggers, items.ItemsSource);
+            var scriptEditor = Assert.IsType<ScriptEditorControl>(editor.FindName("ScriptEditor"));
+            Assert.NotNull(scriptEditor.Environment);
+            Assert.Equal(trigger.Command, scriptEditor.Text);
+            editor.Close();
+            list.Close();
+            return Task.CompletedTask;
+        });
+    }
+
     private static void RunStaAsync(Func<Task> action)
     {
         Exception? failure = null;

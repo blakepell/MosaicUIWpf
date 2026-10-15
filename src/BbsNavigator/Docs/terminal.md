@@ -248,3 +248,47 @@ sessions with that board start capturing automatically. It can also be set with
 
 Logs are written to a `Logs` subfolder of your download folder, named after the board and
 the current date and time. Use **Transfer → Open Download Folder** to jump there.
+
+
+## Triggers
+
+Right-click a board in the directory and choose **Edit Triggers…** to add, edit, enable,
+or delete its triggers. The editor uses the same script control and `term` completions
+as aliases. Triggers are saved with the board. **Triggers Enabled** in the command box
+menu turns processing on or off; **Stop Scripts** stops running scripts.
+
+Each trigger checks complete received lines with ANSI codes removed, even when a line
+or escape sequence arrives in several network reads. Patterns use case-sensitive .NET
+regular expressions; add `(?i)` for case-insensitive matching. Lower priority numbers
+start first; equal priorities retain list order. All matching enabled triggers start
+their scripts. **Disable after firing** makes a trigger run once.
+
+For example, use this pattern:
+
+```regex
+^You see (.+)\.$
+```
+
+and this script:
+
+```javascript
+term.Echo("Received: %0");
+term.SendLine("get %1");
+```
+
+When `You see sword.` arrives, `%0` is the entire line and `%1` is `sword`.
+The script sends `get sword` followed by Enter to the terminal that received the line.
+The same `term`, `win`, `panels`, and session `globals` environment used by aliases is
+available. Use `%2`, `%3`, and so on (including multi-digit numbers) for further capture
+groups. Named groups work too: `(?<army>\w+)` can be read as `%army` in the script.
+Names are case-sensitive and consume the complete group name, so `%army` and `%army_name`
+are distinct placeholders. Unknown or unmatched groups become empty strings.
+Put placeholders inside quoted script strings; values are escaped as literal
+string contents. Missing groups become empty strings. Use `%%` for a literal percent.
+`%0` always means the whole line, even when the regex matches only part of it.
+
+Each trigger retains its current compiled regex with a 250 ms match timeout. An invalid
+pattern cannot be saved in the editor; invalid patterns loaded from settings are skipped.
+A timed-out expression is disabled and reported in the terminal status bar. Lines longer
+than 65,536 characters are discarded for trigger matching, as are incomplete lines when
+a session reconnects. File transfer data and local script echoes do not fire triggers.
