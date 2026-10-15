@@ -919,14 +919,16 @@ namespace BbsNavigator
                 return;
             }
 
+            var environment = new ScriptEnvironment();
+            RegisterScriptObjects(environment);
+            environment.RegisterCompletionType("term", typeof(TerminalScriptCommands));
             var editor = new ScriptEditorControl
             {
+                Environment = environment,
                 SaveObject = profile,
                 SaveToProperty = nameof(BbsProfile.OnConnectedEvent),
                 Text = profile.OnConnectedEvent ?? string.Empty
             };
-            RegisterScriptObjects(editor.Environment!);
-            editor.Environment!.RegisterCompletionType("term", typeof(TerminalScriptCommands));
             editor.MarkSaved();
 
             var document = DockingManager.Add(editor, $"{profile.Name} – OnConnectedEvent", activate: true, canClose: true);
@@ -1388,9 +1390,10 @@ namespace BbsNavigator
                 return;
             }
 
-            var editor = new ScriptEditorControl();
-            // The editor creates a Topaz environment; register the same instance for execution and IntelliSense.
-            RegisterScriptObjects(editor.Environment!);
+            // Configure the environment before docking; the editor's default is created at template application.
+            var environment = new ScriptEnvironment();
+            RegisterScriptObjects(environment);
+            var editor = new ScriptEditorControl { Environment = environment };
             _scriptEditorDocument = DockingManager.Add(editor, "Script Editor", activate: true, canClose: true);
             _scriptEditorDocument.ContentId = "script-editor";
         }

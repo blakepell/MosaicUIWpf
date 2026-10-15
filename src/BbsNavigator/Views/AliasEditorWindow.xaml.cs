@@ -42,9 +42,10 @@ public partial class AliasEditorWindow : Window
         Title = string.IsNullOrWhiteSpace(alias.AliasExpression) ? "New alias" : $"Edit alias – {alias.AliasExpression}";
 
         // The editor only needs completion metadata; aliases run in each terminal's own environment.
-        var environment = ScriptEditor.Environment!;
+        var environment = new ScriptEnvironment();
         configureScriptEnvironment?.Invoke(environment);
         environment.RegisterCompletionType("term", typeof(TerminalScriptCommands));
+        ScriptEditor.Environment = environment;
 
         DataContext = alias;
         Loaded += (_, _) => Keyboard.Focus(string.IsNullOrWhiteSpace(alias.AliasExpression) ? AliasTextBox : ScriptEditor.Editor?.TextArea);
