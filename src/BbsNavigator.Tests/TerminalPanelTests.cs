@@ -252,6 +252,100 @@ public class TerminalPanelTests
         finally { window.Close(); }
     });
 
+    [Fact]
+    public void ScriptsDockDataListsBesideTheTerminalWithoutTakingFocus() => RunSta(() =>
+    {
+        var existingTool = new LayoutAnchorable { Title = "Existing tool", Content = new System.Windows.Controls.TextBlock() };
+        var dock = new DockingManager
+        {
+            Layout = new LayoutRoot { RootPanel = new LayoutPanel { Children = { new LayoutDocumentPane(), new LayoutAnchorablePane(existingTool) } } }
+        };
+        var panels = new PanelScriptCommands(dock);
+        var environment = new ScriptEnvironment();
+        environment.RegisterObject("panels", panels);
+
+        // Without an Application a DataList must be built on the UI thread; in the app scripts can call new DataList().
+        var grid = new Mosaic.UI.Wpf.Controls.Scripting.DataList.DataList("Unit", "Count");
+        environment.Globals["grid"] = grid;
+
+        // A trigger runs this every time troop counts scroll by; only the first run docks a panel.
+        for (int run = 1; run <= 3; run++)
+        {
+            RunScript(environment, $$"""
+                let troops = panels.GetContent('troops') ?? panels.Dock('troops', 'Troops', globals.grid);
+                troops.Clear();
+                troops.Add('Fighters', {{run * 10}});
+                troops.Add('Shields', {{run * 5}});
+                """);
+        }
+
+        Assert.Equal(2, grid.Count);
+        Assert.Equal(30, Convert.ToInt32(grid[0][1]));
+        Assert.Same(grid, panels.GetContent("troops"));
+        Assert.Null(panels.Get("troops"));
+
+        // The panel joins the existing right-hand pane as a selected tab, but is not activated.
+        var host = dock.Layout.Descendents().OfType<LayoutAnchorable>().Single(a => a.ContentId == "panel:troops");
+        Assert.Same(existingTool.Parent, host.Parent);
+        Assert.True(host.IsSelected);
+        Assert.False(host.IsActive);
+        Assert.Equal("Troops", host.Title);
+        Assert.Same(host.Content, grid.ListView.Parent);
+
+        Assert.True(panels.Show("TROOPS"));
+        Assert.True(host.IsActive);
+        Assert.False(panels.Show("nope"));
+
+        // Another side, and re-docking an id with new content swaps it in place.
+        RunScript(environment, "panels.Dock('log', 'Log', globals.grid, 'bottom');");
+        var log = dock.Layout.Descendents().OfType<LayoutAnchorable>().Single(a => a.ContentId == "panel:log");
+        Assert.Equal(AnchorSide.Bottom, ((LayoutAnchorablePane)log.Parent).GetSide());
+        Assert.Same(log.Content, grid.ListView.Parent);
+        Assert.Null(host.Content is System.Windows.Controls.Border border ? border.Child : null);
+
+        var replacement = new Mosaic.UI.Wpf.Controls.Scripting.DataList.DataList("Name");
+        panels.Dock("log", "Renamed", replacement);
+        Assert.Same(log.Content, replacement.ListView.Parent);
+        Assert.Equal("Renamed", log.Title);
+        Assert.Same(replacement, panels.GetContent("log"));
+
+        Assert.Throws<ArgumentException>(() => panels.Dock("bad", "Bad", grid, "middle"));
+        Assert.Throws<ArgumentException>(() => panels.Dock("bad", "Bad", "not a control"));
+        Assert.Throws<InvalidOperationException>(() => panels.CreateTool("log", "Terminal"));
+
+        panels.CloseAll();
+        Assert.Equal(0, panels.Count);
+        Assert.Same(existingTool, dock.Layout.Descendents().OfType<LayoutAnchorable>().Single());
+    });
+
+    [Fact]
+    public void DockingManagerFindsShowsAndReusesContentById() => RunSta(() =>
+    {
+        var dock = new DockingManager { Layout = new LayoutRoot { RootPanel = new LayoutPanel(new LayoutDocumentPane()) } };
+        int built = 0;
+        System.Windows.FrameworkElement Build() { built++; return new System.Windows.Controls.TextBlock(); }
+
+        var tool = dock.GetOrAddToolWindow("stats", Build, "Stats", AnchorableShowStrategy.Left, activate: false, canHide: true);
+        Assert.Same(tool, dock.GetOrAddToolWindow("stats", Build, "Ignored"));
+        Assert.Equal(1, built);
+        Assert.Equal("Stats", tool.Title);
+        Assert.Equal(AnchorSide.Left, ((LayoutAnchorablePane)tool.Parent).GetSide());
+
+        tool.Hide();
+        Assert.True(tool.IsHidden);
+        Assert.Same(tool, dock.FindContent("stats"));
+        Assert.True(dock.ShowContent("stats"));
+        Assert.False(tool.IsHidden);
+        Assert.True(tool.IsActive);
+        Assert.False(dock.ShowContent("missing"));
+
+        var document = dock.GetOrAdd("notes", Build, "Notes");
+        Assert.Same(document, dock.GetOrAdd("notes", Build, "Notes"));
+        Assert.Equal(2, built);
+        Assert.Throws<InvalidOperationException>(() => dock.GetOrAdd("stats", Build, "Stats"));
+        Assert.Throws<InvalidOperationException>(() => dock.GetOrAddToolWindow("notes", Build, "Notes"));
+    });
+
     private static void DrainLayout()
     {
         var frame = new DispatcherFrame();

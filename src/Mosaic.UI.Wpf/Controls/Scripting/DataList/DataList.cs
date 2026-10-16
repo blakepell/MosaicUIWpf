@@ -35,6 +35,7 @@ public sealed class DataList
     private GridView _gridView = null!;
     private ListCollectionView _view = null!;
     private DataListWindow? _window;
+    private Border? _host;
     private DataListColumn? _sortColumn;
     private bool _sortDescending;
     private int _updateDepth;
@@ -359,6 +360,28 @@ public sealed class DataList
     public void Close() => Invoke(() => _window?.Close());
 
     /// <summary>
+    /// Creates a themed element holding the list so a host can place it in its own layout, such as
+    /// a docked tool window. The list moves into the new element: an open window is closed and an
+    /// element returned by an earlier call is emptied.
+    /// </summary>
+    /// <returns>A new element that holds <see cref="ListView"/>.</returns>
+    /// <remarks>This is a WPF element; only access it on its dispatcher thread.</remarks>
+    /// <exception cref="InvalidOperationException">The list view was placed in another element by the host.</exception>
+    [ScriptHidden]
+    public FrameworkElement CreateHostElement() => Invoke(() =>
+    {
+        _window?.Close();
+        ReleaseHost();
+        if (ListView.Parent != null)
+        {
+            throw new InvalidOperationException("The DataList is already hosted in another element.");
+        }
+
+        _host = new Border { Resources = CreateNativeStyles(), Child = ListView };
+        return (FrameworkElement)_host;
+    });
+
+    /// <summary>
     /// Runs an action on the list's dispatcher.
     /// </summary>
     internal void Invoke(Action action)
@@ -550,6 +573,7 @@ public sealed class DataList
     {
         if (_window == null)
         {
+            ReleaseHost();
             if (ListView.Parent != null)
             {
                 throw new InvalidOperationException("The DataList is already hosted in another element.");
@@ -577,6 +601,35 @@ public sealed class DataList
         _window.Width = width > 0 ? width : _window.Width;
         _window.Height = height > 0 ? height : _window.Height;
         return _window;
+    }
+
+    /// <summary>
+    /// Removes the list view from the element returned by the last <see cref="CreateHostElement"/> call.
+    /// </summary>
+    private void ReleaseHost()
+    {
+        if (_host != null)
+        {
+            _host.Child = null;
+            _host = null;
+        }
+    }
+
+    /// <summary>
+    /// Loads the native list styles so the list is themed even when the application has not opted into native styles.
+    /// </summary>
+    private static ResourceDictionary CreateNativeStyles()
+    {
+        var resources = new ResourceDictionary();
+        foreach (string name in new[] { "ScrollBar", "ScrollViewer", "ListView" })
+        {
+            resources.MergedDictionaries.Add(new ResourceDictionary
+            {
+                Source = new Uri($"pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/{name}.xaml", UriKind.Absolute)
+            });
+        }
+
+        return resources;
     }
 
     private static bool TryResolveRecord(object record, List<DataListColumn> columns, out List<object?> cells)

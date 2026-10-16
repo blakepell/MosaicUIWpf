@@ -292,3 +292,24 @@ pattern cannot be saved in the editor; invalid patterns loaded from settings are
 A timed-out expression is disabled and reported in the terminal status bar. Lines longer
 than 65,536 characters are discarded for trigger matching, as are incomplete lines when
 a session reconnects. File transfer data and local script echoes do not fire triggers.
+
+### Docking panels from scripts
+
+Scripts can dock their own panels beside the terminal. `panels.Dock(id, title, content)`
+puts a `DataList` (or a WPF element) in a tool window on the right; add a fourth argument
+of `left`, `top`, `bottom`, or `document` to place it elsewhere. Docking never takes keyboard
+focus, so it is safe from triggers. Calling it again with an open id keeps the panel where
+the user moved it and swaps in the new content. `panels.GetContent(id)` returns what was
+docked, `panels.Show(id)` brings the panel forward, and `panels.Close(id)` closes it.
+
+For example, this trigger script keeps a troop table up to date:
+
+```javascript
+let troops = panels.GetContent('troops')
+    ?? panels.Dock('troops', 'Troops', new DataList('Unit', 'Count'));
+troops.Clear();
+troops.Add('Fighters', '%1');
+troops.Add('Shields', '%2');
+```
+
+`panels.Create` and `panels.CreateTool` still open text-only terminal panels.
