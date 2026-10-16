@@ -214,6 +214,54 @@ namespace BbsNavigator.Views
         }
 
         /// <summary>
+        /// Occurs when the session's aliases should be opened for editing.
+        /// </summary>
+        public event RoutedEventHandler? EditAliasesRequested;
+
+        /// <summary>
+        /// Occurs when the session's triggers should be opened for editing.
+        /// </summary>
+        public event RoutedEventHandler? EditTriggersRequested;
+
+        /// <summary>
+        /// Occurs when the session's connection event should be opened for editing.
+        /// </summary>
+        public event RoutedEventHandler? EditOnConnectedEventRequested;
+
+        /// <summary>
+        /// Occurs when the session's notes should be opened for editing.
+        /// </summary>
+        public event RoutedEventHandler? EditNotesRequested;
+
+        private void Edit_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Mosaic.UI.Wpf.Controls.SplitButton button)
+            {
+                button.IsDropDownOpen = true;
+            }
+        }
+
+        private void EditAliases_OnClick(object sender, RoutedEventArgs e)
+        {
+            EditAliasesRequested?.Invoke(this, e);
+        }
+
+        private void EditTriggers_OnClick(object sender, RoutedEventArgs e)
+        {
+            EditTriggersRequested?.Invoke(this, e);
+        }
+
+        private void EditOnConnectedEvent_OnClick(object sender, RoutedEventArgs e)
+        {
+            EditOnConnectedEventRequested?.Invoke(this, e);
+        }
+
+        private void EditNotes_OnClick(object sender, RoutedEventArgs e)
+        {
+            EditNotesRequested?.Invoke(this, e);
+        }
+
+        /// <summary>
         /// Gets the protocol this session runs over.
         /// </summary>
         public BbsTransport Transport { get; }

@@ -253,6 +253,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -389,9 +390,33 @@
                         </ContextMenu>
                     </mosaic:SplitButton.ContextMenu>
                 </mosaic:SplitButton>
+                <mosaic:SplitButton
+                    Grid.Column="4"
+                    Margin="6,0,0,0"
+                    Padding="8,2"
+                    Click="Edit_OnClick"
+                    Content="Edit"
+                    FontSize="11"
+                    ToolTip="Edit this BBS's aliases, triggers, connection event, or notes">
+                    <mosaic:SplitButton.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Click="EditAliases_OnClick" Header="Edit _Aliases…" />
+                            <MenuItem Click="EditTriggers_OnClick" Header="Edit _Triggers…" />
+                            <MenuItem Click="EditOnConnectedEvent_OnClick" Header="Edit OnConnectedEvent">
+                                <MenuItem.Icon>
+                                    <Image
+                                        Width="16"
+                                        Height="16"
+                                        Source="pack://application:,,,/BbsNavigator;component/Assets/lightning-48.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Click="EditNotes_OnClick" Header="Edit _Notes…" />
+                        </ContextMenu>
+                    </mosaic:SplitButton.ContextMenu>
+                </mosaic:SplitButton>
                 <ComboBox
                     x:Name="EncodingComboBox"
-                    Grid.Column="5"
+                    Grid.Column="6"
                     MinWidth="140"
                     Margin="10,0,0,0"
                     VerticalAlignment="Center"
@@ -406,11 +431,11 @@
                 </ComboBox>
                 <TextBlock
                     x:Name="TrafficText"
-                    Grid.Column="6"
+                    Grid.Column="7"
                     Style="{StaticResource StatusBarText}" />
                 <TextBlock
                     x:Name="DurationText"
-                    Grid.Column="7"
+                    Grid.Column="8"
                     MinWidth="58"
                     Style="{StaticResource StatusBarText}"
                     TextAlignment="Right" />
