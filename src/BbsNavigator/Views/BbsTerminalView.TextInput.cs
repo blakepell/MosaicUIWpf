@@ -26,7 +26,14 @@ public partial class BbsTerminalView
     private async void SessionCommandBox_OnCommandExecuted(object sender, Mosaic.UI.Wpf.Controls.CommandExecutedEventArgs e)
     {
         e.Handled = true;
-        if (TryRunAlias(e.Command))
+
+        // A leading "$" sends the rest of the line as typed, bypassing alias matching.
+        string command = e.Command;
+        if (command.StartsWith('$'))
+        {
+            command = command[1..];
+        }
+        else if (TryRunAlias(command))
         {
             return;
         }
@@ -36,7 +43,7 @@ public partial class BbsTerminalView
             {
                 ScrollLockToggle.IsChecked = false;
                 Terminal.ScrollToBottom();
-                return SendPacedAsync(e.Command + "\r", 0, 0, false, token);
+                return SendPacedAsync(command + "\r", 0, 0, false, token);
             },
             "Command sent.");
     }

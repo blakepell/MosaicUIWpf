@@ -185,7 +185,8 @@ An alias runs a script when you type its name as the first word in a board's com
 box (turn on **Show Command Box** in the session's options). Right-click a board in the
 directory and choose **Edit Aliases…** to add, filter, or delete its aliases, and
 double-click one to edit it. Input that does not start with an enabled alias is sent to
-the board as usual.
+the board as usual. Start a line with `$` to skip aliases and send the rest of it as
+typed: if `1` is an alias, `$1` sends a plain `1` to the board.
 
 Words typed after the alias replace `%1` through `%9` in a copy of the script, `%0` is
 everything after the alias, and `%%` is a literal percent sign. Wrap text in double quotes
