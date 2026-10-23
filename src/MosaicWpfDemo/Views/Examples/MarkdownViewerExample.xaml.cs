@@ -135,6 +135,8 @@ namespace MosaicWpfDemo.Views.Examples
             """
             # Markdown Preview
 
+            ---
+            
             This is **bold**, this is *italic*, and this is `inline code`.
 
             ## Table of Contents
