@@ -4,8 +4,20 @@
     xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
     xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
-    <!--  Search Panel  -->
+    <!--
+        Search Panel (Ctrl+F) with an optional replace row (Ctrl+H).
+
+        The replace state lives in the SyntaxEditor.IsReplaceVisible / SyntaxEditor.ReplacePattern attached
+        properties on the panel because AvalonEdit's SearchPanel cannot be subclassed. The replace commands are
+        bound on the panel instance by SyntaxEditor.
+
+        UseLayoutRounding/SnapsToDevicePixels keep the 16px raster icons on whole device pixels; the panel is
+        right-aligned against the text area, whose width is usually fractional, so without them every icon would
+        land on a half pixel and blur.
+    -->
     <Style TargetType="avalonedit:SearchPanel">
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type avalonedit:SearchPanel}">
@@ -16,9 +28,12 @@
                         Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                         BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
                         BorderThickness="1,1,1,1"
-                        Cursor="Arrow">
-                        <StackPanel Orientation="Horizontal">
-                            <StackPanel.Resources>
+                        Cursor="Arrow"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        SnapsToDevicePixels="True"
+                        UseLayoutRounding="True">
+                        <Grid>
+                            <Grid.Resources>
                                 <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
                                     <Style.Resources>
                                         <Style TargetType="Border">
@@ -33,9 +48,51 @@
                                         </Style>
                                     </Style.Resources>
                                 </Style>
-                            </StackPanel.Resources>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!--  Expand / collapse the replace row (spans both rows like VS Code)  -->
+                            <ToggleButton
+                                x:Name="PART_ToggleReplaceButton"
+                                IsTabStop="False"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Width="16"
+                                Margin="3,5,0,5"
+                                Padding="0"
+                                VerticalAlignment="Stretch"
+                                AutomationProperties.Name="Toggle Replace"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                IsChecked="{Binding Path=(controls:SyntaxEditor.IsReplaceVisible), RelativeSource={RelativeSource TemplatedParent}}"
+                                ToolTip="Toggle Replace (Ctrl+H)">
+                                <Path
+                                    x:Name="ToggleReplaceChevron"
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="M 6,4 L 10.5,8 L 6,12"
+                                    Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlForegroundBrush}}"
+                                    StrokeEndLineCap="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="1.6" />
+                            </ToggleButton>
+
                             <TextBox
                                 Name="PART_searchTextBox"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                TabIndex="1"
                                 Width="150"
                                 Height="Auto"
                                 Margin="5,5,0,5"
@@ -52,47 +109,58 @@
                                 </TextBox.Text>
                             </TextBox>
 
-                            <!--  FindNext button  -->
-                            <Button
-                                Width="30"
-                                Height="22"
-                                Margin="3,1,0,1"
-                                Padding="0"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                                BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
-                                Command="avalonedit:SearchCommands.FindNext"
-                                ToolTip="{Binding Localization.FindNextText, RelativeSource={RelativeSource TemplatedParent}}">
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Orientation="Horizontal">
+                                <!--  FindNext button  -->
+                                <Button
+                                    Width="30"
+                                    Height="22"
+                                    Margin="3,0,0,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Find Next"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
+                                    Command="avalonedit:SearchCommands.FindNext"
+                                    ToolTip="{Binding Localization.FindNextText, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="../../Assets/vs-find-next-16.png"
+                                        Stretch="None" />
+                                </Button>
 
-                                <controls:AdaptiveImage
-                                    Width="16"
-                                    Height="16"
-                                    HorizontalAlignment="Center"
-                                    Source="../../Assets/vs-find-next-16.png" />
-                            </Button>
+                                <!--  FindPrevious (set visibility if required) button  -->
+                                <Button
+                                    Width="30"
+                                    Height="22"
+                                    Margin="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Find Previous"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
+                                    Command="avalonedit:SearchCommands.FindPrevious"
+                                    ToolTip="{Binding Localization.FindPreviousText, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Visibility="Collapsed">
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="../../Assets/vs-find-previous-16.png"
+                                        Stretch="None" />
+                                </Button>
 
-                            <!--  FindPrevious (set visibility if required) button  -->
-                            <Button
-                                Width="30"
-                                Height="22"
-                                Margin="0"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                                BorderBrush="Transparent"
-                                BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
-                                Command="avalonedit:SearchCommands.FindPrevious"
-                                ToolTip="{Binding Localization.FindPreviousText, RelativeSource={RelativeSource TemplatedParent}}"
-                                Visibility="Collapsed">
-                                <controls:AdaptiveImage
-                                    Width="16"
-                                    Height="16"
-                                    HorizontalAlignment="Center"
-                                    Source="../../Assets/vs-find-previous-16.png" />
-                            </Button>
-
-                            <StackPanel Orientation="Horizontal">
                                 <ToggleButton
                                     Width="30"
                                     Height="22"
                                     Margin="1,0,0,0"
+                                    VerticalAlignment="Center"
                                     Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                                     BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
                                     Content="aA"
@@ -107,6 +175,7 @@
                                     Width="30"
                                     Height="22"
                                     Margin="1,0,0,0"
+                                    VerticalAlignment="Center"
                                     Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                                     BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
                                     Content="Ab"
@@ -121,6 +190,7 @@
                                     Width="30"
                                     Height="22"
                                     Margin="1,0,0,0"
+                                    VerticalAlignment="Center"
                                     Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
                                     BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
                                     Content="a*"
@@ -130,27 +200,102 @@
                                     FontWeight="Normal"
                                     IsChecked="{Binding UseRegex, RelativeSource={RelativeSource TemplatedParent}}"
                                     ToolTip="{Binding Localization.UseRegexText, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                <!--  Search Panel close button  -->
+                                <Button
+                                    Width="30"
+                                    Height="22"
+                                    Margin="1,0,4,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Close"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
+                                    Command="avalonedit:SearchCommands.CloseSearchPanel"
+                                    ToolTip="Close (Esc)">
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="../../Assets/vs-close-16.png"
+                                        Stretch="None" />
+                                </Button>
                             </StackPanel>
 
-                            <!--  Search Panel close button  -->
-                            <Button
-                                Width="30"
-                                Height="22"
-                                Margin="1,0,4,0"
-                                Padding="1"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
-                                BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
-                                Command="avalonedit:SearchCommands.CloseSearchPanel"
-                                ToolTip="Close">
+                            <!--  Replace row: hidden until Ctrl+H or the chevron shows it  -->
+                            <TextBox
+                                x:Name="PART_ReplaceTextBox"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                TabIndex="2"
+                                Width="150"
+                                Height="Auto"
+                                Margin="5,0,0,5"
+                                AutomationProperties.Name="Replace With"
+                                Focusable="True"
+                                Text="{Binding Path=(controls:SyntaxEditor.ReplacePattern), RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}"
+                                ToolTip="Replace (Enter to replace, Ctrl+Alt+Enter to replace all)"
+                                Visibility="Collapsed" />
 
-                                <controls:AdaptiveImage
-                                    Width="16"
-                                    Height="16"
-                                    HorizontalAlignment="Center"
-                                    Source="../../Assets/vs-close-16.png" />
-                            </Button>
-                        </StackPanel>
+                            <StackPanel
+                                x:Name="PART_ReplaceButtons"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="0,0,0,5"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed">
+                                <!--  Replace next  -->
+                                <Button
+                                    Width="30"
+                                    Height="22"
+                                    Margin="3,0,0,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Replace Next"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
+                                    Command="{x:Static controls:SyntaxEditor.ReplaceNextCommand}"
+                                    ToolTip="Replace (Enter)">
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="../../Assets/vs-replace-next-16.png"
+                                        Stretch="None" />
+                                </Button>
+
+                                <!--  Replace all  -->
+                                <Button
+                                    Width="30"
+                                    Height="22"
+                                    Margin="1,0,0,0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Replace All"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundBrush}}"
+                                    BorderThickness="{DynamicResource {x:Static themes:MosaicTheme.ButtonBorderThickness}}"
+                                    Command="{x:Static controls:SyntaxEditor.ReplaceAllCommand}"
+                                    ToolTip="Replace All (Ctrl+Alt+Enter)">
+                                    <controls:AdaptiveImage
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="../../Assets/vs-replace-all-16.png"
+                                        Stretch="None" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="controls:SyntaxEditor.IsReplaceVisible" Value="True">
+                            <Setter TargetName="PART_ReplaceTextBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_ReplaceButtons" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ToggleReplaceChevron" Property="Data" Value="M 4,6 L 8,10.5 L 12,6" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

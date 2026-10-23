@@ -29,7 +29,11 @@ Use `SyntaxLanguageMap.FromExtension(pathOrExtension)` to resolve from a file pa
 
 | Command | Shortcut | Description |
 |---|---|---|
-| `ApplicationCommands.Find` | `Ctrl+F` | Opens the AvalonEdit search panel. |
+| `ApplicationCommands.Find` | `Ctrl+F` | Opens the AvalonEdit search panel (find only). |
+| `ApplicationCommands.Replace` | `Ctrl+H` | Opens the search panel with the replace row visible. Also exposed as `OpenReplacePanel()`. |
+| `ReplaceNextCommand` | `Enter` (in the replace box) | Replaces the selected match and selects the next one; if the selection is not a match it only moves to the next match. Also exposed as `ReplaceNext()`. |
+| `ReplaceAllCommand` | `Ctrl+Alt+Enter` (in the replace box) | Replaces every match in one undo step. Also exposed as `ReplaceAll()`, which returns the count. |
+| `ToggleReplaceCommand` | none (chevron button) | Shows or hides the replace row. |
 | `FormatJsonCommand` | none | Pretty-prints the current JSON document. |
 | `MinifyJsonCommand` | none | Compacts the current JSON document. |
 | `ValidateJsonCommand` | none | Validates the current JSON document and shows a result dialog. |

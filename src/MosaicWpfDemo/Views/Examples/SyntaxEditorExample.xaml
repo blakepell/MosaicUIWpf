@@ -17,7 +17,7 @@
 
         <TextBlock
             Margin="0,0,0,8"
-            Text="A themed code editor with JSON syntax highlighting. Toggle the app theme (top-right) to see the editor recolor and swap its highlighting. Right-click for Cut/Copy/Paste/Select All plus Format, Minify, and Validate JSON."
+            Text="A themed code editor with JSON syntax highlighting. Toggle the app theme (top-right) to see the editor recolor and swap its highlighting. Right-click for Cut/Copy/Paste/Select All plus Format, Minify, and Validate JSON. Press Ctrl+F to find and Ctrl+H to find and replace (Enter replaces the current match, Ctrl+Alt+Enter replaces all)."
             TextWrapping="Wrap" />
 
         <!--  FollowGlobalTheme is disabled here to demonstrate explicit theme wiring from the code-behind.  -->

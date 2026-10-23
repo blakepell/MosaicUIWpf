@@ -38,7 +38,9 @@ namespace Mosaic.UI.Wpf.Controls
     /// - Move Line or Selection Up: Ctrl+Up
     /// - Move Line or Selection Down: Ctrl+Down
     /// - Go To Line: Ctrl+G
-    /// 
+    /// - Find: Ctrl+F
+    /// - Find and Replace: Ctrl+H (Enter replaces the current match, Ctrl+Alt+Enter replaces every match)
+    ///
     /// The editor defaults to Consolas 12 with line numbers enabled. Colors for the editing surface
     /// (background, foreground, line numbers, selection, current line) are derived from the Mosaic
     /// theme indicated by <see cref="Theme"/>. When <see cref="FollowGlobalTheme"/> is <c>true</c>
@@ -56,6 +58,7 @@ namespace Mosaic.UI.Wpf.Controls
         private const string PartLineTextBlock = "PART_LineTextBlock";
         private const string PartColumnTextBlock = "PART_ColumnTextBlock";
         private const string PartCharacterTextBlock = "PART_CharacterTextBlock";
+        private const string PartReplaceTextBox = "PART_ReplaceTextBox";
         private const string XshdResourceFormat = "Mosaic.UI.Wpf.Assets.SyntaxEditor.{0}.{1}.xshd";
         private static readonly Uri SearchPanelResourceUri = new("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/AvalonEdit/SearchPanel.xaml", UriKind.Absolute);
 
@@ -76,6 +79,7 @@ namespace Mosaic.UI.Wpf.Controls
         private static readonly Dictionary<MosaicThemeMode, ResourceDictionary> ThemeDictionaryCache = new();
 
         private SearchPanel? _searchPanel;
+        private TextBox? _replaceTextBox;
         private bool _subscribedToGlobalTheme;
         private StatusBar? _statusBar;
         private TextBlock? _lineTextBlock;
@@ -143,6 +147,102 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(GoToLineCommand),
             typeof(SyntaxEditor),
             new InputGestureCollection { new KeyGesture(Key.G, ModifierKeys.Control) });
+
+        /// <summary>
+        /// Command that replaces the current search match with the replacement text and moves to the
+        /// next match. When the selection is not a match, the next match is selected without replacing
+        /// anything, mirroring the behavior of Visual Studio and Visual Studio Code.
+        /// </summary>
+        public static readonly RoutedUICommand ReplaceNextCommand = new(
+            "Replace Next",
+            nameof(ReplaceNextCommand),
+            typeof(SyntaxEditor));
+
+        /// <summary>
+        /// Command that replaces every search match in the document with the replacement text as a
+        /// single undoable operation.
+        /// </summary>
+        public static readonly RoutedUICommand ReplaceAllCommand = new(
+            "Replace All",
+            nameof(ReplaceAllCommand),
+            typeof(SyntaxEditor));
+
+        /// <summary>
+        /// Command that shows or hides the replace row of the search panel.
+        /// </summary>
+        public static readonly RoutedUICommand ToggleReplaceCommand = new(
+            "Toggle Replace",
+            nameof(ToggleReplaceCommand),
+            typeof(SyntaxEditor));
+
+        #endregion
+
+        #region Search Panel Attached Properties
+
+        /// <summary>
+        /// Identifies the <c>SyntaxEditor.IsReplaceVisible</c> attached property, which is set on the
+        /// editor's <see cref="SearchPanel"/> to show or hide the replace row of its template.
+        /// </summary>
+        public static readonly DependencyProperty IsReplaceVisibleProperty = DependencyProperty.RegisterAttached(
+            "IsReplaceVisible",
+            typeof(bool),
+            typeof(SyntaxEditor),
+            new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// Gets whether the replace row of the search panel is visible.
+        /// </summary>
+        /// <param name="element">The search panel.</param>
+        public static bool GetIsReplaceVisible(DependencyObject element)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            return (bool)element.GetValue(IsReplaceVisibleProperty);
+        }
+
+        /// <summary>
+        /// Sets whether the replace row of the search panel is visible.
+        /// </summary>
+        /// <param name="element">The search panel.</param>
+        /// <param name="value"><c>true</c> to show the replace row; otherwise <c>false</c>.</param>
+        public static void SetIsReplaceVisible(DependencyObject element, bool value)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            element.SetValue(IsReplaceVisibleProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <c>SyntaxEditor.ReplacePattern</c> attached property, which is set on the
+        /// editor's <see cref="SearchPanel"/> and holds the text that search matches are replaced with.
+        /// When the panel's <see cref="ICSharpCode.AvalonEdit.Search.SearchPanel.UseRegex"/> option is on,
+        /// the pattern may use .NET regular expression substitutions such as <c>$1</c>; otherwise it is
+        /// inserted literally.
+        /// </summary>
+        public static readonly DependencyProperty ReplacePatternProperty = DependencyProperty.RegisterAttached(
+            "ReplacePattern",
+            typeof(string),
+            typeof(SyntaxEditor),
+            new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        /// <summary>
+        /// Gets the text that search matches are replaced with.
+        /// </summary>
+        /// <param name="element">The search panel.</param>
+        public static string GetReplacePattern(DependencyObject element)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            return (string)element.GetValue(ReplacePatternProperty);
+        }
+
+        /// <summary>
+        /// Sets the text that search matches are replaced with.
+        /// </summary>
+        /// <param name="element">The search panel.</param>
+        /// <param name="value">The replacement text.</param>
+        public static void SetReplacePattern(DependencyObject element, string value)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            element.SetValue(ReplacePatternProperty, value);
+        }
 
         #endregion
 
@@ -328,12 +428,16 @@ namespace Mosaic.UI.Wpf.Controls
             this.CommandBindings.Add(new CommandBinding(MoveSelectionDownCommand, (_, _) => this.MoveSelectedLinesDown(), this.OnLineMoveCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(GoToLineCommand, this.OnGoToLineCommandExecuted, this.OnGoToLineCommandCanExecute));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted, this.OnFindCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, this.OnReplaceCommandExecuted, this.OnReplaceCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ReplaceNextCommand, (_, _) => this.ReplaceNext(), this.OnReplaceCommandCanExecute));
+            this.CommandBindings.Add(new CommandBinding(ReplaceAllCommand, (_, _) => this.ReplaceAll(), this.OnReplaceCommandCanExecute));
             this.TextArea.InputBindings.Add(new KeyBinding(CommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.C)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(UncommentSelectionCommand, new KeyChordGesture(ModifierKeys.Control, Key.K, Key.U)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionUpCommand, new KeyGesture(Key.Up, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(MoveSelectionDownCommand, new KeyGesture(Key.Down, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(GoToLineCommand, new KeyGesture(Key.G, ModifierKeys.Control)) { CommandTarget = this });
             this.TextArea.InputBindings.Add(new KeyBinding(ApplicationCommands.Find, new KeyGesture(Key.F, ModifierKeys.Control)) { CommandTarget = this });
+            this.TextArea.InputBindings.Add(new KeyBinding(ApplicationCommands.Replace, new KeyGesture(Key.H, ModifierKeys.Control)) { CommandTarget = this });
 
             this.ContextMenu = new ContextMenu();
             this.ContextMenuOpening += this.OnContextMenuOpening;
@@ -489,6 +593,14 @@ namespace Mosaic.UI.Wpf.Controls
             if (_searchPanel == null)
             {
                 _searchPanel = SearchPanel.Install(this);
+
+                // The panel lives in the adorner layer, outside this editor's visual tree, so the routed
+                // commands raised by its buttons and text boxes have to be bound on the panel itself.
+                _searchPanel.CommandBindings.Add(new CommandBinding(ReplaceNextCommand, (_, _) => this.ReplaceNext(), this.OnReplaceCommandCanExecute));
+                _searchPanel.CommandBindings.Add(new CommandBinding(ReplaceAllCommand, (_, _) => this.ReplaceAll(), this.OnReplaceCommandCanExecute));
+                _searchPanel.CommandBindings.Add(new CommandBinding(ToggleReplaceCommand, (_, _) => this.ToggleReplaceRow(), this.OnReplaceCommandCanExecute));
+                _searchPanel.PreviewKeyDown += this.OnSearchPanelPreviewKeyDown;
+                _replaceTextBox = null;
             }
 
             this.EnsureSearchPanelResources(_searchPanel.Resources);
@@ -530,9 +642,23 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Opens the search panel and restores its visual state.
+        /// Opens the search panel in find-only mode and restores its visual state.
         /// </summary>
         private void OpenSearchPanel()
+        {
+            this.OpenSearchPanel(false);
+        }
+
+        /// <summary>
+        /// Opens the search panel, optionally with the replace row visible, and focuses the search box.
+        /// When the editor has a single-line selection it seeds the search pattern, as Visual Studio does.
+        /// </summary>
+        /// <param name="showReplace"><c>true</c> to show the replace row; <c>false</c> to hide it.</param>
+        /// <param name="seedFromSelection">
+        /// <c>true</c> to replace the search pattern with the editor's single-line selection; <c>false</c>
+        /// to keep the existing pattern, which is what a reopen after a theme change needs.
+        /// </param>
+        private void OpenSearchPanel(bool showReplace, bool seedFromSelection = true)
         {
             this.EnsureSearchPanelInstalled();
 
@@ -542,6 +668,14 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             this.ApplySearchPanelStyle();
+            SetIsReplaceVisible(_searchPanel, showReplace);
+
+            var selection = this.TextArea.Selection;
+
+            if (seedFromSelection && !selection.IsEmpty && !selection.IsMultiline)
+            {
+                _searchPanel.SearchPattern = selection.GetText();
+            }
 
             if (_searchPanel.IsClosed)
             {
@@ -562,7 +696,117 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             _searchPanel.ApplyTemplate();
+            this.HookReplaceTextBox();
             _searchPanel.Reactivate();
+        }
+
+        /// <summary>
+        /// Opens the search panel with the replace row visible, the same as pressing Ctrl+H.
+        /// </summary>
+        public void OpenReplacePanel()
+        {
+            this.OpenSearchPanel(true);
+        }
+
+        /// <summary>
+        /// Shows the replace row when it is hidden, or hides it when it is visible.
+        /// </summary>
+        private void ToggleReplaceRow()
+        {
+            if (_searchPanel == null || _searchPanel.IsClosed)
+            {
+                this.OpenSearchPanel(true);
+                return;
+            }
+
+            SetIsReplaceVisible(_searchPanel, !GetIsReplaceVisible(_searchPanel));
+        }
+
+        /// <summary>
+        /// Locates the replace text box in the panel's template so the keyboard shortcuts
+        /// (Enter to replace, Ctrl+Alt+Enter to replace all) can be wired to it.
+        /// </summary>
+        private void HookReplaceTextBox()
+        {
+            if (_searchPanel?.Template == null)
+            {
+                return;
+            }
+
+            var textBox = _searchPanel.Template.FindName(PartReplaceTextBox, _searchPanel) as TextBox;
+
+            if (ReferenceEquals(textBox, _replaceTextBox))
+            {
+                return;
+            }
+
+            if (_replaceTextBox != null)
+            {
+                _replaceTextBox.PreviewKeyDown -= this.OnReplaceTextBoxPreviewKeyDown;
+            }
+
+            _replaceTextBox = textBox;
+
+            if (_replaceTextBox != null)
+            {
+                _replaceTextBox.PreviewKeyDown += this.OnReplaceTextBoxPreviewKeyDown;
+            }
+        }
+
+        /// <summary>
+        /// Handles Enter (replace next) and Ctrl+Alt+Enter (replace all) inside the replace text box
+        /// before the panel's own Enter handler runs find-next.
+        /// </summary>
+        /// <param name="sender">The replace text box.</param>
+        /// <param name="e">The event data for the key press.</param>
+        private void OnReplaceTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+            {
+                return;
+            }
+
+            // Push the in-progress text to the attached property before acting on it.
+            (sender as TextBox)?.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+
+            var modifiers = Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift);
+
+            if (modifiers == (ModifierKeys.Control | ModifierKeys.Alt))
+            {
+                this.ReplaceAll();
+                e.Handled = true;
+            }
+            else if (modifiers == ModifierKeys.None)
+            {
+                this.ReplaceNext();
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Handles Ctrl+F and Ctrl+H while keyboard focus is inside the search panel, which sits outside
+        /// the editor's visual tree. Without this, Ctrl+H in a panel text box would fall through to the
+        /// WPF text box default of deleting the previous character.
+        /// </summary>
+        /// <param name="sender">The search panel.</param>
+        /// <param name="e">The event data for the key press.</param>
+        private void OnSearchPanelPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) != ModifierKeys.Control)
+            {
+                return;
+            }
+
+            if (e.Key == Key.H && !this.IsReadOnly)
+            {
+                this.OpenSearchPanel(true);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F)
+            {
+                this.OpenSearchPanel(false);
+                e.Handled = true;
+            }
         }
 
         /// <summary>
@@ -574,11 +818,20 @@ namespace Mosaic.UI.Wpf.Controls
             bool matchCase = _searchPanel?.MatchCase ?? false;
             bool wholeWords = _searchPanel?.WholeWords ?? false;
             bool useRegex = _searchPanel?.UseRegex ?? false;
+            bool replaceVisible = _searchPanel != null && GetIsReplaceVisible(_searchPanel);
+            string replacePattern = _searchPanel != null ? GetReplacePattern(_searchPanel) : string.Empty;
 
             if (_searchPanel != null)
             {
+                _searchPanel.PreviewKeyDown -= this.OnSearchPanelPreviewKeyDown;
                 _searchPanel.Uninstall();
                 _searchPanel = null;
+            }
+
+            if (_replaceTextBox != null)
+            {
+                _replaceTextBox.PreviewKeyDown -= this.OnReplaceTextBoxPreviewKeyDown;
+                _replaceTextBox = null;
             }
 
             this.EnsureSearchPanelInstalled();
@@ -592,6 +845,8 @@ namespace Mosaic.UI.Wpf.Controls
             _searchPanel.MatchCase = matchCase;
             _searchPanel.WholeWords = wholeWords;
             _searchPanel.UseRegex = useRegex;
+            SetIsReplaceVisible(_searchPanel, replaceVisible);
+            SetReplacePattern(_searchPanel, replacePattern);
         }
 
         /// <summary>
@@ -600,12 +855,13 @@ namespace Mosaic.UI.Wpf.Controls
         private void ResetSearchPanelForThemeChange()
         {
             bool reopen = _searchPanel is { IsClosed: false };
+            bool showReplace = _searchPanel != null && GetIsReplaceVisible(_searchPanel);
 
             this.ReplaceSearchPanel();
 
             if (reopen)
             {
-                this.Dispatcher.BeginInvoke(new Action(this.OpenSearchPanel), DispatcherPriority.Loaded);
+                this.Dispatcher.BeginInvoke(new Action(() => this.OpenSearchPanel(showReplace, seedFromSelection: false)), DispatcherPriority.Loaded);
             }
         }
 
@@ -629,6 +885,187 @@ namespace Mosaic.UI.Wpf.Controls
         {
             e.CanExecute = this.IsEnabled;
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Opens the search panel with the replace row visible in response to the replace command.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command execution.</param>
+        private void OnReplaceCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            this.OpenSearchPanel(true);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Reports whether the replace commands can execute: the editor must be enabled and writable.
+        /// </summary>
+        /// <param name="sender">The source of the routed command.</param>
+        /// <param name="e">The event data for the command query.</param>
+        private void OnReplaceCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = this.IsEnabled && !this.IsReadOnly;
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Gets the search panel that provides find and replace for this editor. Its
+        /// <see cref="ICSharpCode.AvalonEdit.Search.SearchPanel.SearchPattern"/> and option properties
+        /// drive <see cref="ReplaceNext"/> and <see cref="ReplaceAll"/>; the replacement text is read from
+        /// the <see cref="ReplacePatternProperty"/> attached property on the panel.
+        /// </summary>
+        [Browsable(false)]
+        public SearchPanel? SearchPanel => _searchPanel;
+
+        /// <summary>
+        /// Replaces the current search match and selects the next one. When the current selection is
+        /// not a match for the search pattern, the next match is selected without changing the document,
+        /// so the first invocation shows what will be replaced and the second performs the replacement.
+        /// </summary>
+        /// <returns><c>true</c> when text was replaced; <c>false</c> when only the selection moved.</returns>
+        public bool ReplaceNext()
+        {
+            if (this.IsReadOnly || _searchPanel == null)
+            {
+                return false;
+            }
+
+            var strategy = this.CreateSearchStrategy();
+
+            if (strategy == null)
+            {
+                return false;
+            }
+
+            var document = this.Document;
+            var textArea = this.TextArea;
+            bool replaced = false;
+            int searchFrom = textArea.Caret.Offset;
+
+            if (!textArea.Selection.IsEmpty)
+            {
+                var segment = textArea.Selection.SurroundingSegment;
+                var current = strategy.FindNext(document, segment.Offset, segment.Length);
+
+                if (current != null && current.Offset == segment.Offset && current.Length == segment.Length)
+                {
+                    string replacement = this.BuildReplacement(current);
+                    document.Replace(current.Offset, current.Length, replacement);
+                    searchFrom = current.Offset + replacement.Length;
+                    replaced = true;
+                }
+                else
+                {
+                    searchFrom = segment.Offset + segment.Length;
+                }
+            }
+
+            this.SelectNextMatch(strategy, searchFrom);
+            return replaced;
+        }
+
+        /// <summary>
+        /// Replaces every search match in the document with the replacement text as one undoable step.
+        /// </summary>
+        /// <returns>The number of matches that were replaced.</returns>
+        public int ReplaceAll()
+        {
+            if (this.IsReadOnly || _searchPanel == null)
+            {
+                return 0;
+            }
+
+            var strategy = this.CreateSearchStrategy();
+
+            if (strategy == null)
+            {
+                return 0;
+            }
+
+            var document = this.Document;
+            var matches = strategy.FindAll(document, 0, document.TextLength).ToList();
+
+            if (matches.Count == 0)
+            {
+                return 0;
+            }
+
+            // Work backwards so earlier offsets stay valid while later matches are rewritten.
+            using (document.RunUpdate())
+            {
+                for (int i = matches.Count - 1; i >= 0; i--)
+                {
+                    var match = matches[i];
+                    document.Replace(match.Offset, match.Length, this.BuildReplacement(match));
+                }
+            }
+
+            this.TextArea.ClearSelection();
+            this.TextArea.Caret.BringCaretToView();
+            return matches.Count;
+        }
+
+        /// <summary>
+        /// Builds the search strategy that mirrors the panel's current pattern and options, or
+        /// <c>null</c> when there is no pattern or the regular expression is invalid.
+        /// </summary>
+        private ISearchStrategy? CreateSearchStrategy()
+        {
+            if (_searchPanel == null || string.IsNullOrEmpty(_searchPanel.SearchPattern))
+            {
+                return null;
+            }
+
+            try
+            {
+                return SearchStrategyFactory.Create(
+                    _searchPanel.SearchPattern,
+                    !_searchPanel.MatchCase,
+                    _searchPanel.WholeWords,
+                    _searchPanel.UseRegex ? SearchMode.RegEx : SearchMode.Normal);
+            }
+            catch (SearchPatternException)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Produces the replacement text for a match. Regular expression substitutions such as <c>$1</c>
+        /// are only honored when the panel's regex option is on; otherwise the text is used verbatim so a
+        /// literal dollar sign is not misread as a group reference.
+        /// </summary>
+        /// <param name="match">The match being replaced.</param>
+        private string BuildReplacement(ISearchResult match)
+        {
+            string replacement = _searchPanel != null ? GetReplacePattern(_searchPanel) : string.Empty;
+            return _searchPanel is { UseRegex: true } ? match.ReplaceWith(replacement) : replacement;
+        }
+
+        /// <summary>
+        /// Selects the first match at or after the offset, wrapping to the start of the document.
+        /// </summary>
+        /// <param name="strategy">The search strategy to match with.</param>
+        /// <param name="offset">The document offset to search from.</param>
+        private void SelectNextMatch(ISearchStrategy strategy, int offset)
+        {
+            var document = this.Document;
+            offset = Math.Clamp(offset, 0, document.TextLength);
+
+            var next = strategy.FindNext(document, offset, document.TextLength - offset)
+                       ?? strategy.FindNext(document, 0, document.TextLength);
+
+            if (next == null)
+            {
+                return;
+            }
+
+            var textArea = this.TextArea;
+            textArea.Caret.Offset = next.Offset;
+            textArea.Selection = Selection.Create(textArea, next.Offset, next.EndOffset);
+            textArea.Caret.BringCaretToView();
+            textArea.Caret.Show();
         }
 
         /// <summary>
@@ -784,15 +1221,25 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Intercepts Ctrl+F so the search panel can open before the default handler runs.
+        /// Intercepts Ctrl+F and Ctrl+H so the search panel can open before the default handlers run.
         /// </summary>
         /// <param name="sender">The source of the keyboard event.</param>
         /// <param name="e">The event data for the key press.</param>
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control && (Keyboard.Modifiers & ModifierKeys.Alt) == 0)
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.Control || (Keyboard.Modifiers & ModifierKeys.Alt) != 0)
             {
-                this.OpenSearchPanel();
+                return;
+            }
+
+            if (e.Key == Key.F)
+            {
+                this.OpenSearchPanel(false);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.H && !this.IsReadOnly)
+            {
+                this.OpenSearchPanel(true);
                 e.Handled = true;
             }
         }

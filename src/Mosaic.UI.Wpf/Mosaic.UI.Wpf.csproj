@@ -53,6 +53,8 @@
     <None Remove="Assets\vs-find-next-16.png" />
     <None Remove="Assets\vs-find-previous-16.png" />
     <None Remove="Assets\vs-lock-16.png" />
+    <None Remove="Assets\vs-replace-all-16.png" />
+    <None Remove="Assets\vs-replace-next-16.png" />
     <None Remove="Assets\vs-save-16.png" />
     <None Remove="Assets\vs-browser-32.png" />
     <None Remove="Assets\vs-bold-32.png" />
@@ -193,6 +195,8 @@
     <Resource Include="Assets\vs-find-previous-16.png" />
     <Resource Include="Assets\vs-lock-16.png" />
     <Resource Include="Assets\vs-play-16.png" />
+    <Resource Include="Assets\vs-replace-all-16.png" />
+    <Resource Include="Assets\vs-replace-next-16.png" />
     <Resource Include="Assets\vs-save-16.png" />
     <Resource Include="Assets\vs-browser-32.png" />
     <Resource Include="Assets\vs-bold-32.png" />
