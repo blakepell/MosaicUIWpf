@@ -104,12 +104,20 @@ namespace MosaicTextEditor
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
             var theme = AppServices.GetRequiredService<ThemeManager>();
-            theme.ToggleTheme();
+            this.ApplyTheme(theme.Theme switch
+            {
+                MosaicThemeMode.Light => MosaicThemeMode.Dark,
+                MosaicThemeMode.Dark => MosaicThemeMode.Black,
+                MosaicThemeMode.Black => MosaicThemeMode.Blue,
+                _ => MosaicThemeMode.Light
+            });
         }
 
         private void ThemeLightMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Light);
 
         private void ThemeDarkMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Dark);
+
+        private void ThemeBlackMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Black);
 
         private void ThemeBlueMenuItem_OnClick(object sender, RoutedEventArgs e) => this.ApplyTheme(MosaicThemeMode.Blue);
 
@@ -580,6 +588,7 @@ namespace MosaicTextEditor
         {
             this.ThemeLightMenuItem.IsChecked = themeMode == MosaicThemeMode.Light;
             this.ThemeDarkMenuItem.IsChecked = themeMode == MosaicThemeMode.Dark;
+            this.ThemeBlackMenuItem.IsChecked = themeMode == MosaicThemeMode.Black;
             this.ThemeBlueMenuItem.IsChecked = themeMode == MosaicThemeMode.Blue;
         }
 

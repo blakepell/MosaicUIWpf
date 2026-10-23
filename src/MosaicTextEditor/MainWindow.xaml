@@ -160,6 +160,11 @@
                         Header="_Dark"
                         IsCheckable="True" />
                     <MenuItem
+                        x:Name="ThemeBlackMenuItem"
+                        Click="ThemeBlackMenuItem_OnClick"
+                        Header="Blac_k"
+                        IsCheckable="True" />
+                    <MenuItem
                         x:Name="ThemeBlueMenuItem"
                         Click="ThemeBlueMenuItem_OnClick"
                         Header="_Blue"
