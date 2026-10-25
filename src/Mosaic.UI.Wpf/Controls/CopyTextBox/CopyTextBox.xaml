@@ -93,10 +93,10 @@
                                 IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
                                 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="ApplicationCommands.Cut" />
-                                        <MenuItem Command="ApplicationCommands.Copy" />
-                                        <MenuItem Command="ApplicationCommands.Paste" />
+                                    <ContextMenu Style="{DynamicResource {x:Type ContextMenu}}">
+                                        <MenuItem Command="ApplicationCommands.Cut" Style="{DynamicResource {x:Type MenuItem}}" />
+                                        <MenuItem Command="ApplicationCommands.Copy" Style="{DynamicResource {x:Type MenuItem}}" />
+                                        <MenuItem Command="ApplicationCommands.Paste" Style="{DynamicResource {x:Type MenuItem}}" />
                                     </ContextMenu>
                                 </TextBox.ContextMenu>
                             </TextBox>

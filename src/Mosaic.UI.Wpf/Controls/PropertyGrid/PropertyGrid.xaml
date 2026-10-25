@@ -9,19 +9,18 @@
     <!--  Bool->Visibility converter for the editor button  -->
     <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
-    <!--  Explicit styles theme menus outside the editor's visual tree.  -->
+    <!--  Style each item by type: ItemContainerStyle would also apply a MenuItem style to Separators.  -->
     <ContextMenu
         x:Key="PropertyGridEditorContextMenu"
         x:Shared="False"
-        ItemContainerStyle="{DynamicResource {x:Type MenuItem}}"
         Style="{DynamicResource {x:Type ContextMenu}}">
-        <MenuItem Command="ApplicationCommands.Undo" />
-        <Separator />
-        <MenuItem Command="ApplicationCommands.Cut" />
-        <MenuItem Command="ApplicationCommands.Copy" />
-        <MenuItem Command="ApplicationCommands.Paste" />
-        <Separator />
-        <MenuItem Command="ApplicationCommands.SelectAll" />
+        <MenuItem Command="ApplicationCommands.Undo" Style="{DynamicResource {x:Type MenuItem}}" />
+        <Separator Style="{DynamicResource {x:Static MenuItem.SeparatorStyleKey}}" />
+        <MenuItem Command="ApplicationCommands.Cut" Style="{DynamicResource {x:Type MenuItem}}" />
+        <MenuItem Command="ApplicationCommands.Copy" Style="{DynamicResource {x:Type MenuItem}}" />
+        <MenuItem Command="ApplicationCommands.Paste" Style="{DynamicResource {x:Type MenuItem}}" />
+        <Separator Style="{DynamicResource {x:Static MenuItem.SeparatorStyleKey}}" />
+        <MenuItem Command="ApplicationCommands.SelectAll" Style="{DynamicResource {x:Type MenuItem}}" />
     </ContextMenu>
 
     <!--  Define a dedicated style for the PropertyGrid TextBox editor  -->

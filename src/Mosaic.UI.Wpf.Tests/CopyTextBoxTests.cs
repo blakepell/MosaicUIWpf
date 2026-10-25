@@ -12,6 +12,8 @@ using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Media;
 using Mosaic.UI.Wpf.Controls;
+using Mosaic.UI.Wpf.Themes;
+using System.Windows.Controls;
 using Xunit;
 
 namespace Mosaic.UI.Wpf.Tests
@@ -84,6 +86,69 @@ namespace Mosaic.UI.Wpf.Tests
         public void ShowToast_IsOffByDefault()
         {
             RunSta(() => Assert.False(new CopyTextBox().ShowToast));
+        }
+
+        /// <summary>
+        /// Realizes the shipped editing menus, including PropertyGrid separators, while switching themes.
+        /// Container generation must not apply MenuItem styles to separators.
+        /// </summary>
+        [Theory]
+        [InlineData(true, true)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(false, false)]
+        public void EditingContextMenu_RealizesAcrossThemeChanges(bool propertyGrid, bool native)
+        {
+            RunSta(() =>
+            {
+                var manager = new ThemeManager();
+                manager.BeginInit();
+                manager.Native = native;
+                manager.EndInit();
+
+                ContextMenu menu;
+                if (propertyGrid)
+                {
+                    var dictionary = new ResourceDictionary
+                    {
+                        Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Controls/PropertyGrid/PropertyGrid.xaml")
+                    };
+                    menu = (ContextMenu)dictionary["PropertyGridEditorContextMenu"];
+                    Assert.Equal(2, menu.Items.OfType<Separator>().Count());
+                }
+                else
+                {
+                    var control = Realize(new CopyTextBox { Text = "hello" });
+                    var editor = Assert.IsType<TextBox>(control.Template.FindName("PART_TextBox", control));
+                    menu = Assert.IsType<ContextMenu>(editor.ContextMenu);
+                }
+
+                menu.Resources.MergedDictionaries.Add(manager);
+                foreach (var theme in Enum.GetValues<MosaicThemeMode>())
+                {
+                    manager.Theme = theme;
+                    menu.Measure(new Size(300, 400));
+                    menu.Arrange(new Rect(menu.DesiredSize));
+                    menu.UpdateLayout();
+
+                    Assert.Null(menu.ItemContainerStyle);
+                    foreach (var item in menu.Items)
+                    {
+                        Assert.Same(item, menu.ItemContainerGenerator.ContainerFromItem(item));
+                    }
+
+                    if (native)
+                    {
+                        Assert.Same(manager[typeof(ContextMenu)], menu.Style);
+                        foreach (Control item in menu.Items)
+                        {
+                            object key = item is Separator ? MenuItem.SeparatorStyleKey : typeof(MenuItem);
+                            Assert.Same(manager[key], item.Style);
+                            Assert.True(item.Style.TargetType.IsInstanceOfType(item));
+                        }
+                    }
+                }
+            });
         }
 
         [Fact]
