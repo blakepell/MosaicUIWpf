@@ -149,6 +149,7 @@ namespace MosaicWpfDemo.Views.Examples
             - [Table](#table)
             - [Event Links](#event-links)
             - [Shields](#shields)
+            - [Pills](#pills)
             - [Release Notes](#release-notes)
             - [Image](#image)
 
@@ -209,6 +210,16 @@ namespace MosaicWpfDemo.Views.Examples
             <shield label="Version" value="1.0">v1.0</shield> <shield label="Version" value="1.0" background="#6395EE" foreground="white">v1.0</shield> <shield label="Build" value="passing" background="#2E7D32">passing</shield> <shield label="License" value="MIT" background="orange" foreground="black">MIT</shield>
 
             Shields can also sit mid-sentence: this library targets <shield label=".NET" value="10.0" background="#512BD4">.NET 10</shield> on Windows.
+
+            ## Pills
+
+            A `<pill>` element renders a Badge control inline. Unlike a shield, the text between the
+            tags is the pill's content, so other renderers simply show the text. `background` and
+            `foreground` are optional.
+
+            <pill>Default</pill> <pill foreground="#FFFFFF" background="#FEB806">Warning</pill> <pill background="#2E7D32">Success</pill> <pill background="#C62828">Error</pill> <pill foreground="#000000" background="#E0E0E0">Draft</pill>
+
+            Pills work mid-sentence too: this feature is <pill background="#6A1B9A">New</pill> in this release.
 
             ## Release Notes
 

@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Mosaic.UI.Wpf.Cache;
 using Mosaic.UI.Wpf.Controls;
 using Xunit;
 
@@ -491,14 +492,100 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Fact]
+        public void PillElementRendersBadgeWithContentText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("Status: <pill>Warning</pill> today");
+
+                var badge = Assert.Single(FindElements<Badge>(document));
+                Assert.Equal("Warning", badge.Text);
+                Assert.Same(new Badge().Background, badge.Background);
+                Assert.DoesNotContain("Warning", GetText(document));
+                Assert.Contains("today", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void PillElementAppliesCachedHexColors()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    "<pill foreground=\"#FFFFFF\" background=\"#FEB806\">Warning</pill>");
+
+                var badge = Assert.Single(FindElements<Badge>(document));
+                Assert.Equal(Color.FromRgb(0xFE, 0xB8, 0x06), ((SolidColorBrush)badge.Background).Color);
+                Assert.Equal(Colors.White, ((SolidColorBrush)badge.Foreground).Color);
+                Assert.Same(ColorPaletteCache.GetBrush(Color.FromRgb(0xFE, 0xB8, 0x06)), badge.Background);
+            });
+        }
+
+        [Fact]
+        public void PillAndShieldOnTheSameLineRenderTogether()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    "<shield label=\"Version\" value=\"1.0\">v1.0</shield> <pill>Beta</pill>");
+
+                Assert.Single(FindShields(document));
+                Assert.Equal("Beta", Assert.Single(FindElements<Badge>(document)).Text);
+            });
+        }
+
+        [Fact]
+        public void PillClosingTagDoesNotCloseShield()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<shield label=\"A\">x</pill> after</shield>");
+
+                Assert.Equal("x after", Assert.Single(FindShields(document)).Value);
+                Assert.Empty(FindElements<Badge>(document));
+            });
+        }
+
+        [Fact]
+        public void PillSpanningLinesInAnHtmlBlockRendersBadge()
+        {
+            RunSta(() =>
+            {
+                // An opening tag alone on its line starts a CommonMark HTML block.
+                var document = MarkdownFlowDocumentRenderer.Render("<pill>\nWarning\n</pill>\n\nText");
+
+                Assert.Equal("Warning", Assert.Single(FindElements<Badge>(document)).Text);
+                Assert.DoesNotContain("<pill", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void ExportRendersPillAsText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.RenderForExport(
+                    "<pill>Warning</pill>", null, null, MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing);
+
+                Assert.Empty(FindElements<Badge>(document));
+                Assert.Contains("Warning", GetText(document));
+            });
+        }
+
         private static Shield[] FindShields(FlowDocument document)
+        {
+            return FindElements<Shield>(document);
+        }
+
+        private static T[] FindElements<T>(FlowDocument document)
         {
             return document.Blocks
                 .OfType<Paragraph>()
                 .SelectMany(p => p.Inlines)
                 .OfType<InlineUIContainer>()
                 .Select(c => c.Child)
-                .OfType<Shield>()
+                .OfType<T>()
                 .ToArray();
         }
 

@@ -62,11 +62,12 @@ namespace Mosaic.UI.Wpf.Controls
         /// in an embedded <see cref="SyntaxEditor"/>. Export formats such as RTF cannot carry
         /// embedded controls, so exported documents use plain paragraphs instead.
         /// </param>
-        /// <param name="PlainShields">
-        /// Whether <c>&lt;shield&gt;</c> elements are rendered as their fallback text rather than as
-        /// embedded <see cref="Shield"/> controls, for the same reason as <paramref name="PlainCodeBlocks"/>.
+        /// <param name="PlainCustomElements">
+        /// Whether custom elements (<c>&lt;shield&gt;</c>, <c>&lt;pill&gt;</c>) are rendered as their
+        /// text rather than as embedded <see cref="Shield"/> and <see cref="Badge"/> controls, for
+        /// the same reason as <paramref name="PlainCodeBlocks"/>.
         /// </param>
-        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing, bool PlainCodeBlocks = false, bool PlainShields = false);
+        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing, bool PlainCodeBlocks = false, bool PlainCustomElements = false);
 
         /// <summary>
         /// The default space, in device-independent pixels, left below each rendered heading.
@@ -195,7 +196,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders the supplied Markdown text into a <see cref="FlowDocument"/> suitable for export
         /// (RTF, XPS, or printing). The output matches <see cref="Render(string?, Uri?, Uri?, double)"/>
-        /// except that code blocks are always monospace paragraphs and shields are plain text, since
+        /// except that code blocks are always monospace paragraphs and shields and pills are plain text, since
         /// embedded controls cannot be serialized to RTF and do not paginate reliably.
         /// </summary>
         /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
@@ -210,7 +211,7 @@ namespace Mosaic.UI.Wpf.Controls
                 headingBottomSpacing = 0;
             }
 
-            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing, PlainCodeBlocks: true, PlainShields: true));
+            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing, PlainCodeBlocks: true, PlainCustomElements: true));
         }
 
         /// <summary>
@@ -668,17 +669,17 @@ namespace Mosaic.UI.Wpf.Controls
 
         /// <summary>
         /// Renders a raw HTML block as plain, monospace text rather than interpreting the markup. A
-        /// block made up only of <c>&lt;shield&gt;</c> elements (for example a self-closing shield
-        /// alone on a line, which CommonMark classifies as an HTML block) is rendered as a paragraph
-        /// of shields instead.
+        /// block made up only of custom elements such as <c>&lt;shield&gt;</c> and <c>&lt;pill&gt;</c>
+        /// (for example a self-closing shield alone on a line, which CommonMark classifies as an HTML
+        /// block) is rendered as a paragraph of those elements instead.
         /// </summary>
         private static WpfBlock RenderHtmlBlock(HtmlBlock html, RenderContext context)
         {
-            var shieldParagraph = TryRenderShieldBlock(html, context);
+            var customParagraph = TryRenderCustomElementBlock(html, context);
 
-            if (shieldParagraph != null)
+            if (customParagraph != null)
             {
-                return shieldParagraph;
+                return customParagraph;
             }
 
             var paragraph = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
@@ -721,7 +722,7 @@ namespace Mosaic.UI.Wpf.Controls
             {
                 // Custom HTML-style elements span several sibling inlines (opening tag, fallback
                 // text, closing tag), so they are consumed here rather than in AddInline.
-                if (inline is HtmlInline html && TryAddShield(target, html, context, out var next))
+                if (inline is HtmlInline html && TryAddCustomElement(target, html, context, out var next))
                 {
                     inline = next;
                     continue;
@@ -733,21 +734,25 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Matches an opening or self-closing <c>&lt;shield&gt;</c> tag as captured by a Markdig
+        /// The custom element names (<c>shield</c>, <c>pill</c>) as a regex alternation.
+        /// </summary>
+        private const string CustomElementNames = "shield|pill";
+
+        /// <summary>
+        /// Matches an opening or self-closing custom element tag as captured by a Markdig
         /// <see cref="HtmlInline"/>.
         /// </summary>
-        private static readonly Regex ShieldOpenTagRegex = new(@"^<shield(?<attrs>\s[^>]*?)?\s*(?<self>/)?>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex CustomOpenTagRegex = new($@"^<(?<name>{CustomElementNames})(?<attrs>\s[^>]*?)?\s*(?<self>/)?>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         /// <summary>
-        /// Matches a closing <c>&lt;/shield&gt;</c> tag.
+        /// Matches a closing custom element tag such as <c>&lt;/shield&gt;</c>.
         /// </summary>
-        private static readonly Regex ShieldCloseTagRegex = new(@"^</shield\s*>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        private static readonly Regex CustomCloseTagRegex = new($@"^</(?<name>{CustomElementNames})\s*>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         /// <summary>
-        /// Matches a complete <c>&lt;shield&gt;</c> element (self-closing or with fallback content)
-        /// within raw HTML block text.
+        /// Matches a complete custom element (self-closing or with content) within raw HTML block text.
         /// </summary>
-        private static readonly Regex ShieldElementRegex = new(@"<shield(?<attrs>\s[^>]*?)?\s*(?:/>|>(?<inner>.*?)</shield\s*>)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+        private static readonly Regex CustomElementRegex = new($@"<(?<name>{CustomElementNames})(?<attrs>\s[^>]*?)?\s*(?:/>|>(?<inner>.*?)</\k<name>\s*>)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
 
         /// <summary>
         /// Matches a single <c>name="value"</c>, <c>name='value'</c>, or unquoted attribute.
@@ -755,30 +760,27 @@ namespace Mosaic.UI.Wpf.Controls
         private static readonly Regex HtmlAttributeRegex = new(@"(?<name>[A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*(?:""(?<value>[^""]*)""|'(?<value>[^']*)'|(?<value>[^\s""'=<>`]+))", RegexOptions.CultureInvariant);
 
         /// <summary>
-        /// Renders a <c>&lt;shield label="..." value="..."&gt;fallback&lt;/shield&gt;</c> element that
-        /// starts at <paramref name="html"/>. The fallback content between the tags exists only for
-        /// Markdown renderers that do not understand the element and is not rendered here; it is used
-        /// as the shield's value when no <c>value</c> attribute is supplied. Optional
-        /// <c>background</c> and <c>foreground</c> attributes accept hex (<c>#6395EE</c>) or named
-        /// (<c>white</c>) colors.
+        /// Renders a custom element (<c>&lt;shield&gt;</c> or <c>&lt;pill&gt;</c>) that starts at
+        /// <paramref name="html"/>, consuming the sibling inlines up to its closing tag.
         /// </summary>
         /// <param name="target">The destination inline collection.</param>
         /// <param name="html">The candidate opening tag.</param>
         /// <param name="context">The active render context.</param>
-        /// <param name="next">The inline to resume rendering from when a shield was rendered.</param>
-        /// <returns><c>true</c> when <paramref name="html"/> was a shield tag and has been rendered.</returns>
-        private static bool TryAddShield(InlineCollection target, HtmlInline html, RenderContext context, out Markdig.Syntax.Inlines.Inline? next)
+        /// <param name="next">The inline to resume rendering from when an element was rendered.</param>
+        /// <returns><c>true</c> when <paramref name="html"/> was a custom element tag and has been rendered.</returns>
+        private static bool TryAddCustomElement(InlineCollection target, HtmlInline html, RenderContext context, out Markdig.Syntax.Inlines.Inline? next)
         {
             next = null;
-            var match = ShieldOpenTagRegex.Match(html.Tag ?? string.Empty);
+            var match = CustomOpenTagRegex.Match(html.Tag ?? string.Empty);
 
             if (!match.Success)
             {
                 return false;
             }
 
+            string name = match.Groups["name"].Value;
             next = html.NextSibling;
-            string fallback = string.Empty;
+            string inner = string.Empty;
 
             if (!match.Groups["self"].Success)
             {
@@ -788,9 +790,11 @@ namespace Mosaic.UI.Wpf.Controls
 
                 for (var sibling = html.NextSibling; sibling != null; sibling = sibling.NextSibling)
                 {
-                    if (sibling is HtmlInline closing && ShieldCloseTagRegex.IsMatch(closing.Tag ?? string.Empty))
+                    if (sibling is HtmlInline closing
+                        && CustomCloseTagRegex.Match(closing.Tag ?? string.Empty) is { Success: true } closeMatch
+                        && string.Equals(closeMatch.Groups["name"].Value, name, StringComparison.OrdinalIgnoreCase))
                     {
-                        fallback = sb.ToString();
+                        inner = sb.ToString();
                         next = closing.NextSibling;
                         break;
                     }
@@ -799,21 +803,21 @@ namespace Mosaic.UI.Wpf.Controls
                 }
             }
 
-            target.Add(CreateShieldInline(ParseHtmlAttributes(match.Groups["attrs"].Value), fallback, context));
+            target.Add(CreateCustomElementInline(name, ParseHtmlAttributes(match.Groups["attrs"].Value), inner, context));
             return true;
         }
 
         /// <summary>
-        /// Renders an HTML block whose content is nothing but <c>&lt;shield&gt;</c> elements and
-        /// whitespace as a paragraph of shields.
+        /// Renders an HTML block whose content is nothing but custom elements and whitespace as a
+        /// paragraph of those elements.
         /// </summary>
         /// <returns>The rendered paragraph, or <c>null</c> when the block contains other markup.</returns>
-        private static Paragraph? TryRenderShieldBlock(HtmlBlock html, RenderContext context)
+        private static Paragraph? TryRenderCustomElementBlock(HtmlBlock html, RenderContext context)
         {
             string text = html.Lines.ToString();
-            var matches = ShieldElementRegex.Matches(text);
+            var matches = CustomElementRegex.Matches(text);
 
-            if (matches.Count == 0 || !string.IsNullOrWhiteSpace(ShieldElementRegex.Replace(text, string.Empty)))
+            if (matches.Count == 0 || !string.IsNullOrWhiteSpace(CustomElementRegex.Replace(text, string.Empty)))
             {
                 return null;
             }
@@ -828,15 +832,67 @@ namespace Mosaic.UI.Wpf.Controls
                 }
 
                 string inner = System.Net.WebUtility.HtmlDecode(matches[i].Groups["inner"].Value).Trim();
-                paragraph.Inlines.Add(CreateShieldInline(ParseHtmlAttributes(matches[i].Groups["attrs"].Value), inner, context));
+                paragraph.Inlines.Add(CreateCustomElementInline(matches[i].Groups["name"].Value, ParseHtmlAttributes(matches[i].Groups["attrs"].Value), inner, context));
             }
 
             return paragraph;
         }
 
         /// <summary>
-        /// Builds the inline for a shield element: an embedded <see cref="Shield"/> control, or plain
-        /// text when the render context cannot carry embedded controls.
+        /// Builds the inline for a custom element by name.
+        /// </summary>
+        /// <param name="name">The element name, matched case-insensitively.</param>
+        /// <param name="attributes">The element's attributes, keyed case-insensitively.</param>
+        /// <param name="inner">The plain text between the element's tags.</param>
+        /// <param name="context">The active render context.</param>
+        private static System.Windows.Documents.Inline CreateCustomElementInline(string name, Dictionary<string, string> attributes, string inner, RenderContext context)
+        {
+            return string.Equals(name, "pill", StringComparison.OrdinalIgnoreCase)
+                ? CreatePillInline(attributes, inner, context)
+                : CreateShieldInline(attributes, inner, context);
+        }
+
+        /// <summary>
+        /// Builds the inline for a <c>&lt;pill background="..." foreground="..."&gt;text&lt;/pill&gt;</c>
+        /// element: an embedded <see cref="Badge"/> showing the text between the tags, or that text
+        /// alone when the render context cannot carry embedded controls. Optional <c>background</c>
+        /// and <c>foreground</c> attributes accept hex (<c>#FEB806</c>) or named (<c>white</c>) colors.
+        /// </summary>
+        /// <param name="attributes">The element's attributes, keyed case-insensitively.</param>
+        /// <param name="text">The text between the element's tags.</param>
+        /// <param name="context">The active render context.</param>
+        private static System.Windows.Documents.Inline CreatePillInline(Dictionary<string, string> attributes, string text, RenderContext context)
+        {
+            if (context.PlainCustomElements)
+            {
+                return new Run(text);
+            }
+
+            var badge = new Badge { Text = text };
+
+            if (TryGetBrush(attributes, "background", out var background))
+            {
+                badge.Background = background;
+            }
+
+            if (TryGetBrush(attributes, "foreground", out var foreground))
+            {
+                badge.Foreground = foreground;
+            }
+
+            return new InlineUIContainer(badge)
+            {
+                BaselineAlignment = BaselineAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Builds the inline for a <c>&lt;shield label="..." value="..."&gt;fallback&lt;/shield&gt;</c>
+        /// element: an embedded <see cref="Shield"/> control, or plain text when the render context
+        /// cannot carry embedded controls. The fallback content between the tags exists only for
+        /// Markdown renderers that do not understand the element; it is used as the shield's value
+        /// when no <c>value</c> attribute is supplied. Optional <c>background</c> and
+        /// <c>foreground</c> attributes accept hex (<c>#6395EE</c>) or named (<c>white</c>) colors.
         /// </summary>
         /// <param name="attributes">The element's attributes, keyed case-insensitively.</param>
         /// <param name="fallback">The plain text between the element's tags.</param>
@@ -850,7 +906,7 @@ namespace Mosaic.UI.Wpf.Controls
                 value = fallback;
             }
 
-            if (context.PlainShields)
+            if (context.PlainCustomElements)
             {
                 if (!string.IsNullOrEmpty(fallback))
                 {
