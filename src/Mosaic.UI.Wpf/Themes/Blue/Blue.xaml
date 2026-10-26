@@ -36,6 +36,8 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundColor}">#FF20339A</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderColor}">#FF798ADE</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FF0D1438</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemBackgroundColor}">#FF0D1438</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundColor}">#FF141E50</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FFF4F7FF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}">#FFD7DEFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#FF263FC9</Color>
@@ -93,6 +95,8 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ListViewItemBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ListViewItemBackgroundColor}}" />
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}}" />
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlPressedBackgroundColor}}" />

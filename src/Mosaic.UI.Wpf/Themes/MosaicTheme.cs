@@ -64,6 +64,28 @@
         public static ComponentResourceKey ControlForegroundBrush { get; } = new(typeof(MosaicTheme), "ControlForegroundBrush");
         public static ComponentResourceKey ControlForegroundColor { get; } = new(typeof(MosaicTheme), "ControlForegroundColor");
 
+        // ListViewItem (alternating rows, enabled via ListViewHelper.IsAlternatingRowsEnabled)
+
+        /// <summary>
+        /// Gets the resource key for the brush used behind even rows (AlternationIndex 0) of a ListView with alternating rows enabled.
+        /// </summary>
+        public static ComponentResourceKey ListViewItemBackgroundBrush { get; } = new(typeof(MosaicTheme), "ListViewItemBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the color used behind even rows (AlternationIndex 0) of a ListView with alternating rows enabled.
+        /// </summary>
+        public static ComponentResourceKey ListViewItemBackgroundColor { get; } = new(typeof(MosaicTheme), "ListViewItemBackgroundColor");
+
+        /// <summary>
+        /// Gets the resource key for the brush used behind odd rows (AlternationIndex 1) of a ListView with alternating rows enabled.
+        /// </summary>
+        public static ComponentResourceKey ListViewItemAlternateBackgroundBrush { get; } = new(typeof(MosaicTheme), "ListViewItemAlternateBackgroundBrush");
+
+        /// <summary>
+        /// Gets the resource key for the color used behind odd rows (AlternationIndex 1) of a ListView with alternating rows enabled.
+        /// </summary>
+        public static ComponentResourceKey ListViewItemAlternateBackgroundColor { get; } = new(typeof(MosaicTheme), "ListViewItemAlternateBackgroundColor");
+
         // MessageBox (two-tone surface: header holds the icon/message, footer holds the buttons)
 
         /// <summary>

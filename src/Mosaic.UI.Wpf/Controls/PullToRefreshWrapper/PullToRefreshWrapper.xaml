@@ -13,17 +13,33 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:PullToRefreshWrapper">
-                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid ClipToBounds="True">
-                            <Grid x:Name="PART_Indicator" Height="60" Margin="0,-60,0,0" VerticalAlignment="Top" IsHitTestVisible="False">
+                            <Grid
+                                x:Name="PART_Indicator"
+                                Height="60"
+                                Margin="0,-60,0,0"
+                                VerticalAlignment="Top"
+                                IsHitTestVisible="False">
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="PART_IndicatorTransform" />
                                 </Grid.RenderTransform>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <controls:RadialProgressBar x:Name="PART_Progress" Width="32" Height="32"
-                                                               Minimum="0" Maximum="100" ArcMode="Pie"
-                                                               OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <controls:RadialProgressBar
+                                        x:Name="PART_Progress"
+                                        Width="32"
+                                        Height="32"
+                                        ArcMode="Pie"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        OuterBackgroundBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightBrush}}">
                                         <controls:RadialProgressBar.Foreground>
                                             <RadialGradientBrush>
                                                 <GradientStop Offset="0" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlBackgroundLightColor}}" />
@@ -31,13 +47,19 @@
                                             </RadialGradientBrush>
                                         </controls:RadialProgressBar.Foreground>
                                     </controls:RadialProgressBar>
-                                    <TextBlock x:Name="Prompt" Margin="12,0,0,0" VerticalAlignment="Center"
-                                               Foreground="{TemplateBinding Foreground}" Text="Pull to refresh…" />
+                                    <TextBlock
+                                        x:Name="Prompt"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Text="Pull to refresh…" />
                                 </StackPanel>
                             </Grid>
-                            <ContentPresenter x:Name="PART_Content" ContentSource="Content"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <ContentPresenter
+                                x:Name="PART_Content"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                ContentSource="Content">
                                 <ContentPresenter.RenderTransform>
                                     <TranslateTransform x:Name="PART_ContentTransform" />
                                 </ContentPresenter.RenderTransform>

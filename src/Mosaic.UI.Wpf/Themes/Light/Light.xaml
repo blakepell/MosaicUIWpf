@@ -90,6 +90,12 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FFFFFFFF</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundColor}}" />
 
+    <!--  ListViewItem alternating rows  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemBackgroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ListViewItemBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ListViewItemBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundColor}">#FFF3F4F6</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundColor}}" />
+
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FF333333</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundColor}}" />
 

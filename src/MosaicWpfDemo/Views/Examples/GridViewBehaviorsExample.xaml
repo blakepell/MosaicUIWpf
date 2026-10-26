@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:Mosaic.UI.Wpf.Behaviors;assembly=Mosaic.UI.Wpf"
+    xmlns:common="clr-namespace:Mosaic.UI.Wpf.Common;assembly=Mosaic.UI.Wpf"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,8 +18,16 @@
         </Grid.RowDefinitions>
 
         <StackPanel>
-            <TextBlock Margin="0,0,0,8" FontSize="18" FontWeight="SemiBold" Text="GridView Behaviors" />
+            <TextBlock
+                Margin="0,0,0,8"
+                FontSize="18"
+                FontWeight="SemiBold"
+                Text="GridView Behaviors" />
             <TextBlock Text="Click a column header to sort. The last column stretches to fill the remaining width." TextWrapping="Wrap" />
+            <CheckBox
+                Margin="0,8,0,0"
+                Content="Alternating rows"
+                IsChecked="{Binding IsAlternatingRowsEnabled, Mode=TwoWay}" />
         </StackPanel>
 
         <Border
@@ -28,7 +37,10 @@
             BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
             BorderThickness="1"
             CornerRadius="4">
-            <ListView behaviors:GridViewSortBehavior.IsEnabled="True" ItemsSource="{Binding Rows}">
+            <ListView
+                behaviors:GridViewSortBehavior.IsEnabled="True"
+                common:ListViewHelper.IsAlternatingRowsEnabled="{Binding IsAlternatingRowsEnabled}"
+                ItemsSource="{Binding Rows}">
                 <i:Interaction.Behaviors>
                     <behaviors:GridViewLastColumnFillBehavior />
                 </i:Interaction.Behaviors>
@@ -38,17 +50,17 @@
                         <GridViewColumn
                             Width="220"
                             behaviors:GridViewSortBehavior.SortPropertyName="Name"
-                            Header="Name"
-                            DisplayMemberBinding="{Binding Name}" />
+                            DisplayMemberBinding="{Binding Name}"
+                            Header="Name" />
                         <GridViewColumn
                             Width="260"
                             behaviors:GridViewSortBehavior.SortPropertyName="Identifier"
-                            Header="Identifier"
-                            DisplayMemberBinding="{Binding Identifier}" />
+                            DisplayMemberBinding="{Binding Identifier}"
+                            Header="Identifier" />
                         <GridViewColumn
                             behaviors:GridViewSortBehavior.SortPropertyName="Category"
-                            Header="Category"
-                            DisplayMemberBinding="{Binding Category}" />
+                            DisplayMemberBinding="{Binding Category}"
+                            Header="Category" />
                     </GridView>
                 </ListView.View>
             </ListView>

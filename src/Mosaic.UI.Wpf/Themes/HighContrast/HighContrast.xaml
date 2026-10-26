@@ -32,6 +32,8 @@
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBackgroundColor}">#FF1E1E1E</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlHoverBorderColor}">#FFFFFF00</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.ListViewItemAlternateBackgroundColor}">#FF1C1C1C</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextForegroundColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlTextSecondaryForegroundColor}">#FFE0E0E0</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ControlPressedBackgroundColor}">#FFFFFF00</Color>
