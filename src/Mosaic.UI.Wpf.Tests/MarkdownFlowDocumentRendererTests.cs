@@ -386,6 +386,127 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        [Fact]
+        public void ShieldElementRendersShieldInsteadOfFallbackText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("Release <shield label=\"Version\" value=\"1.0\">v1.0</shield> is out.");
+
+                var shield = Assert.Single(FindShields(document));
+                Assert.Equal("Version", shield.Label);
+                Assert.Equal("1.0", shield.Value);
+                Assert.DoesNotContain("v1.0", GetText(document));
+                Assert.Contains("Release", GetText(document));
+                Assert.Contains("is out.", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void ShieldElementAtStartOfLineIsRenderedInline()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<shield label=\"Version\" value=\"1.0\">v1.0</shield>");
+
+                Assert.Single(FindShields(document));
+                Assert.DoesNotContain("<shield", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void ShieldElementAppliesHexAndNamedColors()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    "<shield label=\"Version\" value=\"1.0\" background=\"#6395EE\" foreground=\"white\">v1.0</shield>");
+
+                var shield = Assert.Single(FindShields(document));
+                Assert.Equal(Color.FromRgb(0x63, 0x95, 0xEE), ((SolidColorBrush)shield.ValueBackgroundBrush).Color);
+                Assert.Equal(Colors.White, ((SolidColorBrush)shield.ValueForegroundBrush).Color);
+                Assert.True(shield.ValueBackgroundBrush.IsFrozen);
+            });
+        }
+
+        [Fact]
+        public void ShieldElementWithInvalidColorKeepsDefaults()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    "<shield label=\"Build\" value=\"ok\" background=\"not-a-color\">ok</shield>");
+
+                var shield = Assert.Single(FindShields(document));
+                Assert.Same(new Shield().ValueBackgroundBrush, shield.ValueBackgroundBrush);
+            });
+        }
+
+        [Fact]
+        public void ShieldElementWithoutValueUsesFallbackText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<shield label=\"Version\">v2.0</shield>");
+
+                Assert.Equal("v2.0", Assert.Single(FindShields(document)).Value);
+            });
+        }
+
+        [Fact]
+        public void SelfClosingShieldOnItsOwnLineRendersShield()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<shield label=\"License\" value=\"MIT\" />");
+
+                var shield = Assert.Single(FindShields(document));
+                Assert.Equal("MIT", shield.Value);
+                Assert.DoesNotContain("<shield", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void UnclosedShieldLeavesFollowingTextIntact()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("Before <shield label=\"Version\" value=\"1.0\"> after");
+
+                Assert.Single(FindShields(document));
+                Assert.Contains("after", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void ExportRendersShieldAsFallbackText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.RenderForExport(
+                    "<shield label=\"Version\" value=\"1.0\">v1.0</shield>", null, null, MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing);
+
+                Assert.Empty(FindShields(document));
+                Assert.Contains("v1.0", GetText(document));
+            });
+        }
+
+        private static Shield[] FindShields(FlowDocument document)
+        {
+            return document.Blocks
+                .OfType<Paragraph>()
+                .SelectMany(p => p.Inlines)
+                .OfType<InlineUIContainer>()
+                .Select(c => c.Child)
+                .OfType<Shield>()
+                .ToArray();
+        }
+
+        private static string GetText(FlowDocument document)
+        {
+            return new TextRange(document.ContentStart, document.ContentEnd).Text;
+        }
+
         /// <summary>
         /// Renders a fenced code block of the requested line count and measures the embedded editor with
         /// unbounded height, mirroring how the hosting rich text box lays the document out.

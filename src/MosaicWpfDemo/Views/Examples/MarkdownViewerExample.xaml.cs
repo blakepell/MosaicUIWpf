@@ -148,6 +148,7 @@ namespace MosaicWpfDemo.Views.Examples
             - [Code Blocks](#code-blocks)
             - [Table](#table)
             - [Event Links](#event-links)
+            - [Shields](#shields)
             - [Release Notes](#release-notes)
             - [Image](#image)
 
@@ -198,6 +199,16 @@ namespace MosaicWpfDemo.Views.Examples
             - [Blake's Articles](@ShowArticle?keyword=bpell)
             - [Search two terms](@Search?term=wpf&term2=markdown&page=2)
             - [Refresh (no parameters)](@Refresh)
+
+            ## Shields
+
+            A `<shield>` element renders a Shield control inline. The text between the tags is only a
+            fallback for Markdown renderers that do not support the element, so GitHub would show `v1.0`.
+            `background` and `foreground` are optional and accept hex or named colors.
+
+            <shield label="Version" value="1.0">v1.0</shield> <shield label="Version" value="1.0" background="#6395EE" foreground="white">v1.0</shield> <shield label="Build" value="passing" background="#2E7D32">passing</shield> <shield label="License" value="MIT" background="orange" foreground="black">MIT</shield>
+
+            Shields can also sit mid-sentence: this library targets <shield label=".NET" value="10.0" background="#512BD4">.NET 10</shield> on Windows.
 
             ## Release Notes
 

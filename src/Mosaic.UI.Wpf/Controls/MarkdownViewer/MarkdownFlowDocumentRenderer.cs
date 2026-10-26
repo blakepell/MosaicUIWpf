@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Mosaic UI for WPF
  *
  * @project lead      : Blake Pell
@@ -12,6 +12,7 @@ using Markdig;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Mosaic.UI.Wpf.Cache;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
@@ -61,7 +62,11 @@ namespace Mosaic.UI.Wpf.Controls
         /// in an embedded <see cref="SyntaxEditor"/>. Export formats such as RTF cannot carry
         /// embedded controls, so exported documents use plain paragraphs instead.
         /// </param>
-        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing, bool PlainCodeBlocks = false);
+        /// <param name="PlainShields">
+        /// Whether <c>&lt;shield&gt;</c> elements are rendered as their fallback text rather than as
+        /// embedded <see cref="Shield"/> controls, for the same reason as <paramref name="PlainCodeBlocks"/>.
+        /// </param>
+        private readonly record struct RenderContext(Uri? BaseUri, Uri? ImageBaseUri, double HeadingBottomSpacing, bool PlainCodeBlocks = false, bool PlainShields = false);
 
         /// <summary>
         /// The default space, in device-independent pixels, left below each rendered heading.
@@ -190,8 +195,8 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>
         /// Renders the supplied Markdown text into a <see cref="FlowDocument"/> suitable for export
         /// (RTF, XPS, or printing). The output matches <see cref="Render(string?, Uri?, Uri?, double)"/>
-        /// except that code blocks are always monospace paragraphs, since embedded controls cannot
-        /// be serialized to RTF and do not paginate reliably.
+        /// except that code blocks are always monospace paragraphs and shields are plain text, since
+        /// embedded controls cannot be serialized to RTF and do not paginate reliably.
         /// </summary>
         /// <param name="markdown">The Markdown source. A <c>null</c> value is treated as an empty string.</param>
         /// <param name="baseUri">The absolute URI relative links and images are resolved against, if any.</param>
@@ -205,7 +210,7 @@ namespace Mosaic.UI.Wpf.Controls
                 headingBottomSpacing = 0;
             }
 
-            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing, PlainCodeBlocks: true));
+            return Render(markdown, new RenderContext(baseUri, imageBaseUri, headingBottomSpacing, PlainCodeBlocks: true, PlainShields: true));
         }
 
         /// <summary>
@@ -258,7 +263,7 @@ namespace Mosaic.UI.Wpf.Controls
                 case ThematicBreakBlock:
                     return RenderThematicBreak();
                 case HtmlBlock html:
-                    return RenderHtmlBlock(html);
+                    return RenderHtmlBlock(html, context);
                 default:
                     return null;
             }
@@ -662,10 +667,20 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
-        /// Renders a raw HTML block as plain, monospace text rather than interpreting the markup.
+        /// Renders a raw HTML block as plain, monospace text rather than interpreting the markup. A
+        /// block made up only of <c>&lt;shield&gt;</c> elements (for example a self-closing shield
+        /// alone on a line, which CommonMark classifies as an HTML block) is rendered as a paragraph
+        /// of shields instead.
         /// </summary>
-        private static WpfBlock RenderHtmlBlock(HtmlBlock html)
+        private static WpfBlock RenderHtmlBlock(HtmlBlock html, RenderContext context)
         {
+            var shieldParagraph = TryRenderShieldBlock(html, context);
+
+            if (shieldParagraph != null)
+            {
+                return shieldParagraph;
+            }
+
             var paragraph = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
             paragraph.SetResourceReference(TextElement.FontFamilyProperty, MosaicTheme.MonospaceFontFamily);
 
@@ -700,9 +715,248 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
-            foreach (var inline in container)
+            var inline = container.FirstChild;
+
+            while (inline != null)
             {
+                // Custom HTML-style elements span several sibling inlines (opening tag, fallback
+                // text, closing tag), so they are consumed here rather than in AddInline.
+                if (inline is HtmlInline html && TryAddShield(target, html, context, out var next))
+                {
+                    inline = next;
+                    continue;
+                }
+
                 AddInline(target, inline, context);
+                inline = inline.NextSibling;
+            }
+        }
+
+        /// <summary>
+        /// Matches an opening or self-closing <c>&lt;shield&gt;</c> tag as captured by a Markdig
+        /// <see cref="HtmlInline"/>.
+        /// </summary>
+        private static readonly Regex ShieldOpenTagRegex = new(@"^<shield(?<attrs>\s[^>]*?)?\s*(?<self>/)?>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Matches a closing <c>&lt;/shield&gt;</c> tag.
+        /// </summary>
+        private static readonly Regex ShieldCloseTagRegex = new(@"^</shield\s*>$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Matches a complete <c>&lt;shield&gt;</c> element (self-closing or with fallback content)
+        /// within raw HTML block text.
+        /// </summary>
+        private static readonly Regex ShieldElementRegex = new(@"<shield(?<attrs>\s[^>]*?)?\s*(?:/>|>(?<inner>.*?)</shield\s*>)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+
+        /// <summary>
+        /// Matches a single <c>name="value"</c>, <c>name='value'</c>, or unquoted attribute.
+        /// </summary>
+        private static readonly Regex HtmlAttributeRegex = new(@"(?<name>[A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*(?:""(?<value>[^""]*)""|'(?<value>[^']*)'|(?<value>[^\s""'=<>`]+))", RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Renders a <c>&lt;shield label="..." value="..."&gt;fallback&lt;/shield&gt;</c> element that
+        /// starts at <paramref name="html"/>. The fallback content between the tags exists only for
+        /// Markdown renderers that do not understand the element and is not rendered here; it is used
+        /// as the shield's value when no <c>value</c> attribute is supplied. Optional
+        /// <c>background</c> and <c>foreground</c> attributes accept hex (<c>#6395EE</c>) or named
+        /// (<c>white</c>) colors.
+        /// </summary>
+        /// <param name="target">The destination inline collection.</param>
+        /// <param name="html">The candidate opening tag.</param>
+        /// <param name="context">The active render context.</param>
+        /// <param name="next">The inline to resume rendering from when a shield was rendered.</param>
+        /// <returns><c>true</c> when <paramref name="html"/> was a shield tag and has been rendered.</returns>
+        private static bool TryAddShield(InlineCollection target, HtmlInline html, RenderContext context, out Markdig.Syntax.Inlines.Inline? next)
+        {
+            next = null;
+            var match = ShieldOpenTagRegex.Match(html.Tag ?? string.Empty);
+
+            if (!match.Success)
+            {
+                return false;
+            }
+
+            next = html.NextSibling;
+            string fallback = string.Empty;
+
+            if (!match.Groups["self"].Success)
+            {
+                // Find the matching closing tag among the following siblings. When it is missing the
+                // following content is left to render normally rather than swallowing the paragraph.
+                var sb = new StringBuilder();
+
+                for (var sibling = html.NextSibling; sibling != null; sibling = sibling.NextSibling)
+                {
+                    if (sibling is HtmlInline closing && ShieldCloseTagRegex.IsMatch(closing.Tag ?? string.Empty))
+                    {
+                        fallback = sb.ToString();
+                        next = closing.NextSibling;
+                        break;
+                    }
+
+                    AppendPlainText(sb, sibling);
+                }
+            }
+
+            target.Add(CreateShieldInline(ParseHtmlAttributes(match.Groups["attrs"].Value), fallback, context));
+            return true;
+        }
+
+        /// <summary>
+        /// Renders an HTML block whose content is nothing but <c>&lt;shield&gt;</c> elements and
+        /// whitespace as a paragraph of shields.
+        /// </summary>
+        /// <returns>The rendered paragraph, or <c>null</c> when the block contains other markup.</returns>
+        private static Paragraph? TryRenderShieldBlock(HtmlBlock html, RenderContext context)
+        {
+            string text = html.Lines.ToString();
+            var matches = ShieldElementRegex.Matches(text);
+
+            if (matches.Count == 0 || !string.IsNullOrWhiteSpace(ShieldElementRegex.Replace(text, string.Empty)))
+            {
+                return null;
+            }
+
+            var paragraph = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
+
+            for (int i = 0; i < matches.Count; i++)
+            {
+                if (i > 0)
+                {
+                    paragraph.Inlines.Add(new Run(" "));
+                }
+
+                string inner = System.Net.WebUtility.HtmlDecode(matches[i].Groups["inner"].Value).Trim();
+                paragraph.Inlines.Add(CreateShieldInline(ParseHtmlAttributes(matches[i].Groups["attrs"].Value), inner, context));
+            }
+
+            return paragraph;
+        }
+
+        /// <summary>
+        /// Builds the inline for a shield element: an embedded <see cref="Shield"/> control, or plain
+        /// text when the render context cannot carry embedded controls.
+        /// </summary>
+        /// <param name="attributes">The element's attributes, keyed case-insensitively.</param>
+        /// <param name="fallback">The plain text between the element's tags.</param>
+        /// <param name="context">The active render context.</param>
+        private static System.Windows.Documents.Inline CreateShieldInline(Dictionary<string, string> attributes, string fallback, RenderContext context)
+        {
+            attributes.TryGetValue("label", out var label);
+
+            if (!attributes.TryGetValue("value", out var value))
+            {
+                value = fallback;
+            }
+
+            if (context.PlainShields)
+            {
+                if (!string.IsNullOrEmpty(fallback))
+                {
+                    return new Run(fallback);
+                }
+
+                return new Run(string.IsNullOrEmpty(label) ? value : $"{label}: {value}");
+            }
+
+            var shield = new Shield
+            {
+                Label = label ?? string.Empty,
+                Value = value
+            };
+
+            if (TryGetBrush(attributes, "background", out var background))
+            {
+                shield.ValueBackgroundBrush = background;
+            }
+
+            if (TryGetBrush(attributes, "foreground", out var foreground))
+            {
+                shield.ValueForegroundBrush = foreground;
+            }
+
+            return new InlineUIContainer(shield)
+            {
+                BaselineAlignment = BaselineAlignment.Center
+            };
+        }
+
+        /// <summary>
+        /// Resolves a hex or named color attribute to a cached, frozen brush.
+        /// </summary>
+        /// <returns><c>false</c> when the attribute is missing or is not a valid color.</returns>
+        private static bool TryGetBrush(Dictionary<string, string> attributes, string name, [NotNullWhen(true)] out SolidColorBrush? brush)
+        {
+            brush = null;
+
+            if (!attributes.TryGetValue(name, out var text) || string.IsNullOrWhiteSpace(text))
+            {
+                return false;
+            }
+
+            try
+            {
+                if (ColorConverter.ConvertFromString(text.Trim()) is Color color)
+                {
+                    brush = ColorPaletteCache.GetBrush(color);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Parses HTML attribute text into a case-insensitive name/value dictionary. Values are
+        /// HTML-decoded so entities such as <c>&amp;amp;</c> render as their characters.
+        /// </summary>
+        private static Dictionary<string, string> ParseHtmlAttributes(string text)
+        {
+            var attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (Match match in HtmlAttributeRegex.Matches(text))
+            {
+                attributes[match.Groups["name"].Value] = System.Net.WebUtility.HtmlDecode(match.Groups["value"].Value);
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Appends the plain text of a Markdig inline (and its children) to <paramref name="sb"/>.
+        /// </summary>
+        private static void AppendPlainText(StringBuilder sb, Markdig.Syntax.Inlines.Inline inline)
+        {
+            switch (inline)
+            {
+                case LiteralInline literal:
+                    sb.Append(literal.Content.ToString());
+                    break;
+
+                case CodeInline code:
+                    sb.Append(code.Content);
+                    break;
+
+                case HtmlEntityInline entity:
+                    sb.Append(entity.Transcoded.ToString());
+                    break;
+
+                case LineBreakInline:
+                    sb.Append(' ');
+                    break;
+
+                case ContainerInline container:
+                    foreach (var child in container)
+                    {
+                        AppendPlainText(sb, child);
+                    }
+
+                    break;
             }
         }
 
