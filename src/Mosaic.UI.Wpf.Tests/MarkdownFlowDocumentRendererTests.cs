@@ -573,6 +573,149 @@ namespace Mosaic.UI.Wpf.Tests
             });
         }
 
+        private const string PanelWithHeaderAndFooter =
+            "<panel title=\"ADD-470\">\n" +
+            "    <header><pill>Functional Test</pill></header>\n" +
+            "    **FEM: Document lock race condition**\n" +
+            "    This is the contents of the panel.\n" +
+            "    <footer>Updated 10/26/2026</footer>\n" +
+            "</panel>\n\nAfter";
+
+        [Fact]
+        public void PanelMapsTitleHeaderContentAndFooter()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(PanelWithHeaderAndFooter);
+                var panel = Assert.Single(FindPanels(document));
+
+                Assert.Equal("ADD-470", panel.Title);
+                Assert.Equal(Visibility.Visible, panel.HeaderVisibility);
+                Assert.Equal(Visibility.Visible, panel.FooterVisibility);
+
+                var header = Assert.IsType<TextBlock>(panel.HeaderContent);
+                Assert.Equal(HorizontalAlignment.Right, header.HorizontalAlignment);
+                var badge = Assert.Single(header.Inlines.OfType<InlineUIContainer>().Select(c => c.Child).OfType<Badge>());
+                Assert.Equal("Functional Test", badge.Text);
+
+                // The indented body is dedented, so it is Markdown rather than an indented code block.
+                var body = Assert.IsType<RichTextBox>(panel.Content).Document;
+                var paragraph = Assert.IsType<Paragraph>(Assert.Single(body.Blocks));
+                Assert.Contains(paragraph.Inlines, inline => inline is Span { FontWeight: var weight } && weight == FontWeights.Bold);
+                Assert.DoesNotContain("<header>", GetText(body));
+                Assert.DoesNotContain("Updated", GetText(body));
+
+                var footer = Assert.IsType<TextBlock>(panel.FooterContent);
+                Assert.Equal("Updated 10/26/2026", new TextRange(footer.ContentStart, footer.ContentEnd).Text);
+
+                Assert.DoesNotContain("<panel", GetText(document));
+                Assert.Contains("After", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void PanelWithoutTitleOrFooterCollapsesThem()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<panel>\n    <header>Ignored</header>\n    **Body**\n</panel>");
+                var panel = Assert.Single(FindPanels(document));
+
+                Assert.Equal(Visibility.Collapsed, panel.HeaderVisibility);
+                Assert.Equal(Visibility.Collapsed, panel.FooterVisibility);
+                Assert.Null(panel.HeaderContent);
+                Assert.DoesNotContain("Ignored", GetText(Assert.IsType<RichTextBox>(panel.Content).Document));
+            });
+        }
+
+        [Fact]
+        public void PanelWithBlankLinesKeepsEveryParagraph()
+        {
+            RunSta(() =>
+            {
+                // A CommonMark HTML block ends at a blank line, so the panel spans several blocks.
+                var document = MarkdownFlowDocumentRenderer.Render("Before\n\n<panel title=\"T\">\n    First\n\n    Second\n\n    - Item\n</panel>\n\nAfter");
+                var panel = Assert.Single(FindPanels(document));
+                var body = Assert.IsType<RichTextBox>(panel.Content).Document;
+
+                Assert.Equal(3, body.Blocks.Count);
+                Assert.IsType<List>(body.Blocks.LastBlock);
+                Assert.Equal(3, document.Blocks.Count);
+                Assert.DoesNotContain("panel>", GetText(document));
+                Assert.Contains("After", GetText(document));
+            });
+        }
+
+        [Fact]
+        public void ContentAfterPanelInTheSameHtmlBlockIsRendered()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<panel>\nBody\n</panel>\n**After**");
+
+                Assert.Single(FindPanels(document));
+                var after = Assert.IsType<Paragraph>(document.Blocks.LastBlock);
+                Assert.Contains(after.Inlines, inline => inline is Span { FontWeight: var weight } && weight == FontWeights.Bold);
+            });
+        }
+
+        [Fact]
+        public void NestedPanelKeepsItsOwnHeader()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render(
+                    "<panel title=\"Outer\">\n<header>Outer header</header>\n\n<panel title=\"Inner\">\n<header>Inner header</header>\nInner body\n</panel>\n\nOuter body\n</panel>");
+
+                var outer = Assert.Single(FindPanels(document));
+                Assert.Equal("Outer header", new TextRange(((TextBlock)outer.HeaderContent).ContentStart, ((TextBlock)outer.HeaderContent).ContentEnd).Text);
+
+                var outerBody = Assert.IsType<RichTextBox>(outer.Content).Document;
+                var inner = Assert.Single(FindPanels(outerBody));
+                Assert.Equal("Inner", inner.Title);
+                Assert.Equal("Inner header", new TextRange(((TextBlock)inner.HeaderContent).ContentStart, ((TextBlock)inner.HeaderContent).ContentEnd).Text);
+                Assert.Contains("Outer body", GetText(outerBody));
+            });
+        }
+
+        [Fact]
+        public void UnclosedPanelIsNotRendered()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.Render("<panel title=\"T\">\nBody");
+
+                Assert.Empty(FindPanels(document));
+            });
+        }
+
+        [Fact]
+        public void ExportRendersPanelAsText()
+        {
+            RunSta(() =>
+            {
+                var document = MarkdownFlowDocumentRenderer.RenderForExport(
+                    PanelWithHeaderAndFooter, null, null, MarkdownFlowDocumentRenderer.DefaultHeadingBottomSpacing);
+
+                Assert.Empty(FindPanels(document));
+                string text = GetText(document);
+                Assert.Contains("ADD-470", text);
+                Assert.Contains("Functional Test", text);
+                Assert.Contains("FEM: Document lock race condition", text);
+                Assert.Contains("Updated 10/26/2026", text);
+                Assert.DoesNotContain("<", text);
+            });
+        }
+
+        private static ContentPanel[] FindPanels(FlowDocument document)
+        {
+            return document.Blocks
+                .OfType<BlockUIContainer>()
+                .Select(c => c.Child)
+                .OfType<ContentPanel>()
+                .ToArray();
+        }
+
         private static Shield[] FindShields(FlowDocument document)
         {
             return FindElements<Shield>(document);

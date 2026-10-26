@@ -14,6 +14,7 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Mosaic.UI.Wpf.Cache;
 using Mosaic.UI.Wpf.Themes;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using MarkdigBlock = Markdig.Syntax.Block;
@@ -224,19 +225,63 @@ namespace Mosaic.UI.Wpf.Controls
                 PagePadding = new Thickness(0)
             };
 
-            var parsed = Markdown.Parse(markdown ?? string.Empty, Pipeline);
+            RenderBlocks(markdown ?? string.Empty, context, document.Blocks);
+            return document;
+        }
 
-            foreach (var block in parsed)
+        /// <summary>
+        /// Parses <paramref name="markdown"/> and appends its rendered top-level blocks to
+        /// <paramref name="target"/>. A <c>&lt;panel&gt;</c> element is located in the source text
+        /// rather than in the syntax tree because a CommonMark HTML block ends at the first blank
+        /// line, so a panel with several paragraphs is split across many sibling blocks; every block
+        /// that starts inside the panel is consumed by it.
+        /// </summary>
+        /// <param name="markdown">The Markdown source.</param>
+        /// <param name="context">The active render context.</param>
+        /// <param name="target">The collection the rendered blocks are added to.</param>
+        private static void RenderBlocks(string markdown, RenderContext context, BlockCollection target)
+        {
+            var parsed = Markdown.Parse(markdown, Pipeline);
+
+            for (int i = 0; i < parsed.Count; i++)
             {
-                var rendered = RenderBlock((MarkdigBlock)block, context);
+                var block = parsed[i];
+
+                if (block is HtmlBlock && TryFindPanel(markdown, block.Span.Start, out var panel))
+                {
+                    target.Add(RenderPanel(panel, context));
+
+                    // Skip the blocks the panel consumed. An HTML block runs to the next blank line,
+                    // so the last of them can carry content after the closing tag, which is rendered
+                    // on its own.
+                    int consumedEnd = block.Span.End + 1;
+
+                    while (i + 1 < parsed.Count && parsed[i + 1].Span.Start < panel.End)
+                    {
+                        i++;
+                        consumedEnd = parsed[i].Span.End + 1;
+                    }
+
+                    if (consumedEnd > panel.End && consumedEnd <= markdown.Length)
+                    {
+                        string remainder = markdown[panel.End..consumedEnd];
+
+                        if (!string.IsNullOrWhiteSpace(remainder))
+                        {
+                            RenderBlocks(remainder, context, target);
+                        }
+                    }
+
+                    continue;
+                }
+
+                var rendered = RenderBlock(block, context);
 
                 if (rendered != null)
                 {
-                    document.Blocks.Add(rendered);
+                    target.Add(rendered);
                 }
             }
-
-            return document;
         }
 
         /// <summary>
@@ -400,19 +445,27 @@ namespace Mosaic.UI.Wpf.Controls
             // Child paragraphs carry their own top/bottom margins; strip the leading top and trailing
             // bottom margins so the Section's padding alone controls the spacing and renders evenly
             // above and below the quoted text.
-            if (section.Blocks.FirstBlock is { } firstBlock)
+            TrimOuterMargins(section.Blocks);
+            return section;
+        }
+
+        /// <summary>
+        /// Removes the top margin of the first block and the bottom margin of the last block so the
+        /// container's own padding alone controls the spacing around its content.
+        /// </summary>
+        private static void TrimOuterMargins(BlockCollection blocks)
+        {
+            if (blocks.FirstBlock is { } firstBlock)
             {
                 var margin = firstBlock.Margin;
                 firstBlock.Margin = new Thickness(margin.Left, 0, margin.Right, margin.Bottom);
             }
 
-            if (section.Blocks.LastBlock is { } lastBlock)
+            if (blocks.LastBlock is { } lastBlock)
             {
                 var margin = lastBlock.Margin;
                 lastBlock.Margin = new Thickness(margin.Left, margin.Top, margin.Right, 0);
             }
-
-            return section;
         }
 
         /// <summary>
@@ -701,6 +754,369 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             return paragraph;
+        }
+
+        /// <summary>
+        /// The source of a <c>&lt;panel&gt;</c> element located in Markdown text.
+        /// </summary>
+        /// <param name="Attributes">The raw attribute text of the opening tag.</param>
+        /// <param name="Inner">The text between the opening and closing tags.</param>
+        /// <param name="End">The source index just past the closing tag.</param>
+        private readonly record struct PanelSource(string Attributes, string Inner, int End);
+
+        /// <summary>
+        /// Matches a <c>&lt;panel&gt;</c> opening tag at the start of an HTML block.
+        /// </summary>
+        private static readonly Regex PanelOpenTagRegex = new(@"\G[ \t]*<panel(?<attrs>\s[^>]*?)?\s*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Matches any opening or closing <c>&lt;panel&gt;</c> tag, used to pair nested panels.
+        /// </summary>
+        private static readonly Regex PanelTagRegex = new(@"<(?<close>/)?panel(?:\s[^>]*)?>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// Matches a panel's <c>&lt;header&gt;</c> or <c>&lt;footer&gt;</c> slot.
+        /// </summary>
+        private static readonly Regex PanelSlotRegex = new(@"<(?<name>header|footer)(?:\s[^>]*)?>(?<inner>.*?)</\k<name>\s*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+
+        /// <summary>
+        /// Locates a <c>&lt;panel&gt;</c> element whose opening tag starts at <paramref name="start"/>,
+        /// pairing nested panels so the matching closing tag is found.
+        /// </summary>
+        /// <param name="markdown">The Markdown source.</param>
+        /// <param name="start">The index of the HTML block that may open a panel.</param>
+        /// <param name="panel">The located panel.</param>
+        /// <returns><c>false</c> when no panel opens there or it is never closed.</returns>
+        private static bool TryFindPanel(string markdown, int start, out PanelSource panel)
+        {
+            panel = default;
+
+            if (start < 0 || start >= markdown.Length)
+            {
+                return false;
+            }
+
+            var open = PanelOpenTagRegex.Match(markdown, start);
+
+            if (!open.Success)
+            {
+                return false;
+            }
+
+            int innerStart = open.Index + open.Length;
+            int depth = 1;
+
+            for (var tag = PanelTagRegex.Match(markdown, innerStart); tag.Success; tag = tag.NextMatch())
+            {
+                depth += tag.Groups["close"].Success ? -1 : 1;
+
+                if (depth == 0)
+                {
+                    panel = new PanelSource(open.Groups["attrs"].Value, markdown[innerStart..tag.Index], tag.Index + tag.Length);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Renders a <c>&lt;panel title="..."&gt;</c> element as a <see cref="ContentPanel"/>. The
+        /// text between the tags is Markdown and becomes the panel's content. An optional
+        /// <c>&lt;header&gt;</c> holds Markdown shown right-aligned in the title bar, and an optional
+        /// <c>&lt;footer&gt;</c> holds Markdown shown in the footer. Without a <c>title</c> the
+        /// header (and any <c>&lt;header&gt;</c>) is collapsed; without a <c>&lt;footer&gt;</c> the
+        /// footer is collapsed.
+        /// </summary>
+        private static WpfBlock RenderPanel(PanelSource source, RenderContext context)
+        {
+            var attributes = ParseHtmlAttributes(source.Attributes);
+            attributes.TryGetValue("title", out var title);
+
+            var nested = GetNestedPanelRanges(source.Inner);
+            string? header = null;
+            string? footer = null;
+
+            // Pull out the panel's own header and footer, leaving those of nested panels in place.
+            string body = PanelSlotRegex.Replace(source.Inner, match =>
+            {
+                if (nested.Any(range => match.Index >= range.Start && match.Index < range.End))
+                {
+                    return match.Value;
+                }
+
+                if (string.Equals(match.Groups["name"].Value, "header", StringComparison.OrdinalIgnoreCase))
+                {
+                    header ??= match.Groups["inner"].Value;
+                }
+                else
+                {
+                    footer ??= match.Groups["inner"].Value;
+                }
+
+                return string.Empty;
+            });
+
+            body = Dedent(body);
+            header = string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(header) ? null : Dedent(header).Trim();
+            footer = string.IsNullOrWhiteSpace(footer) ? null : Dedent(footer).Trim();
+
+            if (!context.PlainCustomElements)
+            {
+                try
+                {
+                    var contentPanel = new ContentPanel
+                    {
+                        Title = title ?? string.Empty,
+                        Content = CreatePanelSlot(body, context, TextAlignment.Left, preferTextBlock: false)
+                    };
+
+                    if (string.IsNullOrWhiteSpace(title))
+                    {
+                        contentPanel.HeaderVisibility = Visibility.Collapsed;
+                    }
+                    else if (header != null)
+                    {
+                        var headerContent = CreatePanelSlot(header, context, TextAlignment.Right, preferTextBlock: true);
+                        headerContent.HorizontalAlignment = HorizontalAlignment.Right;
+                        headerContent.VerticalAlignment = VerticalAlignment.Center;
+                        contentPanel.HeaderContent = headerContent;
+                    }
+
+                    if (footer != null)
+                    {
+                        contentPanel.FooterContent = CreatePanelSlot(footer, context, TextAlignment.Left, preferTextBlock: true);
+                    }
+                    else
+                    {
+                        contentPanel.FooterVisibility = Visibility.Collapsed;
+                    }
+
+                    return new BlockUIContainer(contentPanel)
+                    {
+                        Margin = new Thickness(0, 0, 0, 8)
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+            }
+
+            return RenderPlainPanel(title, header, body, footer, context);
+        }
+
+        /// <summary>
+        /// Renders a panel as a bordered <see cref="Section"/> of ordinary text, used for export (where
+        /// embedded controls cannot be serialized) and when the control cannot be created.
+        /// </summary>
+        private static WpfBlock RenderPlainPanel(string? title, string? header, string body, string? footer, RenderContext context)
+        {
+            var section = new Section
+            {
+                Margin = new Thickness(0, 0, 0, 8),
+                Padding = new Thickness(10, 6, 10, 6),
+                BorderThickness = new Thickness(1)
+            };
+
+            section.SetResourceReference(WpfBlock.BorderBrushProperty, MosaicTheme.ControlBorderBrush);
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                var titleParagraph = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
+                titleParagraph.Inlines.Add(new Bold(new Run(title)));
+
+                if (header != null)
+                {
+                    titleParagraph.Inlines.Add(new Run("  "));
+                    AddSlotInlines(titleParagraph.Inlines, header, context);
+                }
+
+                section.Blocks.Add(titleParagraph);
+            }
+
+            RenderBlocks(body, context, section.Blocks);
+
+            if (footer != null)
+            {
+                var footerParagraph = new Paragraph { Margin = new Thickness(0, 0, 0, 8) };
+                footerParagraph.SetResourceReference(TextElement.ForegroundProperty, MosaicTheme.ControlTextSecondaryForegroundBrush);
+                AddSlotInlines(footerParagraph.Inlines, footer, context);
+                section.Blocks.Add(footerParagraph);
+            }
+
+            if (section.Blocks.Count == 0)
+            {
+                section.Blocks.Add(new Paragraph());
+            }
+
+            TrimOuterMargins(section.Blocks);
+            return section;
+        }
+
+        /// <summary>
+        /// Renders slot Markdown and appends the inlines of its paragraphs to <paramref name="target"/>,
+        /// separated by spaces.
+        /// </summary>
+        private static void AddSlotInlines(InlineCollection target, string markdown, RenderContext context)
+        {
+            var section = new Section();
+            RenderBlocks(markdown, context, section.Blocks);
+            bool first = true;
+
+            foreach (var paragraph in section.Blocks.OfType<Paragraph>().ToList())
+            {
+                if (!first)
+                {
+                    target.Add(new Run(" "));
+                }
+
+                var inlines = paragraph.Inlines.ToList();
+                paragraph.Inlines.Clear();
+                target.AddRange(inlines);
+                first = false;
+            }
+        }
+
+        /// <summary>
+        /// Builds the element shown in one of a panel's slots. Markdown that renders to a single
+        /// paragraph becomes a <see cref="TextBlock"/> sized to its text when
+        /// <paramref name="preferTextBlock"/> is set; anything else is hosted in a nested, read-only
+        /// <see cref="RichTextBox"/> so lists, code blocks, and selection keep working.
+        /// </summary>
+        /// <param name="markdown">The slot's Markdown.</param>
+        /// <param name="context">The active render context.</param>
+        /// <param name="alignment">The text alignment of the slot.</param>
+        /// <param name="preferTextBlock">Whether a single paragraph is shown in a <see cref="TextBlock"/>.</param>
+        private static FrameworkElement CreatePanelSlot(string markdown, RenderContext context, TextAlignment alignment, bool preferTextBlock)
+        {
+            var document = new FlowDocument
+            {
+                PagePadding = new Thickness(0),
+                Background = Brushes.Transparent,
+                TextAlignment = alignment
+            };
+
+            RenderBlocks(markdown, context, document.Blocks);
+
+            if (preferTextBlock && document.Blocks.Count == 1 && document.Blocks.FirstBlock is Paragraph paragraph)
+            {
+                var textBlock = new TextBlock
+                {
+                    TextWrapping = TextWrapping.Wrap,
+                    TextAlignment = alignment
+                };
+
+                var inlines = paragraph.Inlines.ToList();
+                paragraph.Inlines.Clear();
+                textBlock.Inlines.AddRange(inlines);
+                return textBlock;
+            }
+
+            TrimOuterMargins(document.Blocks);
+
+            var richTextBox = new RichTextBox
+            {
+                Document = document,
+                IsReadOnly = true,
+                IsDocumentEnabled = true,
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Padding = new Thickness(0),
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+            };
+
+            // A rich text box applies its default page padding (5,0,5,0) to the document when it loads,
+            // which would indent the body relative to the panel's title and footer.
+            richTextBox.Loaded += static (sender, _) => ((RichTextBox)sender).Document.PagePadding = new Thickness(0);
+
+            // The typography and color come from the panel slot hosting the box, overriding a native
+            // RichTextBox style that would otherwise apply its own.
+            richTextBox.SetBinding(Control.FontFamilyProperty, new Binding(nameof(Control.FontFamily)) { RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ContentPanel), 1) });
+            richTextBox.SetBinding(Control.FontSizeProperty, new Binding(nameof(Control.FontSize)) { RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ContentPanel), 1) });
+            richTextBox.SetBinding(Control.ForegroundProperty, new Binding { Path = new PropertyPath(TextElement.ForegroundProperty), RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(ContentPresenter), 1) });
+
+            // The box has nothing to scroll, but its scroll viewer would still swallow the wheel.
+            richTextBox.PreviewMouseWheel += OnCodeBlockEditorPreviewMouseWheel;
+
+            return richTextBox;
+        }
+
+        /// <summary>
+        /// Finds the ranges of <paramref name="text"/> covered by nested <c>&lt;panel&gt;</c> elements.
+        /// </summary>
+        private static List<(int Start, int End)> GetNestedPanelRanges(string text)
+        {
+            var ranges = new List<(int Start, int End)>();
+            int depth = 0;
+            int start = 0;
+
+            foreach (Match tag in PanelTagRegex.Matches(text))
+            {
+                if (tag.Groups["close"].Success)
+                {
+                    if (depth == 0)
+                    {
+                        continue;
+                    }
+
+                    if (--depth == 0)
+                    {
+                        ranges.Add((start, tag.Index + tag.Length));
+                    }
+                }
+                else if (depth++ == 0)
+                {
+                    start = tag.Index;
+                }
+            }
+
+            if (depth > 0)
+            {
+                ranges.Add((start, text.Length));
+            }
+
+            return ranges;
+        }
+
+        /// <summary>
+        /// Removes the indentation shared by every non-blank line so Markdown indented inside an
+        /// element (for readability) is not parsed as an indented code block.
+        /// </summary>
+        private static string Dedent(string text)
+        {
+            var lines = text.Replace("\r\n", "\n").Split('\n');
+            int indent = int.MaxValue;
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    continue;
+                }
+
+                int count = 0;
+
+                while (count < line.Length && (line[count] == ' ' || line[count] == '\t'))
+                {
+                    count++;
+                }
+
+                indent = Math.Min(indent, count);
+            }
+
+            if (indent is 0 or int.MaxValue)
+            {
+                return string.Join("\n", lines);
+            }
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = lines[i].Length >= indent ? lines[i][indent..] : lines[i].TrimStart(' ', '\t');
+            }
+
+            return string.Join("\n", lines);
         }
 
         /// <summary>

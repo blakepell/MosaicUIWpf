@@ -191,6 +191,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         public MarkdownViewer()
         {
+            this.AddHandler(DocHyperlink.RequestNavigateEvent, new System.Windows.Navigation.RequestNavigateEventHandler(this.OnHyperlinkRequestNavigate));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, this.OnFindCommandExecuted));
             this.CommandBindings.Add(new CommandBinding(FindNextCommand, (_, e) =>
             {
@@ -660,8 +661,10 @@ namespace Mosaic.UI.Wpf.Controls
 
                 // The text editor also wins the cursor negotiation and forces an I-beam over the
                 // whole document, so the hand cursor over a link is applied here for the same reason.
-                _richTextBox.QueryCursor -= OnRichTextBoxQueryCursor;
-                _richTextBox.QueryCursor += OnRichTextBoxQueryCursor;
+                // Handled events are included so the hand also shows over links in a rich text box
+                // nested in the document (a panel's body), whose own editor handles the query first.
+                _richTextBox.RemoveHandler(QueryCursorEvent, new QueryCursorEventHandler(OnRichTextBoxQueryCursor));
+                _richTextBox.AddHandler(QueryCursorEvent, new QueryCursorEventHandler(OnRichTextBoxQueryCursor), true);
 
                 // Without a menu of its own the rich text box would open the text editor's built-in
                 // Cut/Copy/Paste menu, so it shares whichever menu the viewer has.
@@ -753,19 +756,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void OnRichTextBoxPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_richTextBox == null)
-            {
-                return;
-            }
-
-            var position = _richTextBox.GetPositionFromPoint(e.GetPosition(_richTextBox), false);
-
-            if (position == null)
-            {
-                return;
-            }
-
-            var hyperlink = FindHyperlink(position.Parent);
+            var hyperlink = FindHyperlinkAt(e);
 
             if (hyperlink?.NavigateUri == null)
             {
@@ -782,20 +773,71 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void OnRichTextBoxQueryCursor(object sender, QueryCursorEventArgs e)
         {
-            if (_richTextBox == null)
-            {
-                return;
-            }
-
-            var position = _richTextBox.GetPositionFromPoint(e.GetPosition(_richTextBox), false);
-
-            if (position == null || FindHyperlink(position.Parent) == null)
+            if (FindHyperlinkAt(e) == null)
             {
                 return;
             }
 
             e.Cursor = Cursors.Hand;
             e.Handled = true;
+        }
+
+        /// <summary>
+        /// Finds the hyperlink under the mouse, if any, in the viewer's document or in a rich text box
+        /// nested in it (such as the body of a <c>&lt;panel&gt;</c>).
+        /// </summary>
+        private DocHyperlink? FindHyperlinkAt(MouseEventArgs e)
+        {
+            // An enabled document routes input to its content elements, so the event can come
+            // straight from the link's text, whose logical parents stop short of a nested box.
+            if (e.OriginalSource is DependencyObject source and not Visual and not Visual3D &&
+                FindHyperlink(source) is { } direct)
+            {
+                return direct;
+            }
+
+            if (GetEventRichTextBox(e) is not { } richTextBox)
+            {
+                return null;
+            }
+
+            var position = richTextBox.GetPositionFromPoint(e.GetPosition(richTextBox), false);
+            return position == null ? null : FindHyperlink(position.Parent);
+        }
+
+        /// <summary>
+        /// Finds the rich text box an input event occurred in: the viewer's own, or one nested in the
+        /// document such as the body of a <c>&lt;panel&gt;</c>, so links inside it can be hit-tested.
+        /// </summary>
+        private RichTextBox? GetEventRichTextBox(RoutedEventArgs e)
+        {
+            for (var element = e.OriginalSource as DependencyObject;
+                 element != null;
+                 element = element is Visual or Visual3D ? VisualTreeHelper.GetParent(element) : LogicalTreeHelper.GetParent(element))
+            {
+                if (element is RichTextBox richTextBox)
+                {
+                    return richTextBox;
+                }
+            }
+
+            return _richTextBox;
+        }
+
+        /// <summary>
+        /// Navigates a hyperlink that raised <see cref="DocHyperlink.RequestNavigateEvent"/> itself,
+        /// such as one in the header or footer of a <c>&lt;panel&gt;</c>, which is hosted in a
+        /// <see cref="TextBlock"/> rather than a rich text box.
+        /// </summary>
+        private void OnHyperlinkRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            if (e.Uri == null)
+            {
+                return;
+            }
+
+            e.Handled = true;
+            NavigateTo(e.Uri);
         }
 
         /// <summary>

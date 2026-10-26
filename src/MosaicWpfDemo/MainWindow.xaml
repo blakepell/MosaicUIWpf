@@ -1004,8 +1004,11 @@
                 </mosaic:SideMenuItem>
 
                 <!--  Pull to Refresh  -->
-                <mosaic:SideMenuItem ContentType="{x:Type views:ShellView}" ContentTypeIsSingleton="True"
-                                    ImageSource="/Assets/refresh2-48.png" Text="Pull to Refresh">
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/refresh2-48.png"
+                    Text="Pull to Refresh">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
                             <mosaic:SideMenuParameter Key="Title" Value="Pull to Refresh" />

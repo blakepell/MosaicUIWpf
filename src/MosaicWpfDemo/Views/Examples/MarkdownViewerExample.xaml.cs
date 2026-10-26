@@ -150,6 +150,7 @@ namespace MosaicWpfDemo.Views.Examples
             - [Event Links](#event-links)
             - [Shields](#shields)
             - [Pills](#pills)
+            - [Panels](#panels)
             - [Release Notes](#release-notes)
             - [Image](#image)
 
@@ -220,6 +221,33 @@ namespace MosaicWpfDemo.Views.Examples
             <pill>Default</pill> <pill foreground="#FFFFFF" background="#FEB806">Warning</pill> <pill background="#2E7D32">Success</pill> <pill background="#C62828">Error</pill> <pill foreground="#000000" background="#E0E0E0">Draft</pill>
 
             Pills work mid-sentence too: this feature is <pill background="#6A1B9A">New</pill> in this release.
+
+            ## Panels
+
+            A `<panel>` element renders a ContentPanel, which is handy for visually organizing
+            information. The text between the tags is Markdown, and it can be indented and span
+            several paragraphs. A `title` attribute shows the header, where an optional `<header>`
+            adds right-aligned Markdown; an optional `<footer>` adds a footer. Leave a blank line
+            before `<panel>` so it is not read as part of the previous paragraph.
+
+            <panel title="ADD-470">
+                <header><pill>Functional Test</pill></header>
+                **FEM: Document lock race condition**
+                This is the contents of the panel.
+                <footer>Updated 10/26/2026</footer>
+            </panel>
+
+            Without a title or footer, only the content is shown:
+
+            <panel>
+                **FEM: Document lock race condition**
+                This is the contents of the panel.
+
+                Panels can hold lists, links, and code too:
+
+                - [Blake's Articles](@ShowArticle?keyword=bpell)
+                - `inline code` and <shield label="Status" value="open" background="#2E7D32">open</shield>
+            </panel>
 
             ## Release Notes
 
