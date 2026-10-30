@@ -22,9 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Controls\Header.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Folder Include="Controls\" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>
