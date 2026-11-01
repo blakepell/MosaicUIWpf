@@ -57,6 +57,7 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.ErrorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.ErrorColor}}" />
 
     <!--  Window  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowBorderBrush}" Color="#303034" />
     <Color x:Key="{x:Static themes:MosaicTheme.WindowBackgroundColor}">#FF000000</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundColor}}" />
 

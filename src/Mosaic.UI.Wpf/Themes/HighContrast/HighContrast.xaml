@@ -19,6 +19,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.PlaceholderTextColor}">#FFE0E0E0</Color>
 
     <!--  Surface / text  -->
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundColor}}" />
     <Color x:Key="{x:Static themes:MosaicTheme.WindowBackgroundColor}">#FF000000</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.WindowForegroundColor}">#FFFFFFFF</Color>
 

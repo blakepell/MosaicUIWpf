@@ -11,6 +11,7 @@
 using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Themes;
 using System.Windows.Interop;
+using System.Windows.Data;
 using System.Windows.Shell;
 
 namespace Mosaic.UI.Wpf.Behaviors
@@ -39,7 +40,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             new PropertyMetadata(0d, OnChromeSettingsChanged));
 
         /// <summary>
-        /// The corner radius used by <see cref="WindowChrome"/>.
+        /// The fallback corner radius used by <see cref="WindowChrome"/>. Native mode uses the OS radius.
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.RegisterAttached(
             "CornerRadius",
@@ -57,7 +58,7 @@ namespace Mosaic.UI.Wpf.Behaviors
             new PropertyMetadata(new Thickness(5), OnChromeSettingsChanged));
 
         /// <summary>
-        /// The glass frame thickness used by <see cref="WindowChrome"/>.
+        /// The fallback glass frame thickness used by <see cref="WindowChrome"/>. Native mode reserves a small DWM frame.
         /// </summary>
         public static readonly DependencyProperty GlassFrameThicknessProperty = DependencyProperty.RegisterAttached(
             "GlassFrameThickness",
@@ -96,15 +97,69 @@ namespace Mosaic.UI.Wpf.Behaviors
             new PropertyMetadata(false, OnChromeSettingsChanged));
 
         /// <summary>
-        /// Tracks whether the rounded HWND region currently on a window was applied by this behavior.
-        /// <see cref="WindowChrome"/> applies a rounding region of its own, so the region may only be
-        /// cleared when we are the ones who set it.
+        /// Enables system-rendered corners, borders, and shadows on Windows 11. Defaults to true.
+        /// Earlier Windows versions continue to use WPF chrome rounding.
         /// </summary>
-        private static readonly DependencyProperty HasWindowRegionProperty = DependencyProperty.RegisterAttached(
-            "HasWindowRegion",
-            typeof(bool),
-            typeof(WindowChromeBehavior),
-            new PropertyMetadata(false));
+        public static readonly DependencyProperty UseNativeCornersProperty = DependencyProperty.RegisterAttached(
+            "UseNativeCorners", typeof(bool), typeof(WindowChromeBehavior),
+            new PropertyMetadata(true, OnChromeSettingsChanged));
+
+        /// <summary>
+        /// Controls visibility of the DWM border without affecting native rounding or shadows. Defaults to true.
+        /// Native border thickness is controlled by Windows.
+        /// </summary>
+        public static readonly DependencyProperty ShowNativeBorderProperty = DependencyProperty.RegisterAttached(
+            "ShowNativeBorder", typeof(bool), typeof(WindowChromeBehavior),
+            new PropertyMetadata(true, OnBorderSettingsChanged));
+
+        private static readonly DependencyProperty ThemeBorderBrushProperty = DependencyProperty.RegisterAttached(
+            "ThemeBorderBrush", typeof(Brush), typeof(WindowChromeBehavior),
+            new PropertyMetadata(null, OnBorderSettingsChanged));
+
+        private static readonly DependencyProperty ObservedBorderBrushProperty = DependencyProperty.RegisterAttached(
+            "ObservedBorderBrush", typeof(Brush), typeof(WindowChromeBehavior),
+            new PropertyMetadata(null, OnBorderSettingsChanged));
+
+        /// <summary>
+        /// Gets whether the native window border is visible.
+        /// </summary>
+        public static bool GetShowNativeBorder(DependencyObject obj) => (bool)obj.GetValue(ShowNativeBorderProperty);
+
+        /// <summary>
+        /// Sets whether the native window border is visible.
+        /// </summary>
+        public static void SetShowNativeBorder(DependencyObject obj, bool value) => obj.SetValue(ShowNativeBorderProperty, value);
+
+        private static void OnBorderSettingsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Window window && GetIsEnabled(window))
+            {
+                ApplyDwmBorderColor(window);
+            }
+        }
+
+        private static readonly DependencyPropertyKey IsNativeCornerModePropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+            "IsNativeCornerMode", typeof(bool), typeof(WindowChromeBehavior), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Identifies whether the window is currently using system-rendered corners.
+        /// </summary>
+        public static readonly DependencyProperty IsNativeCornerModeProperty = IsNativeCornerModePropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets whether native Windows 11 corners are requested.
+        /// </summary>
+        public static bool GetUseNativeCorners(DependencyObject obj) => (bool)obj.GetValue(UseNativeCornersProperty);
+
+        /// <summary>
+        /// Sets whether native Windows 11 corners are requested. Custom radii and glass thickness apply only in fallback mode.
+        /// </summary>
+        public static void SetUseNativeCorners(DependencyObject obj, bool value) => obj.SetValue(UseNativeCornersProperty, value);
+
+        /// <summary>
+        /// Gets whether the window is currently using system-rendered corners.
+        /// </summary>
+        public static bool GetIsNativeCornerMode(DependencyObject obj) => (bool)obj.GetValue(IsNativeCornerModeProperty);
 
         /// <summary>
         /// Gets whether the behavior is enabled.
@@ -244,20 +299,35 @@ namespace Mosaic.UI.Wpf.Behaviors
             if (!GetIsEnabled(window))
             {
                 window.SourceInitialized -= Window_SourceInitialized;
-                window.SizeChanged -= Window_SizeChanged;
-                window.StateChanged -= Window_StateChanged;
+                window.Loaded -= Window_BorderStateChanged;
+                window.Activated -= Window_BorderStateChanged;
+                window.Deactivated -= Window_BorderStateChanged;
                 DetachMaximizeHook(window);
-                ClearRoundWindowRegion(window);
+                WindowChrome.SetWindowChrome(window, null);
+                BindingOperations.ClearBinding(window, ObservedBorderBrushProperty);
+                window.ClearValue(ThemeBorderBrushProperty);
+                window.SetValue(IsNativeCornerModePropertyKey, false);
+                SetDwmCornerPreference(new WindowInteropHelper(window).Handle, DwmWindowCornerPreference.Default);
                 return;
             }
 
             window.SourceInitialized -= Window_SourceInitialized;
             window.SourceInitialized += Window_SourceInitialized;
-            window.SizeChanged -= Window_SizeChanged;
-            window.SizeChanged += Window_SizeChanged;
-            window.StateChanged -= Window_StateChanged;
-            window.StateChanged += Window_StateChanged;
+            window.Loaded -= Window_BorderStateChanged;
+            window.Loaded += Window_BorderStateChanged;
+            window.Activated -= Window_BorderStateChanged;
+            window.Activated += Window_BorderStateChanged;
+            window.Deactivated -= Window_BorderStateChanged;
+            window.Deactivated += Window_BorderStateChanged;
             Apply(window);
+        }
+
+        private static void Window_BorderStateChanged(object? sender, EventArgs e)
+        {
+            if (sender is Window window && GetIsEnabled(window))
+            {
+                ApplyDwmBorderColor(window);
+            }
         }
 
         private static void Window_SourceInitialized(object? sender, EventArgs e)
@@ -268,39 +338,30 @@ namespace Mosaic.UI.Wpf.Behaviors
             }
         }
 
-        private static void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (sender is Window window && GetIsEnabled(window))
-            {
-                ApplyRoundWindowRegion(window);
-            }
-        }
-
-        private static void Window_StateChanged(object? sender, EventArgs e)
-        {
-            if (sender is Window window && GetIsEnabled(window))
-            {
-                ApplyRoundWindowRegion(window);
-            }
-        }
-
         private static void Apply(Window window)
         {
-            if (window.WindowStyle != WindowStyle.None)
-            {
-                window.WindowStyle = WindowStyle.None;
-            }
+            bool native = GetUseNativeCorners(window) && OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000);
+            window.SetValue(IsNativeCornerModePropertyKey, native);
 
             if (window.AllowsTransparency)
             {
                 window.AllowsTransparency = false;
             }
 
+            // Retain standard frame styles so DWM can supply its border and shadow.
+            window.WindowStyle = native ? WindowStyle.SingleBorderWindow : WindowStyle.None;
+
             var chrome = WindowChrome.GetWindowChrome(window) ?? new WindowChrome();
+            if (chrome.IsFrozen)
+            {
+                chrome = (WindowChrome)chrome.Clone();
+            }
             chrome.CaptionHeight = GetCaptionHeight(window);
-            chrome.CornerRadius = GetCornerRadius(window);
+            chrome.CornerRadius = native ? new CornerRadius(0) : GetCornerRadius(window);
             chrome.ResizeBorderThickness = GetResizeBorderThickness(window);
-            chrome.GlassFrameThickness = GetGlassFrameThickness(window);
+            // A nonzero glass extension keeps WindowChromeWorker out of its SetWindowRgn path.
+            // Use one DIP; WPF scales this to physical pixels on each monitor.
+            chrome.GlassFrameThickness = native ? new Thickness(1) : GetGlassFrameThickness(window);
             chrome.UseAeroCaptionButtons = GetUseAeroCaptionButtons(window);
             WindowChrome.SetWindowChrome(window, chrome);
 
@@ -310,9 +371,19 @@ namespace Mosaic.UI.Wpf.Behaviors
                 window.SetResourceReference(Control.ForegroundProperty, MosaicTheme.WindowForegroundBrush);
             }
 
+            // Observe the caller brush and theme resource without overwriting either. DynamicResource
+            // invalidation and brush subproperty changes refresh DWM without rebuilding window chrome.
+            if (!BindingOperations.IsDataBound(window, ObservedBorderBrushProperty))
+            {
+                BindingOperations.SetBinding(window, ObservedBorderBrushProperty,
+                    new Binding(nameof(Window.BorderBrush)) { RelativeSource = RelativeSource.Self });
+            }
+            window.SetResourceReference(ThemeBorderBrushProperty, MosaicTheme.WindowBorderBrush);
+
             AttachMaximizeHook(window);
             ApplyRoundBorder(window);
-            ApplyRoundWindowRegion(window);
+            SetDwmCornerPreference(new WindowInteropHelper(window).Handle,
+                native ? DwmWindowCornerPreference.Round : DwmWindowCornerPreference.Default);
             ApplyDwmBorderColor(window);
         }
 
@@ -449,11 +520,8 @@ namespace Mosaic.UI.Wpf.Behaviors
         }
 
         /// <summary>
-        /// Syncs the Windows 11 DWM window border color (<c>DWMWA_BORDER_COLOR</c>) to the window's
-        /// <see cref="Control.BorderBrush"/>. Without this, DWM paints its own default-colored frame around the
-        /// window, which overpaints any border set on the window along the straight edges (the rounded corners are
-        /// clipped away by the window region, revealing the templated border underneath — producing a two-tone
-        /// border). Requires Windows 11 (build 22000+); the call is a harmless no-op on earlier systems.
+        /// Syncs the Windows 11 DWM border color to a solid window border brush. Native mode otherwise
+        /// uses the system default border; fallback mode suppresses it when no WPF border is requested.
         /// </summary>
         private static void ApplyDwmBorderColor(Window window)
         {
@@ -464,21 +532,39 @@ namespace Mosaic.UI.Wpf.Behaviors
                 return;
             }
 
-            int colorRef;
+            int colorRef = ResolveDwmBorderColor(window);
+            Win32.DwmSetWindowAttribute(hwnd, DwmWindowAttributes.BorderColor, ref colorRef, sizeof(int));
+        }
 
-            // A zero-thickness border means "no border"; suppress the DWM frame so nothing is drawn.
-            if (window.BorderThickness == default || window.BorderBrush is not SolidColorBrush brush)
+        private static int ResolveDwmBorderColor(Window window)
+        {
+            bool native = GetIsNativeCornerMode(window);
+            Brush? borderBrush = window.BorderBrush;
+            if (native && (borderBrush == null ||
+                DependencyPropertyHelper.GetValueSource(window, Control.BorderBrushProperty).BaseValueSource == BaseValueSource.Default))
+            {
+                borderBrush = (Brush?)window.GetValue(ThemeBorderBrushProperty);
+            }
+
+            int colorRef;
+            if ((native && !GetShowNativeBorder(window)) ||
+                (!native && window.BorderThickness == default) ||
+                borderBrush is SolidColorBrush { Color.A: 0 } || borderBrush?.Opacity == 0)
             {
                 colorRef = DwmColor.None;
             }
-            else
+            else if (borderBrush is SolidColorBrush brush)
             {
                 var c = brush.Color;
-                // DWMWA_BORDER_COLOR expects a COLORREF (0x00BBGGRR); alpha is ignored by DWM.
+                // DWM accepts an opaque COLORREF (0x00BBGGRR), not an alpha channel.
                 colorRef = c.R | (c.G << 8) | (c.B << 16);
             }
+            else
+            {
+                colorRef = native ? DwmColor.Default : DwmColor.None;
+            }
 
-            Win32.DwmSetWindowAttribute(hwnd, DwmWindowAttributes.BorderColor, ref colorRef, sizeof(int));
+            return colorRef;
         }
 
         /// <summary>
@@ -487,7 +573,7 @@ namespace Mosaic.UI.Wpf.Behaviors
         /// </summary>
         private static void ApplyRoundBorder(Window window)
         {
-            if (GetRoundBorder(window))
+            if (GetRoundBorder(window) || GetIsNativeCornerMode(window))
             {
                 if (window.TryFindResource(MosaicTheme.RoundedWindowTemplate) is ControlTemplate template)
                 {
@@ -501,99 +587,13 @@ namespace Mosaic.UI.Wpf.Behaviors
             }
         }
 
-        /// <summary>
-        /// Applies a native rounded region to the HWND so pixels outside the rounded border are not rendered.
-        /// </summary>
-        private static void ApplyRoundWindowRegion(Window window)
-        {
-            if (!GetRoundBorder(window) || window.WindowState == WindowState.Maximized)
-            {
-                ClearRoundWindowRegion(window);
-                return;
-            }
-
-            var hwnd = new WindowInteropHelper(window).Handle;
-
-            if (hwnd == IntPtr.Zero || !Win32.GetWindowRect(hwnd, out var rect))
-            {
-                return;
-            }
-
-            int width = rect.Right - rect.Left;
-            int height = rect.Bottom - rect.Top;
-
-            if (width <= 0 || height <= 0)
-            {
-                return;
-            }
-
-            double radius = GetMaxCornerRadius(GetCornerRadius(window));
-
-            if (radius <= 0)
-            {
-                ClearRoundWindowRegion(window);
-                return;
-            }
-
-            int dpi = Win32.GetDpiForWindow(hwnd);
-            double dpiScale = dpi > 0 ? dpi / 96d : 1d;
-            int diameter = Math.Max(1, (int)Math.Round(radius * 2d * dpiScale));
-
-            SetDwmCornerPreference(hwnd, DwmWindowCornerPreference.Round);
-
-            IntPtr region = Win32.CreateRoundRectRgn(0, 0, width + 1, height + 1, diameter, diameter);
-
-            if (region == IntPtr.Zero)
-            {
-                return;
-            }
-
-            if (Win32.SetWindowRgn(hwnd, region, true) == 0)
-            {
-                Win32.DeleteObject(region);
-                return;
-            }
-
-            window.SetValue(HasWindowRegionProperty, true);
-        }
-
-        /// <summary>
-        /// Clears the native rounded region applied by <see cref="ApplyRoundWindowRegion"/>.
-        /// </summary>
-        /// <remarks>
-        /// This is a no-op unless the region currently on the window came from
-        /// <see cref="ApplyRoundWindowRegion"/>. <see cref="WindowChrome"/> maintains a rounding region of its own
-        /// (derived from <see cref="WindowChrome.CornerRadius"/>) and only refreshes it when the chrome changes, so
-        /// clearing it unconditionally — for instance on the state change out of a maximized window — would leave
-        /// the restored window with square corners.
-        /// </remarks>
-        private static void ClearRoundWindowRegion(Window window)
-        {
-            if (!(bool)window.GetValue(HasWindowRegionProperty))
-            {
-                return;
-            }
-
-            var hwnd = new WindowInteropHelper(window).Handle;
-
-            if (hwnd != IntPtr.Zero)
-            {
-                Win32.SetWindowRgn(hwnd, IntPtr.Zero, true);
-                SetDwmCornerPreference(hwnd, DwmWindowCornerPreference.Default);
-            }
-
-            window.SetValue(HasWindowRegionProperty, false);
-        }
-
-        private static double GetMaxCornerRadius(CornerRadius cornerRadius)
-        {
-            return Math.Max(
-                Math.Max(cornerRadius.TopLeft, cornerRadius.TopRight),
-                Math.Max(cornerRadius.BottomRight, cornerRadius.BottomLeft));
-        }
-
         private static void SetDwmCornerPreference(IntPtr hwnd, DwmWindowCornerPreference preference)
         {
+            if (hwnd == IntPtr.Zero || !OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))
+            {
+                return;
+            }
+
             int value = (int)preference;
             Win32.DwmSetWindowAttribute(hwnd, DwmWindowAttributes.WindowCornerPreference, ref value, sizeof(int));
         }

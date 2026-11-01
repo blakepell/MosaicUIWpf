@@ -49,6 +49,10 @@
         public static ComponentResourceKey ErrorColor { get; } = new(typeof(MosaicTheme), "ErrorColor");
 
         // Window
+        /// <summary>
+        /// Gets the subtle native window border brush for the current theme.
+        /// </summary>
+        public static ComponentResourceKey WindowBorderBrush { get; } = new(typeof(MosaicTheme), "WindowBorderBrush");
         public static ComponentResourceKey WindowBackgroundBrush { get; } = new(typeof(MosaicTheme), "WindowBackgroundBrush");
         public static ComponentResourceKey WindowBackgroundColor { get; } = new(typeof(MosaicTheme), "WindowBackgroundColor");
         public static ComponentResourceKey WindowForegroundBrush { get; } = new(typeof(MosaicTheme), "WindowForegroundBrush");

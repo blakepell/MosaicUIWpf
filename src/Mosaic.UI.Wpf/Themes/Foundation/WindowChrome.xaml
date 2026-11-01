@@ -23,6 +23,11 @@
             </AdornerDecorator>
         </controls:ClipBorder>
         <ControlTemplate.Triggers>
+            <!-- DWM owns the outside edge in native mode, including snapped-window geometry. -->
+            <Trigger Property="behaviors:WindowChromeBehavior.IsNativeCornerMode" Value="True">
+                <Setter TargetName="PART_WindowBorder" Property="CornerRadius" Value="0" />
+                <Setter TargetName="PART_WindowBorder" Property="BorderThickness" Value="0" />
+            </Trigger>
             <!--  When maximized the rounded corners and resize border no longer apply; square the border and inset the content so it is not pushed off-screen.  -->
             <Trigger Property="WindowState" Value="Maximized">
                 <Setter TargetName="PART_WindowBorder" Property="CornerRadius" Value="0" />

@@ -23,6 +23,7 @@
     <Color x:Key="{x:Static themes:MosaicTheme.WarningColor}">#FFF7C948</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.ErrorColor}">#FFFF7A73</Color>
 
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.WindowBorderBrush}" Color="#2B3865" />
     <Color x:Key="{x:Static themes:MosaicTheme.WindowBackgroundColor}">#FF101843</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.WindowForegroundColor}">#FFF4F7FF</Color>
 
