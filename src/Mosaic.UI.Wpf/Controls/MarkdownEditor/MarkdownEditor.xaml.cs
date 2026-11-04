@@ -772,21 +772,24 @@ namespace Mosaic.UI.Wpf.Controls
         public void SurroundWith(string marker)
         {
             int caretOffset = this.Editor.CaretOffset;
-            string text = this.Editor.Text;
 
             // If the caret is within an existing matched pair, remove the markers.
-            if (caretOffset >= marker.Length && caretOffset <= text.Length - marker.Length)
+            if (TryFindEnclosingMarkerPair(this.Editor.Document, caretOffset, marker, out int start, out int end))
             {
-                int start = text.LastIndexOf(marker, caretOffset - 1, StringComparison.Ordinal);
-                int end = text.IndexOf(marker, caretOffset, StringComparison.Ordinal);
+                this.Editor.Document.BeginUpdate();
 
-                if (start != -1 && end != -1 && start < end)
+                try
                 {
                     this.Editor.Document.Remove(end, marker.Length);
                     this.Editor.Document.Remove(start, marker.Length);
-                    this.Editor.CaretOffset = caretOffset - marker.Length;
-                    return;
                 }
+                finally
+                {
+                    this.Editor.Document.EndUpdate();
+                }
+
+                this.Editor.CaretOffset = caretOffset - marker.Length;
+                return;
             }
 
             if (string.IsNullOrWhiteSpace(this.Editor.SelectedText))
@@ -798,6 +801,50 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             this.Editor.SelectedText = $"{marker}{this.Editor.SelectedText}{marker}";
+        }
+
+        /// <summary>
+        /// Finds the marker pair on the caret's line that encloses the caret. Markers are paired in order
+        /// from the start of the line (first with second, third with fourth, ...) so the closing marker of
+        /// one span is never mistaken for the opening marker of the next, and a pair never spans lines.
+        /// </summary>
+        /// <param name="document">The document to search.</param>
+        /// <param name="caretOffset">The caret's document offset.</param>
+        /// <param name="marker">The marker to look for.</param>
+        /// <param name="start">The document offset of the opening marker.</param>
+        /// <param name="end">The document offset of the closing marker.</param>
+        /// <returns><c>true</c> when the caret sits between the end of an opening marker and the start of its closing marker.</returns>
+        internal static bool TryFindEnclosingMarkerPair(ICSharpCode.AvalonEdit.Document.TextDocument document, int caretOffset, string marker, out int start, out int end)
+        {
+            start = -1;
+            end = -1;
+
+            var line = document.GetLineByOffset(Math.Clamp(caretOffset, 0, document.TextLength));
+            string lineText = document.GetText(line.Offset, line.Length);
+            int caret = caretOffset - line.Offset;
+
+            int open = lineText.IndexOf(marker, StringComparison.Ordinal);
+
+            while (open != -1)
+            {
+                int close = lineText.IndexOf(marker, open + marker.Length, StringComparison.Ordinal);
+
+                if (close == -1 || open > caret)
+                {
+                    return false;
+                }
+
+                if (caret >= open + marker.Length && caret <= close)
+                {
+                    start = line.Offset + open;
+                    end = line.Offset + close;
+                    return true;
+                }
+
+                open = lineText.IndexOf(marker, close + marker.Length, StringComparison.Ordinal);
+            }
+
+            return false;
         }
 
         /// <summary>

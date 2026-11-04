@@ -175,5 +175,47 @@ namespace Mosaic.UI.Wpf.Tests
                 Assert.Same(CustomMenuButton(editor).ContextMenu, LogicalTreeHelper.GetParent((MenuItem)editor.CustomMenuItems[0]!));
             });
         }
+
+        /// <summary>
+        /// Places the caret at the <c>|</c> in <paramref name="textWithCaret"/>, toggles the marker, and
+        /// returns the resulting text.
+        /// </summary>
+        private static string ToggleMarkerAtCaret(string textWithCaret, string marker)
+        {
+            string result = "";
+
+            RunSta(() =>
+            {
+                var editor = CreateEditor();
+                int caret = textWithCaret.IndexOf('|');
+
+                editor.Editor.Text = textWithCaret.Remove(caret, 1);
+                editor.Editor.CaretOffset = caret;
+                editor.SurroundWith(marker);
+                result = editor.Editor.Text;
+            });
+
+            return result;
+        }
+
+        [Theory]
+        [InlineData("- **o|ne**\n- **two**", "**", "- one\n- **two**")]
+        [InlineData("- **one**\n- **t|wo**", "**", "- **one**\n- two")]
+        [InlineData("_o|ne_\n_two_", "_", "one\n_two_")]
+        [InlineData("~~o|ne~~\r\n~~two~~", "~~", "one\r\n~~two~~")]
+        [InlineData("**a** and **b|**", "**", "**a** and b")]
+        [InlineData("**|a** and **b**", "**", "a and **b**")]
+        public void RemovingAMarkerOnlyAffectsTheEnclosingPairOnTheCaretLine(string input, string marker, string expected)
+        {
+            Assert.Equal(expected, ToggleMarkerAtCaret(input, marker));
+        }
+
+        [Theory]
+        [InlineData("- **one**|\n- **two**", "**", "- **one******\n- **two**")]
+        [InlineData("**a** a|nd **b**", "**", "**a** a****nd **b**")]
+        public void CaretOutsideAPairInsertsMarkersInsteadOfUnwrappingAcrossSpans(string input, string marker, string expected)
+        {
+            Assert.Equal(expected, ToggleMarkerAtCaret(input, marker));
+        }
     }
 }
