@@ -161,6 +161,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [HexColorTextBox](./docs/HexColorTextBox.md) | A ComboBox-based control that allows editing and selecting colors using hex strings (supports #RGB, #RRGGBB, #AARRGGBB) and named brushes. |
 | [HorizontalListBox](./docs/HorizontalListBox.md) | A ListBox variant that lays its items out horizontally as a row of cells which toggle on and off when clicked, with selection conveyed by the cell fill color rather than a checkbox. |
 | [Hyperlink](./docs/Hyperlink.md) | Represents a hyperlink control that displays text and provides navigation functionality. |
+| [ImageViewer](./docs/ImageViewer.md) | An image viewer modeled after the Windows Photos viewer: fit-to-window, mouse-wheel zoom around the cursor, drag to pan, double-click to toggle actual size, rotation, and a status bar with resolution, file size and a zoom slider. |
 | [InertiaScrollViewer](./docs/InertiaScrollViewer.md) | Represents a scroll viewer that supports inertia-based scrolling animations. |
 | [InfoBubble](./docs/InfoBubble.md) | A content wrapper that overlays a count, capped value, status dot, or custom notification indicator in any of eight positions. |
 | [InfoCard](./docs/InfoCard.md) | An info card with a highlight color on the left hand side. |

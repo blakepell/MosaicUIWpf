@@ -604,6 +604,13 @@
 			<Link>LinkedSources\HyperlinkExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ImageViewerExample.xaml">
+			<Link>LinkedSources\ImageViewerExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ImageViewerExample.xaml.cs">
+			<Link>LinkedSources\ImageViewerExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SettingsItemExample.xaml">
 			<Link>LinkedSources\SettingsItemExample.xaml</Link>
 		</EmbeddedResource>

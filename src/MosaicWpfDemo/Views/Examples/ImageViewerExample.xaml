@@ -1,0 +1,57 @@
+<UserControl
+    x:Class="MosaicWpfDemo.Views.Examples.ImageViewerExample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Options  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Orientation="Horizontal">
+            <Button
+                Padding="14,6"
+                Click="OpenImageButton_Click"
+                Content="Open Image..." />
+            <CheckBox
+                Margin="16,0,0,0"
+                VerticalAlignment="Center"
+                Content="Show status bar"
+                IsChecked="{Binding ShowStatusBar, ElementName=Viewer}" />
+            <CheckBox
+                Margin="16,0,0,0"
+                VerticalAlignment="Center"
+                Content="Zoom to fit"
+                IsChecked="{Binding IsZoomToFit, ElementName=Viewer}" />
+        </StackPanel>
+
+        <!--  The viewer: starts with an image bundled as a resource in this app.  -->
+        <controls:ImageViewer
+            x:Name="Viewer"
+            Grid.Row="1"
+            MinHeight="320"
+            ImageFailed="Viewer_ImageFailed"
+            ImagePath="/Assets/avatar.jpg" />
+
+        <TextBlock
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            Opacity="0.75"
+            TextWrapping="Wrap">
+            Mouse wheel zooms around the cursor, drag to pan when zoomed in, double-click toggles fit / actual size.
+            Keyboard: Ctrl + Plus / Minus to zoom, Ctrl + 0 to fit, Ctrl + 1 for actual size, Ctrl + R to rotate, arrow keys to pan.
+        </TextBlock>
+    </Grid>
+</UserControl>
