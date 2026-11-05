@@ -62,6 +62,7 @@
 		<None Remove="Assets\password-48.png" />
 		<None Remove="Assets\penny-heads.png" />
 		<None Remove="Assets\penny-tails.png" />
+		<None Remove="Assets\picture-zoom-48.png" />
 		<None Remove="Assets\pie-chart-48.png" />
 		<None Remove="Assets\play-pause-stop-48.png" />
 		<None Remove="Assets\progress-48.png" />
@@ -152,6 +153,7 @@
 		<Resource Include="Assets\password-lock-48.png" />
 		<Resource Include="Assets\penny-heads.png" />
 		<Resource Include="Assets\penny-tails.png" />
+		<Resource Include="Assets\picture-zoom-48.png" />
 		<Resource Include="Assets\pie-chart-48.png" />
 		<Resource Include="Assets\play-pause-stop-48.png" />
 		<Resource Include="Assets\progress-48.png" />

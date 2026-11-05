@@ -774,7 +774,7 @@
                 <mosaic:SideMenuItem
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
-                    ImageSource="/Assets/zoom-in-48.png"
+                    ImageSource="/Assets/picture-zoom-48.png"
                     Text="ImageViewer">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -783,7 +783,7 @@
                             <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ImageViewerExample.xaml.cs" />
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:ImageViewer}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ImageViewerExample}" />
-                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/zoom-in-48.png" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/picture-zoom-48.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
