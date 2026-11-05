@@ -90,6 +90,48 @@
                                     x:Name="PART_ImageHost"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
+                                    <!--
+                                        The context menu lives in its own visual tree, so each item targets the image host
+                                        explicitly; the commands then bubble up to the ImageViewer's command bindings.
+                                    -->
+                                    <Grid.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem
+                                                Command="{x:Static controls:ImageViewer.SaveAsCommand}"
+                                                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                Header="Save As..."
+                                                InputGestureText="Ctrl+S">
+                                                <MenuItem.Icon>
+                                                    <TextBlock
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Text="&#xE792;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem
+                                                Command="{x:Static controls:ImageViewer.CopyImageCommand}"
+                                                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                Header="Copy Image"
+                                                InputGestureText="Ctrl+C">
+                                                <MenuItem.Icon>
+                                                    <TextBlock
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Text="&#xE8C8;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem
+                                                Command="{x:Static controls:ImageViewer.CopyPathCommand}"
+                                                CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                Header="Copy Path"
+                                                InputGestureText="Ctrl+Shift+C">
+                                                <MenuItem.Icon>
+                                                    <TextBlock
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Text="&#xE71B;" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Grid.ContextMenu>
                                     <Image
                                         x:Name="PART_Image"
                                         RenderOptions.BitmapScalingMode="HighQuality"

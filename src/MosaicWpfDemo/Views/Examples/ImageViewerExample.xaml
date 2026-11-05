@@ -43,6 +43,7 @@
             Grid.Row="1"
             MinHeight="320"
             ImageFailed="Viewer_ImageFailed"
+            OperationFailed="Viewer_OperationFailed"
             ImagePath="/Assets/avatar.jpg" />
 
         <TextBlock
@@ -52,6 +53,7 @@
             TextWrapping="Wrap">
             Mouse wheel zooms around the cursor, drag to pan when zoomed in, double-click toggles fit / actual size.
             Keyboard: Ctrl + Plus / Minus to zoom, Ctrl + 0 to fit, Ctrl + 1 for actual size, Ctrl + R to rotate, arrow keys to pan.
+            Right-click the image to Save As (Ctrl + S), Copy Image (Ctrl + C) or Copy Path (Ctrl + Shift + C; only for images opened from disk).
         </TextBlock>
     </Grid>
 </UserControl>

@@ -40,5 +40,19 @@ namespace MosaicWpfDemo.Views.Examples
             System.Windows.MessageBox.Show($"The image could not be loaded:\n\n{e.Exception.Message}", "Image Viewer",
                 MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        private void Viewer_OperationFailed(object? sender, ImageViewerFailedEventArgs e)
+        {
+            string action = e.Operation switch
+            {
+                ImageViewerOperation.Save => "save the image",
+                ImageViewerOperation.CopyImage => "copy the image",
+                ImageViewerOperation.CopyPath => "copy the path",
+                _ => "complete the operation"
+            };
+
+            System.Windows.MessageBox.Show($"Unable to {action}:\n\n{e.Exception.Message}", "Image Viewer",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

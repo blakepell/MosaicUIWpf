@@ -222,6 +222,98 @@ namespace Mosaic.UI.Wpf.Tests
         }
 
         [Fact]
+        public void FilePath_Is_Only_Set_For_Images_Loaded_From_Disk()
+        {
+            RunSta(() =>
+            {
+                string path = CreateTempPng(20, 10);
+
+                try
+                {
+                    var viewer = new ImageViewer { ImagePath = path };
+                    Assert.Equal(Path.GetFullPath(path), viewer.FilePath);
+                    Assert.True(ImageViewer.CopyPathCommand.CanExecute(null, viewer));
+
+                    // An in-memory source has no path, so Copy Path is disabled.
+                    viewer.Source = BitmapSource.Create(4, 4, 96, 96, PixelFormats.Bgra32, null, new byte[4 * 4 * 4], 16);
+                    Assert.Null(viewer.FilePath);
+                    Assert.True(viewer.HasImage);
+                    Assert.False(ImageViewer.CopyPathCommand.CanExecute(null, viewer));
+                    Assert.True(ImageViewer.CopyImageCommand.CanExecute(null, viewer));
+                    Assert.True(ImageViewer.SaveAsCommand.CanExecute(null, viewer));
+                }
+                finally
+                {
+                    File.Delete(path);
+                }
+            });
+        }
+
+        [Fact]
+        public void SaveImage_In_The_Original_Format_Writes_The_Original_Bytes()
+        {
+            RunSta(() =>
+            {
+                string path = CreateTempPng(30, 20);
+                string target = Path.ChangeExtension(Path.GetTempFileName(), ".png");
+
+                try
+                {
+                    var viewer = new ImageViewer { ImagePath = path };
+                    viewer.SaveImage(target);
+
+                    Assert.Equal(File.ReadAllBytes(path), File.ReadAllBytes(target));
+                }
+                finally
+                {
+                    File.Delete(path);
+                    File.Delete(target);
+                }
+            });
+        }
+
+        [Fact]
+        public void SaveImage_Applies_Rotation_And_Converts_Format()
+        {
+            RunSta(() =>
+            {
+                string path = CreateTempPng(30, 20);
+                string target = Path.ChangeExtension(Path.GetTempFileName(), ".jpg");
+
+                try
+                {
+                    var viewer = new ImageViewer { ImagePath = path };
+                    viewer.RotateRight();
+                    viewer.SaveImage(target);
+
+                    var saved = BitmapFrame.Create(new Uri(target), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                    Assert.Equal(20, saved.PixelWidth);
+                    Assert.Equal(30, saved.PixelHeight);
+                    Assert.IsType<JpegBitmapDecoder>(saved.Decoder);
+                }
+                finally
+                {
+                    File.Delete(path);
+                    File.Delete(target);
+                }
+            });
+        }
+
+        [Fact]
+        public void SaveImage_Rejects_Unsupported_Extensions()
+        {
+            RunSta(() =>
+            {
+                var viewer = new ImageViewer
+                {
+                    Source = BitmapSource.Create(4, 4, 96, 96, PixelFormats.Bgra32, null, new byte[4 * 4 * 4], 16)
+                };
+
+                Assert.Throws<NotSupportedException>(() => viewer.SaveImage(Path.Combine(Path.GetTempPath(), "image.xyz")));
+            });
+        }
+
+        [Fact]
         public void Missing_File_Raises_ImageFailed_And_Clears_The_Image()
         {
             RunSta(() =>

@@ -32,6 +32,11 @@ namespace Mosaic.UI.Wpf.Controls
     /// window, <c>Ctrl + 1</c> shows the actual size, <c>Ctrl + R</c> rotates clockwise,
     /// <c>Ctrl + Shift + R</c> rotates counter-clockwise and the arrow keys pan.
     /// </para>
+    /// <para>
+    /// Right-clicking the image opens a context menu with Save As (<c>Ctrl + S</c>), Copy Image (<c>Ctrl + C</c>)
+    /// and Copy Path (<c>Ctrl + Shift + C</c>, only enabled when the image was loaded from a file on disk). Failures
+    /// from these commands are reported through <see cref="OperationFailed"/> rather than thrown.
+    /// </para>
     /// </remarks>
     [TemplatePart(Name = PartScrollViewer, Type = typeof(ScrollViewer))]
     [TemplatePart(Name = PartImageHost, Type = typeof(FrameworkElement))]
@@ -85,6 +90,12 @@ namespace Mosaic.UI.Wpf.Controls
         private double _panStartHorizontalOffset;
         private double _panStartVerticalOffset;
 
+        /// <summary>The encoded bytes of the image loaded through <see cref="ImagePath"/>, used for lossless "Save As".</summary>
+        private byte[]? _originalBytes;
+
+        /// <summary>The lower-case extension (e.g. <c>.jpg</c>) of the image loaded through <see cref="ImagePath"/>.</summary>
+        private string? _originalExtension;
+
         /// <summary>The bitmap whose <c>DownloadCompleted</c> event is currently subscribed to, if any.</summary>
         private BitmapSource? _pendingBitmap;
 
@@ -121,6 +132,21 @@ namespace Mosaic.UI.Wpf.Controls
         /// Rotates the image 90 degrees counter-clockwise.
         /// </summary>
         public static RoutedUICommand RotateLeftCommand { get; } = new("Rotate Left", nameof(RotateLeftCommand), typeof(ImageViewer));
+
+        /// <summary>
+        /// Prompts for a location and saves the image as displayed (including rotation).
+        /// </summary>
+        public static RoutedUICommand SaveAsCommand { get; } = new("Save As...", nameof(SaveAsCommand), typeof(ImageViewer));
+
+        /// <summary>
+        /// Copies the full path of the image file to the clipboard. Only available when the image was loaded from disk.
+        /// </summary>
+        public static RoutedUICommand CopyPathCommand { get; } = new("Copy Path", nameof(CopyPathCommand), typeof(ImageViewer));
+
+        /// <summary>
+        /// Copies the image as displayed (including rotation) to the clipboard.
+        /// </summary>
+        public static RoutedUICommand CopyImageCommand { get; } = new("Copy Image", nameof(CopyImageCommand), typeof(ImageViewer));
 
         #endregion
 
@@ -326,6 +352,21 @@ namespace Mosaic.UI.Wpf.Controls
         [Browsable(false)]
         public long? FileSize => (long?)GetValue(FileSizeProperty);
 
+        private static readonly DependencyPropertyKey FilePathPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(FilePath), typeof(string), typeof(ImageViewer), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Identifies the read-only <see cref="FilePath"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FilePathProperty = FilePathPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// Gets the full path of the image file when the image was loaded from disk through
+        /// <see cref="ImagePath"/>; <c>null</c> when it came from a resource, a remote URI or was set via <see cref="Source"/>.
+        /// </summary>
+        [Browsable(false)]
+        public string? FilePath => (string?)GetValue(FilePathProperty);
+
         private static readonly DependencyPropertyKey ResolutionTextPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(ResolutionText), typeof(string), typeof(ImageViewer), new FrameworkPropertyMetadata("—"));
 
@@ -403,6 +444,22 @@ namespace Mosaic.UI.Wpf.Controls
             remove => RemoveHandler(ImageFailedEvent, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="OperationFailed"/> routed event.
+        /// </summary>
+        public static readonly RoutedEvent OperationFailedEvent = EventManager.RegisterRoutedEvent(
+            nameof(OperationFailed), RoutingStrategy.Bubble, typeof(EventHandler<ImageViewerFailedEventArgs>), typeof(ImageViewer));
+
+        /// <summary>
+        /// Occurs when a save or clipboard operation started from a command (context menu or keyboard) fails.
+        /// <see cref="ImageViewerFailedEventArgs.Operation"/> identifies which one.
+        /// </summary>
+        public event EventHandler<ImageViewerFailedEventArgs> OperationFailed
+        {
+            add => AddHandler(OperationFailedEvent, value);
+            remove => RemoveHandler(OperationFailedEvent, value);
+        }
+
         #endregion
 
         #region Construction
@@ -427,6 +484,9 @@ namespace Mosaic.UI.Wpf.Controls
             CommandBindings.Add(new CommandBinding(ActualSizeCommand, (_, _) => ActualSize(), CanExecuteWhenImage));
             CommandBindings.Add(new CommandBinding(RotateRightCommand, (_, _) => RotateRight(), CanExecuteWhenImage));
             CommandBindings.Add(new CommandBinding(RotateLeftCommand, (_, _) => RotateLeft(), CanExecuteWhenImage));
+            CommandBindings.Add(new CommandBinding(SaveAsCommand, (_, _) => ShowSaveAsDialog(), CanExecuteWhenImage));
+            CommandBindings.Add(new CommandBinding(CopyImageCommand, (_, _) => TryCopyImage(), CanExecuteWhenImage));
+            CommandBindings.Add(new CommandBinding(CopyPathCommand, (_, _) => TryCopyPath(), (_, e) => e.CanExecute = FilePath != null));
 
             InputBindings.Add(new KeyBinding(ZoomInCommand, Key.OemPlus, ModifierKeys.Control));
             InputBindings.Add(new KeyBinding(ZoomInCommand, Key.Add, ModifierKeys.Control));
@@ -438,6 +498,9 @@ namespace Mosaic.UI.Wpf.Controls
             InputBindings.Add(new KeyBinding(ActualSizeCommand, Key.NumPad1, ModifierKeys.Control));
             InputBindings.Add(new KeyBinding(RotateRightCommand, Key.R, ModifierKeys.Control));
             InputBindings.Add(new KeyBinding(RotateLeftCommand, Key.R, ModifierKeys.Control | ModifierKeys.Shift));
+            InputBindings.Add(new KeyBinding(SaveAsCommand, Key.S, ModifierKeys.Control));
+            InputBindings.Add(new KeyBinding(CopyImageCommand, Key.C, ModifierKeys.Control));
+            InputBindings.Add(new KeyBinding(CopyPathCommand, Key.C, ModifierKeys.Control | ModifierKeys.Shift));
         }
 
         private void CanExecuteWhenImage(object sender, CanExecuteRoutedEventArgs e)
@@ -661,6 +724,9 @@ namespace Mosaic.UI.Wpf.Controls
             if (!_isLoadingFromPath)
             {
                 SetFileSize(null);
+                SetValue(FilePathPropertyKey, null);
+                _originalBytes = null;
+                _originalExtension = null;
             }
 
             if (source is BitmapSource { IsDownloading: true } downloading)
@@ -799,20 +865,21 @@ namespace Mosaic.UI.Wpf.Controls
         {
             if (string.IsNullOrWhiteSpace(path))
             {
-                SetSourceFromPath(null, null);
+                SetSourceFromPath(null, null, null);
                 return;
             }
 
             try
             {
-                long? fileSize = null;
+                byte[]? bytes = null;
+                string? filePath = null;
                 BitmapImage bitmap;
 
                 if (File.Exists(path))
                 {
                     // Read the bytes up front so no file lock is held and the size is known.
-                    var bytes = File.ReadAllBytes(path);
-                    fileSize = bytes.LongLength;
+                    bytes = File.ReadAllBytes(path);
+                    filePath = Path.GetFullPath(path);
                     bitmap = CreateBitmap(new MemoryStream(bytes, writable: false));
                 }
                 else
@@ -827,9 +894,8 @@ namespace Mosaic.UI.Wpf.Controls
                         using var stream = resource.Stream;
                         var buffer = new MemoryStream();
                         stream.CopyTo(buffer);
-                        buffer.Position = 0;
-                        fileSize = buffer.Length;
-                        bitmap = CreateBitmap(buffer);
+                        bytes = buffer.ToArray();
+                        bitmap = CreateBitmap(new MemoryStream(bytes, writable: false));
                     }
                     else if (uri.IsAbsoluteUri && uri.IsFile)
                     {
@@ -846,11 +912,13 @@ namespace Mosaic.UI.Wpf.Controls
                     }
                 }
 
-                SetSourceFromPath(bitmap, fileSize);
+                _originalBytes = bytes;
+                _originalExtension = bytes != null ? GetExtension(path) : null;
+                SetSourceFromPath(bitmap, bytes?.LongLength, filePath);
             }
             catch (Exception ex)
             {
-                SetSourceFromPath(null, null);
+                SetSourceFromPath(null, null, null);
                 RaiseEvent(new ImageViewerFailedEventArgs(ImageFailedEvent, this, path, ex));
             }
         }
@@ -880,13 +948,20 @@ namespace Mosaic.UI.Wpf.Controls
             return bitmap;
         }
 
-        private void SetSourceFromPath(ImageSource? source, long? fileSize)
+        private void SetSourceFromPath(ImageSource? source, long? fileSize, string? filePath)
         {
             _isLoadingFromPath = true;
 
             try
             {
+                if (source == null)
+                {
+                    _originalBytes = null;
+                    _originalExtension = null;
+                }
+
                 SetFileSize(fileSize);
+                SetValue(FilePathPropertyKey, filePath);
                 SetCurrentValue(SourceProperty, source);
             }
             finally
@@ -946,6 +1021,270 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             return $"{len:0.##} {sizes[order]}";
+        }
+
+        #endregion
+
+        #region Save and Clipboard
+
+        /// <summary>
+        /// The file types offered by the Save As dialog, in filter order.
+        /// </summary>
+        private static readonly (string Name, string[] Extensions)[] SaveFormats =
+        [
+            ("PNG", [".png"]),
+            ("JPEG", [".jpg", ".jpeg"]),
+            ("Bitmap", [".bmp"]),
+            ("GIF", [".gif"]),
+            ("TIFF", [".tif", ".tiff"]),
+        ];
+
+        /// <summary>
+        /// Saves the image as displayed (including <see cref="Rotation"/>) to <paramref name="path"/>. The format is
+        /// chosen from the extension (.png, .jpg/.jpeg, .bmp, .gif, .tif/.tiff). When the image is not rotated and
+        /// the extension matches the file it was loaded from, the original bytes are written unchanged so no quality
+        /// or metadata is lost.
+        /// </summary>
+        /// <param name="path">The destination file path.</param>
+        /// <exception cref="InvalidOperationException">No image is loaded.</exception>
+        /// <exception cref="NotSupportedException">The extension is not a supported image format.</exception>
+        public void SaveImage(string path)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(path);
+
+            string extension = GetExtension(path);
+
+            if (Rotation == 0 && _originalBytes != null && IsSameFormat(extension, _originalExtension))
+            {
+                File.WriteAllBytes(path, _originalBytes);
+                return;
+            }
+
+            var bitmap = GetDisplayedBitmap() ?? throw new InvalidOperationException("There is no image to save.");
+            var encoder = CreateEncoder(extension);
+
+            // JPEG and BMP have no alpha channel; flatten onto white so transparent areas don't turn black.
+            if (encoder is JpegBitmapEncoder or BmpBitmapEncoder)
+            {
+                bitmap = FlattenOntoWhite(bitmap);
+            }
+
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+
+            using var stream = File.Create(path);
+            encoder.Save(stream);
+        }
+
+        /// <summary>
+        /// Copies the image as displayed (including <see cref="Rotation"/>) to the clipboard. Both a standard bitmap
+        /// and a PNG (which preserves transparency in apps that support it) are placed on the clipboard.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">No image is loaded.</exception>
+        public void CopyImageToClipboard()
+        {
+            var bitmap = GetDisplayedBitmap() ?? throw new InvalidOperationException("There is no image to copy.");
+
+            var png = new MemoryStream();
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            encoder.Save(png);
+            png.Position = 0;
+
+            var data = new DataObject();
+            data.SetImage(bitmap);
+            data.SetData("PNG", png, false);
+
+            SetClipboard(() => Clipboard.SetDataObject(data, true));
+        }
+
+        /// <summary>
+        /// Copies <see cref="FilePath"/> to the clipboard as text.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">The image was not loaded from a file on disk.</exception>
+        public void CopyPathToClipboard()
+        {
+            string path = FilePath ?? throw new InvalidOperationException("The image was not loaded from a file on disk.");
+            SetClipboard(() => Clipboard.SetDataObject(new DataObject(DataFormats.UnicodeText, path), true));
+        }
+
+        private void ShowSaveAsDialog()
+        {
+            string sourceName = FilePath ?? ImagePath ?? string.Empty;
+            string suggestedName = Path.GetFileNameWithoutExtension(sourceName.Replace('/', Path.DirectorySeparatorChar));
+
+            // Default to the original format; fall back to PNG for in-memory images.
+            int formatIndex = Array.FindIndex(SaveFormats, f => IsSameFormat(f.Extensions[0], _originalExtension));
+            formatIndex = formatIndex < 0 ? 0 : formatIndex;
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Save As",
+                Filter = string.Join("|", SaveFormats.Select(f =>
+                {
+                    string patterns = string.Join(";", f.Extensions.Select(e => "*" + e));
+                    return $"{f.Name} ({patterns})|{patterns}";
+                })),
+                FilterIndex = formatIndex + 1,
+                DefaultExt = SaveFormats[formatIndex].Extensions[0],
+                AddExtension = true,
+                OverwritePrompt = true,
+                FileName = string.IsNullOrWhiteSpace(suggestedName) ? "image" : suggestedName
+            };
+
+            if (FilePath != null)
+            {
+                dialog.InitialDirectory = Path.GetDirectoryName(FilePath);
+            }
+
+            if (dialog.ShowDialog(Window.GetWindow(this)) != true)
+            {
+                return;
+            }
+
+            try
+            {
+                SaveImage(dialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                RaiseEvent(new ImageViewerFailedEventArgs(OperationFailedEvent, this, dialog.FileName, ex, ImageViewerOperation.Save));
+            }
+        }
+
+        private void TryCopyImage()
+        {
+            try
+            {
+                CopyImageToClipboard();
+            }
+            catch (Exception ex)
+            {
+                RaiseEvent(new ImageViewerFailedEventArgs(OperationFailedEvent, this, FilePath ?? ImagePath ?? string.Empty, ex, ImageViewerOperation.CopyImage));
+            }
+        }
+
+        private void TryCopyPath()
+        {
+            try
+            {
+                CopyPathToClipboard();
+            }
+            catch (Exception ex)
+            {
+                RaiseEvent(new ImageViewerFailedEventArgs(OperationFailedEvent, this, FilePath ?? string.Empty, ex, ImageViewerOperation.CopyPath));
+            }
+        }
+
+        /// <summary>
+        /// Runs a clipboard write, retrying briefly when another process has the clipboard open.
+        /// </summary>
+        private static void SetClipboard(Action write)
+        {
+            const int clipboardCantOpen = unchecked((int)0x800401D0);
+
+            for (int attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    write();
+                    return;
+                }
+                catch (COMException ex) when (ex.HResult == clipboardCantOpen && attempt < 5)
+                {
+                    Thread.Sleep(50);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the image as it is displayed: the source rendered to a bitmap if needed, with rotation applied.
+        /// </summary>
+        private BitmapSource? GetDisplayedBitmap()
+        {
+            if (!HasImage)
+            {
+                return null;
+            }
+
+            BitmapSource bitmap;
+
+            if (Source is BitmapSource source)
+            {
+                bitmap = source;
+            }
+            else
+            {
+                // Vector sources (e.g. DrawingImage) are rasterized at their natural size.
+                var visual = new DrawingVisual();
+
+                using (var context = visual.RenderOpen())
+                {
+                    context.DrawImage(Source, new Rect(0, 0, PixelWidth, PixelHeight));
+                }
+
+                var target = new RenderTargetBitmap(PixelWidth, PixelHeight, 96, 96, PixelFormats.Pbgra32);
+                target.Render(visual);
+                bitmap = target;
+            }
+
+            if (Rotation != 0)
+            {
+                bitmap = new TransformedBitmap(bitmap, new RotateTransform(Rotation));
+            }
+
+            if (bitmap.CanFreeze)
+            {
+                bitmap.Freeze();
+            }
+
+            return bitmap;
+        }
+
+        private static BitmapSource FlattenOntoWhite(BitmapSource bitmap)
+        {
+            var visual = new DrawingVisual();
+
+            using (var context = visual.RenderOpen())
+            {
+                var rect = new Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight);
+                context.DrawRectangle(Brushes.White, null, rect);
+                context.DrawImage(bitmap, rect);
+            }
+
+            var target = new RenderTargetBitmap(bitmap.PixelWidth, bitmap.PixelHeight, 96, 96, PixelFormats.Pbgra32);
+            target.Render(visual);
+            target.Freeze();
+            return target;
+        }
+
+        private static BitmapEncoder CreateEncoder(string extension)
+        {
+            return extension switch
+            {
+                ".png" => new PngBitmapEncoder(),
+                ".jpg" or ".jpeg" => new JpegBitmapEncoder { QualityLevel = 95 },
+                ".bmp" => new BmpBitmapEncoder(),
+                ".gif" => new GifBitmapEncoder(),
+                ".tif" or ".tiff" => new TiffBitmapEncoder(),
+                _ => throw new NotSupportedException($"Saving images with the extension '{extension}' is not supported.")
+            };
+        }
+
+        private static string GetExtension(string path)
+        {
+            return Path.GetExtension(path).ToLowerInvariant();
+        }
+
+        private static bool IsSameFormat(string? a, string? b)
+        {
+            static string? Normalize(string? e) => e switch
+            {
+                ".jpeg" => ".jpg",
+                ".tiff" => ".tif",
+                _ => e
+            };
+
+            return a != null && Normalize(a) == Normalize(b);
         }
 
         #endregion
