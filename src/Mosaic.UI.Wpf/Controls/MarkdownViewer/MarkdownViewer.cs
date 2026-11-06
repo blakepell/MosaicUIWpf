@@ -45,6 +45,11 @@ namespace Mosaic.UI.Wpf.Controls
     /// can target Microsoft Print to PDF. <see cref="IsSaveAsMenuEnabled"/> and
     /// <see cref="IsPrintMenuEnabled"/> turn the export and print options off.
     /// </para>
+    /// <para>
+    /// Setting <see cref="ImagePreviewTrigger"/> lets a click or double click on a rendered image
+    /// open it in a window hosting an <see cref="ImageViewer"/>, shown modally unless
+    /// <see cref="IsImagePreviewModal"/> is <c>false</c>.
+    /// </para>
     /// </remarks>
     [TemplatePart(Name = PartRichTextBox, Type = typeof(RichTextBox))]
     [TemplatePart(Name = PartFindPanel, Type = typeof(FrameworkElement))]
@@ -307,6 +312,51 @@ namespace Mosaic.UI.Wpf.Controls
         {
             get => (bool)GetValue(IsPrintMenuEnabledProperty);
             set => SetValue(IsPrintMenuEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="ImagePreviewTrigger"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ImagePreviewTriggerProperty = DependencyProperty.Register(
+            nameof(ImagePreviewTrigger),
+            typeof(MarkdownImagePreviewTrigger),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(MarkdownImagePreviewTrigger.None));
+
+        /// <summary>
+        /// Gets or sets the mouse gesture that opens a rendered image in a window hosting an
+        /// <see cref="ImageViewer"/>, where it can be zoomed, panned, rotated and saved. Defaults to
+        /// <see cref="MarkdownImagePreviewTrigger.None"/>. An image that is also a link navigates the
+        /// link instead.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("The mouse gesture that opens a rendered image in an image viewer window.")]
+        public MarkdownImagePreviewTrigger ImagePreviewTrigger
+        {
+            get => (MarkdownImagePreviewTrigger)GetValue(ImagePreviewTriggerProperty);
+            set => SetValue(ImagePreviewTriggerProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="IsImagePreviewModal"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsImagePreviewModalProperty = DependencyProperty.Register(
+            nameof(IsImagePreviewModal),
+            typeof(bool),
+            typeof(MarkdownViewer),
+            new FrameworkPropertyMetadata(true));
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the image preview opened by
+        /// <see cref="ImagePreviewTrigger"/> is shown as a modal dialog (<c>true</c>, the default) or
+        /// as a window alongside the application, so several images can be open at once (<c>false</c>).
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether the image preview window is shown as a modal dialog.")]
+        public bool IsImagePreviewModal
+        {
+            get => (bool)GetValue(IsImagePreviewModalProperty);
+            set => SetValue(IsImagePreviewModalProperty, value);
         }
 
         /// <summary>
@@ -758,13 +808,73 @@ namespace Mosaic.UI.Wpf.Controls
         {
             var hyperlink = FindHyperlinkAt(e);
 
-            if (hyperlink?.NavigateUri == null)
+            if (hyperlink?.NavigateUri != null)
+            {
+                e.Handled = true;
+                NavigateTo(hyperlink.NavigateUri);
+                return;
+            }
+
+            if (FindPreviewableImage(e) is not { } image)
+            {
+                return;
+            }
+
+            int requiredClicks = ImagePreviewTrigger == MarkdownImagePreviewTrigger.DoubleClick ? 2 : 1;
+
+            if (e.ClickCount != requiredClicks)
             {
                 return;
             }
 
             e.Handled = true;
-            NavigateTo(hyperlink.NavigateUri);
+
+            // Deferred so the click finishes routing before a modal dialog starts its own message loop.
+            Dispatcher.BeginInvoke(() => ShowImagePreview(image), DispatcherPriority.Input);
+        }
+
+        /// <summary>
+        /// Finds the rendered Markdown image an input event occurred on, when
+        /// <see cref="ImagePreviewTrigger"/> allows images to be previewed.
+        /// </summary>
+        private Image? FindPreviewableImage(RoutedEventArgs e)
+        {
+            // Rendered images are hosted directly in an InlineUIContainer; this excludes images that
+            // belong to other embedded content such as a code block editor's chrome.
+            return ImagePreviewTrigger != MarkdownImagePreviewTrigger.None &&
+                   e.OriginalSource is Image { Parent: InlineUIContainer, Source: not null } image
+                ? image
+                : null;
+        }
+
+        /// <summary>
+        /// Opens an image in a window hosting an <see cref="ImageViewer"/>, as a modal dialog when
+        /// <see cref="IsImagePreviewModal"/> is <c>true</c>.
+        /// </summary>
+        private void ShowImagePreview(Image image)
+        {
+            if (image.Source is not { } source)
+            {
+                return;
+            }
+
+            // The tooltip holds the alt text, or the image URL when there is none; an inline data URI
+            // is no use as a title.
+            string? title = image.ToolTip as string;
+
+            if (title != null && title.StartsWith("data:", StringComparison.OrdinalIgnoreCase))
+            {
+                title = null;
+            }
+
+            try
+            {
+                ImageViewerWindow.ShowImage(source, title, Window.GetWindow(this), IsImagePreviewModal);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
 
         /// <summary>
@@ -773,7 +883,7 @@ namespace Mosaic.UI.Wpf.Controls
         /// </summary>
         private void OnRichTextBoxQueryCursor(object sender, QueryCursorEventArgs e)
         {
-            if (FindHyperlinkAt(e) == null)
+            if (FindHyperlinkAt(e) == null && FindPreviewableImage(e) == null)
             {
                 return;
             }
