@@ -6,8 +6,8 @@
 
     <BooleanToVisibilityConverter x:Key="Mosaic.ImageViewer.BoolToVisibility" />
 
-    <!--  Flat glyph button used in the status bar (rotate, fit, zoom out / in).  -->
-    <Style x:Key="Mosaic.ImageViewer.ToolButton" TargetType="{x:Type Button}">
+    <!--  Flat glyph button used in the status bar (rotate, actual size, zoom out / in).  -->
+    <Style x:Key="Mosaic.ImageViewer.ToolButtonBase" TargetType="{x:Type ButtonBase}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
@@ -22,7 +22,7 @@
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
                     <Border
                         x:Name="Chrome"
                         Background="{TemplateBinding Background}"
@@ -50,6 +50,25 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style
+        x:Key="Mosaic.ImageViewer.ToolButton"
+        BasedOn="{StaticResource Mosaic.ImageViewer.ToolButtonBase}"
+        TargetType="{x:Type Button}" />
+
+    <!--  Flat glyph toggle used in the status bar for a mode that stays on (fit to window).  -->
+    <Style
+        x:Key="Mosaic.ImageViewer.ToolToggleButton"
+        BasedOn="{StaticResource Mosaic.ImageViewer.ToolButtonBase}"
+        TargetType="{x:Type ToggleButton}">
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBorderBrush}}" />
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="{x:Type controls:ImageViewer}" TargetType="{x:Type controls:ImageViewer}">
@@ -139,7 +158,7 @@
                                 </Grid>
                             </ScrollViewer>
 
-                            <!--  Status bar: resolution | file size ............ rotate fit  - [slider] +  zoom%  -->
+                            <!--  Status bar: resolution | file size (files only) ............ rotate [fit] 1:1  - [slider] +  zoom%  -->
                             <Border
                                 Grid.Row="1"
                                 Padding="10,3"
@@ -163,6 +182,7 @@
                                         ToolTip="Resolution" />
 
                                     <Rectangle
+                                        x:Name="FileSizeSeparator"
                                         Grid.Column="1"
                                         Width="1"
                                         Height="14"
@@ -171,6 +191,7 @@
                                         Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
 
                                     <TextBlock
+                                        x:Name="FileSizeText"
                                         Grid.Column="2"
                                         VerticalAlignment="Center"
                                         Text="{TemplateBinding FileSizeText}"
@@ -185,10 +206,11 @@
                                             Content="&#xE7AD;"
                                             Style="{StaticResource Mosaic.ImageViewer.ToolButton}"
                                             ToolTip="Rotate (Ctrl+R)" />
-                                        <Button
-                                            Command="{x:Static controls:ImageViewer.ZoomToFitCommand}"
+                                        <ToggleButton
                                             Content="&#xE9A6;"
-                                            Style="{StaticResource Mosaic.ImageViewer.ToolButton}"
+                                            IsChecked="{Binding IsZoomToFit, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                            IsEnabled="{TemplateBinding HasImage}"
+                                            Style="{StaticResource Mosaic.ImageViewer.ToolToggleButton}"
                                             ToolTip="Fit to window (Ctrl+0)" />
                                         <Button
                                             Command="{x:Static controls:ImageViewer.ActualSizeCommand}"
@@ -236,6 +258,13 @@
                             </Border>
                         </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  Only a file has a size; hide the field rather than show a placeholder.  -->
+                        <Trigger Property="FileSize" Value="{x:Null}">
+                            <Setter TargetName="FileSizeSeparator" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="FileSizeText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
