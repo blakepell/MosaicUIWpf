@@ -172,6 +172,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// resources and vector <see cref="DrawingImage"/>s; it is rendered at the shell's small-icon size for the
         /// current DPI. When <see langword="null"/> (or not renderable), the executable's own icon is used.
         /// </summary>
+        /// <remarks>
+        /// Multi-frame ICO BitmapFrame and URI-backed BitmapImage sources select the closest frame at or above
+        /// the physical tray size, or the largest available frame. Source alpha is preserved throughout rendering.
+        /// </remarks>
         [Category("Common")]
         [Description("The image shown in the notification area.")]
         public ImageSource? Icon

@@ -628,6 +628,10 @@ namespace Mosaic.UI.Wpf.Controls
             [return: MarshalAs(UnmanagedType.Bool)]
             public static partial bool DestroyIcon(IntPtr hIcon);
 
+            /// <summary>
+            /// Creates an icon by copying the supplied color and mask bitmaps. Straight BGRA color input produces
+            /// correct DrawIconEx AC_SRC_OVER blending; supplying premultiplied input dims it in the native tests.
+            /// </summary>
             [LibraryImport(Common.Win32.User32, SetLastError = true)]
             public static partial IntPtr CreateIconIndirect(ICONINFO* piconinfo);
 

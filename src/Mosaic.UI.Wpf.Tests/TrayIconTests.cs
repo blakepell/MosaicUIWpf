@@ -35,7 +35,7 @@ namespace Mosaic.UI.Wpf.Tests
     }
 
     [Collection("TrayIcon")]
-    public class TrayIconTests
+    public partial class TrayIconTests
     {
         private const uint WM_LBUTTONDOWN = 0x0201;
         private const uint WM_LBUTTONUP = 0x0202;
@@ -600,17 +600,19 @@ namespace Mosaic.UI.Wpf.Tests
             {
                 var source = CreateBitmap(16, 0x40);
                 var direct = TrayIconImageConverter.Rasterize(source, 16)!;
-                Assert.Same(source, direct);
+                Assert.Equal(PixelFormats.Pbgra32, direct.Format);
+                var premultiplied = new FormatConvertedBitmap(source, PixelFormats.Pbgra32, null, 0);
+                Assert.Same(premultiplied, TrayIconImageConverter.Rasterize(premultiplied, 16));
 
                 var scaled = TrayIconImageConverter.Rasterize(CreateBitmap(48, 0x40), 24)!;
                 Assert.Equal(24, scaled.PixelWidth);
-                Assert.Equal(PixelFormats.Bgra32, scaled.Format);
+                Assert.Equal(PixelFormats.Pbgra32, scaled.Format);
 
                 var pixels = new byte[24 * 24 * 4];
                 scaled.CopyPixels(pixels, 24 * 4, 0);
                 int center = ((12 * 24) + 12) * 4;
                 Assert.InRange(pixels[center + 3], 0x3E, 0x42); // alpha survives
-                Assert.InRange(pixels[center + 2], 0xE8, 0xFF); // straight (not premultiplied) red
+                Assert.InRange(pixels[center + 2], 59, 61); // 240 * 64 / 255
 
                 using var icon = TrayIconImageConverter.Convert(source, 20);
                 Assert.NotNull(icon);
