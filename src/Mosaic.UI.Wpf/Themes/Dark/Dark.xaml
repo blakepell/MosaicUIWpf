@@ -133,10 +133,10 @@
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.HyperLinkVisitedColor}}" />
 
     <!--  Tab & TabItem  -->
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF1E1E1E</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF2D2D30</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}}" />
 
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF2D2D30</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF1E1E1E</Color>
     <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.TabItemBackgroundColor}}" />
 
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColor}">#FF3F3F46</Color>

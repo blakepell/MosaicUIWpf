@@ -50,8 +50,8 @@
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColor}">#FFFFFF00</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedColor}">#FFFF80FF</Color>
 
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF000000</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF111111</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF111111</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF000000</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColor}">#FFFFFFFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColor}">#FFFFFFFF</Color>
 

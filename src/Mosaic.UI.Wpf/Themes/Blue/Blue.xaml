@@ -53,8 +53,8 @@
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkHoverColor}">#FFC2CAFF</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.HyperLinkVisitedColor}">#FF798ADE</Color>
 
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF101843</Color>
-    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF182465</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemSelectedBackgroundColor}">#FF182465</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.TabItemBackgroundColor}">#FF101843</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemBorderColor}">#FF2F43A8</Color>
     <Color x:Key="{x:Static themes:MosaicTheme.TabItemForegroundColor}">#FFF4F7FF</Color>
 

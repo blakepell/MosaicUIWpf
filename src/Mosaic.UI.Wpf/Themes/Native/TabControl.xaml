@@ -113,15 +113,7 @@
                             Margin="0"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="1">
-                            <Border
-                                x:Name="innerBorder"
-                                Margin="-1"
-                                Background="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}"
-                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.TabItemBorderBrush}}"
-                                BorderThickness="1"
-                                Opacity="0" />
-                        </Border>
+                            BorderThickness="1" />
                         <ContentPresenter
                             x:Name="contentPresenter"
                             Margin="{TemplateBinding Padding}"
@@ -133,17 +125,21 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="true">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="true" />
+                                <Condition Property="IsSelected" Value="false" />
+                                <Condition Property="IsEnabled" Value="true" />
+                            </MultiTrigger.Conditions>
                             <Setter TargetName="mainBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBackgroundBrush}}" />
-                            <Setter TargetName="mainBorder" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
-                        </Trigger>
+                        </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter TargetName="contentPresenter" Property="Opacity" Value="0.56" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter Property="Margin" Value="-2" />
-                            <Setter TargetName="innerBorder" Property="Opacity" Value="1" />
+                            <Setter TargetName="mainBorder" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.TabItemSelectedBackgroundBrush}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
