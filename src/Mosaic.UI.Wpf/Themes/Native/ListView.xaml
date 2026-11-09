@@ -290,10 +290,17 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" Value="{x:Null}">
+                        <!--
+                            ListView.PrepareContainerForItemOverride calls GridView.PrepareItem, which sets
+                            GridView.ColumnCollection locally on the container; GridView.ClearItem clears it.
+                            Triggering on that (instead of a FindAncestor binding to ListView.View) keeps the
+                            mode correct for recycled containers that are briefly out of the visual tree, and
+                            avoids a per-container ancestor walk.
+                        -->
+                        <Trigger Property="GridView.ColumnCollection" Value="{x:Null}">
                             <Setter TargetName="GridViewRow" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="ItemContent" Property="Visibility" Value="Visible" />
-                        </DataTrigger>
+                        </Trigger>
                         <!--  Alternating rows: declared before hover/selection so those still win  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
