@@ -52,6 +52,10 @@
 
         <!--  Running windows + Edge tabs list  -->
         <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <ListBox
                 x:Name="WindowList"
                 Margin="8,0,8,0"
@@ -60,8 +64,7 @@
                 ItemsSource="{Binding FilteredWindows}"
                 MouseDoubleClick="WindowList_MouseDoubleClick"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                SelectionMode="Extended"
-                Visibility="{Binding IsLoading, Converter={mosaic:InvertedBoolToVisibilityConverter}}">
+                SelectionMode="Extended">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -137,25 +140,13 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <!--  Loading overlay — covers the list area while enumeration is running  -->
-            <Border
-                Background="{DynamicResource {x:Static theme:MosaicTheme.ControlBackgroundBrush}}"
-                BorderBrush="{DynamicResource {x:Static theme:MosaicTheme.ControlBorderBrush}}"
-                BorderThickness="1"
-                Visibility="{Binding IsLoading, Converter={mosaic:BoolToVisibilityConverter}}">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <ProgressBar
-                        Width="220"
-                        Height="4"
-                        IsIndeterminate="True" />
-                    <TextBlock
-                        Margin="0,10,0,0"
-                        HorizontalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
-                        Text="Loading windows and tabs…" />
-                </StackPanel>
-            </Border>
+            <TextBlock
+                Grid.Row="1"
+                Margin="8,4,8,0"
+                FontSize="12"
+                TextWrapping="Wrap"
+                Foreground="{DynamicResource {x:Static theme:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                Text="{Binding LoadStatus}" />
         </Grid>
 
         <!--  Buttons  -->

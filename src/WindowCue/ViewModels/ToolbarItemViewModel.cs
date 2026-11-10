@@ -105,6 +105,19 @@ namespace WindowCue.ViewModels
         [property: PropertyGrid(Category = "Browser Tab", DisplayName = "Browser", IsReadOnly = true)]
         private string _browserProcessName = string.Empty;
 
+        /// <summary>Session-only tab strip identity; independent of the page renderer process.</summary>
+        [PropertyGrid(Ignore = true)]
+        public int[]? TabRuntimeId { get; set; }
+
+        /// <summary>Creation time of the browser UI process, independent of page renderer lifetime.</summary>
+        [PropertyGrid(Ignore = true)]
+        public long TabProcessStartTimeUtcTicks { get; set; }
+
+        /// <summary>True after confirmed closure; this pin must never bind to a replacement tab.</summary>
+        [PropertyGrid(Ignore = true)]
+        public bool TabClosed { get; set; }
+
+
         // ── Factory methods ───────────────────────────────────────────────────
 
         /// <summary>Creates a ViewModel from a live <see cref="WindowInfo"/> snapshot.</summary>
@@ -155,6 +168,8 @@ namespace WindowCue.ViewModels
                 ExecutablePath = tab.ExecutablePath,
                 TargetType = PinnedTargetType.BrowserTab,
                 TabTitle = tab.Title,
+                TabRuntimeId = tab.RuntimeId,
+                TabProcessStartTimeUtcTicks = tab.ProcessStartTimeUtcTicks,
                 TabUrl = tab.Url,
                 BrowserProcessName = tab.BrowserProcessName,
                 IsAvailable = true

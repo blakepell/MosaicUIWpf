@@ -32,6 +32,11 @@ namespace WindowCue.Services
         private bool _registered;
         private HwndSource? _hwndSource;
 
+        private bool _applyingPosition;
+        private bool _positionUpdateQueued;
+        private NativeMethods.RECT? _reservedRect;
+        private uint _reservedEdge;
+
         private const int WM_DISPLAYCHANGE = 0x007E;
 
         // ── Construction ──────────────────────────────────────────────────────
@@ -59,7 +64,9 @@ namespace WindowCue.Services
 
             var hwnd = new WindowInteropHelper(window).Handle;
             if (hwnd == IntPtr.Zero)
+            {
                 return;
+            }
 
             if (!_registered)
             {
@@ -91,7 +98,9 @@ namespace WindowCue.Services
 
             var hwnd = new WindowInteropHelper(window).Handle;
             if (hwnd == IntPtr.Zero)
+            {
                 return;
+            }
 
             ApplyPosition(window, hwnd, edge, deviceName);
         }
@@ -102,7 +111,9 @@ namespace WindowCue.Services
         public void Unregister()
         {
             if (!_registered)
+            {
                 return;
+            }
 
             var hwnd = _hwndSource?.Handle ?? IntPtr.Zero;
             if (hwnd != IntPtr.Zero)
@@ -114,6 +125,7 @@ namespace WindowCue.Services
             _hwndSource?.RemoveHook(WndProcHook);
             _hwndSource = null;
             _registered = false;
+            _reservedRect = null;
         }
 
         // ── IDisposable ───────────────────────────────────────────────────────
@@ -124,30 +136,51 @@ namespace WindowCue.Services
 
         private void ApplyPosition(Window window, IntPtr hwnd, DockEdge edge, string? deviceName)
         {
-            var monitorRect = GetMonitorRect(hwnd, deviceName);
-            var dpi = GetDpiScale(window);
-            var thickness = GetThicknessPx(window, edge, dpi);
-            var abeEdge = ToAbeEdge(edge);
+            if (_applyingPosition || !_registered)
+                return;
+            _applyingPosition = true;
+            try
+            {
+                var monitorRect = GetMonitorRect(hwnd, deviceName);
+                var dpi = GetDpiScale(window);
+                var thickness = GetThicknessPx(window, edge, dpi);
+                var abeEdge = ToAbeEdge(edge);
 
-            var data = MakeData(hwnd);
-            data.uEdge = abeEdge;
-            data.rc = BuildProposedRect(monitorRect, edge, thickness);
+                var data = MakeData(hwnd);
+                data.uEdge = abeEdge;
+                data.rc = BuildProposedRect(monitorRect, edge, thickness);
 
-            // Ask the shell to clip our proposed rect (e.g., around the taskbar).
-            NativeMethods.SHAppBarMessage(NativeMethods.ABM_QUERYPOS, ref data);
+                // Ask the shell to clip our proposed rect (e.g., around the taskbar).
+                NativeMethods.SHAppBarMessage(NativeMethods.ABM_QUERYPOS, ref data);
 
-            // Re-enforce our desired thickness on whichever axis the shell clipped.
-            EnforceThickness(ref data.rc, edge, thickness);
+                // Re-enforce our desired thickness on whichever axis the shell clipped.
+                EnforceThickness(ref data.rc, edge, thickness);
 
-            // Confirm; the shell now updates the monitor work area for all windows.
-            NativeMethods.SHAppBarMessage(NativeMethods.ABM_SETPOS, ref data);
+                if (_reservedRect is { } previous && _reservedEdge == abeEdge &&
+                    previous.Left == data.rc.Left && previous.Top == data.rc.Top &&
+                    previous.Right == data.rc.Right && previous.Bottom == data.rc.Bottom)
+                {
+                    PositionWindow(window, data.rc, edge, dpi);
+                    return;
+                }
 
-            // Position the WPF window at the confirmed physical rectangle.
-            PositionWindow(window, data.rc, edge, dpi);
+                // Confirm; the shell now updates the monitor work area for all windows.
+                NativeMethods.SHAppBarMessage(NativeMethods.ABM_SETPOS, ref data);
 
-            // Inform the shell that our window has settled at its new position.
-            var posData = MakeData(hwnd);
-            NativeMethods.SHAppBarMessage(NativeMethods.ABM_WINDOWPOSCHANGED, ref posData);
+                _reservedRect = data.rc;
+                _reservedEdge = abeEdge;
+
+                // Position the WPF window at the confirmed physical rectangle.
+                PositionWindow(window, data.rc, edge, dpi);
+
+                // Inform the shell that our window has settled at its new position.
+                var posData = MakeData(hwnd);
+                NativeMethods.SHAppBarMessage(NativeMethods.ABM_WINDOWPOSCHANGED, ref posData);
+            }
+            finally
+            {
+                _applyingPosition = false;
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────
@@ -198,7 +231,10 @@ namespace WindowCue.Services
         {
             var source = PresentationSource.FromVisual(window);
             if (source?.CompositionTarget == null)
+            {
                 return (1.0, 1.0);
+            }
+
             var m = source.CompositionTarget.TransformToDevice;
             return (m.M11, m.M22);
         }
@@ -285,8 +321,17 @@ namespace WindowCue.Services
 
         private void ReapplyPosition(IntPtr hwnd)
         {
-            if (_windowRef?.TryGetTarget(out var w) == true)
-                ApplyPosition(w, hwnd, _currentEdge, _currentDeviceName);
+            if (_applyingPosition || _positionUpdateQueued || !_registered ||
+                _windowRef?.TryGetTarget(out var window) != true || window == null)
+                return;
+
+            _positionUpdateQueued = true;
+            window.Dispatcher.InvokeAsync(() =>
+            {
+                _positionUpdateQueued = false;
+                if (_registered && !window.Dispatcher.HasShutdownStarted)
+                    ApplyPosition(window, hwnd, _currentEdge, _currentDeviceName);
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
     }
 }

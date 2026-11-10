@@ -15,277 +15,238 @@ using WindowCue.Interop;
 namespace WindowCue.Services
 {
     /// <summary>
-    /// Enumerates open browser tabs and provides focus/rebind operations for
-    /// Chromium-based browsers (Microsoft Edge, Chrome, etc.) via UI Automation.
+    /// Discovers and selects browser tab strip items, including sleeping/discarded pages.
+    /// Renderer process liveness is deliberately not used as tab liveness.
     /// </summary>
     public class BrowserTabService
     {
-        // ── Discovery ─────────────────────────────────────────────────────────
+        internal BackgroundOperationRunner Work { get; } = new();
+        internal BackgroundOperationRunner PickerWork { get; } = new();
+        // Presentation clicks must not be rejected because the periodic inspector is busy.
+        internal BackgroundOperationRunner ActivationWork { get; } = new();
+
+        /// <summary>Returns discoverable tabs from every top-level browser window.</summary>
+        public List<BrowserTabInfo> GetOpenTabs(string processName = "msedge") =>
+            GetOpenTabs(processName, out _);
 
         /// <summary>
-        /// Returns all discoverable open tabs for the given browser process name.
-        /// Tab titles are read from UI Automation tab-item elements; the URL is only
-        /// populated for the active tab in each browser window (background-tab URLs are
-        /// not exposed by the address bar).
+        /// Returns tab strip snapshots. A false completeness flag means automation could not
+        /// inspect every window; a missing match in that case is not evidence of closure.
         /// </summary>
-        /// <param name="processName">The process name to search, e.g. <c>msedge</c>.</param>
-        public List<BrowserTabInfo> GetOpenTabs(string processName = "msedge")
+        public List<BrowserTabInfo> GetOpenTabs(string processName, out bool complete, IntPtr onlyWindow = default)
         {
             var result = new List<BrowserTabInfo>();
-
-            var processes = Process.GetProcessesByName(processName)
-                .Where(p => p.MainWindowHandle != IntPtr.Zero)
-                .ToList();
-
-            foreach (var proc in processes)
+            if (string.IsNullOrWhiteSpace(processName))
             {
+                complete = false;
+                return result;
+            }
+            bool inspectedAll = true;
+            var browserPids = new HashSet<int>();
+            foreach (var browser in Process.GetProcessesByName(processName))
+            {
+                using (browser)
+                    browserPids.Add(browser.Id);
+            }
+            bool enumerated = NativeMethods.EnumWindows((handle, _) =>
+            {
+                if (onlyWindow != IntPtr.Zero && handle != onlyWindow)
+                    return true;
+                if (!NativeMethods.IsWindowVisible(handle))
+                {
+                    return true;
+                }
+
+                NativeMethods.GetWindowThreadProcessId(handle, out int pid);
+                if (!browserPids.Contains(pid))
+                {
+                    return true;
+                }
+
                 try
                 {
-                    var rootElement = AutomationElement.FromHandle(proc.MainWindowHandle);
-
-                    // Locate tab items in the browser's tab strip.
-                    var tabCondition = new PropertyCondition(
-                        AutomationElement.ControlTypeProperty, ControlType.TabItem);
-                    var tabElements = rootElement.FindAll(TreeScope.Descendants, tabCondition);
-
-                    if (tabElements.Count == 0)
+                    using var process = Process.GetProcessById(pid);
+                    if (!string.Equals(process.ProcessName, processName, StringComparison.OrdinalIgnoreCase))
                     {
-                        continue;
+                        return true;
                     }
 
-                    // Read the active URL from the address bar (only works for the focused tab).
-                    string? activeUrl = TryGetActiveUrl(rootElement);
-
-                    // Determine which tab is currently selected.
-                    AutomationElement? selectedTab = FindSelectedTab(tabElements);
-
-                    string? execPath = null;
-                    try { execPath = proc.MainModule?.FileName; } catch { /* access denied */ }
-
-                    foreach (AutomationElement tabEl in tabElements)
+                    // Ignore browser utility/popup windows; include minimized browser windows.
+                    var className = new System.Text.StringBuilder(256);
+                    NativeMethods.GetClassName(handle, className, className.Capacity);
+                    if (!className.ToString().StartsWith("Chrome_WidgetWin_", StringComparison.Ordinal))
                     {
-                        string title = tabEl.Current.Name;
-                        if (string.IsNullOrWhiteSpace(title))
+                        return true;
+                    }
+
+                    try
+                    {
+                        var root = AutomationElement.FromHandle(handle);
+                        var chrome = ReadBrowserChrome(root, out bool chromeComplete);
+                        inspectedAll &= chromeComplete;
+                        var tabs = chrome.Where(e => e.Current.ControlType == ControlType.TabItem).ToList();
+                        if (tabs.Count == 0)
                         {
-                            continue;
+                            inspectedAll = false;
+                            return true;
                         }
-
-                        bool isActive = ReferenceEquals(tabEl, selectedTab) ||
-                                        string.Equals(tabEl.Current.AutomationId,
-                                            selectedTab?.Current.AutomationId,
-                                            StringComparison.Ordinal);
-
-                        result.Add(new BrowserTabInfo
+                        string? url = TryGetActiveUrl(chrome);
+                        string? path = null;
+                        try { path = process.MainModule?.FileName; } catch { }
+                        foreach (AutomationElement tab in tabs)
                         {
-                            Title = title,
-                            Url = isActive ? activeUrl : null,
-                            WindowHandle = proc.MainWindowHandle,
-                            ProcessId = proc.Id,
-                            BrowserProcessName = processName,
-                            ExecutablePath = execPath,
-                            IsActiveTab = isActive
-                        });
+                            try
+                            {
+                                string title = tab.Current.Name;
+                                if (string.IsNullOrWhiteSpace(title))
+                                {
+                                    inspectedAll = false;
+                                    continue;
+                                }
+                                bool selected = tab.TryGetCurrentPattern(SelectionItemPattern.Pattern, out var pattern)
+                                    && pattern is SelectionItemPattern selection && selection.Current.IsSelected;
+                                result.Add(new BrowserTabInfo
+                                {
+                                    Title = title, Url = selected ? url : null,
+                                    WindowHandle = handle, ProcessId = pid,
+                                    BrowserProcessName = processName, ExecutablePath = path,
+                                    IsActiveTab = selected, RuntimeId = tab.GetRuntimeId(),
+                                    ProcessStartTimeUtcTicks = process.StartTime.ToUniversalTime().Ticks
+                                });
+                            }
+                            catch { inspectedAll = false; }
+                        }
                     }
+                    catch { inspectedAll = false; }
                 }
                 catch
                 {
-                    // Skip inaccessible windows (e.g., elevated browser in unelevated host).
+                    // The process may have exited or access may be denied. Do not infer closure.
+                    inspectedAll = false;
                 }
-                finally
-                {
-                    proc.Dispose();
-                }
-            }
-
-            return result
-                .OrderBy(t => t.Title, StringComparer.OrdinalIgnoreCase)
-                .ToList();
+                return true;
+            }, IntPtr.Zero);
+            complete = inspectedAll && enumerated;
+            return result.OrderBy(t => t.Title, StringComparer.OrdinalIgnoreCase).ToList();
         }
 
-        // ── Focus ─────────────────────────────────────────────────────────────
+        /// <summary>
+        /// Matches only the original tab strip identity in the original browser process lifetime.
+        /// Page titles, URLs and window handles are hints, never replacement identities.
+        /// </summary>
+        public BrowserTabInfo? MatchTab(IEnumerable<BrowserTabInfo> tabs, string title, string? url,
+            int[]? runtimeId = null, IntPtr windowHandle = default, long processStartTimeUtcTicks = 0)
+        {
+            if (runtimeId == null || runtimeId.Length == 0)
+                return null;
+            return tabs.FirstOrDefault(t => t.RuntimeId != null && t.RuntimeId.SequenceEqual(runtimeId) &&
+                (processStartTimeUtcTicks == 0 || t.ProcessStartTimeUtcTicks == processStartTimeUtcTicks));
+        }
 
         /// <summary>
-        /// Brings a specific browser tab to the foreground by matching it against
-        /// running browser tabs. Tries an exact title match first, then a URL match,
-        /// then a contains-substring match as a fallback.
+        /// Maximizes the browser and selects its tab strip item to wake a dormant page.
+        /// Failure to activate does not mean the tab is closed.
         /// </summary>
-        /// <param name="processName">Browser process name, e.g. <c>msedge</c>.</param>
-        /// <param name="tabTitle">Stored tab title to match against.</param>
-        /// <param name="tabUrl">Optional URL hint for disambiguation.</param>
-        /// <returns><see langword="true"/> when a tab was found and activation was attempted.</returns>
-        public bool FocusTab(string processName, string tabTitle, string? tabUrl)
+        public bool FocusTab(BrowserTabInfo tab)
         {
-            var processes = Process.GetProcessesByName(processName)
-                .Where(p => p.MainWindowHandle != IntPtr.Zero)
-                .ToList();
-
-            foreach (var proc in processes)
+            if (!NativeMethods.IsWindow(tab.WindowHandle))
             {
-                try
+                return false;
+            }
+
+            NativeMethods.ShowWindowAsync(tab.WindowHandle, NativeMethods.SW_MAXIMIZE);
+            NativeMethods.BringWindowToTop(tab.WindowHandle);
+            NativeMethods.SetForegroundWindow(tab.WindowHandle);
+            try
+            {
+                var root = AutomationElement.FromHandle(tab.WindowHandle);
+                var elements = ReadBrowserChrome(root, out _)
+                    .Where(e => e.Current.ControlType == ControlType.TabItem);
+                foreach (AutomationElement element in elements)
                 {
-                    var rootElement = AutomationElement.FromHandle(proc.MainWindowHandle);
-
-                    var tabCondition = new PropertyCondition(
-                        AutomationElement.ControlTypeProperty, ControlType.TabItem);
-                    var tabElements = rootElement.FindAll(TreeScope.Descendants, tabCondition);
-
-                    var candidates = new List<AutomationElement>();
-                    foreach (AutomationElement tabEl in tabElements)
-                    {
-                        if (TitleMatches(tabEl.Current.Name, tabTitle))
-                        {
-                            candidates.Add(tabEl);
-                        }
-                    }
-
-                    AutomationElement? best = PickBestCandidate(candidates, tabUrl);
-                    if (best == null)
+                    if (tab.RuntimeId == null || !element.GetRuntimeId().SequenceEqual(tab.RuntimeId))
                     {
                         continue;
                     }
 
-                    // Bring the browser window to the foreground first.
-                    NativeMethods.SetForegroundWindow(proc.MainWindowHandle);
-
-                    // Activate the tab via InvokePattern, then fall back to SelectionItemPattern.
-                    if (best.TryGetCurrentPattern(InvokePattern.Pattern, out object invokeObj) &&
-                        invokeObj is InvokePattern invoke)
+                    // Selection wakes sleeping tabs without depending on their renderer process.
+                    bool selected = false;
+                    try
+                    {
+                        if (element.TryGetCurrentPattern(SelectionItemPattern.Pattern, out var value) &&
+                            value is SelectionItemPattern selection)
+                        {
+                            selection.Select();
+                            selected = selection.Current.IsSelected;
+                        }
+                    }
+                    catch { /* Try Invoke independently if selection is unavailable. */ }
+                    if (!selected && element.TryGetCurrentPattern(InvokePattern.Pattern, out var invokeValue) &&
+                        invokeValue is InvokePattern invoke)
                     {
                         invoke.Invoke();
-                        return true;
+                        selected = true;
                     }
-
-                    if (best.TryGetCurrentPattern(SelectionItemPattern.Pattern, out object selObj) &&
-                        selObj is SelectionItemPattern sel)
-                    {
-                        sel.Select();
-                        NativeMethods.SetForegroundWindow(proc.MainWindowHandle);
-                        return true;
-                    }
-                }
-                catch { /* skip */ }
-                finally
-                {
-                    proc.Dispose();
+                    NativeMethods.SetForegroundWindow(tab.WindowHandle);
+                    return selected && NativeMethods.GetForegroundWindow() == tab.WindowHandle;
                 }
             }
-
+            catch { /* The browser may be rebuilding its automation tree. Allow retry. */ }
             return false;
         }
-
-        // ── Rebind ────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Attempts to match a persisted tab identity back to a currently-open tab.
-        /// Matching priority: exact title + URL → exact title → title substring.
-        /// </summary>
-        public BrowserTabInfo? TryRebind(string processName, string tabTitle, string? tabUrl)
-        {
-            var tabs = GetOpenTabs(processName);
-
-            // Priority 1: exact title and URL match.
-            if (!string.IsNullOrWhiteSpace(tabUrl))
-            {
-                var match = tabs.FirstOrDefault(t =>
-                    string.Equals(t.Title, tabTitle, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(t.Url, tabUrl, StringComparison.OrdinalIgnoreCase));
-                if (match != null)
-                {
-                    return match;
-                }
-            }
-
-            // Priority 2: exact title.
-            var byTitle = tabs.FirstOrDefault(t =>
-                string.Equals(t.Title, tabTitle, StringComparison.OrdinalIgnoreCase));
-            if (byTitle != null)
-            {
-                return byTitle;
-            }
-
-            // Priority 3: title substring (bidirectional).
-            return tabs.FirstOrDefault(t =>
-                t.Title.Contains(tabTitle, StringComparison.OrdinalIgnoreCase) ||
-                tabTitle.Contains(t.Title, StringComparison.OrdinalIgnoreCase));
-        }
-
-        // ── Private helpers ───────────────────────────────────────────────────
 
         /// <summary>
         /// Reads the URL from the browser's address bar (omnibox). This only reflects
         /// the active tab's URL; background tab URLs are not exposed via UI Automation.
         /// </summary>
-        private static string? TryGetActiveUrl(AutomationElement root)
+        private static string? TryGetActiveUrl(IEnumerable<AutomationElement> chrome)
         {
             try
             {
-                // Edge and Chrome use "addressEditBox" as the automation ID for the omnibox.
-                var byId = new PropertyCondition(
-                    AutomationElement.AutomationIdProperty, "addressEditBox");
-                var byClass = new PropertyCondition(
-                    AutomationElement.ClassNameProperty, "OmniboxViewViews");
-                var condition = new OrCondition(byId, byClass);
-
-                var addressBar = root.FindFirst(TreeScope.Descendants, condition);
+                var addressBar = chrome.FirstOrDefault(e =>
+                    e.Current.AutomationId == "addressEditBox" || e.Current.ClassName == "OmniboxViewViews");
                 if (addressBar != null &&
-                    addressBar.TryGetCurrentPattern(ValuePattern.Pattern, out object vp) &&
-                    vp is ValuePattern valuePattern)
-                {
-                    string val = valuePattern.Current.Value;
-                    return string.IsNullOrWhiteSpace(val) ? null : val;
-                }
+                    addressBar.TryGetCurrentPattern(ValuePattern.Pattern, out var value) &&
+                    value is ValuePattern pattern)
+                    return string.IsNullOrWhiteSpace(pattern.Current.Value) ? null : pattern.Current.Value;
             }
             catch { }
-
             return null;
         }
 
         /// <summary>
-        /// Returns the currently-selected tab element, or <see langword="null"/>.
+        /// Walks browser controls only. Never descends into page documents, whose potentially
+        /// enormous accessibility trees are unrelated to tab discovery. Budget exhaustion is
+        /// an incomplete inspection, not evidence that a pinned tab has closed.
         /// </summary>
-        private static AutomationElement? FindSelectedTab(AutomationElementCollection tabs)
+        private static List<AutomationElement> ReadBrowserChrome(AutomationElement root, out bool complete)
         {
-            foreach (AutomationElement tab in tabs)
+            var found = new List<AutomationElement>();
+            var pending = new Queue<AutomationElement>();
+            pending.Enqueue(root);
+            var clock = Stopwatch.StartNew();
+            int visited = 0;
+            complete = true;
+            while (pending.Count > 0)
             {
-                try
+                if (++visited > 512 || clock.Elapsed > TimeSpan.FromSeconds(1))
                 {
-                    if (tab.TryGetCurrentPattern(SelectionItemPattern.Pattern, out object selObj) &&
-                        selObj is SelectionItemPattern sel && sel.Current.IsSelected)
-                    {
-                        return tab;
-                    }
+                    complete = false;
+                    break;
                 }
-                catch { }
+                var element = pending.Dequeue();
+                var type = element.Current.ControlType;
+                if (type == ControlType.Document)
+                    continue;
+                if (type == ControlType.TabItem || type == ControlType.Edit)
+                {
+                    found.Add(element);
+                    continue;
+                }
+                foreach (AutomationElement child in element.FindAll(TreeScope.Children, Condition.TrueCondition))
+                    pending.Enqueue(child);
             }
-
-            return null;
+            return found;
         }
-
-        /// <summary>
-        /// Selects the best candidate tab from a list by preferring the one whose URL
-        /// matches the stored URL hint.
-        /// </summary>
-        private static AutomationElement? PickBestCandidate(
-            List<AutomationElement> candidates, string? tabUrl)
-        {
-            if (candidates.Count == 0)
-            {
-                return null;
-            }
-
-            if (candidates.Count == 1 || string.IsNullOrWhiteSpace(tabUrl))
-            {
-                return candidates[0];
-            }
-
-            // Try to match URL by reading the address bar after temporarily focusing each.
-            // We do NOT focus each tab here as that would be disruptive; fall back to first match.
-            return candidates[0];
-        }
-
-        private static bool TitleMatches(string actual, string expected) =>
-            string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase) ||
-            actual.Contains(expected, StringComparison.OrdinalIgnoreCase) ||
-            expected.Contains(actual, StringComparison.OrdinalIgnoreCase);
     }
 }

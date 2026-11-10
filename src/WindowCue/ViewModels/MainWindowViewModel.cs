@@ -34,6 +34,8 @@ namespace WindowCue.ViewModels
         private readonly DialogService _dialogService;
         private readonly BrowserTabService _browserTabService;
         private readonly DispatcherTimer _processMonitorTimer;
+        private bool _isMonitoring;
+        private int _tabActivationVersion;
 
         /// <summary>The ordered collection of pinned toolbar items.</summary>
         public ObservableCollection<ToolbarItemViewModel> Items { get; } = new();
@@ -76,6 +78,9 @@ namespace WindowCue.ViewModels
             _processMonitorTimer.Start();
         }
 
+        /// <summary>Stops scheduling inspections when the toolbar closes.</summary>
+        public void StopMonitoring() => _processMonitorTimer.Stop();
+
         // ── Add ──────────────────────────────────────────────────────────────
 
         /// <summary>
@@ -105,14 +110,14 @@ namespace WindowCue.ViewModels
                 if (result.BrowserTab != null)
                 {
                     // Browser tab path
-                    var icon = _iconService.ExtractIcon(result.BrowserTab.WindowHandle, result.BrowserTab.ExecutablePath);
+                    var icon = await _iconService.ExtractIconAsync(result.BrowserTab.WindowHandle, result.BrowserTab.ExecutablePath);
                     result.BrowserTab.Icon = icon;
                     vm = ToolbarItemViewModel.FromBrowserTab(result.BrowserTab);
                 }
                 else if (result.Window != null)
                 {
                     // Regular desktop window path
-                    var icon = _iconService.ExtractIcon(result.Window.Handle, result.Window.ExecutablePath);
+                    var icon = await _iconService.ExtractIconAsync(result.Window.Handle, result.Window.ExecutablePath);
                     result.Window.Icon = icon;
                     vm = ToolbarItemViewModel.FromWindowInfo(result.Window);
                 }
@@ -133,7 +138,7 @@ namespace WindowCue.ViewModels
         /// window items use the existing HWND / PID focus path.
         /// </summary>
         [RelayCommand]
-        private void FocusItem(ToolbarItemViewModel? item)
+        private async Task FocusItemAsync(ToolbarItemViewModel? item)
         {
             if (item == null)
             {
@@ -143,168 +148,207 @@ namespace WindowCue.ViewModels
             // ── Browser-tab path ─────────────────────────────────────────────
             if (item.TargetType == PinnedTargetType.BrowserTab)
             {
-                bool ok = _browserTabService.FocusTab(
-                    item.BrowserProcessName, item.TabTitle, item.TabUrl);
-
-                item.IsAvailable = ok;
-                item.UnavailableReason = ok ? null : "Browser tab is no longer open.";
-                return;
-            }
-
-            // ── Regular window path ──────────────────────────────────────────
-            // Try the stored handle first
-            if (_focusService.FocusWindow(item.WindowHandle))
-            {
-                item.IsAvailable = true;
-                item.UnavailableReason = null;
-                return;
-            }
-
-            // Handle is stale — try to find a fresh handle by the original PID first.
-            var freshHandle = _focusService.FindWindowForProcess(item.ProcessId);
-            if (freshHandle != IntPtr.Zero)
-            {
-                item.WindowHandle = freshHandle;
-                if (_focusService.FocusWindow(freshHandle))
+                _tabActivationVersion++;
+                if (item.TabClosed || item.TabRuntimeId == null || item.TabProcessStartTimeUtcTicks == 0)
                 {
-                    item.IsAvailable = true;
-                    item.UnavailableReason = null;
+                    item.IsAvailable = false;
+                    item.UnavailableReason = "Original tab is closed or its identity was not saved. Pin the desired tab again.";
                     return;
                 }
-            }
+                // Capture immutable input before leaving the dispatcher; workers never touch VMs.
+                var browser = item.BrowserProcessName;
+                var handle = item.WindowHandle;
+                var title = item.TabTitle;
+                var url = item.TabUrl;
+                var runtimeId = item.TabRuntimeId;
+                var started = item.TabProcessStartTimeUtcTicks;
+                var result = await _browserTabService.ActivationWork.RunAsync(token =>
+                {
+                    // Try the known window first for quick switching; only search other windows
+                    // if the original tab may have moved. Never foreground an unmatched browser.
+                    var tabs = _browserTabService.GetOpenTabs(browser, out bool complete, handle);
+                    var tab = _browserTabService.MatchTab(tabs, title, url, runtimeId, handle, started);
+                    if (tab == null && handle != IntPtr.Zero)
+                    {
+                        tabs = _browserTabService.GetOpenTabs(browser, out complete);
+                        tab = _browserTabService.MatchTab(tabs, title, url, runtimeId, handle, started);
+                    }
+                    token.ThrowIfCancellationRequested();
+                    bool focused = tab != null && _browserTabService.FocusTab(tab);
+                    return (tab, complete, focused);
+                });
+                if (!Items.Contains(item))
+                    return;
+                if (!result.Completed)
+                {
+                    item.UnavailableReason = "Browser is busy or not responding. Click to retry.";
+                    return;
+                }
+                var probe = result.Value;
+                ApplyTabProbe(item, probe.tab, probe.complete);
+                if (probe.tab != null && !probe.focused)
+                    item.UnavailableReason = "Tab is still open. Click again to retry activation.";
 
-            // The original process is gone or its window is unreachable. The application may
-            // have been re-launched under a new PID (e.g. Visual Studio re-opened on the same
-            // solution), so try to re-bind to the best-matching live window by executable /
-            // process identity and fuzzy window-title similarity.
-            if (TryRebindItem(item))
-            {
                 return;
             }
 
-            // The original process is gone or its window is unreachable, and no live window
-            // could be matched even by partial title similarity. Leave the item in place but
-            // mark it inactive (grayed out) rather than removing it — the user can re-bind by
-            // clicking again later, or prune it with "Remove Inactive".
-            bool processAlive;
-            try
+            // Native focus, process lookup and window enumeration all stay off the dispatcher.
+            var windowHandle = item.WindowHandle;
+            var pid = item.ProcessId;
+            var path = item.ExecutablePath;
+            var processName = item.ProcessName;
+            var windowTitle = item.WindowTitle;
+            var windowResult = await _enumService.Work.RunAsync(token =>
             {
-                using var proc = Process.GetProcessById(item.ProcessId);
-                processAlive = !proc.HasExited;
-            }
-            catch
+                if (_focusService.FocusWindow(windowHandle))
+                    return (Handle: windowHandle, Match: (WindowInfo?)null);
+                var freshHandle = _focusService.FindWindowForProcess(pid);
+                if (freshHandle != IntPtr.Zero && _focusService.FocusWindow(freshHandle))
+                    return (Handle: freshHandle, Match: (WindowInfo?)null);
+                var match = _enumService.TryRebind(path, processName, windowTitle);
+                token.ThrowIfCancellationRequested();
+                if (match != null)
+                    _focusService.FocusWindow(match.Handle);
+                return (Handle: match?.Handle ?? IntPtr.Zero, Match: match);
+            });
+            if (!Items.Contains(item) || !windowResult.Completed)
+                return;
+            if (windowResult.Value.Match is { } matched)
+                ApplyWindowMatch(item, matched);
+            else
             {
-                processAlive = false;
+                item.WindowHandle = windowResult.Value.Handle;
+                item.IsAvailable = windowResult.Value.Handle != IntPtr.Zero;
+                item.UnavailableReason = item.IsAvailable ? null : "Window is no longer available.";
             }
-
-            item.IsAvailable = false;
-            item.UnavailableReason = processAlive
-                ? "Window is no longer available."
-                : "Application is not currently running.";
         }
 
-        /// <summary>
-        /// Attempts to re-bind a pinned window item to the best-matching live window using
-        /// executable / process identity and fuzzy window-title similarity. On success the
-        /// item's handle, PID, title and identity fields are refreshed and it is marked
-        /// available. When <paramref name="focus"/> is <see langword="true"/> the matched
-        /// window is also brought to the foreground.
-        /// </summary>
-        /// <returns><see langword="true"/> if a matching window was found and the item re-bound.</returns>
-        private bool TryRebindItem(ToolbarItemViewModel item, bool focus = true)
+        /// <summary>Applies a plain window snapshot on the dispatcher without native calls.</summary>
+        private static void ApplyWindowMatch(ToolbarItemViewModel item, WindowInfo match)
         {
-            if (item.TargetType != PinnedTargetType.Window)
-            {
-                return false;
-            }
-
-            var match = _enumService.TryRebind(item.ExecutablePath, item.ProcessName, item.WindowTitle);
-            if (match == null)
-            {
-                return false;
-            }
-
-            if (focus)
-            {
-                _focusService.FocusWindow(match.Handle);
-            }
-
             item.WindowHandle = match.Handle;
             item.ProcessId = match.ProcessId;
             item.WindowTitle = match.Title;
             item.ProcessName = match.ProcessName;
             item.ExecutablePath = match.ExecutablePath;
-
-            if (item.Icon == null)
-            {
-                item.Icon = _iconService.ExtractIcon(match.Handle, match.ExecutablePath);
-            }
-
             item.IsAvailable = true;
             item.UnavailableReason = null;
-            return true;
         }
 
         // ── Process monitor ───────────────────────────────────────────────────
 
-        /// <summary>
-        /// Fires every 5 seconds to reconcile pinned window items whose process has exited.
-        /// Each dead item is first re-bound to a matching live window (handling apps relaunched
-        /// under a new PID, including partial title matches). Items with no matching window are
-        /// marked inactive (grayed out) rather than removed, so they auto-reactivate if the app
-        /// returns and can be pruned via "Remove Inactive". The liveness checks run on the
-        /// thread pool to avoid blocking the UI thread. Browser-tab items are skipped — their
-        /// lifecycle is managed by the browser.
-        /// </summary>
-        private async void OnProcessMonitorTick(object? sender, EventArgs e)
+        /// <summary>Applies presence separately from activation success.</summary>
+        private static void ApplyTabProbe(ToolbarItemViewModel item, BrowserTabInfo? tab, bool complete)
         {
-            var windowItems = Items
-                .Where(i => i.TargetType == PinnedTargetType.Window)
-                .ToList();
+            if (item.TabClosed)
+            {
+                item.IsAvailable = false;
+                return;
+            }
+            if (tab != null)
+            {
+                item.WindowHandle = tab.WindowHandle;
+                item.ProcessId = tab.ProcessId;
+                item.TabRuntimeId = tab.RuntimeId;
+                item.TabProcessStartTimeUtcTicks = tab.ProcessStartTimeUtcTicks;
+                item.TabTitle = tab.Title;
+                item.TabUrl = tab.Url ?? item.TabUrl;
+                item.ExecutablePath = tab.ExecutablePath ?? item.ExecutablePath;
+                item.IsAvailable = true;
+                item.UnavailableReason = null;
+            }
+            else
+            {
+                // Inaccessible/minimized/rebuilding UI is uncertainty, not proof of closure.
+                if (complete)
+                {
+                    item.TabClosed = true;
+                    item.IsAvailable = false;
+                }
+                item.UnavailableReason = complete ? "Browser tab is no longer open." :
+                    "Browser tabs could not be inspected. Click to retry.";
+            }
+        }
 
-            if (windowItems.Count == 0)
+        /// <summary>
+        /// Reconciles pinned targets without activating them. Browser snapshots are shared per
+        /// browser and inspected on a worker thread; overlapping timer ticks are skipped.
+        /// </summary>
+        private async void OnProcessMonitorTick(object? sender, EventArgs e) => await MonitorTargetsAsync();
+
+        /// <summary>Inspects a single snapshot; only result application touches observable state.</summary>
+        internal async Task MonitorTargetsAsync()
+        {
+            if (_isMonitoring || IsRestoringPinnedItems || FocusItemCommand.IsRunning)
             {
                 return;
             }
 
-            var deadItems = await Task.Run(() =>
+            _isMonitoring = true;
+            try
             {
-                var dead = new List<ToolbarItemViewModel>();
-                foreach (var item in windowItems)
+                var items = Items.ToList();
+                foreach (var group in items.Where(i => i.TargetType == PinnedTargetType.BrowserTab)
+                    .Where(i => !i.TabClosed)
+                    .GroupBy(i => i.BrowserProcessName))
                 {
-                    bool alive;
-                    try
+                    var browser = group.Key;
+                    int activationVersion = _tabActivationVersion;
+                    var result = await _browserTabService.Work.RunAsync(() =>
                     {
-                        using var proc = Process.GetProcessById(item.ProcessId);
-                        alive = !proc.HasExited;
-                    }
-                    catch
+                        var tabs = _browserTabService.GetOpenTabs(browser, out bool complete);
+                        return (tabs, complete);
+                    });
+                    if (!result.Completed || activationVersion != _tabActivationVersion)
+                        continue;
+                    var snapshot = result.Value;
+                    foreach (var item in group)
                     {
-                        alive = false;
-                    }
+                        if (!Items.Contains(item) || FocusItemCommand.IsRunning)
+                        {
+                            continue;
+                        }
 
-                    if (!alive)
-                    {
-                        dead.Add(item);
+                        ApplyTabProbe(item, _browserTabService.MatchTab(snapshot.tabs,
+                            item.TabTitle, item.TabUrl, item.TabRuntimeId, item.WindowHandle, item.TabProcessStartTimeUtcTicks), snapshot.complete);
                     }
                 }
-                return dead;
-            });
-
-            foreach (var dead in deadItems)
-            {
-                // The original process exited, but the application may have been relaunched
-                // under a new PID. Try to re-bind to a matching live window (including partial
-                // title matches) before giving up.
-                if (TryRebindItem(dead, focus: false))
+                var windows = items.Where(i => i.TargetType == PinnedTargetType.Window)
+                    .Select(i => (Item: i, Handle: i.WindowHandle, Path: i.ExecutablePath,
+                        Process: i.ProcessName, Title: i.WindowTitle)).ToList();
+                if (windows.Count == 0)
+                    return;
+                var windowResult = await _enumService.Work.RunAsync(() =>
                 {
-                    continue;
+                    var missing = windows.Where(w => !_focusService.IsWindowAlive(w.Handle)).ToList();
+                    // Enumerate at most once per tick, even if many pinned targets closed together.
+                    var live = missing.Count > 0 ? _enumService.GetVisibleWindows(includeCommandLine: false) : [];
+                    return windows.Select(w => (w.Item, Alive: !missing.Contains(w),
+                        Match: missing.Contains(w) ? _enumService.FindBestMatch(live, w.Path, w.Process, w.Title, out _) : null))
+                        .ToList();
+                });
+                if (!windowResult.Completed)
+                    return;
+                foreach (var status in windowResult.Value!)
+                {
+                    if (!Items.Contains(status.Item) || FocusItemCommand.IsRunning)
+                        continue;
+                    if (status.Match is { } match)
+                        ApplyWindowMatch(status.Item, match);
+                    else
+                    {
+                        status.Item.IsAvailable = status.Alive;
+                        status.Item.UnavailableReason = status.Alive ? null : "Window is no longer available.";
+                    }
                 }
-
-                // No live window matched — mark the item inactive (grayed out) instead of
-                // removing it. The user can prune these via "Remove Inactive".
-                dead.IsAvailable = false;
-                dead.UnavailableReason = "Application is not currently running.";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WindowCue target inspection failed: {ex}");
+            }
+            finally
+            {
+                _isMonitoring = false;
             }
         }
 
@@ -373,66 +417,69 @@ namespace WindowCue.ViewModels
         [RelayCommand]
         private async Task PinForegroundWindowAsync()
         {
-            var hWnd = NativeMethods.GetForegroundWindow();
-
-            if (hWnd == IntPtr.Zero || !NativeMethods.IsWindow(hWnd) || !NativeMethods.IsWindowVisible(hWnd))
+            // Capture the foreground handle before scheduling work so the hotkey pins the
+            // window that was active when pressed, even if focus changes during inspection.
+            var foreground = NativeMethods.GetForegroundWindow();
+            var inspection = await _enumService.Work.RunAsync(() =>
             {
+                var hWnd = foreground;
+
+                if (hWnd == IntPtr.Zero || !NativeMethods.IsWindow(hWnd) || !NativeMethods.IsWindowVisible(hWnd))
+                {
+                    return (WindowInfo?)null;
+                }
+
+                // Skip WindowCue's own windows.
+                NativeMethods.GetWindowThreadProcessId(hWnd, out int pid);
+                if (pid == 0 || pid == Environment.ProcessId)
+                {
+                    return (WindowInfo?)null;
+                }
+
+                // Build WindowInfo from the live handle.
+                int titleLen = NativeMethods.GetWindowTextLength(hWnd);
+                var sb = new StringBuilder(titleLen + 1);
+                NativeMethods.GetWindowText(hWnd, sb, sb.Capacity);
+                string title = sb.ToString();
+
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    return (WindowInfo?)null;
+                }
+
+                string processName = string.Empty;
+                string? executablePath = null;
+
+                try
+                {
+                    using var proc = Process.GetProcessById(pid);
+                    processName = proc.ProcessName;
+                    try { executablePath = proc.MainModule?.FileName; } catch { /* access denied */ }
+                }
+                catch
+                {
+                    return (WindowInfo?)null;
+                }
+
+                if (WindowEnumerationService.IgnoreList.Contains(processName))
+                {
+                    return (WindowInfo?)null;
+                }
+
+                return new WindowInfo
+                {
+                    Handle = hWnd,
+                    Title = title,
+                    ProcessId = pid,
+                    ProcessName = processName,
+                    ExecutablePath = executablePath
+                };
+
+            });
+            var info = inspection.Value;
+            if (!inspection.Completed || info == null || Items.Any(i => i.ProcessId == info.ProcessId))
                 return;
-            }
-
-            // Skip WindowCue's own windows.
-            NativeMethods.GetWindowThreadProcessId(hWnd, out int pid);
-            if (pid == 0 || pid == Environment.ProcessId)
-            {
-                return;
-            }
-
-            // Skip if already pinned (match by ProcessId).
-            if (Items.Any(i => i.ProcessId == pid))
-            {
-                return;
-            }
-
-            // Build WindowInfo from the live handle.
-            int titleLen = NativeMethods.GetWindowTextLength(hWnd);
-            var sb = new StringBuilder(titleLen + 1);
-            NativeMethods.GetWindowText(hWnd, sb, sb.Capacity);
-            string title = sb.ToString();
-
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                return;
-            }
-
-            string processName = string.Empty;
-            string? executablePath = null;
-
-            try
-            {
-                using var proc = Process.GetProcessById(pid);
-                processName = proc.ProcessName;
-                try { executablePath = proc.MainModule?.FileName; } catch { /* access denied */ }
-            }
-            catch
-            {
-                return;
-            }
-
-            if (WindowEnumerationService.IgnoreList.Contains(processName))
-            {
-                return;
-            }
-
-            var info = new WindowInfo
-            {
-                Handle = hWnd,
-                Title = title,
-                ProcessId = pid,
-                ProcessName = processName,
-                ExecutablePath = executablePath
-            };
-
-            var icon = await Task.Run(() => _iconService.ExtractIcon(hWnd, executablePath));
+            var icon = await _iconService.ExtractIconAsync(info.Handle, info.ExecutablePath);
             info.Icon = icon;
 
             var vm = ToolbarItemViewModel.FromWindowInfo(info);
@@ -472,6 +519,9 @@ namespace WindowCue.ViewModels
                 ProcessName = i.ProcessName,
                 ExecutablePath = i.ExecutablePath,
                 WindowTitle = i.WindowTitle,
+                TabRuntimeId = i.TabRuntimeId,
+                TabProcessStartTimeUtcTicks = i.TabProcessStartTimeUtcTicks,
+                TabClosed = i.TabClosed,
                 TabTitle = i.TabTitle,
                 TabUrl = i.TabUrl,
                 BrowserProcessName = i.BrowserProcessName
@@ -491,14 +541,21 @@ namespace WindowCue.ViewModels
                     // ── Browser-tab restore path ──────────────────────────────────
                     if (data.TargetType == PinnedTargetType.BrowserTab)
                     {
-                        var tab = await Task.Run(() =>
-                            _browserTabService.TryRebind(
-                                data.BrowserProcessName, data.TabTitle, data.TabUrl));
+                        var result = await _browserTabService.Work.RunAsync(() =>
+                        {
+                            if (data.TabClosed || data.TabRuntimeId == null || data.TabProcessStartTimeUtcTicks == 0)
+                                return (tab: (BrowserTabInfo?)null, complete: true);
+                            var tabs = _browserTabService.GetOpenTabs(data.BrowserProcessName, out bool complete);
+                            return (tab: _browserTabService.MatchTab(tabs, data.TabTitle, data.TabUrl,
+                                data.TabRuntimeId, processStartTimeUtcTicks: data.TabProcessStartTimeUtcTicks), complete);
+                        });
+                        var probe = result.Completed ? result.Value : (tab: (BrowserTabInfo?)null, complete: false);
+                        var tab = probe.tab;
 
                         ToolbarItemViewModel tabVm;
                         if (tab != null)
                         {
-                            tab.Icon = _iconService.ExtractIcon(tab.WindowHandle, tab.ExecutablePath);
+                            tab.Icon = await _iconService.ExtractIconAsync(tab.WindowHandle, tab.ExecutablePath);
                             tabVm = ToolbarItemViewModel.FromBrowserTab(tab, data.Label);
                         }
                         else
@@ -508,10 +565,13 @@ namespace WindowCue.ViewModels
                                 Label = data.Label,
                                 ProcessName = data.BrowserProcessName,
                                 TargetType = PinnedTargetType.BrowserTab,
+                                TabRuntimeId = data.TabRuntimeId,
+                                TabProcessStartTimeUtcTicks = data.TabProcessStartTimeUtcTicks,
+                                TabClosed = data.TabClosed,
                                 TabTitle = data.TabTitle,
                                 TabUrl = data.TabUrl,
                                 BrowserProcessName = data.BrowserProcessName,
-                                IsAvailable = false,
+                                IsAvailable = !probe.complete,
                                 UnavailableReason = "Browser tab is not currently open."
                             };
                             var tabIcon = await TryExtractIconWithoutHandleAsync(data.ExecutablePath, data.BrowserProcessName);
@@ -521,34 +581,25 @@ namespace WindowCue.ViewModels
                             }
                         }
 
+                        tabVm.TabUrl ??= data.TabUrl;
+                        ApplyTabProbe(tabVm, tab, probe.complete);
                         Items.Add(tabVm);
                         continue;
                     }
 
                     // ── Regular window restore path ───────────────────────────────
-                    var match = await Task.Run(() =>
+                    var inspection = await _enumService.Work.RunAsync(() =>
                         _enumService.TryRebind(data.ExecutablePath, data.ProcessName, data.WindowTitle));
+                    var match = inspection.Value;
 
                     ToolbarItemViewModel vm;
                     if (match != null)
                     {
-                        match.Icon = _iconService.ExtractIcon(match.Handle, match.ExecutablePath);
+                        match.Icon = await _iconService.ExtractIconAsync(match.Handle, match.ExecutablePath);
                         vm = ToolbarItemViewModel.FromWindowInfo(match, data.Label);
                     }
                     else
                     {
-                        // If the process is completely gone, skip the placeholder.
-                        // Only add an unavailable placeholder when a matching process is
-                        // actually running (window may be hidden / not yet shown).
-                        bool processRunning = await Task.Run(() =>
-                            Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(data.ProcessName ?? ""))
-                                   .Any(p => { try { return !p.HasExited; } finally { p.Dispose(); } }));
-
-                        if (!processRunning)
-                        {
-                            continue;
-                        }
-
                         // Show as unavailable placeholder so the user can remove or wait
                         vm = new ToolbarItemViewModel
                         {
@@ -556,8 +607,8 @@ namespace WindowCue.ViewModels
                             ProcessName = data.ProcessName,
                             ExecutablePath = data.ExecutablePath,
                             WindowTitle = data.WindowTitle,
-                            IsAvailable = false,
-                            UnavailableReason = "Application is not currently running."
+                            IsAvailable = !inspection.Completed,
+                            UnavailableReason = inspection.Completed ? "Window is no longer available." : "Window inspection timed out. Click to retry."
                         };
 
                         // Attempt to extract an icon even though the window is unavailable.
@@ -580,7 +631,7 @@ namespace WindowCue.ViewModels
         /// Asynchronously attempts to obtain an icon without a live window handle.
         /// The blocking OS calls (<see cref="Process.GetProcessesByName"/> and
         /// <see cref="System.Diagnostics.ProcessModule.FileName"/> access) run on the
-        /// thread pool so the UI thread is never blocked.
+        /// background workers so the UI thread is never blocked.
         /// Tries the saved executable path first; if that is missing or inaccessible,
         /// looks for a running process whose name matches <paramref name="processName"/>
         /// and uses its main module's file path.
@@ -594,7 +645,7 @@ namespace WindowCue.ViewModels
             {
                 try
                 {
-                    var icon = await Task.Run(() => _iconService.ExtractIcon(IntPtr.Zero, executablePath));
+                    var icon = await _iconService.ExtractIconAsync(IntPtr.Zero, executablePath);
                     if (icon != null)
                     {
                         return icon;
@@ -609,7 +660,7 @@ namespace WindowCue.ViewModels
             {
                 try
                 {
-                    return await Task.Run(() =>
+                    var result = await _enumService.Work.RunAsync(() =>
                     {
                         var processes = Process.GetProcessesByName(processName);
                         foreach (var proc in processes)
@@ -630,6 +681,7 @@ namespace WindowCue.ViewModels
                         }
                         return null;
                     });
+                    return result.Value;
                 }
                 catch { /* fall through */ }
             }

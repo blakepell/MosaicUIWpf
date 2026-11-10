@@ -35,6 +35,9 @@ namespace WindowCue.Services
     /// </summary>
     public class ScreenDockingService
     {
+        /// <summary>The width of the vertical presentation toolbar in device-independent pixels.</summary>
+        public const double ToolbarWidth = 72;
+
         /// <summary>Returns information about all connected monitors.</summary>
         public List<MonitorInfo> GetMonitors()
         {
@@ -86,12 +89,14 @@ namespace WindowCue.Services
             switch (edge)
             {
                 case DockEdge.Left:
+                    window.Width = ToolbarWidth;
                     window.Left = work.Left;
                     window.Top = work.Top;
                     window.Height = work.Height;
                     break;
 
                 case DockEdge.Right:
+                    window.Width = ToolbarWidth;
                     window.Left = work.Right - window.Width;
                     window.Top = work.Top;
                     window.Height = work.Height;

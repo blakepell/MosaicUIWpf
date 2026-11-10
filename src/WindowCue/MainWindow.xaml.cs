@@ -28,6 +28,14 @@ namespace WindowCue
     {
         private MainWindowViewModel _vm = null!;
         private AppBarService _appBar = null!;
+        private readonly Dictionary<ToolbarItemViewModel, PropertyChangedEventHandler> _itemHandlers = new();
+
+        private void DetachItemHandlers()
+        {
+            foreach (var pair in _itemHandlers)
+                pair.Key.PropertyChanged -= pair.Value;
+            _itemHandlers.Clear();
+        }
 
         public MainWindow()
         {
@@ -70,6 +78,9 @@ namespace WindowCue
             // Remove the reservation as soon as the window closes.
             Closed += (_, _) =>
             {
+                _vm.StopMonitoring();
+                _vm.Items.CollectionChanged -= Items_CollectionChanged;
+                DetachItemHandlers();
                 _vm.PropertyChanged -= OnVmPropertyChanged;
                 _appBar.Unregister();
             };
@@ -88,6 +99,7 @@ namespace WindowCue
 
         private void RebuildSideMenuItems()
         {
+            DetachItemHandlers();
             ToolbarMenu.MenuItems.Clear();
             foreach (var item in _vm.Items)
                 ToolbarMenu.MenuItems.Add(CreateSideMenuItem(item));
@@ -107,7 +119,7 @@ namespace WindowCue
             // Keep the SideMenuItem label and icon in sync with the VM.
             // When the item becomes unavailable its icon is shown in greyscale;
             // the item stays clickable so the focus command can attempt re-bind.
-            vm.PropertyChanged += (s, e) =>
+            PropertyChangedEventHandler handler = (s, e) =>
             {
                 if (e.PropertyName == nameof(ToolbarItemViewModel.Label))
                 {
@@ -121,6 +133,8 @@ namespace WindowCue
                 }
             };
 
+            vm.PropertyChanged += handler;
+            _itemHandlers[vm] = handler;
             return mi;
         }
 
@@ -131,7 +145,9 @@ namespace WindowCue
         private static ImageSource? ToGrayscale(ImageSource? source)
         {
             if (source is not BitmapSource bitmap)
+            {
                 return source;
+            }
 
             try
             {
@@ -232,16 +248,6 @@ namespace WindowCue
 
             menu.PlacementTarget = target;
             menu.IsOpen = true;
-        }
-
-        // ── ItemClicked: focus the target window ─────────────────────────────
-
-        private void ToolbarMenu_ItemClicked(object sender, Mosaic.UI.Wpf.Controls.SideMenuItemClickEventArgs e)
-        {
-            if (e.Item.Tag is ToolbarItemViewModel vm)
-            {
-                _vm.FocusItemCommand.Execute(vm);
-            }
         }
 
         // ── Add button ───────────────────────────────────────────────────────

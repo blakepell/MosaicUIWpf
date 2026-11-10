@@ -3,18 +3,19 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:services="clr-namespace:WindowCue.Services"
     xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
     xmlns:themeNs="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
-    Title="WindowCue"
-    Width="72"
-    MinWidth="64"
-    MaxWidth="120"
+    Title=""
+    Width="{x:Static services:ScreenDockingService.ToolbarWidth}"
+    MinWidth="{x:Static services:ScreenDockingService.ToolbarWidth}"
     theme:WindowChromeBehavior.CaptionHeight="0"
     theme:WindowChromeBehavior.CornerRadius="10"
     theme:WindowChromeBehavior.GlassFrameThickness="0"
     theme:WindowChromeBehavior.IsEnabled="True"
     theme:WindowChromeBehavior.ResizeBorderThickness="5"
-    theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    theme:WindowChromeBehavior.UseAeroCaptionButtons="False"
+    theme:WindowChromeBehavior.UseNativeCorners="False"
     Background="{DynamicResource {x:Static themeNs:MosaicTheme.WindowBackgroundBrush}}"
     Foreground="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}"
     Loaded="MainWindow_OnLoaded"
@@ -39,11 +40,15 @@
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            IconSource="/Assets/app.png">
+            IconSource="/Assets/app.png"
+            ShowCloseButton="False"
+            ShowIcon="False"
+            ShowMaxRestoreButton="False"
+            ShowMinimizeButton="False">
             <mosaic:WindowTitleBar.RightContent>
                 <StackPanel Orientation="Horizontal">
                     <Button
-                        Width="48"
+                        Width="{x:Static services:ScreenDockingService.ToolbarWidth}"
                         Padding="0"
                         Background="Transparent"
                         BorderThickness="0"
@@ -84,23 +89,7 @@
                         </Button.ContextMenu>
                     </Button>
 
-                    <Button
-                        Width="48"
-                        Click="ToggleTheme_Click"
-                        Style="{DynamicResource {x:Static themeNs:MosaicTheme.WindowTitleBarButtonStyle}}"
-                        ToolTip="Toggle Theme">
-                        <Button.ContentTemplate>
-                            <DataTemplate>
-                                <Viewbox Width="16" Height="16">
-                                    <Canvas Width="512" Height="512">
-                                        <Path
-                                            Data="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm248 184V72c101.7 0 184 82.3 184 184 0 101.7-82.3 184-184 184z"
-                                            Fill="{DynamicResource {x:Static themeNs:MosaicTheme.WindowForegroundBrush}}" />
-                                    </Canvas>
-                                </Viewbox>
-                            </DataTemplate>
-                        </Button.ContentTemplate>
-                    </Button>
+
                 </StackPanel>
             </mosaic:WindowTitleBar.RightContent>
         </mosaic:WindowTitleBar>
@@ -111,7 +100,6 @@
                 x:Name="ToolbarMenu"
                 Compact="True"
                 EnableDragAndDropReordering="True"
-                ItemClicked="ToolbarMenu_ItemClicked"
                 MouseRightButtonDown="ToolbarMenu_MouseRightButtonDown"
                 SearchBoxVisibility="Collapsed"
                 VerticalScrollViewerVisibility="Auto" />

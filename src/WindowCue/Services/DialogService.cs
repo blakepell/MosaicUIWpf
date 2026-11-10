@@ -9,6 +9,8 @@
  */
 
 using System.Windows;
+using System.Diagnostics;
+using WindowCue.Common;
 using WindowCue.Interop;
 using WindowCue.ViewModels;
 using WindowCue.Views;
@@ -71,8 +73,9 @@ namespace WindowCue.Services
         /// </summary>
         public async Task<List<AddWindowResult>?> ShowSelectWindowDialogAsync(Window owner)
         {
-            var vm = new SelectWindowDialogViewModel(_enumService, _iconService, _tabService);
+            using var vm = new SelectWindowDialogViewModel(_enumService, _iconService, _tabService);
             var dialog = new SelectWindowDialog { DataContext = vm, Owner = owner };
+            dialog.Closed += (_, _) => vm.Dispose();
 
             // Kick off enumeration after the dialog's visual tree is ready.
             // ShowDialog enters a nested WPF dispatcher loop, so this async handler
@@ -85,11 +88,43 @@ namespace WindowCue.Services
                 return null;
             }
 
-            return vm.SelectedWindows
+            var results = vm.SelectedWindows
                 .Select(selected => selected.IsEdgeTab
                     ? AddWindowResult.FromBrowserTab(selected.BrowserTab!)
                     : AddWindowResult.FromWindow(selected.Source!))
                 .ToList();
+
+            // Command lines are optional launch metadata. Read only the chosen processes;
+            // querying every process via WMI must never delay or empty the picker list.
+            var pids = results.Where(result => result.Window != null)
+                .Select(result => result.Window!.ProcessId).Distinct().ToArray();
+            if (pids.Length > 0)
+            {
+                var metadata = await _enumService.MetadataWork.RunAsync(() =>
+                {
+                    var commandLines = new Dictionary<int, string?>();
+                    foreach (int pid in pids)
+                    {
+                        try
+                        {
+                            using var process = Process.GetProcessById(pid);
+                            commandLines[pid] = process.GetCommandLine();
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"WindowCue selected-process metadata unavailable: {ex.Message}");
+                        }
+                    }
+                    return commandLines;
+                });
+                if (metadata.Completed && metadata.Value != null)
+                {
+                    foreach (var result in results)
+                        if (result.Window is { } selected && metadata.Value.TryGetValue(selected.ProcessId, out var commandLine))
+                            selected.CommandLine = commandLine;
+                }
+            }
+            return results;
         }
 
         /// <summary>

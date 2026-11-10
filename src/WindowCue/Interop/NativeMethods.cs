@@ -28,6 +28,7 @@ namespace WindowCue.Interop
 
         // ── ShowWindow commands ───────────────────────────────────────────────
         public const int SW_RESTORE = 9;
+        public const int SW_MAXIMIZE = 3;
         public const int SW_SHOWNOACTIVATE = 4;
 
         // ── GetClassLongPtr indices ───────────────────────────────────────────
@@ -102,6 +103,9 @@ namespace WindowCue.Interop
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder className, int maxCount);
+
         [DllImport("user32.dll")]
         public static extern int GetWindowTextLength(IntPtr hWnd);
 
@@ -116,6 +120,9 @@ namespace WindowCue.Interop
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -158,7 +165,8 @@ namespace WindowCue.Interop
         public static extern IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessageTimeout(IntPtr hWnd, int msg, IntPtr wParam,
+            IntPtr lParam, uint flags, uint timeout, out IntPtr result);
 
         [DllImport("user32.dll")]
         public static extern bool DestroyIcon(IntPtr hIcon);

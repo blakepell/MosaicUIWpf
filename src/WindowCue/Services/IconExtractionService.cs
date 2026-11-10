@@ -23,6 +23,15 @@ namespace WindowCue.Services
     /// </summary>
     public class IconExtractionService
     {
+        private readonly BackgroundOperationRunner _work = new();
+
+        /// <summary>Extracts a frozen icon without blocking the caller or queuing behind hung work.</summary>
+        public async Task<ImageSource> ExtractIconAsync(IntPtr handle, string? path)
+        {
+            var result = await _work.RunAsync(() => ExtractIcon(handle, path)).ConfigureAwait(false);
+            return result.Completed ? result.Value ?? _fallback : _fallback;
+        }
+
         private static readonly BitmapSource _fallback = CreateFallback();
 
         private static BitmapSource CreateFallback()
@@ -51,18 +60,17 @@ namespace WindowCue.Services
         public ImageSource ExtractIcon(IntPtr windowHandle, string? executablePath)
         {
             IntPtr hIcon = IntPtr.Zero;
+            bool ownsIcon = false;
 
             // 1. WM_GETICON — big
             if (windowHandle != IntPtr.Zero)
             {
-                hIcon = NativeMethods.SendMessage(windowHandle,
-                    NativeMethods.WM_GETICON, new IntPtr(NativeMethods.ICON_BIG), IntPtr.Zero);
+                hIcon = ReadWindowIcon(windowHandle, NativeMethods.ICON_BIG);
 
                 // 2. WM_GETICON — small
                 if (hIcon == IntPtr.Zero)
                 {
-                    hIcon = NativeMethods.SendMessage(windowHandle,
-                        NativeMethods.WM_GETICON, new IntPtr(NativeMethods.ICON_SMALL), IntPtr.Zero);
+                    hIcon = ReadWindowIcon(windowHandle, NativeMethods.ICON_SMALL);
                 }
 
                 // 3. Class icon
@@ -76,6 +84,7 @@ namespace WindowCue.Services
             if (hIcon == IntPtr.Zero && !string.IsNullOrWhiteSpace(executablePath))
             {
                 hIcon = ExtractFromExecutable(executablePath);
+                ownsIcon = hIcon != IntPtr.Zero;
             }
 
             if (hIcon != IntPtr.Zero)
@@ -89,9 +98,23 @@ namespace WindowCue.Services
                     return source;
                 }
                 catch { /* fall through to placeholder */ }
+                finally
+                {
+                    // Window/class icon handles are shared; shell-extracted handles are owned.
+                    if (ownsIcon)
+                        NativeMethods.DestroyIcon(hIcon);
+                }
             }
 
             return _fallback;
+        }
+
+        private static IntPtr ReadWindowIcon(IntPtr handle, int size)
+        {
+            // Abort for a hung or exiting window; never wait indefinitely for WM_GETICON.
+            return NativeMethods.SendMessageTimeout(handle, NativeMethods.WM_GETICON,
+                new IntPtr(size), IntPtr.Zero, 0x2 | 0x20, 150, out var icon) != IntPtr.Zero
+                ? icon : IntPtr.Zero;
         }
 
         private static IntPtr ExtractFromExecutable(string path)

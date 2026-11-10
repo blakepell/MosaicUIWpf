@@ -53,5 +53,12 @@ namespace WindowCue.Interop
         /// its browser window.
         /// </summary>
         public bool IsActiveTab { get; set; }
+
+        /// <summary>Gets or sets the session-only UI Automation identity of the tab strip item.</summary>
+        public int[]? RuntimeId { get; set; }
+
+        /// <summary>Browser UI process creation time; protects against reused process/runtime IDs.</summary>
+        public long ProcessStartTimeUtcTicks { get; set; }
+
     }
 }

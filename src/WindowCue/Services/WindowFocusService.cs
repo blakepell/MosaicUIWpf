@@ -31,7 +31,7 @@ namespace WindowCue.Services
 
             if (NativeMethods.IsIconic(handle))
             {
-                NativeMethods.ShowWindow(handle, NativeMethods.SW_RESTORE);
+                NativeMethods.ShowWindowAsync(handle, NativeMethods.SW_RESTORE);
             }
 
             NativeMethods.BringWindowToTop(handle);

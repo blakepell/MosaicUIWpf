@@ -21,6 +21,10 @@ namespace WindowCue.Services
     /// </summary>
     public class WindowEnumerationService
     {
+        internal BackgroundOperationRunner Work { get; } = new();
+        internal BackgroundOperationRunner PickerWork { get; } = new();
+        internal BackgroundOperationRunner MetadataWork { get; } = new();
+
         /// <summary>
         /// Common entries that should be ignored, generally Windows related.
         /// </summary>
@@ -30,7 +34,7 @@ namespace WindowCue.Services
         /// Returns a sorted list of visible, non-tool windows suitable for presentation use.
         /// WindowCue's own process windows are automatically filtered out.
         /// </summary>
-        public List<WindowInfo> GetVisibleWindows()
+        public List<WindowInfo> GetVisibleWindows(bool includeCommandLine = true)
         {
             var result = new List<WindowInfo>();
             var shellHwnd = NativeMethods.GetShellWindow();
@@ -113,7 +117,8 @@ namespace WindowCue.Services
 
                         try
                         {
-                            commandLine = proc.GetCommandLine();
+                            if (includeCommandLine)
+                                commandLine = proc.GetCommandLine();
                         }
                         catch
                         {
@@ -163,7 +168,7 @@ namespace WindowCue.Services
         /// </summary>
         public WindowInfo? TryRebind(string? executablePath, string processName, string windowTitle)
         {
-            return FindBestMatch(GetVisibleWindows(), executablePath, processName, windowTitle, out _);
+            return FindBestMatch(GetVisibleWindows(includeCommandLine: false), executablePath, processName, windowTitle, out _);
         }
 
         /// <summary>

@@ -77,5 +77,15 @@ namespace WindowCue.Models
         /// </summary>
         [ObservableProperty]
         public partial string BrowserProcessName { get; set; } = "msedge";
+
+        /// <summary>Original UI Automation tab identity, valid only in the saved browser lifetime.</summary>
+        public int[]? TabRuntimeId { get; set; }
+
+        /// <summary>Original browser UI process creation time, protecting against ID reuse.</summary>
+        public long TabProcessStartTimeUtcTicks { get; set; }
+
+        /// <summary>Whether closure of this particular tab has already been confirmed.</summary>
+        public bool TabClosed { get; set; }
+
     }
 }
