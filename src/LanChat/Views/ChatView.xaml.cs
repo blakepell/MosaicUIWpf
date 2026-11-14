@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -268,7 +268,7 @@ namespace LanChat.Views
                         AddMessage(new Message()
                         {
                             BackgroundBrush = Brushes.DarkGreen,
-                            From = "System",
+                            From = payload.IsPrivate ? "System says (to you only)" : "System",
                             Timestamp = DateTime.Now,
                             Direction = MessageDirection.Received,
                             ForegroundBrush = Brushes.White,
@@ -287,17 +287,28 @@ namespace LanChat.Views
                         var payload = e.Envelope.Deserialize<ChatMessagePayload>();
 
                         var from = payload?.DisplayName ?? payload?.Sender ?? "Unknown";
+                        var isPrivate = payload?.IsPrivate == true;
+                        var isPrivateEcho = isPrivate && !string.IsNullOrEmpty(payload?.Recipient);
+
+                        if (isPrivateEcho)
+                        {
+                            from = $"You say (to {payload!.Recipient} only)";
+                        }
+                        else if (isPrivate)
+                        {
+                            from = $"{from} says (to you only)";
+                        }
 
                         // Determine message direction
                         MessageDirection direction = MessageDirection.Received;
-                        if (payload?.Sender == _username)
+                        if (isPrivateEcho || (!isPrivate && payload?.Sender == _username))
                         {
                             direction = MessageDirection.Sent;
                         }
 
                         AddMessage(new Message()
                         {
-                            BackgroundBrush = ColorPaletteCache.GetBrush("#03467A"),
+                            BackgroundBrush = ColorPaletteCache.GetBrush(isPrivate ? "#6A2C91" : "#03467A"),
                             From = from,
                             Timestamp = DateTime.Now,
                             Direction = direction,
@@ -585,7 +596,15 @@ namespace LanChat.Views
                         var server = AppServices.GetRequiredService<ChatServer>();
                         if (!server.IsListening)
                         {
-                            await server.StartAsync();
+                            try
+                            {
+                                await server.StartAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Could not start the chat server on port {server.Port}: {ex.Message}", "Server Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
                         }
 
                         var vm3 = AppServices.GetRequiredService<AppViewModel>();

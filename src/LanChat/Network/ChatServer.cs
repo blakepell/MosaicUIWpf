@@ -153,9 +153,37 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     /// <summary>Send a server (system) message to a single user.</summary>
     public async Task SendSystemMessageToAsync(ChatUser user, string message, CancellationToken ct = default)
     {
-        var env = MessageEnvelope.Create(new { Text = message, Sender = "System" }, typeName: "SystemMessage");
+        var env = MessageEnvelope.Create(new { Text = message, Sender = "System", IsPrivate = true }, typeName: "SystemMessage");
         var bytes = JsonSerializer.SerializeToUtf8Bytes(env, MessageEnvelope.DefaultJsonOptions);
         await user.SendAsync(MessageKind.JsonEnvelope, bytes, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Sends a private chat message to one user, plus an echo to the sender, without involving the rest of the room.
+    /// </summary>
+    public async Task SendPrivateMessageAsync(ChatUser sender, ChatUser recipient, string text, CancellationToken ct = default)
+    {
+        var toRecipient = MessageEnvelope.Create(new
+        {
+            Text = text,
+            SenderId = sender.Id,
+            Sender = sender.Username,
+            DisplayName = sender.DisplayName,
+            IsPrivate = true
+        }, typeName: "ChatMessage");
+
+        var echo = MessageEnvelope.Create(new
+        {
+            Text = text,
+            SenderId = sender.Id,
+            Sender = sender.Username,
+            DisplayName = sender.DisplayName,
+            IsPrivate = true,
+            Recipient = recipient.DisplayName
+        }, typeName: "ChatMessage");
+
+        await recipient.SendAsync(MessageKind.JsonEnvelope, JsonSerializer.SerializeToUtf8Bytes(toRecipient, MessageEnvelope.DefaultJsonOptions), ct).ConfigureAwait(false);
+        await sender.SendAsync(MessageKind.JsonEnvelope, JsonSerializer.SerializeToUtf8Bytes(echo, MessageEnvelope.DefaultJsonOptions), ct).ConfigureAwait(false);
     }
 
     /// <summary>Broadcast a server (system) message to everyone except one user.</summary>

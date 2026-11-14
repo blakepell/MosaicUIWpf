@@ -1,4 +1,4 @@
-/*
+﻿/*
  * LanChat
  *
  * @project lead      : Blake Pell
@@ -66,7 +66,15 @@ namespace LanChat
 
             if (appSettings.StartServerOnStartup)
             {
-                await server.StartAsync();
+                try
+                {
+                    await server.StartAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Don't block startup: the chat client works without a local server (e.g. the port is in use by another instance).
+                    vm.StatusText = $"Could not start server on port {server.Port}: {ex.Message}";
+                }
             }
         }
 
