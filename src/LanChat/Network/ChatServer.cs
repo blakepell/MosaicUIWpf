@@ -316,7 +316,7 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
         try
         {
             var stream = tcp.GetStream();
-            while (!ct.IsCancellationRequested)
+            while (!ct.IsCancellationRequested && !user.DisconnectRequested)
             {
                 var (kind, payload) = await Framing.ReadAsync(stream, ct).ConfigureAwait(false);
                 switch (kind)

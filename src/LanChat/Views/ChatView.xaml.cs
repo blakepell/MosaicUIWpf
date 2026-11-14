@@ -19,7 +19,6 @@ namespace LanChat.Views
     {
         private ChatClient? _chatClient;
         private string _username = Environment.UserName;
-        private bool _isReconnecting;
 
         public ObservableCollection<ServerInfo> ServerList { get; set; } = new();
         public ObservableCollection<Message> Messages { get; set; } = new();
@@ -167,20 +166,23 @@ namespace LanChat.Views
             }
         }
 
-        private async void ChatClient_Disconnected(object? sender, EventArgs e)
+        /// <summary>
+        /// The connection ended (server stopped, network drop, or /quit): return to the connection panel so the user can reconnect.
+        /// </summary>
+        private void ChatClient_Disconnected(object? sender, EventArgs e)
         {
-            // If we are already trying to reconnect, do nothing.
-            if (_isReconnecting)
+            // Raised from the client's read loop thread.
+            Dispatcher.BeginInvoke(() =>
             {
-                return;
-            }
+                // Ignore a stale client that was replaced by a newer connection.
+                if (sender != null && !ReferenceEquals(sender, _chatClient))
+                {
+                    return;
+                }
 
-            try
-            {
-                _isReconnecting = true;
                 AddMessage(new Message
                 {
-                    Text = "Connection lost. Attempting to reconnect...",
+                    Text = "Disconnected from the server.",
                     From = "System",
                     Direction = MessageDirection.Received,
                     BackgroundBrush = Brushes.DarkOrange,
@@ -188,41 +190,13 @@ namespace LanChat.Views
                     Timestamp = DateTime.Now
                 });
 
-                // Keep trying to reconnect
-                while (true)
-                {
-                    try
-                    {
-                        await Task.Delay(5000); // Wait 5 seconds before retrying
-                        await ConnectAndLoginAsync();
+                ChatThread.Visibility = Visibility.Collapsed;
+                CommandTextBox.Visibility = Visibility.Collapsed;
+                LoginPanel.Visibility = Visibility.Visible;
 
-                        // If we successfully connect and log in, break the loop.
-                        if (_chatClient?.IsConnected == true)
-                        {
-                            break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to reconnect: {ex.Message}");
-                        // The loop will continue and try again.
-                    }
-                }
-
-                AddMessage(new Message
-                {
-                    Text = "Reconnected successfully.",
-                    From = "System",
-                    Direction = MessageDirection.Received,
-                    BackgroundBrush = Brushes.DarkGreen,
-                    ForegroundBrush = Brushes.White,
-                    Timestamp = DateTime.Now
-                });
-            }
-            finally
-            {
-                _isReconnecting = false;
-            }
+                var vm = AppServices.GetRequiredService<AppViewModel>();
+                vm.StatusText = "Disconnected from the server. Choose a server and connect to rejoin.";
+            });
         }
 
         public async Task ConnectAndLoginAsync()

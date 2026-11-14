@@ -79,6 +79,11 @@ namespace LanChat.Network
         public string _ipAddress = "n/a";
 
         /// <summary>
+        /// Set when the user asked to leave (/quit); the server closes the connection after replying.
+        /// </summary>
+        public bool DisconnectRequested { get; set; }
+
+        /// <summary>
         /// Get display name for this user (username or fallback).
         /// </summary>
         public string DisplayName => !string.IsNullOrWhiteSpace(Username) ? Username : $"User {Id.ToString()[..8]}";

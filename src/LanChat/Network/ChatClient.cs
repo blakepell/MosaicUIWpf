@@ -313,9 +313,16 @@ namespace LanChat.Network
             {
                 if (!isIntentionalDisconnect)
                 {
+                    // Close the socket directly: DisconnectAsync awaits this very task and would never complete.
+                    try
+                    {
+                        _tcp?.Close();
+                    }
+                    catch { /* ignore */ }
+
+                    UpdateIsConnected();
                     Disconnected?.Invoke(this, EventArgs.Empty);
                 }
-                await DisconnectAsync();
             }
         }
     }
