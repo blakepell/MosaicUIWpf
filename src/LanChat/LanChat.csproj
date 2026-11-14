@@ -7,9 +7,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <Version>2026.11.14.1</Version>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\app.ico" />
+    <None Remove="Assets\app.png" />
     <None Remove="Assets\chat-48.png" />
     <None Remove="Assets\color-swatch-48.png" />
     <None Remove="Assets\link-48.png" />
@@ -30,6 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+    <Resource Include="Assets\app.png" />
     <Resource Include="Assets\chat-48.png" />
     <Resource Include="Assets\collage-48.png" />
     <Resource Include="Assets\color-swatch-48.png" />

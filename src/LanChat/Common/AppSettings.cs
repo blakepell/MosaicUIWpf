@@ -37,6 +37,19 @@ namespace LanChat.Common
         [ObservableProperty]
         private string? _applicationDataFolder;
 
+        /// <summary>
+        /// A stable identifier for this installation. It is generated once, only when no value exists
+        /// in the persisted settings, and is then saved with them. It can be used to recognize a user
+        /// who has changed their <see cref="Username"/> across sessions.
+        /// </summary>
+        [property: Category("Network")]
+        [property: DisplayName("App Id")]
+        [property: Description("A unique identifier for this installation, generated once and persisted.")]
+        [property: ReadOnly(true)]
+        [property: Browsable(true)]
+        [ObservableProperty]
+        private string _appId = Guid.NewGuid().ToString("N");
+
         [property: Category("File System")]
         [property: DisplayName("Client Settings")]
         [property: Description("Settings specific to this workstation.")]
