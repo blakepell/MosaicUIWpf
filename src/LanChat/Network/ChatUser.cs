@@ -51,6 +51,7 @@ namespace LanChat.Network
         /// Username provided during login.
         /// </summary>
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(DisplayName))]
         private string _username = string.Empty;
 
         /// <summary>

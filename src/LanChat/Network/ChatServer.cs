@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LanChat.Network.Commands;
 using LanChat.Network.Handlers;
 using Mosaic.UI.Wpf.Collections;
 using System.Reflection;
@@ -32,6 +33,11 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     private List<IEnvelopeHandler> EnvelopeHandlers { get; }
 
     /// <summary>
+    /// The registered slash commands (listed by /help).
+    /// </summary>
+    public IReadOnlyList<ISlashCommand> SlashCommands { get; }
+
+    /// <summary>
     /// The TCP port the server listens on.
     /// </summary>
     public int Port => _options.Port;
@@ -42,6 +48,7 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
 
         // Initialize the envelope handlers list and load implementations via reflection.
         EnvelopeHandlers = new List<IEnvelopeHandler>();
+        SlashCommands = LoadSlashCommands();
 
         try
         {
@@ -82,6 +89,92 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
 
 
 
+    }
+
+    private List<ISlashCommand> LoadSlashCommands()
+    {
+        var commands = new List<ISlashCommand>();
+
+        foreach (var type in typeof(ChatServer).Assembly.GetTypes()
+                     .Where(t => !t.IsAbstract && !t.IsInterface && typeof(ISlashCommand).IsAssignableFrom(t)))
+        {
+            try
+            {
+                if (Activator.CreateInstance(type) is ISlashCommand command)
+                {
+                    commands.Add(command);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error?.Invoke(this, new ErrorEventArgs { Exception = ex });
+            }
+        }
+
+        return commands;
+    }
+
+    /// <summary>
+    /// Runs a slash command for the user and returns the reply to only that user.
+    /// </summary>
+    private async Task ProcessSlashCommandAsync(ChatUser user, string text, CancellationToken ct)
+    {
+        var body = text.TrimStart()[1..];
+        var split = body.IndexOfAny([' ', '	']);
+        var name = split < 0 ? body : body[..split];
+        var args = split < 0 ? string.Empty : body[(split + 1)..].Trim();
+
+        var command = SlashCommands.FirstOrDefault(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
+        string? reply;
+
+        if (command == null)
+        {
+            reply = $"Unknown command '/{name}'. Type /help for a list of commands.";
+        }
+        else
+        {
+            try
+            {
+                reply = await command.ExecuteAsync(this, user, args, ct).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                Error?.Invoke(this, new ErrorEventArgs { Exception = ex, ClientId = user.Id });
+                reply = $"The command '/{name}' failed.";
+            }
+        }
+
+        if (!string.IsNullOrEmpty(reply))
+        {
+            await SendSystemMessageToAsync(user, reply, ct).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Send a server (system) message to a single user.</summary>
+    public async Task SendSystemMessageToAsync(ChatUser user, string message, CancellationToken ct = default)
+    {
+        var env = MessageEnvelope.Create(new { Text = message, Sender = "System" }, typeName: "SystemMessage");
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(env, MessageEnvelope.DefaultJsonOptions);
+        await user.SendAsync(MessageKind.JsonEnvelope, bytes, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Broadcast a server (system) message to everyone except one user.</summary>
+    public async Task BroadcastSystemMessageExceptAsync(Guid excludedId, string message, CancellationToken ct = default)
+    {
+        var env = MessageEnvelope.Create(new { Text = message, Sender = "System" }, typeName: "SystemMessage");
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(env, MessageEnvelope.DefaultJsonOptions);
+
+        await _broadcastGate.WaitAsync(ct).ConfigureAwait(false);
+
+        try
+        {
+            await Task.WhenAll(_clients.Where(c => c.Id != excludedId)
+                .Select(c => c.SendAsync(MessageKind.JsonEnvelope, bytes, ct))).ConfigureAwait(false);
+        }
+        finally
+        {
+            _broadcastGate.Release();
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -205,6 +298,13 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
                             var text = Encoding.UTF8.GetString(payload);
                             user.LastActivity = DateTime.Now;
                             user.MessagesSent++;
+
+                            // Slash commands are handled by the server and are not broadcast.
+                            if (text.TrimStart().StartsWith('/'))
+                            {
+                                await ProcessSlashCommandAsync(user, text, ct).ConfigureAwait(false);
+                                break;
+                            }
 
                             TextReceived?.Invoke(this, new TextMessageEventArgs 
                             { 
