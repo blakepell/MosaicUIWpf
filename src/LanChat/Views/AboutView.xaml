@@ -55,12 +55,12 @@
                         Margin="20,2,0,0"
                         FontSize="12"
                         Text="Version:" />
-                    <TextBlock
+                    <mosaic:VersionTextBlock
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="20,1,0,0"
-                        FontSize="12"
-                        Text="2025.09.20.1" />
+                        AssemblySource="EntryAssembly"
+                        FontSize="12" />
 
                     <TextBlock
                         Grid.Row="2"

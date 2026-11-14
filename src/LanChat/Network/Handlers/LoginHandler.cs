@@ -1,4 +1,5 @@
 ﻿using Argus.Memory;
+using LanChat.Common;
 using System.Text.Json;
 
 namespace LanChat.Network.Handlers
@@ -37,6 +38,20 @@ namespace LanChat.Network.Handlers
                 // Send system announcement about the newly logged in user
                 var announcement = $"{user.DisplayName} has joined the chat.";
                 await server.BroadcastSystemMessageAsync(announcement, ct).ConfigureAwait(false);
+
+                // Optionally PM the user the /help output so they know which commands are available.
+                var settings = AppServices.GetRequiredService<AppSettings>();
+
+                if (settings.SendHelpOnConnect)
+                {
+                    var help = server.SlashCommands.FirstOrDefault(c => string.Equals(c.Name, "help", StringComparison.OrdinalIgnoreCase));
+                    var text = help == null ? null : await help.ExecuteAsync(server, user, string.Empty, ct).ConfigureAwait(false);
+
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        await server.SendSystemMessageToAsync(user, text, ct).ConfigureAwait(false);
+                    }
+                }
             }
         }
     }

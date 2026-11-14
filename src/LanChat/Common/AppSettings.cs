@@ -144,6 +144,13 @@ namespace LanChat.Common
         [property: Browsable(true)]
         private bool _autoConnectWhenServerStarts = false;
 
+        [property: Category("Network")]
+        [property: DisplayName("Send Help on Connect")]
+        [property: Description("If the chat server should privately send the /help command output to users when they connect.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private bool _sendHelpOnConnect = true;
+
         /// <summary>
         /// The view state information for a given window.
         /// </summary>

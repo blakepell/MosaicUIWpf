@@ -62,6 +62,14 @@
                 </mosaic:SettingsItem>
 
                 <mosaic:SettingsItem
+                    Title="Send Help on Connect"
+                    Margin="0,4,0,0"
+                    Description="If your chat server should privately send users the list of /help commands when they connect."
+                    IconSource="/Assets/tag-48.png">
+                    <mosaic:ToggleButton IsChecked="{Binding SendHelpOnConnect, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                </mosaic:SettingsItem>
+
+                <mosaic:SettingsItem
                     Title="Server Name"
                     Margin="0,4,0,0"
                     Description="The name that your server should share to chat clients discovering servers."
