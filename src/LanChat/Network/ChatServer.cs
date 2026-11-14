@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,6 +30,11 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     private readonly ChatServerOptions _options;
     private Task? _acceptLoop;
     private List<IEnvelopeHandler> EnvelopeHandlers { get; }
+
+    /// <summary>
+    /// The TCP port the server listens on.
+    /// </summary>
+    public int Port => _options.Port;
 
     public ChatServer(ChatServerOptions options)
     {

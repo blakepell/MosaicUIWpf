@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -35,6 +35,86 @@ namespace LanChat.Views
             {
                 AppServices.AddSingleton(this);
             }
+
+            // Keep the local server available in the server list for as long as it is running.
+            var server = AppServices.GetService<ChatServer>();
+            if (server != null)
+            {
+                server.PropertyChanged += (_, args) =>
+                {
+                    if (args.PropertyName == nameof(ChatServer.IsListening))
+                    {
+                        Dispatcher.BeginInvoke(() => OnLocalServerStateChanged(server));
+                    }
+                };
+
+                this.SyncLocalServerEntry(server);
+            }
+        }
+
+        private bool _isLoggingIn;
+
+        private const string LocalServerAddress = "127.0.0.1";
+
+        /// <summary>
+        /// Adds the local server to the server list when it's listening and removes it when it's not.
+        /// </summary>
+        private void SyncLocalServerEntry(ChatServer server)
+        {
+            var existing = ServerList.FirstOrDefault(s => s.IpAddress == LocalServerAddress && s.ServerName == "Local Server");
+
+            if (server.IsListening)
+            {
+                if (existing == null)
+                {
+                    ServerList.Insert(0, new ServerInfo { IpAddress = LocalServerAddress, Port = server.Port, ServerName = "Local Server" });
+                }
+                else
+                {
+                    existing.Port = server.Port;
+                }
+
+                if (ServerAddress.SelectedItem == null)
+                {
+                    ServerAddress.SelectedIndex = 0;
+                }
+            }
+            else if (existing != null)
+            {
+                ServerList.Remove(existing);
+            }
+        }
+
+        private void OnLocalServerStateChanged(ChatServer server)
+        {
+            this.SyncLocalServerEntry(server);
+
+            if (server.IsListening && AppServices.GetRequiredService<AppSettings>().AutoConnectWhenServerStarts)
+            {
+                this.AutoConnectToLocalServer();
+            }
+        }
+
+        /// <summary>
+        /// Selects the local server and logs in to it, unless already connected or connecting.
+        /// </summary>
+        public void AutoConnectToLocalServer()
+        {
+            var server = AppServices.GetService<ChatServer>();
+
+            if (server is not { IsListening: true } || _isLoggingIn || _chatClient is { IsConnected: true })
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(UsernameTextBox.Text))
+            {
+                return;
+            }
+
+            this.SyncLocalServerEntry(server);
+            ServerAddress.SelectedItem = ServerList.FirstOrDefault(s => s.IpAddress == LocalServerAddress && s.ServerName == "Local Server");
+            LoginButton_Click(null!, null!);
         }
 
         public void LoginClick()
@@ -53,6 +133,7 @@ namespace LanChat.Views
             }
 
             _username = username;
+            _isLoggingIn = true;
 
             try
             {
@@ -77,6 +158,8 @@ namespace LanChat.Views
             }
             finally
             {
+                _isLoggingIn = false;
+
                 if (sender is Button btn2)
                 {
                     btn2.IsEnabled = true;
@@ -521,12 +604,8 @@ namespace LanChat.Views
 
                         _username = username;
 
-                        var localInfo = new ServerInfo { IpAddress = "127.0.0.1", Port = vm3.AppSettings.Port, ServerName = "Local Server" };
-                        if (!ServerList.Any(s => s.IpAddress == "127.0.0.1"))
-                        {
-                            ServerList.Insert(0, localInfo);
-                        }
-                        ServerAddress.SelectedItem = ServerList.First(s => s.IpAddress == "127.0.0.1");
+                        this.SyncLocalServerEntry(server);
+                        ServerAddress.SelectedItem = ServerList.First(s => s.IpAddress == LocalServerAddress && s.ServerName == "Local Server");
 
                         try
                         {

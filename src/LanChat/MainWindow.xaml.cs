@@ -1,4 +1,4 @@
-﻿/*
+/*
  * LanChat
  *
  * @project lead      : Blake Pell
@@ -12,7 +12,10 @@ using Argus.Memory;
 using LanChat.Common;
 using LanChat.Views;
 using Mosaic.UI.Wpf.Themes;
+using Mosaic.UI.Wpf;
+using Mosaic.UI.Wpf.Controls;
 using System.Windows;
+using System.Windows.Input;
 
 namespace LanChat
 {
@@ -36,6 +39,11 @@ namespace LanChat
                 var chatView = AppServices.GetService<ChatView>();
                 chatView?.LoginClick();
             }
+            else if (vm.AppSettings.AutoConnectWhenServerStarts)
+            {
+                // The server may have started before the chat view existed to see it.
+                AppServices.GetService<ChatView>()?.AutoConnectToLocalServer();
+            }
 
             var ips = Argus.Network.Utilities.GetLocalIpAddresses();
 
@@ -56,20 +64,58 @@ namespace LanChat
             vm.LanIpAddress = "127.0.0.1";
         }
 
+        private static readonly MosaicThemeMode[] ThemeCycle =
+        {
+            MosaicThemeMode.Light,
+            MosaicThemeMode.Dark,
+            MosaicThemeMode.Black,
+            MosaicThemeMode.Blue
+        };
+
         private void ButtonToggleTheme_OnClick(object sender, RoutedEventArgs e)
         {
             var theme = AppServices.GetRequiredService<ThemeManager>();
             var appSettings = AppServices.GetRequiredService<AppSettings>();
 
-            if (theme.Theme == Mosaic.UI.Wpf.MosaicThemeMode.Light)
+            // Advance to the next theme; an unlisted theme (e.g. HighContrast) restarts the cycle.
+            var index = Array.IndexOf(ThemeCycle, theme.Theme);
+            var next = ThemeCycle[(index + 1) % ThemeCycle.Length];
+
+            theme.Theme = next;
+            appSettings.Theme = next;
+        }
+
+        private void ShieldLanIp_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            this.CopyToClipboard(AppServices.GetRequiredService<AppViewModel>().LanIpAddress, "LAN IP address");
+        }
+
+        private void ShieldPort_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var port = AppServices.GetRequiredService<AppViewModel>().ChatServer?.Port;
+            this.CopyToClipboard(port?.ToString(), "Port");
+        }
+
+        /// <summary>
+        /// Copies text to the clipboard and shows a toast describing what was copied.
+        /// </summary>
+        private void CopyToClipboard(string? text, string description)
+        {
+            if (string.IsNullOrWhiteSpace(text))
             {
-                theme.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Dark;
-                appSettings.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Dark;
+                return;
             }
-            else
+
+            try
             {
-                theme.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Light;
-                appSettings.Theme = Mosaic.UI.Wpf.MosaicThemeMode.Light;
+                Clipboard.SetText(text);
+                ToastManager.ForElement(this)?.Show("Copied", $"{description} \"{text}\" copied to the clipboard.", ToastSeverity.Success, TimeSpan.FromSeconds(2));
+            }
+            catch (Exception ex)
+            {
+                // The clipboard can be locked by another process.
+                var vm = AppServices.GetRequiredService<AppViewModel>();
+                vm.StatusText = $"Unable to copy to clipboard: {ex.Message}";
             }
         }
     }

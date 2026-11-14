@@ -1,4 +1,4 @@
-﻿/*
+/*
  * LanChat
  *
  * @project lead      : Blake Pell
@@ -106,6 +106,16 @@ namespace LanChat.Common
         [property: Browsable(true)]
         private int _port = 4000;
 
+        /// <summary>
+        /// Gets or sets the TCP port the local chat server listens on.
+        /// </summary>
+        [property: Category("Network")]
+        [property: DisplayName("Server Port")]
+        [property: Description("The TCP port the local chat server listens on.  A restart is required for changes to take effect if the server is already running.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private int _serverPort = 4000;
+
         [property: Category("Network")]
         [property: DisplayName("Server Name")]
         [property: Description("The name of your chat server that will be seen on discovery requests.")]
@@ -126,6 +136,13 @@ namespace LanChat.Common
         [ObservableProperty]
         [property: Browsable(true)]
         private bool _connectToLocalhostOnStartup = false;
+
+        [property: Category("Network")]
+        [property: DisplayName("Auto-Connect When Server Starts")]
+        [property: Description("If the app should automatically connect to chat on the local server whenever the server is started.")]
+        [ObservableProperty]
+        [property: Browsable(true)]
+        private bool _autoConnectWhenServerStarts = false;
 
         /// <summary>
         /// The view state information for a given window.

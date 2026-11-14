@@ -1,4 +1,4 @@
-﻿/*
+/*
  * LanChat
  *
  * @project lead      : Blake Pell
@@ -36,7 +36,7 @@ namespace LanChat
 
             var server = new ChatServer(new ChatServerOptions
             {
-                Port = 4000,
+                Port = appSettings.ServerPort is > 0 and <= 65535 ? appSettings.ServerPort : 4000,
                 Name = Environment.MachineName,
             });
 

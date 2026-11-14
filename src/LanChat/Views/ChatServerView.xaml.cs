@@ -1,7 +1,7 @@
-﻿using Argus.Memory;
+using Argus.Memory;
 using LanChat.Common;
 using LanChat.Network;
-using Mosaic.UI.Wpf.Controls;
+using System.Windows;
 
 namespace LanChat.Views
 {
@@ -13,31 +13,39 @@ namespace LanChat.Views
         {
             InitializeComponent();
             _server = AppServices.GetRequiredService<ChatServer>();
-            ToggleServerIsOn.IsOn = _server.IsListening;
+            this.SyncToggle();
         }
 
-        private async void ServerIsOn_OnChanged(object? sender, ToggleSwitch.ToggleSwitchChangedEventArgs e)
+        private async void ServerIsOn_OnClick(object sender, RoutedEventArgs e)
         {
+            var turnOn = ToggleServerIsOn.IsChecked == true;
+
             try
             {
-                if (e.IsOn && !_server.IsListening)
+                if (turnOn && !_server.IsListening)
                 {
                     await _server.StartAsync();
-                    return;
                 }
-
-                if (!e.IsOn)
+                else if (!turnOn && _server.IsListening)
                 {
                     await _server.StopAsync();
-                    return;
                 }
             }
             catch (Exception ex)
             {
-                ToggleServerIsOn.IsOn = false;
                 var vm = AppServices.GetRequiredService<AppViewModel>();
                 vm.StatusText = $"Error: {ex.Message}";
             }
+            finally
+            {
+                this.SyncToggle();
+            }
+        }
+
+        private void SyncToggle()
+        {
+            ToggleServerIsOn.IsChecked = _server.IsListening;
+            ToggleServerIsOn.Content = _server.IsListening ? "On" : "Off";
         }
     }
 }
