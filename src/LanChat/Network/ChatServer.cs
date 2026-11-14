@@ -38,6 +38,38 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
     public IReadOnlyList<ISlashCommand> SlashCommands { get; }
 
     /// <summary>
+    /// Identifies this running application instance.  Clients send it at login so a client hosted in the
+    /// same process as the server can be recognized and granted admin.
+    /// </summary>
+    public static Guid InstanceId { get; } = Guid.NewGuid();
+
+    /// <summary>
+    /// Forcibly closes a user's connection.  The user's read loop then ends and cleans up normally.
+    /// </summary>
+    public async Task DisconnectUserAsync(ChatUser target, string reason, CancellationToken ct = default)
+    {
+        target.DisconnectRequested = true;
+
+        try
+        {
+            await SendSystemMessageToAsync(target, reason, ct).ConfigureAwait(false);
+        }
+        catch
+        {
+            /* the connection may already be gone */
+        }
+
+        try
+        {
+            target.Tcp.Close();
+        }
+        catch
+        {
+            /* ignore */
+        }
+    }
+
+    /// <summary>
     /// The TCP port the server listens on.
     /// </summary>
     public int Port => _options.Port;
@@ -124,7 +156,9 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
         var name = split < 0 ? body : body[..split];
         var args = split < 0 ? string.Empty : body[(split + 1)..].Trim();
 
-        var command = SlashCommands.FirstOrDefault(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
+        // Admin commands are treated as nonexistent for non-admins.
+        var command = SlashCommands.FirstOrDefault(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase)
+                                                        && (!c.AdminOnly || user.IsAdmin));
         string? reply;
 
         if (command == null)
@@ -376,7 +410,7 @@ public partial class ChatServer : ObservableObject, IAsyncDisposable
         {
             // ignore
         }
-        catch (IOException) // remote closed
+        catch (Exception ex) when (ex is IOException or ObjectDisposedException) // remote closed or kicked
         {
             // ignore
         }

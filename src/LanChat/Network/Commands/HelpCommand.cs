@@ -10,6 +10,7 @@ public class HelpCommand : ISlashCommand
     public Task<string?> ExecuteAsync(ChatServer server, ChatUser user, string args, CancellationToken ct)
     {
         var lines = server.SlashCommands
+            .Where(c => !c.AdminOnly || user.IsAdmin)
             .OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
             .Select(c => $"{c.Usage} - {c.Description}");
 

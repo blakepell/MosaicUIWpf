@@ -171,7 +171,7 @@ namespace LanChat.Network
                         if (!string.IsNullOrEmpty(savedUsername))
                         {
                             Username = savedUsername;
-                            var loginData = new Dictionary<string, string> { ["username"] = Username };
+                            var loginData = new Dictionary<string, string> { ["username"] = Username, ["instance"] = ChatServer.InstanceId.ToString() };
                             var envelope = MessageEnvelope.Create(loginData, typeName: "Login");
                             await SendEnvelopeInternalAsync(envelope, ct).ConfigureAwait(false);
                         }
@@ -208,7 +208,7 @@ namespace LanChat.Network
 
             Username = username.Trim();
 
-            var loginData = new Dictionary<string, string> { ["username"] = Username };
+            var loginData = new Dictionary<string, string> { ["username"] = Username, ["instance"] = ChatServer.InstanceId.ToString() };
             var envelope = MessageEnvelope.Create(loginData, typeName: "Login");
             await SendEnvelopeInternalAsync(envelope, ct).ConfigureAwait(false);
         }

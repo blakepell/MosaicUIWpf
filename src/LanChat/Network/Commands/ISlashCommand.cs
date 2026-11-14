@@ -17,6 +17,11 @@ public interface ISlashCommand
     string Description { get; }
 
     /// <summary>
+    /// When true only admins can run the command and see it in /help.
+    /// </summary>
+    bool AdminOnly => false;
+
+    /// <summary>
     /// Executes the command.
     /// </summary>
     /// <param name="server">The server processing the command.</param>

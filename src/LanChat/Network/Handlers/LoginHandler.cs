@@ -32,6 +32,13 @@ namespace LanChat.Network.Handlers
             {
                 var server = AppServices.GetRequiredService<ChatServer>();
                 user.Username = username.Trim();
+
+                // A client running in the same application instance as the server is an admin.
+                if (loginData.TryGetValue("instance", out var instance) && instance == ChatServer.InstanceId.ToString())
+                {
+                    user.IsAdmin = true;
+                }
+
                 user.LastActivity = DateTime.Now;
                 user.MessagesSent++;
 
