@@ -25,6 +25,19 @@ namespace LanChat
         {
             InitializeComponent();
             this.DataContext = AppServices.GetRequiredService<AppViewModel>();
+
+            // When the window regains focus, put the cursor back in the chat command box.
+            this.Activated += (_, _) => AppServices.GetService<ChatView>()?.FocusCommandBox();
+
+            // Typing anywhere in the window (outside another text input) goes to the chat command box,
+            // but only while the chat view is the visible one.
+            this.PreviewTextInput += (_, e) =>
+            {
+                if (AppServices.GetService<ChatView>()?.TryRouteTextInput(e.Text) == true)
+                {
+                    e.Handled = true;
+                }
+            };
         }
 
         private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)

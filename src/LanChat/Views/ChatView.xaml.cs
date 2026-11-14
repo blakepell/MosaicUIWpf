@@ -319,6 +319,45 @@ namespace LanChat.Views
             await _chatClient.LoginAsync(_username);
         }
 
+        /// <summary>
+        /// Focuses the command box when the chat view is showing the conversation.
+        /// </summary>
+        public void FocusCommandBox()
+        {
+            if (IsVisible && CommandTextBox.IsVisible && !CommandTextBox.IsKeyboardFocusWithin)
+            {
+                CommandTextBox.Focus();
+                CommandTextBox.CaretIndex = CommandTextBox.Text.Length;
+            }
+        }
+
+        /// <summary>
+        /// Routes typed text to the command box when the conversation is showing and focus isn't in another input.
+        /// Returns true if the text was consumed.
+        /// </summary>
+        public bool TryRouteTextInput(string? text)
+        {
+            // Only while this view is the visible one and showing the conversation (not the login panel).
+            if (!IsVisible || !CommandTextBox.IsVisible || string.IsNullOrEmpty(text) || char.IsControl(text[0]))
+            {
+                return false;
+            }
+
+            // Leave typing alone when focus is already in a text input (including the command box).
+            if (Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or PasswordBox)
+            {
+                return false;
+            }
+
+            FocusCommandBox();
+
+            // Insert at the caret, replacing any selection.
+            CommandTextBox.SelectedText = text;
+            CommandTextBox.CaretIndex = CommandTextBox.SelectionStart + CommandTextBox.SelectionLength;
+            CommandTextBox.SelectionLength = 0;
+            return true;
+        }
+
         private async void CommandTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)
