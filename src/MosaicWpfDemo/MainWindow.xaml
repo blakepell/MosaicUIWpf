@@ -138,10 +138,10 @@
 
                 <!--  Debug  -->
                 <mosaic:SideMenuItem
-                    Tag="DebugOnly"
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/bug-48.png"
+                    Tag="DebugOnly"
                     Text="Debug">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -157,11 +157,11 @@
 
                 <!--  Kitchen Sink (new)  -->
                 <mosaic:SideMenuItem
-                    Tag="DebugOnly"
                     Click="SideMenuItem_Click"
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/collage-48.png"
+                    Tag="DebugOnly"
                     Text="Kitchen Sink">
                     <mosaic:SideMenuItem.ParameterCollection>
                         <mosaic:SideMenuParameterCollection>
@@ -1056,6 +1056,42 @@
                             <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:PullToRefreshWrapper}" />
                             <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:PullToRefreshWrapperExample}" />
                             <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/refresh2-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Ribbon  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/tabs-96.png"
+                    Text="Ribbon">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Ribbon" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.RibbonExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.RibbonExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:Ribbon}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:RibbonExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/tabs-96.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
+                <!--  Ribbon Window  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/ribbon-window-96.png"
+                    Text="Ribbon Window">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Ribbon Window" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.RibbonDemoWindow.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.RibbonDemoWindow.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:Ribbon}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:RibbonWindowExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/ribbon-window-96.png" />
                         </mosaic:SideMenuParameterCollection>
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>

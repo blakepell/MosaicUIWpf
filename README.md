@@ -94,6 +94,8 @@ For a complete wiring example, see `MosaicTemplateApp` in the repository.
 
 ## Dark Theme
 
+![Ribbon](./docs/images/ribbon.png)
+
 ![Dark Theme](./docs/images/screen-chat1.png)
 
 ![VT52 Terminal with Green Phosphor Effect](./docs/images/vt52.png)
@@ -183,6 +185,7 @@ The following table lists the controls found in `src/Mosaic.UI.Wpf/Controls` and
 | [RadialColorPickerBox](./docs/RadialColorPickerBox.md) | A compact swatch and hex field with a drop-down RadialColorPicker for property panels and forms. |
 | [RadialProgressBar](./docs/RadialProgressBar.md) | Represents a ProgressBar that renders its value as a circular arc, pie, or a ring of discrete shapes. |
 | [RelativePanel](./docs/RelativePanel.md) | Defines an area within which you can position and align child objects in relation to each other or the parent panel. |
+| [Ribbon](./docs/Ribbon.md) | A modern Office-style Ribbon with adaptive Classic/Simplified layouts, contextual tabs, a Backstage, a Quick Access Toolbar, key tips, and persisted preferences. |
 | [ScalingTextBlock](./docs/ScalingTextBlock.md) | A TextBlock that attempts to scale the font size so all text fits within the available space. MinFontSize and MaxFontSize serve as the lower and upper boundaries. |
 | [SearchBox](./docs/SearchBox.md) | A custom TextBox tailored for searching or filtering. |
 | [SettingsItem](./docs/SettingsItem.md) | A settings item control. |

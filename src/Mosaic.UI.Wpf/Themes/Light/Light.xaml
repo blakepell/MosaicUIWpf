@@ -397,4 +397,46 @@
     <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
     <Color x:Key="GlyphColor">#FF444444</Color>
     <Color x:Key="GlyphMouseOver">#FF0078D7</Color>
+
+    <!--  Ribbon  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabStripBackgroundColor}">#FFEFF0F1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonTabStripBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabStripBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackgroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBorderColor}">#FFE1E1E1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBackgroundColor}">#FFE8E8E8</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBorderColor}">#00000000</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemPressedBackgroundColor}">#FFD6D6D6</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundColor}">#FFDDDDDD</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBorderColor}">#FFC8C8C8</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBackgroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonPopupBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBorderColor}">#FFD1D1D1</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonPopupBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBorderColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabSelectedForegroundColor}">#FF0F6CBD</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonTabSelectedForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabSelectedForegroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabIndicatorColor}">#FF0F6CBD</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonTabIndicatorBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabIndicatorColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundColor}">#FF185ABD</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundColor}">#26FFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundColor}">#40FFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundColor}">#FFFFFFFF</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBackgroundColor}">#FFF9F9F9</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBackgroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonKeyTipBackgroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipForegroundColor}">#FF1A1A1A</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipForegroundBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonKeyTipForegroundColor}}" />
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBorderColor}">#FF8A8A8A</Color>
+    <SolidColorBrush x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBorderBrush}" Color="{DynamicResource {x:Static themes:MosaicTheme.RibbonKeyTipBorderColor}}" />
 </ResourceDictionary>

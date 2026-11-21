@@ -114,4 +114,26 @@
     <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Background" Color="#FF000000" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Border" Color="#FF6B6B6B" />
     <SolidColorBrush x:Key="ComboBoxItem.Items.Disabled.Foreground" Color="#FFE0E0E0" />
+
+    <!--  Ribbon  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabStripBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBorderColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBackgroundColor}">#FF1A1A1A</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBorderColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemPressedBackgroundColor}">#FF3C3C3C</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundColor}">#FF000080</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBorderColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBorderColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabSelectedForegroundColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabIndicatorColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundColor}">#FF1E1E1E</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundColor}">#FF3C3C3C</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBackgroundColor}">#FF000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipForegroundColor}">#FFFFFF00</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBorderColor}">#FFFFFF00</Color>
 </ResourceDictionary>

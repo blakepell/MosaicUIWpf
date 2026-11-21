@@ -17,11 +17,13 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
 
-    <Grid Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}">
+    <Grid Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}" SizeChanged="OnTitleLayoutSizeChanged">
         <DockPanel LastChildFill="True">
 
             <!--  System Buttons (Right)  -->
             <StackPanel
+                x:Name="RightPanel"
+                SizeChanged="OnTitleLayoutSizeChanged"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Right"
                 Orientation="Horizontal">
@@ -72,31 +74,31 @@
                     Visibility="{Binding ShowCloseButton, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
 
-            <!--  App Icon  -->
-            <Image
-                x:Name="WindowIconImage"
-                Width="16"
-                Height="16"
-                Margin="8,0,4,0"
-                VerticalAlignment="Center"
-                Cursor="Arrow"
-                DockPanel.Dock="Left"
-                MouseLeftButtonDown="OnWindowIconMouseLeftButtonDown"
-                Source="{Binding IconSource, ElementName=TitleBarControl}"
-                Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel x:Name="LeftPanel" DockPanel.Dock="Left" Orientation="Horizontal" SizeChanged="OnTitleLayoutSizeChanged">
+                <!--  App Icon  -->
+                <Image
+                    x:Name="WindowIconImage"
+                    Width="16"
+                    Height="16"
+                    Margin="8,0,4,0"
+                    VerticalAlignment="Center"
+                    Cursor="Arrow"
+                    MouseLeftButtonDown="OnWindowIconMouseLeftButtonDown"
+                    Source="{Binding IconSource, ElementName=TitleBarControl}"
+                    Visibility="{Binding ShowIcon, ElementName=TitleBarControl, Converter={StaticResource BoolToVisibility}}" />
 
-            <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
-            <ContentPresenter
-                VerticalAlignment="Center"
-                Content="{Binding LeftContent, ElementName=TitleBarControl}"
-                DockPanel.Dock="Left" />
+                <!--  User-supplied left content (e.g. breadcrumbs, search)  -->
+                <ContentPresenter
+                    VerticalAlignment="Center"
+                    Content="{Binding LeftContent, ElementName=TitleBarControl}" />
+            </StackPanel>
 
             <!--  Transparent fill keeps mouse-hit-test intact for dragging empty title bar space.  -->
             <Border Background="Transparent" />
         </DockPanel>
 
         <!--  Title text overlays the full title bar so Center means the window's true center.  -->
-        <Border Background="Transparent" IsHitTestVisible="False">
+        <Border x:Name="TitleRegion" Background="Transparent" IsHitTestVisible="False" ClipToBounds="True">
             <TextBlock
                 x:Name="TitleTextBlock"
                 HorizontalAlignment="{Binding TitleAlignment, ElementName=TitleBarControl}"
@@ -105,18 +107,7 @@
                 FontSize="12"
                 FontWeight="Normal"
                 Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}"
-                TextTrimming="CharacterEllipsis">
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Margin" Value="32,0,8,0" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding TitleAlignment, ElementName=TitleBarControl}" Value="Center">
-                                <Setter Property="Margin" Value="0" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                TextTrimming="CharacterEllipsis" />
         </Border>
     </Grid>
 </UserControl>

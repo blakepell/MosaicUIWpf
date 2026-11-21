@@ -267,4 +267,26 @@
     <Color x:Key="ControlMouseOverColor">#FF798ADE</Color>
     <Color x:Key="GlyphColor">#FFD7DEFF</Color>
     <Color x:Key="GlyphMouseOver">#FFFFFFFF</Color>
+
+    <!--  Ribbon  -->
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabStripBackgroundColor}">#FF101843</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackgroundColor}">#FF182465</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBorderColor}">#FF24337F</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBackgroundColor}">#FF20339A</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemHoverBorderColor}">#00000000</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemPressedBackgroundColor}">#FF263FC9</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundColor}">#FF2B45C8</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonItemCheckedBorderColor}">#FF5A6FE0</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBackgroundColor}">#FF182465</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonPopupBorderColor}">#FF2F43A8</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabSelectedForegroundColor}">#FFB7C3FF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonTabIndicatorColor}">#FF798ADE</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundColor}">#FF263FC9</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundColor}">#26FFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundColor}">#40FFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundColor}">#FF131D55</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBackgroundColor}">#FF263FC9</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipForegroundColor}">#FFFFFFFF</Color>
+    <Color x:Key="{x:Static themes:MosaicTheme.RibbonKeyTipBorderColor}">#FF798ADE</Color>
 </ResourceDictionary>

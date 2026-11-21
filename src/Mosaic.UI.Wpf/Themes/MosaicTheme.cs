@@ -275,6 +275,88 @@
         /// </summary>
         public static ComponentResourceKey DataGridColumnHeaderHeight { get; } = new(typeof(MosaicTheme), "DataGridColumnHeaderHeight");
 
+        // Ribbon
+        /// <summary>Gets the resource key for the color: Surface behind the Ribbon tab strip and around the command card.</summary>
+        public static ComponentResourceKey RibbonTabStripBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonTabStripBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Surface behind the Ribbon tab strip and around the command card.</summary>
+        public static ComponentResourceKey RibbonTabStripBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonTabStripBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Background of the Ribbon command card that hosts the selected tab's groups.</summary>
+        public static ComponentResourceKey RibbonBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of the Ribbon command card that hosts the selected tab's groups.</summary>
+        public static ComponentResourceKey RibbonBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Border of the Ribbon command card.</summary>
+        public static ComponentResourceKey RibbonBorderColor { get; } = new(typeof(MosaicTheme), "RibbonBorderColor");
+        /// <summary>Gets the resource key for the brush: Border of the Ribbon command card.</summary>
+        public static ComponentResourceKey RibbonBorderBrush { get; } = new(typeof(MosaicTheme), "RibbonBorderBrush");
+        /// <summary>Gets the resource key for the color: Background of a Ribbon command under the pointer.</summary>
+        public static ComponentResourceKey RibbonItemHoverBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonItemHoverBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of a Ribbon command under the pointer.</summary>
+        public static ComponentResourceKey RibbonItemHoverBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonItemHoverBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Border of a Ribbon command under the pointer (visible in high contrast).</summary>
+        public static ComponentResourceKey RibbonItemHoverBorderColor { get; } = new(typeof(MosaicTheme), "RibbonItemHoverBorderColor");
+        /// <summary>Gets the resource key for the brush: Border of a Ribbon command under the pointer (visible in high contrast).</summary>
+        public static ComponentResourceKey RibbonItemHoverBorderBrush { get; } = new(typeof(MosaicTheme), "RibbonItemHoverBorderBrush");
+        /// <summary>Gets the resource key for the color: Background of a pressed Ribbon command.</summary>
+        public static ComponentResourceKey RibbonItemPressedBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonItemPressedBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of a pressed Ribbon command.</summary>
+        public static ComponentResourceKey RibbonItemPressedBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonItemPressedBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Background of a checked Ribbon toggle.</summary>
+        public static ComponentResourceKey RibbonItemCheckedBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonItemCheckedBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of a checked Ribbon toggle.</summary>
+        public static ComponentResourceKey RibbonItemCheckedBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonItemCheckedBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Border of a checked Ribbon toggle, a non-color cue for the checked state.</summary>
+        public static ComponentResourceKey RibbonItemCheckedBorderColor { get; } = new(typeof(MosaicTheme), "RibbonItemCheckedBorderColor");
+        /// <summary>Gets the resource key for the brush: Border of a checked Ribbon toggle, a non-color cue for the checked state.</summary>
+        public static ComponentResourceKey RibbonItemCheckedBorderBrush { get; } = new(typeof(MosaicTheme), "RibbonItemCheckedBorderBrush");
+        /// <summary>Gets the resource key for the color: Background of Ribbon drop-downs, collapsed-group and overflow popups.</summary>
+        public static ComponentResourceKey RibbonPopupBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonPopupBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of Ribbon drop-downs, collapsed-group and overflow popups.</summary>
+        public static ComponentResourceKey RibbonPopupBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonPopupBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Border of Ribbon popups.</summary>
+        public static ComponentResourceKey RibbonPopupBorderColor { get; } = new(typeof(MosaicTheme), "RibbonPopupBorderColor");
+        /// <summary>Gets the resource key for the brush: Border of Ribbon popups.</summary>
+        public static ComponentResourceKey RibbonPopupBorderBrush { get; } = new(typeof(MosaicTheme), "RibbonPopupBorderBrush");
+        /// <summary>Gets the resource key for the color: Foreground of the selected Ribbon tab header.</summary>
+        public static ComponentResourceKey RibbonTabSelectedForegroundColor { get; } = new(typeof(MosaicTheme), "RibbonTabSelectedForegroundColor");
+        /// <summary>Gets the resource key for the brush: Foreground of the selected Ribbon tab header.</summary>
+        public static ComponentResourceKey RibbonTabSelectedForegroundBrush { get; } = new(typeof(MosaicTheme), "RibbonTabSelectedForegroundBrush");
+        /// <summary>Gets the resource key for the color: Underline indicator of the selected Ribbon tab header.</summary>
+        public static ComponentResourceKey RibbonTabIndicatorColor { get; } = new(typeof(MosaicTheme), "RibbonTabIndicatorColor");
+        /// <summary>Gets the resource key for the brush: Underline indicator of the selected Ribbon tab header.</summary>
+        public static ComponentResourceKey RibbonTabIndicatorBrush { get; } = new(typeof(MosaicTheme), "RibbonTabIndicatorBrush");
+        /// <summary>Gets the resource key for the color: Background of the Backstage navigation pane.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of the Backstage navigation pane.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Foreground of the Backstage navigation pane.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationForegroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationForegroundColor");
+        /// <summary>Gets the resource key for the brush: Foreground of the Backstage navigation pane.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationForegroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationForegroundBrush");
+        /// <summary>Gets the resource key for the color: Background of a Backstage navigation entry under the pointer.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationHoverBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationHoverBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of a Backstage navigation entry under the pointer.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationHoverBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationHoverBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Background of the selected Backstage navigation entry.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationSelectedBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationSelectedBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of the selected Backstage navigation entry.</summary>
+        public static ComponentResourceKey RibbonBackstageNavigationSelectedBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackstageNavigationSelectedBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Background of the Backstage content area.</summary>
+        public static ComponentResourceKey RibbonBackstageContentBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonBackstageContentBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of the Backstage content area.</summary>
+        public static ComponentResourceKey RibbonBackstageContentBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonBackstageContentBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Background of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipBackgroundColor { get; } = new(typeof(MosaicTheme), "RibbonKeyTipBackgroundColor");
+        /// <summary>Gets the resource key for the brush: Background of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipBackgroundBrush { get; } = new(typeof(MosaicTheme), "RibbonKeyTipBackgroundBrush");
+        /// <summary>Gets the resource key for the color: Foreground of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipForegroundColor { get; } = new(typeof(MosaicTheme), "RibbonKeyTipForegroundColor");
+        /// <summary>Gets the resource key for the brush: Foreground of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipForegroundBrush { get; } = new(typeof(MosaicTheme), "RibbonKeyTipForegroundBrush");
+        /// <summary>Gets the resource key for the color: Border of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipBorderColor { get; } = new(typeof(MosaicTheme), "RibbonKeyTipBorderColor");
+        /// <summary>Gets the resource key for the brush: Border of Ribbon key tip badges.</summary>
+        public static ComponentResourceKey RibbonKeyTipBorderBrush { get; } = new(typeof(MosaicTheme), "RibbonKeyTipBorderBrush");
+
         // Typography
         public static ComponentResourceKey FontFamily { get; } = new(typeof(MosaicTheme), "FontFamily");
         public static ComponentResourceKey MonospaceFontFamily { get; } = new(typeof(MosaicTheme), "MonospaceFontFamily");

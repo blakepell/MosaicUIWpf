@@ -67,7 +67,7 @@ namespace Mosaic.UI.Wpf.Controls
             nameof(TitleAlignment),
             typeof(HorizontalAlignment),
             typeof(WindowTitleBar),
-            new PropertyMetadata(HorizontalAlignment.Left));
+            new PropertyMetadata(HorizontalAlignment.Left, (d, _) => ((WindowTitleBar)d).UpdateTitleRegion()));
 
         /// <summary>
         /// Gets or sets the image source used for the title bar icon.
@@ -291,6 +291,26 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Title
 
+        private void OnTitleLayoutSizeChanged(object sender, SizeChangedEventArgs e) => UpdateTitleRegion();
+
+        private void UpdateTitleRegion()
+        {
+            if (TitleRegion == null || LeftPanel == null || RightPanel == null)
+            {
+                return;
+            }
+
+            // Symmetric reservations preserve the window's true center, even with a QAT on the left.
+            var left = LeftPanel.ActualWidth + 8;
+            var right = RightPanel.ActualWidth + 8;
+            if (TitleAlignment == HorizontalAlignment.Center)
+            {
+                left = right = Math.Max(left, right);
+            }
+
+            TitleRegion.Margin = new Thickness(left, 0, right, 0);
+        }
+
         private static void OnTitleTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var titleBar = (WindowTitleBar)d;
@@ -403,6 +423,16 @@ namespace Mosaic.UI.Wpf.Controls
 
         private void OnTitleBarMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            // Interactive slot content owns its mouse input, including unhandled clicks on editor surfaces.
+            for (var current = e.OriginalSource as DependencyObject; current != null && current != this;
+                 current = current is Visual ? VisualTreeHelper.GetParent(current) : LogicalTreeHelper.GetParent(current))
+            {
+                if (current is System.Windows.Controls.Primitives.ButtonBase or TextBox or ComboBox or RibbonQuickAccessToolbar)
+                {
+                    return;
+                }
+            }
+
             if (e.ClickCount == 2)
             {
                 // Only maximize if the ShowMaxRestoreButton is visible.

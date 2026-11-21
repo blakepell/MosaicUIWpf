@@ -1,0 +1,2175 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mosaic.UI.Wpf.Controls"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes">
+
+    <!--
+        Ribbon styles. Modern Office (Fluent) metrics: 4px command corner radius, 8px card radius, subtle
+        neutral hover/press fills, accent underline for the selected tab. Every color is a theme token so
+        Light, Dark, Black, Blue and HighContrast all apply.
+    -->
+
+    <BooleanToVisibilityConverter x:Key="Mosaic.Ribbon.BoolToVisibility" />
+    <FontFamily x:Key="Mosaic.Ribbon.IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <Style x:Key="Mosaic.Ribbon.FocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle
+                        Margin="-1"
+                        RadiusX="4"
+                        RadiusY="4"
+                        SnapsToDevicePixels="True"
+                        Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                        StrokeThickness="2" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Mosaic.Ribbon.PopupBorder" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBackgroundBrush}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBorderBrush}}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="Margin" Value="0,2,10,10" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect
+                    BlurRadius="10"
+                    Direction="270"
+                    Opacity="0.2"
+                    ShadowDepth="2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Mosaic.Ribbon.MenuSeparator" TargetType="{x:Type Separator}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Rectangle
+                        Height="1"
+                        Margin="6,4"
+                        Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                        SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Small chevron used by drop-down commands.  -->
+    <Style x:Key="Mosaic.Ribbon.Chevron" TargetType="{x:Type Path}">
+        <Setter Property="Data" Value="M 0,0 L 3.5,3.5 L 7,0" />
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Height" Value="5" />
+        <Setter Property="Stretch" Value="None" />
+        <Setter Property="StrokeThickness" Value="1.2" />
+        <Setter Property="Stroke" Value="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="False" />
+    </Style>
+
+    <!--  ===================================================================================  -->
+    <!--  Part templates                                                                       -->
+    <!--  ===================================================================================  -->
+
+    <ControlTemplate x:Key="Mosaic.Ribbon.PartButtonTemplate" TargetType="{x:Type ButtonBase}">
+        <Border
+            x:Name="Bd"
+            Padding="{TemplateBinding Padding}"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="1"
+            CornerRadius="4"
+            SnapsToDevicePixels="True">
+            <ContentPresenter
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                Focusable="False"
+                RecognizesAccessKey="True" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="Mosaic.Ribbon.PartToggleTemplate" TargetType="{x:Type ToggleButton}">
+        <Border
+            x:Name="Bd"
+            Padding="{TemplateBinding Padding}"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="1"
+            CornerRadius="4"
+            SnapsToDevicePixels="True">
+            <ContentPresenter
+                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                Focusable="False"
+                RecognizesAccessKey="True" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBorderBrush}}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.45" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--  Chrome buttons: launchers, overflow, display options, scroll and customize buttons.  -->
+    <Style TargetType="{x:Type controls:RibbonChromeButton}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="MinWidth" Value="20" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Mosaic.Ribbon.FocusVisual}" />
+        <Setter Property="Template" Value="{StaticResource Mosaic.Ribbon.PartToggleTemplate}" />
+    </Style>
+
+    <Style x:Key="Mosaic.Ribbon.ScrollButton" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Interval" Value="60" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Border
+                        x:Name="Bd"
+                        Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBackgroundBrush}}"
+                        BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.RibbonPopupBorderBrush}}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ===================================================================================  -->
+    <!--  Commands                                                                             -->
+    <!--  ===================================================================================  -->
+
+    <Style x:Key="Mosaic.Ribbon.CommandBase" TargetType="{x:Type Control}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="Padding" Value="4,0" />
+        <Setter Property="MinWidth" Value="24" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Mosaic.Ribbon.FocusVisual}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="controls:RibbonItem.Variant" Value="Large">
+                <Setter Property="Padding" Value="3,2" />
+                <Setter Property="MinWidth" Value="44" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  RibbonButton  -->
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonButton}">
+                    <Border
+                        x:Name="Bd"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <StackPanel
+                                x:Name="LargeLayout"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed">
+                                <controls:RibbonIconPresenter
+                                    x:Name="LargeIcon"
+                                    Margin="0,3,0,2"
+                                    HorizontalAlignment="Center"
+                                    FallbackSource="{TemplateBinding SmallImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    GlyphBrush="{TemplateBinding GlyphBrush}"
+                                    IconSize="32"
+                                    Source="{TemplateBinding LargeImage}" />
+                                <TextBlock
+                                    MaxWidth="76"
+                                    MaxHeight="30"
+                                    LineHeight="14"
+                                    LineStackingStrategy="BlockLineHeight"
+                                    Text="{TemplateBinding Label}"
+                                    TextAlignment="Center"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel
+                                x:Name="RowLayout"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <controls:RibbonIconPresenter
+                                    x:Name="SmallIcon"
+                                    VerticalAlignment="Center"
+                                    FallbackSource="{TemplateBinding LargeImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    GlyphBrush="{TemplateBinding GlyphBrush}"
+                                    IconSize="16"
+                                    Source="{TemplateBinding SmallImage}" />
+                                <TextBlock
+                                    x:Name="RowLabel"
+                                    Margin="5,0,2,0"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding Label}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Large">
+                            <Setter TargetName="LargeLayout" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RowLayout" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Label" Value="{x:Null}">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="LargeIcon" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="SmallIcon" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonToggleButton  -->
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonToggleButton}">
+                    <Border
+                        x:Name="Bd"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <StackPanel
+                                x:Name="LargeLayout"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed">
+                                <controls:RibbonIconPresenter
+                                    x:Name="LargeIcon"
+                                    Margin="0,3,0,2"
+                                    HorizontalAlignment="Center"
+                                    FallbackSource="{TemplateBinding SmallImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    GlyphBrush="{TemplateBinding GlyphBrush}"
+                                    IconSize="32"
+                                    Source="{TemplateBinding LargeImage}" />
+                                <TextBlock
+                                    MaxWidth="76"
+                                    MaxHeight="30"
+                                    LineHeight="14"
+                                    LineStackingStrategy="BlockLineHeight"
+                                    Text="{TemplateBinding Label}"
+                                    TextAlignment="Center"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel
+                                x:Name="RowLayout"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                                <controls:RibbonIconPresenter
+                                    x:Name="SmallIcon"
+                                    VerticalAlignment="Center"
+                                    FallbackSource="{TemplateBinding LargeImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    GlyphBrush="{TemplateBinding GlyphBrush}"
+                                    IconSize="16"
+                                    Source="{TemplateBinding SmallImage}" />
+                                <TextBlock
+                                    x:Name="RowLabel"
+                                    Margin="5,0,2,0"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding Label}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Large">
+                            <Setter TargetName="LargeLayout" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RowLayout" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Label" Value="{x:Null}">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBorderBrush}}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="LargeIcon" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="SmallIcon" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonCheckBox  -->
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonCheckBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonCheckBox}">
+                    <Border
+                        x:Name="Bd"
+                        Padding="{TemplateBinding Padding}"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <Border
+                                x:Name="Box"
+                                Width="14"
+                                Height="14"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                BorderThickness="1"
+                                CornerRadius="3">
+                                <Path
+                                    x:Name="Check"
+                                    Data="M 2.5,6.5 L 5.2,9.2 L 10.5,3.5"
+                                    Stroke="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}"
+                                    StrokeThickness="1.6"
+                                    Visibility="Collapsed" />
+                            </Border>
+                            <TextBlock
+                                x:Name="LabelText"
+                                Margin="6,0,2,0"
+                                VerticalAlignment="Center"
+                                Text="{TemplateBinding Label}" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="Check" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Box" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonMenuItem (drop-downs, overflow, context menus)  -->
+    <Style TargetType="{x:Type controls:RibbonMenuItem}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonMenuItem}">
+                    <Border
+                        x:Name="Bd"
+                        Margin="0,1"
+                        Padding="4,2,6,2"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="RibbonMenuGesture" />
+                                <ColumnDefinition Width="16" />
+                            </Grid.ColumnDefinitions>
+                            <controls:RibbonIconPresenter
+                                x:Name="Icon"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Glyph="{TemplateBinding Glyph}"
+                                GlyphBrush="{TemplateBinding GlyphBrush}"
+                                IconSize="16"
+                                Source="{TemplateBinding SmallImage}" />
+                            <Path
+                                x:Name="CheckMark"
+                                Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="M 0,5 L 3.5,8.5 L 10,1.5"
+                                Stroke="{TemplateBinding Foreground}"
+                                StrokeThickness="1.5"
+                                Visibility="Collapsed" />
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="2,0,8,0"
+                                VerticalAlignment="Center">
+                                <ContentPresenter
+                                    ContentSource="Header"
+                                    RecognizesAccessKey="True"
+                                    TextElement.FontWeight="{TemplateBinding FontWeight}" />
+                                <TextBlock
+                                    x:Name="DescriptionText"
+                                    MaxWidth="280"
+                                    Margin="0,1,0,0"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="{TemplateBinding Description}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <TextBlock
+                                x:Name="Gesture"
+                                Grid.Column="2"
+                                Margin="12,0,4,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                Text="{TemplateBinding InputGestureText}" />
+                            <Path
+                                x:Name="Arrow"
+                                Grid.Column="3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="M 0,0 L 3.5,3.5 L 0,7"
+                                Stroke="{TemplateBinding Foreground}"
+                                StrokeThickness="1.2"
+                                Visibility="Collapsed" />
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                HorizontalOffset="-2"
+                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                Placement="Right"
+                                PopupAnimation="Fade"
+                                VerticalOffset="-5">
+                                <AdornerDecorator>
+                                    <Border Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                        <Border.Resources>
+                                            <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                        </Border.Resources>
+                                        <ScrollViewer
+                                            MaxHeight="520"
+                                            Focusable="False"
+                                            HorizontalScrollBarVisibility="Disabled"
+                                            VerticalScrollBarVisibility="Auto">
+                                            <ItemsPresenter
+                                                Grid.IsSharedSizeScope="True"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                KeyboardNavigation.TabNavigation="Cycle" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </AdornerDecorator>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="True">
+                            <Setter TargetName="Arrow" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsSubmenuOpen" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlDisabledForegroundBrush}}" />
+                            <Setter TargetName="Icon" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonContextMenu  -->
+    <Style TargetType="{x:Type controls:RibbonContextMenu}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="HasDropShadow" Value="False" />
+        <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonContextMenu}">
+                    <Border MinWidth="200" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                        <Border.Resources>
+                            <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                        </Border.Resources>
+                        <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
+                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Drop-down toggle surface shared by menu buttons and galleries  -->
+    <ControlTemplate x:Key="Mosaic.Ribbon.DropDownToggleTemplate" TargetType="{x:Type ToggleButton}">
+        <Border
+            x:Name="Bd"
+            Padding="{TemplateBinding Padding}"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="1"
+            CornerRadius="4"
+            SnapsToDevicePixels="True">
+            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Focusable="False" />
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--  RibbonMenuButton  -->
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonMenuButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonMenuButton}">
+                    <Grid>
+                        <ToggleButton
+                            x:Name="PART_ToggleButton"
+                            Padding="{TemplateBinding Padding}"
+                            VerticalContentAlignment="Stretch"
+                            AutomationProperties.Name="{TemplateBinding Label}"
+                            ClickMode="Release"
+                            FocusVisualStyle="{StaticResource Mosaic.Ribbon.FocusVisual}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Template="{StaticResource Mosaic.Ribbon.DropDownToggleTemplate}">
+                            <Grid>
+                                <StackPanel
+                                    x:Name="LargeLayout"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Visibility="Collapsed">
+                                    <controls:RibbonIconPresenter
+                                        x:Name="LargeIcon"
+                                        Margin="0,3,0,2"
+                                        HorizontalAlignment="Center"
+                                        FallbackSource="{TemplateBinding SmallImage}"
+                                        Glyph="{TemplateBinding Glyph}"
+                                        GlyphBrush="{TemplateBinding GlyphBrush}"
+                                        IconSize="32"
+                                        Source="{TemplateBinding LargeImage}" />
+                                    <TextBlock
+                                        MaxWidth="76"
+                                        HorizontalAlignment="Center"
+                                        Text="{TemplateBinding Label}"
+                                        TextAlignment="Center"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <Path Margin="0,3,0,0" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                </StackPanel>
+                                <StackPanel
+                                    x:Name="RowLayout"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <controls:RibbonIconPresenter
+                                        x:Name="SmallIcon"
+                                        VerticalAlignment="Center"
+                                        FallbackSource="{TemplateBinding LargeImage}"
+                                        Glyph="{TemplateBinding Glyph}"
+                                        GlyphBrush="{TemplateBinding GlyphBrush}"
+                                        IconSize="16"
+                                        Source="{TemplateBinding SmallImage}" />
+                                    <TextBlock
+                                        x:Name="RowLabel"
+                                        Margin="5,0,2,0"
+                                        VerticalAlignment="Center"
+                                        Text="{TemplateBinding Label}" />
+                                    <Path Margin="4,1,1,0" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                </StackPanel>
+                            </Grid>
+                        </ToggleButton>
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=PART_ToggleButton}"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <AdornerDecorator>
+                                <Border MinWidth="{Binding ActualWidth, ElementName=PART_ToggleButton}" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                    <Border.Resources>
+                                        <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                    </Border.Resources>
+                                    <ScrollViewer
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Focusable="False"
+                                        HorizontalScrollBarVisibility="Disabled"
+                                        VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter
+                                            Grid.IsSharedSizeScope="True"
+                                            KeyboardNavigation.DirectionalNavigation="Cycle"
+                                            KeyboardNavigation.TabNavigation="Cycle" />
+                                    </ScrollViewer>
+                                </Border>
+                            </AdornerDecorator>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Large">
+                            <Setter TargetName="LargeLayout" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RowLayout" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="PART_ToggleButton" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="LargeIcon" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="SmallIcon" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonSplitButton: primary surface and drop-down surface are separate parts.  -->
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonSplitButton}">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonSplitButton}">
+                    <Grid x:Name="Root">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            x:Name="Frame"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="4" />
+                        <Button
+                            x:Name="PART_PrimaryButton"
+                            Grid.RowSpan="2"
+                            Padding="4,0,2,0"
+                            AutomationProperties.Name="{TemplateBinding Label}"
+                            Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}"
+                            CommandTarget="{TemplateBinding CommandTarget}"
+                            FocusVisualStyle="{StaticResource Mosaic.Ribbon.FocusVisual}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Template="{StaticResource Mosaic.Ribbon.PartButtonTemplate}">
+                            <Grid>
+                                <controls:RibbonIconPresenter
+                                    x:Name="LargeIcon"
+                                    Margin="0,3,0,1"
+                                    HorizontalAlignment="Center"
+                                    FallbackSource="{TemplateBinding SmallImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    GlyphBrush="{TemplateBinding GlyphBrush}"
+                                    IconSize="32"
+                                    Source="{TemplateBinding LargeImage}"
+                                    Visibility="Collapsed" />
+                                <StackPanel
+                                    x:Name="RowContent"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <controls:RibbonIconPresenter
+                                        x:Name="SmallIcon"
+                                        VerticalAlignment="Center"
+                                        FallbackSource="{TemplateBinding LargeImage}"
+                                        Glyph="{TemplateBinding Glyph}"
+                                        GlyphBrush="{TemplateBinding GlyphBrush}"
+                                        IconSize="16"
+                                        Source="{TemplateBinding SmallImage}" />
+                                    <TextBlock
+                                        x:Name="RowLabel"
+                                        Margin="5,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Text="{TemplateBinding Label}" />
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                        <ToggleButton
+                            x:Name="PART_ToggleButton"
+                            Grid.RowSpan="2"
+                            Grid.Column="1"
+                            Padding="3,0"
+                            AutomationProperties.Name="More options"
+                            ClickMode="Release"
+                            FocusVisualStyle="{StaticResource Mosaic.Ribbon.FocusVisual}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Template="{StaticResource Mosaic.Ribbon.PartToggleTemplate}">
+                            <Grid>
+                                <StackPanel x:Name="LargeToggleContent" Visibility="Collapsed">
+                                    <TextBlock
+                                        MaxWidth="76"
+                                        HorizontalAlignment="Center"
+                                        Text="{TemplateBinding Label}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <Path Margin="0,2,0,2" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                </StackPanel>
+                                <Path x:Name="RowChevron" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                            </Grid>
+                        </ToggleButton>
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=Root}"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <AdornerDecorator>
+                                <Border MinWidth="{Binding ActualWidth, ElementName=Root}" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                    <Border.Resources>
+                                        <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                    </Border.Resources>
+                                    <ScrollViewer
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Focusable="False"
+                                        HorizontalScrollBarVisibility="Disabled"
+                                        VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter
+                                            Grid.IsSharedSizeScope="True"
+                                            KeyboardNavigation.DirectionalNavigation="Cycle"
+                                            KeyboardNavigation.TabNavigation="Cycle" />
+                                    </ScrollViewer>
+                                </Border>
+                            </AdornerDecorator>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Large">
+                            <Setter TargetName="PART_PrimaryButton" Property="Grid.RowSpan" Value="1" />
+                            <Setter TargetName="PART_PrimaryButton" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="PART_PrimaryButton" Property="Padding" Value="3,0" />
+                            <Setter TargetName="PART_ToggleButton" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="PART_ToggleButton" Property="Grid.RowSpan" Value="1" />
+                            <Setter TargetName="PART_ToggleButton" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="PART_ToggleButton" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="PART_ToggleButton" Property="VerticalContentAlignment" Value="Top" />
+                            <Setter TargetName="LargeIcon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RowContent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="LargeToggleContent" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="RowChevron" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="RowLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsCheckable" Value="True" />
+                                <Condition Property="IsChecked" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Frame" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundBrush}}" />
+                            <Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBorderBrush}}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="PART_ToggleButton" Property="IsHitTestVisible" Value="False" />
+                            <Setter TargetName="Frame" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="LargeIcon" Property="Opacity" Value="0.45" />
+                            <Setter TargetName="SmallIcon" Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonComboBox  -->
+    <Style x:Key="Mosaic.Ribbon.ComboBoxItem" TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                    <Border
+                        x:Name="Bd"
+                        Margin="0,1"
+                        Padding="8,4"
+                        Background="Transparent"
+                        CornerRadius="4">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemCheckedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:RibbonComboBox}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2,0" />
+        <Setter Property="MaxDropDownHeight" Value="360" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource Mosaic.Ribbon.ComboBoxItem}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonComboBox}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <StackPanel
+                            x:Name="LabelPanel"
+                            Margin="2,0,6,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <controls:RibbonIconPresenter
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Glyph="{TemplateBinding Glyph}"
+                                IconSize="16"
+                                Source="{TemplateBinding SmallImage}" />
+                            <TextBlock VerticalAlignment="Center" Text="{TemplateBinding Label}" />
+                        </StackPanel>
+                        <Grid
+                            x:Name="Box"
+                            Width="{TemplateBinding InputWidth}"
+                            Height="22">
+                            <ToggleButton
+                                x:Name="ToggleButton"
+                                ClickMode="Press"
+                                Focusable="False"
+                                IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Border
+                                            x:Name="Bd"
+                                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <Path
+                                                Margin="0,0,7,0"
+                                                HorizontalAlignment="Right"
+                                                Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter
+                                x:Name="ContentSite"
+                                Margin="7,0,22,0"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                IsHitTestVisible="False" />
+                            <TextBox
+                                x:Name="PART_EditableTextBox"
+                                Margin="4,0,20,0"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                CaretBrush="{TemplateBinding Foreground}"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                SelectionBrush="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}"
+                                Visibility="Hidden">
+                                <TextBox.Template>
+                                    <ControlTemplate TargetType="{x:Type TextBox}">
+                                        <ScrollViewer
+                                            x:Name="PART_ContentHost"
+                                            Focusable="False"
+                                            HorizontalScrollBarVisibility="Hidden"
+                                            VerticalScrollBarVisibility="Hidden" />
+                                    </ControlTemplate>
+                                </TextBox.Template>
+                            </TextBox>
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                Placement="Bottom"
+                                PopupAnimation="Fade">
+                                <AdornerDecorator>
+                                    <Border
+                                        MinWidth="{Binding ActualWidth, ElementName=Box}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                        <ScrollViewer Focusable="False" HorizontalScrollBarVisibility="Disabled">
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Border>
+                                </AdornerDecorator>
+                            </Popup>
+                        </Grid>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEditable" Value="True">
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="ShowLabel" Value="False">
+                            <Setter TargetName="LabelPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Label" Value="{x:Null}">
+                            <Setter TargetName="LabelPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="LabelPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonTextBox  -->
+    <Style TargetType="{x:Type controls:RibbonTextBox}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.SelectionBackgroundBrush}}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="2,0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonTextBox}">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                        <StackPanel
+                            x:Name="LabelPanel"
+                            Margin="2,0,6,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <controls:RibbonIconPresenter
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Glyph="{TemplateBinding Glyph}"
+                                IconSize="16" />
+                            <TextBlock VerticalAlignment="Center" Text="{TemplateBinding Label}" />
+                        </StackPanel>
+                        <Border
+                            x:Name="Bd"
+                            Width="{TemplateBinding InputWidth}"
+                            Height="22"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                Margin="4,0"
+                                VerticalAlignment="Center"
+                                Focusable="False"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Hidden" />
+                        </Border>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Label" Value="{x:Null}">
+                            <Setter TargetName="LabelPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="LabelPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonControlGroup  -->
+    <Style TargetType="{x:Type controls:RibbonControlGroup}">
+        <Setter Property="Margin" Value="1,0" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonControlGroup}">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonSeparator  -->
+    <Style TargetType="{x:Type controls:RibbonSeparator}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonSeparator}">
+                    <Rectangle
+                        Width="1"
+                        Margin="3,4"
+                        Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                        SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonGallery  -->
+    <Style x:Key="Mosaic.Ribbon.GalleryItem" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border
+                        x:Name="Bd"
+                        Margin="2"
+                        Padding="2"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <ContentPresenter />
+                            <Border
+                                x:Name="SelectionRing"
+                                Margin="-2"
+                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                                BorderThickness="2"
+                                CornerRadius="4"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="SelectionRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.CommandBase}" TargetType="{x:Type controls:RibbonGallery}">
+        <Setter Property="Padding" Value="4,0" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource Mosaic.Ribbon.GalleryItem}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource AncestorType={x:Type controls:RibbonGallery}}}" ItemWidth="{Binding ItemWidth, RelativeSource={RelativeSource AncestorType={x:Type controls:RibbonGallery}}}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonGallery}">
+                    <Grid x:Name="Root">
+                        <Border
+                            x:Name="InlineRoot"
+                            Margin="1,2"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackgroundBrush}}"
+                            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Visibility="Collapsed">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="18" />
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer
+                                    x:Name="PART_ScrollViewer"
+                                    Width="{TemplateBinding InlineWidth}"
+                                    CanContentScroll="False"
+                                    Focusable="False"
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    VerticalScrollBarVisibility="Hidden">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <RepeatButton
+                                        x:Name="PART_LineUp"
+                                        Padding="0"
+                                        AutomationProperties.Name="Previous row"
+                                        Focusable="False"
+                                        Template="{StaticResource Mosaic.Ribbon.PartButtonTemplate}">
+                                        <Path RenderTransformOrigin="0.5,0.5" Style="{StaticResource Mosaic.Ribbon.Chevron}">
+                                            <Path.RenderTransform>
+                                                <RotateTransform Angle="180" />
+                                            </Path.RenderTransform>
+                                        </Path>
+                                    </RepeatButton>
+                                    <RepeatButton
+                                        x:Name="PART_LineDown"
+                                        Grid.Row="1"
+                                        Padding="0"
+                                        AutomationProperties.Name="Next row"
+                                        Focusable="False"
+                                        Template="{StaticResource Mosaic.Ribbon.PartButtonTemplate}">
+                                        <Path Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                    </RepeatButton>
+                                    <ToggleButton
+                                        x:Name="ExpandButton"
+                                        Grid.Row="2"
+                                        Padding="0"
+                                        AutomationProperties.Name="More"
+                                        ClickMode="Release"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                        Template="{StaticResource Mosaic.Ribbon.PartToggleTemplate}">
+                                        <StackPanel>
+                                            <Rectangle
+                                                Width="7"
+                                                Height="1.2"
+                                                Fill="{TemplateBinding Foreground}" />
+                                            <Path Margin="0,1,0,0" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                        </StackPanel>
+                                    </ToggleButton>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        <ToggleButton
+                            x:Name="DropDownButton"
+                            Padding="{TemplateBinding Padding}"
+                            AutomationProperties.Name="{TemplateBinding Label}"
+                            ClickMode="Release"
+                            FocusVisualStyle="{StaticResource Mosaic.Ribbon.FocusVisual}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Template="{StaticResource Mosaic.Ribbon.DropDownToggleTemplate}">
+                            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                <controls:RibbonIconPresenter
+                                    VerticalAlignment="Center"
+                                    FallbackSource="{TemplateBinding LargeImage}"
+                                    Glyph="{TemplateBinding Glyph}"
+                                    IconSize="16"
+                                    Source="{TemplateBinding SmallImage}" />
+                                <TextBlock
+                                    x:Name="DropDownLabel"
+                                    Margin="5,0,2,0"
+                                    VerticalAlignment="Center"
+                                    Text="{TemplateBinding Label}" />
+                                <Path Margin="4,1,1,0" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=Root}"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <AdornerDecorator>
+                                <Border Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                    <Border.Resources>
+                                        <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                    </Border.Resources>
+                                    <StackPanel>
+                                        <ListBox
+                                            x:Name="PART_PopupList"
+                                            MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                            DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                            ItemContainerStyle="{StaticResource Mosaic.Ribbon.GalleryItem}"
+                                            ItemTemplate="{TemplateBinding ItemTemplate}"
+                                            ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                            <ListBox.Template>
+                                                <ControlTemplate TargetType="{x:Type ListBox}">
+                                                    <ScrollViewer Focusable="False" VerticalScrollBarVisibility="Auto">
+                                                        <ItemsPresenter />
+                                                    </ScrollViewer>
+                                                </ControlTemplate>
+                                            </ListBox.Template>
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel
+                                                        Width="{Binding DropDownItemsWidth, RelativeSource={RelativeSource AncestorType={x:Type controls:RibbonGallery}}}"
+                                                        ItemHeight="{Binding ItemHeight, RelativeSource={RelativeSource AncestorType={x:Type controls:RibbonGallery}}}"
+                                                        ItemWidth="{Binding ItemWidth, RelativeSource={RelativeSource AncestorType={x:Type controls:RibbonGallery}}}" />
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
+                                        </ListBox>
+                                        <ContentPresenter x:Name="Footer" Content="{TemplateBinding DropDownFooter}" />
+                                    </StackPanel>
+                                </Border>
+                            </AdornerDecorator>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Large">
+                            <Setter TargetName="InlineRoot" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="DropDownButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Relative" />
+                        </Trigger>
+                        <Trigger Property="Variant" Value="Small">
+                            <Setter TargetName="DropDownLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="DropDownFooter" Value="{x:Null}">
+                            <Setter TargetName="Footer" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="DropDownButton" Property="IsHitTestVisible" Value="False" />
+                            <Setter TargetName="ExpandButton" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Screen tip  -->
+    <Style TargetType="{x:Type controls:RibbonScreenTip}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="HasDropShadow" Value="False" />
+        <Setter Property="Placement" Value="Bottom" />
+        <Setter Property="VerticalOffset" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonScreenTip}">
+                    <Border MaxWidth="320" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                        <StackPanel Margin="6,4">
+                            <TextBlock TextWrapping="Wrap">
+                                <Run FontWeight="SemiBold" Text="{TemplateBinding Title}" />
+                                <Run
+                                    x:Name="GestureRun"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    Text="{TemplateBinding GestureText}" />
+                            </TextBlock>
+                            <TextBlock
+                                x:Name="DescriptionText"
+                                Margin="0,4,0,0"
+                                Text="{TemplateBinding Description}"
+                                TextWrapping="Wrap" />
+                            <ContentPresenter x:Name="ContentHost" Margin="0,4,0,0" />
+                            <StackPanel x:Name="FooterPanel">
+                                <Rectangle
+                                    Height="1"
+                                    Margin="0,8,0,6"
+                                    Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}" />
+                                <ContentPresenter Content="{TemplateBinding Footer}" ContentTemplate="{TemplateBinding FooterTemplate}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter TargetName="ContentHost" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Footer" Value="{x:Null}">
+                            <Setter TargetName="FooterPanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ===================================================================================  -->
+    <!--  Structure: groups, tabs, headers, QAT, Ribbon                                        -->
+    <!--  ===================================================================================  -->
+
+    <Style TargetType="{x:Type controls:RibbonGroup}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Continue" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls:RibbonGroupItemsPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonGroup}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Decorator x:Name="PART_InlineHost">
+                            <Grid x:Name="PART_ContentRoot" Margin="3,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ItemsPresenter Margin="0,2,0,0" />
+                                <controls:RibbonChromeButton
+                                    x:Name="GroupOverflowButton"
+                                    Grid.Column="1"
+                                    Margin="2,0,0,0"
+                                    AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}More {0} commands}"
+                                    ClickMode="Release"
+                                    IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    Visibility="{Binding HasOverflowItems, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.Ribbon.BoolToVisibility}}">
+                                    <Path Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                </controls:RibbonChromeButton>
+                                <Popup
+                                    AllowsTransparency="True"
+                                    controls:RibbonPopupService.CloseOnEscape="True"
+                                    Focusable="False"
+                                    IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    Placement="Bottom"
+                                    PlacementTarget="{Binding ElementName=GroupOverflowButton}"
+                                    PopupAnimation="Fade"
+                                    StaysOpen="False">
+                                    <AdornerDecorator>
+                                        <Border MinWidth="200" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                            <Border.Resources>
+                                                <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                            </Border.Resources>
+                                            <ItemsControl
+                                                Grid.IsSharedSizeScope="True"
+                                                ItemsSource="{Binding OverflowItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                KeyboardNavigation.TabNavigation="Cycle" />
+                                        </Border>
+                                    </AdornerDecorator>
+                                </Popup>
+                                <Grid
+                                    x:Name="HeaderRow"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    Height="18">
+                                    <TextBlock
+                                        x:Name="HeaderText"
+                                        Margin="12,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="{DynamicResource {x:Static themes:MosaicTheme.FontSizeSmall}}"
+                                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                        Text="{TemplateBinding Header}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <controls:RibbonChromeButton
+                                        x:Name="PART_LauncherButton"
+                                        Width="16"
+                                        Height="16"
+                                        MinWidth="16"
+                                        MinHeight="16"
+                                        Padding="0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}{0} options}"
+                                        IsToggle="False"
+                                        ToolTip="{TemplateBinding LauncherToolTip}"
+                                        Visibility="{Binding HasLauncher, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.Ribbon.BoolToVisibility}}">
+                                        <Path
+                                            Data="M 0.5,4 V 0.5 H 4 M 2.5,2.5 L 7.5,7.5 M 7.5,4 V 7.5 H 4"
+                                            Stroke="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                            StrokeThickness="1" />
+                                    </controls:RibbonChromeButton>
+                                </Grid>
+                            </Grid>
+                        </Decorator>
+                        <ToggleButton
+                            x:Name="PART_CollapsedButton"
+                            MinWidth="48"
+                            Padding="4,2"
+                            AutomationProperties.Name="{TemplateBinding Header}"
+                            ClickMode="Release"
+                            FocusVisualStyle="{StaticResource Mosaic.Ribbon.FocusVisual}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Template="{StaticResource Mosaic.Ribbon.DropDownToggleTemplate}"
+                            VerticalContentAlignment="Top"
+                            Visibility="Collapsed">
+                            <StackPanel HorizontalAlignment="Center">
+                                <Border
+                                    Width="36"
+                                    Height="36"
+                                    Margin="0,2,0,2"
+                                    HorizontalAlignment="Center"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <controls:RibbonIconPresenter
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Glyph="{TemplateBinding Glyph}"
+                                        IconSize="24"
+                                        Source="{TemplateBinding LargeImage}" />
+                                </Border>
+                                <TextBlock
+                                    MaxWidth="76"
+                                    HorizontalAlignment="Center"
+                                    Text="{TemplateBinding Header}"
+                                    TextAlignment="Center"
+                                    TextTrimming="CharacterEllipsis" />
+                                <Path Margin="0,3,0,0" Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <Popup
+                            x:Name="PART_CollapsedPopup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=PART_CollapsedButton}"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <AdornerDecorator>
+                                <Border Padding="2,4,2,0" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                    <Decorator x:Name="PART_PopupHost" />
+                                </Border>
+                            </AdornerDecorator>
+                        </Popup>
+                        <Rectangle
+                            x:Name="Separator"
+                            Grid.Column="1"
+                            Width="1"
+                            Margin="2,8,2,8"
+                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                            SnapsToDevicePixels="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Variant" Value="Collapsed">
+                            <Setter TargetName="PART_InlineHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_CollapsedButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsInlineEmpty" Value="True">
+                            <Setter TargetName="PART_InlineHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Separator" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="PART_CollapsedButton" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                        <Trigger Property="IsOverflowOpen" Value="True">
+                            <Setter TargetName="GroupOverflowButton" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                        <Trigger Property="controls:Ribbon.LayoutMode" Value="Simplified">
+                            <Setter TargetName="HeaderRow" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Separator" Property="Margin" Value="4,7" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:RibbonTabItem}">
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls:RibbonGroupsPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonTabItem}">
+                    <Grid x:Name="Root">
+                        <ItemsPresenter />
+                        <RepeatButton
+                            x:Name="PART_ScrollLeft"
+                            HorizontalAlignment="Left"
+                            AutomationProperties.Name="Scroll left"
+                            Style="{StaticResource Mosaic.Ribbon.ScrollButton}"
+                            Visibility="{Binding CanScrollLeft, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.Ribbon.BoolToVisibility}}">
+                            <TextBlock
+                                FontFamily="{StaticResource Mosaic.Ribbon.IconFont}"
+                                FontSize="9"
+                                Text="&#xE76B;" />
+                        </RepeatButton>
+                        <RepeatButton
+                            x:Name="PART_ScrollRight"
+                            HorizontalAlignment="Right"
+                            AutomationProperties.Name="Scroll right"
+                            Style="{StaticResource Mosaic.Ribbon.ScrollButton}"
+                            Visibility="{Binding CanScrollRight, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.Ribbon.BoolToVisibility}}">
+                            <TextBlock
+                                FontFamily="{StaticResource Mosaic.Ribbon.IconFont}"
+                                FontSize="9"
+                                Text="&#xE76C;" />
+                        </RepeatButton>
+                        <controls:RibbonChromeButton
+                            x:Name="OverflowButton"
+                            Width="34"
+                            HorizontalAlignment="Right"
+                            AutomationProperties.Name="More commands"
+                            ClickMode="Release"
+                            IsChecked="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Visibility="{Binding HasOverflowItems, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource Mosaic.Ribbon.BoolToVisibility}}">
+                            <TextBlock FontFamily="{StaticResource Mosaic.Ribbon.IconFont}" Text="&#xE712;" />
+                        </controls:RibbonChromeButton>
+                        <Popup
+                            AllowsTransparency="True"
+                            controls:RibbonPopupService.CloseOnEscape="True"
+                            Focusable="False"
+                            IsOpen="{Binding IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                            Placement="Bottom"
+                            PlacementTarget="{Binding ElementName=OverflowButton}"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <AdornerDecorator>
+                                <Border MinWidth="220" Style="{StaticResource Mosaic.Ribbon.PopupBorder}">
+                                    <Border.Resources>
+                                        <Style BasedOn="{StaticResource Mosaic.Ribbon.MenuSeparator}" TargetType="{x:Type Separator}" />
+                                    </Border.Resources>
+                                    <ScrollViewer
+                                        MaxHeight="520"
+                                        Focusable="False"
+                                        HorizontalScrollBarVisibility="Disabled"
+                                        VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl
+                                            Grid.IsSharedSizeScope="True"
+                                            ItemsSource="{Binding OverflowItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                            KeyboardNavigation.DirectionalNavigation="Cycle"
+                                            KeyboardNavigation.TabNavigation="Cycle" />
+                                    </ScrollViewer>
+                                </Border>
+                            </AdornerDecorator>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Root" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsOverflowOpen" Value="True">
+                            <Setter TargetName="OverflowButton" Property="IsHitTestVisible" Value="False" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Mosaic.Ribbon.TabStripItem" TargetType="{x:Type Control}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Mosaic.Ribbon.FocusVisual}" />
+        <Setter Property="MinHeight" Value="34" />
+    </Style>
+
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.TabStripItem}" TargetType="{x:Type controls:RibbonTabHeader}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonTabHeader}">
+                    <Grid Background="Transparent">
+                        <Border
+                            x:Name="Hover"
+                            Margin="1,4"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="4" />
+                        <Grid Margin="11,0">
+                            <ContentPresenter
+                                x:Name="Content"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True" />
+                            <Border
+                                x:Name="PART_Indicator"
+                                Height="3"
+                                Margin="0,0,0,3"
+                                VerticalAlignment="Bottom"
+                                Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabIndicatorBrush}}"
+                                CornerRadius="1.5"
+                                Visibility="Hidden" />
+                        </Grid>
+                        <Rectangle
+                            x:Name="ContextDivider"
+                            Width="1"
+                            Margin="0,9"
+                            HorizontalAlignment="Left"
+                            Fill="{DynamicResource {x:Static themes:MosaicTheme.ControlSeparatorBrush}}"
+                            Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Hover" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Hover" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsFirstContextual" Value="True">
+                            <Setter TargetName="ContextDivider" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="PART_Indicator" Property="Visibility" Value="Visible" />
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabSelectedForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsContextual" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                            <Setter TargetName="PART_Indicator" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsContextual" Value="True" />
+                                <Condition Property="HasContextualBrush" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{Binding ContextualBrush, RelativeSource={RelativeSource Self}}" />
+                            <Setter TargetName="PART_Indicator" Property="Background" Value="{Binding ContextualBrush, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.TabStripItem}" TargetType="{x:Type controls:RibbonApplicationButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonApplicationButton}">
+                    <Grid Background="Transparent">
+                        <Border
+                            x:Name="Hover"
+                            Margin="1,4"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="1"
+                            CornerRadius="4" />
+                        <ContentPresenter
+                            Margin="11,0"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Hover" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            <Setter TargetName="Hover" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBorderBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Hover" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:RibbonQuickAccessToolbar}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonQuickAccessToolbar}">
+                    <StackPanel
+                        Height="28"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal">
+                        <ItemsPresenter Margin="0,2" />
+                        <controls:RibbonChromeButton
+                            x:Name="PART_CustomizeButton"
+                            Margin="2,4"
+                            AutomationProperties.Name="Customize Quick Access Toolbar"
+                            IsToggle="False">
+                            <Path Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                        </controls:RibbonChromeButton>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:Ribbon}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonTabStripBackgroundBrush}}" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <Grid />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:Ribbon}">
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <ContentPresenter x:Name="PART_QatAbovePresenter" Margin="8,2,8,0" />
+
+                            <Grid
+                                x:Name="TabStrip"
+                                Grid.Row="1"
+                                Margin="6,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <controls:RibbonApplicationButton
+                                    x:Name="PART_ApplicationButton"
+                                    AutomationProperties.Name="File"
+                                    Content="{TemplateBinding ApplicationButtonContent}"
+                                    controls:RibbonKeyTipService.KeyTip="F" />
+                                <ItemsControl
+                                    x:Name="PART_TabHeaderItemsControl"
+                                    Grid.Column="1"
+                                    Focusable="False"
+                                    ItemsSource="{Binding TabHeaders, RelativeSource={RelativeSource TemplatedParent}}"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    KeyboardNavigation.TabNavigation="Once">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                                <ContentPresenter
+                                    x:Name="PART_TabRowToolbarPresenter"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding TabRowToolbarContent}" />
+                            </Grid>
+
+                            <Decorator x:Name="PART_BodyHost" Grid.Row="2">
+                                <Border
+                                    x:Name="PART_Body"
+                                    Margin="6,0,6,6"
+                                    Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackgroundBrush}}"
+                                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.RibbonBorderBrush}}"
+                                    BorderThickness="1"
+                                    CornerRadius="8">
+                                    <Grid>
+                                        <ItemsPresenter
+                                            x:Name="PART_ItemsPresenter"
+                                            Margin="4,3,30,3"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"
+                                            KeyboardNavigation.TabNavigation="Local" />
+                                        <controls:RibbonChromeButton
+                                            x:Name="PART_DisplayOptionsButton"
+                                            Margin="0,0,4,4"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            AutomationProperties.Name="Ribbon display options"
+                                            IsToggle="False"
+                                            ToolTip="Ribbon display options">
+                                            <Path Style="{StaticResource Mosaic.Ribbon.Chevron}" />
+                                        </controls:RibbonChromeButton>
+                                    </Grid>
+                                </Border>
+                            </Decorator>
+
+                            <ContentPresenter
+                                x:Name="PART_QatBelowPresenter"
+                                Grid.Row="3"
+                                Margin="8,0,8,4" />
+                            <ContentPresenter
+                                x:Name="PART_FooterPresenter"
+                                Grid.Row="4"
+                                Content="{TemplateBinding FooterContent}" />
+
+                            <Popup
+                                x:Name="PART_MinimizedPopup"
+                                Width="{Binding ActualWidth, ElementName=Root}"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{Binding IsMinimizedPopupOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                Placement="Bottom"
+                                PlacementTarget="{Binding ElementName=TabStrip}"
+                                PopupAnimation="Slide"
+                                StaysOpen="True">
+                                <AdornerDecorator>
+                                    <Decorator x:Name="PART_MinimizedPopupHost" />
+                                </AdornerDecorator>
+                            </Popup>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Backstage" Value="{x:Null}">
+                            <Setter TargetName="PART_ApplicationButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMinimized" Value="True">
+                            <Setter TargetName="PART_BodyHost" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowDisplayOptionsButton" Value="False">
+                            <Setter TargetName="PART_DisplayOptionsButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_ItemsPresenter" Property="Margin" Value="4,3" />
+                        </Trigger>
+                        <Trigger Property="IsCollapsed" Value="True">
+                            <Setter TargetName="Root" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ===================================================================================  -->
+    <!--  Backstage                                                                            -->
+    <!--  ===================================================================================  -->
+
+    <!--
+        Navigation entries color their own template only: a page's content is a logical child of its entry and
+        must inherit the content-area foreground, not the navigation pane's.
+    -->
+    <Style x:Key="Mosaic.Ribbon.BackstageNavItem" TargetType="{x:Type Control}">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    </Style>
+
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.BackstageNavItem}" TargetType="{x:Type controls:RibbonBackstageTabItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonBackstageTabItem}">
+                    <Border
+                        x:Name="Bd"
+                        Margin="6,1"
+                        Padding="14,0"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        TextElement.Foreground="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                Width="18"
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource Mosaic.Ribbon.IconFont}"
+                                FontSize="16"
+                                Text="{TemplateBinding Glyph}" />
+                            <ContentPresenter VerticalAlignment="Center" ContentSource="Header" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundBrush}}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource Mosaic.Ribbon.BackstageNavItem}" TargetType="{x:Type controls:RibbonBackstageButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonBackstageButton}">
+                    <Border
+                        x:Name="Bd"
+                        Margin="6,1"
+                        Padding="14,0"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        TextElement.Foreground="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}">
+                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                            <TextBlock
+                                Width="18"
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource Mosaic.Ribbon.IconFont}"
+                                FontSize="16"
+                                Text="{TemplateBinding Glyph}" />
+                            <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationSelectedBackgroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:RibbonBackstage}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+        <Setter Property="FontFamily" Value="{DynamicResource {x:Static themes:MosaicTheme.FontFamily}}" />
+        <Setter Property="FontSize" Value="{DynamicResource {x:Static themes:MosaicTheme.FontSizeNormal}}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:RibbonBackstage}">
+                    <Grid Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageContentBackgroundBrush}}" ClipToBounds="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            x:Name="PART_Navigation"
+                            Width="208"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationBackgroundBrush}}">
+                            <Border.Resources>
+                                <Style TargetType="{x:Type Separator}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type Separator}">
+                                                <Rectangle
+                                                    Height="1"
+                                                    Margin="20,8"
+                                                    Fill="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundBrush}}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Border.Resources>
+                            <DockPanel>
+                                <Button
+                                    x:Name="PART_BackButton"
+                                    Width="36"
+                                    Height="36"
+                                    Margin="16,14,0,14"
+                                    HorizontalAlignment="Left"
+                                    AutomationProperties.Name="Back"
+                                    DockPanel.Dock="Top"
+                                    ToolTip="Back">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border
+                                                x:Name="Bd"
+                                                Background="Transparent"
+                                                BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}"
+                                                BorderThickness="1.5"
+                                                CornerRadius="18">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{StaticResource Mosaic.Ribbon.IconFont}"
+                                                    FontSize="14"
+                                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationForegroundBrush}}"
+                                                    Text="&#xE72B;" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonBackstageNavigationHoverBackgroundBrush}}" />
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                    <Setter TargetName="Bd" Property="BorderThickness" Value="2.5" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <ScrollViewer
+                                    Focusable="False"
+                                    HorizontalScrollBarVisibility="Disabled"
+                                    VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Once" />
+                                </ScrollViewer>
+                            </DockPanel>
+                        </Border>
+                        <Border
+                            x:Name="PART_Content"
+                            Grid.Column="1"
+                            Padding="44,28,32,24">
+                            <ContentPresenter Content="{TemplateBinding SelectedContent}" KeyboardNavigation.TabNavigation="Local" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="CanClose" Value="False">
+                            <Setter TargetName="PART_BackButton" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

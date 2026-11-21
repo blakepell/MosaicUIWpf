@@ -67,6 +67,7 @@
 		<None Remove="Assets\play-pause-stop-48.png" />
 		<None Remove="Assets\progress-48.png" />
 		<None Remove="Assets\refresh2-48.png" />
+		<None Remove="Assets\ribbon-window-96.png" />
 		<None Remove="Assets\screenshot-48.png" />
 		<None Remove="Assets\search-48.png" />
 		<None Remove="Assets\settings-panel-48.png" />
@@ -77,6 +78,7 @@
 		<None Remove="Assets\start-half-empty-48.png" />
 		<None Remove="Assets\stopwatch-48.png" />
 		<None Remove="Assets\tab-control-48.png" />
+		<None Remove="Assets\tabs-96.png" />
 		<None Remove="Assets\tag-48.png" />
 		<None Remove="Assets\terminal-48.png" />
 		<None Remove="Assets\text-48.png" />
@@ -158,6 +160,7 @@
 		<Resource Include="Assets\play-pause-stop-48.png" />
 		<Resource Include="Assets\progress-48.png" />
 		<Resource Include="Assets\refresh2-48.png" />
+		<Resource Include="Assets\ribbon-window-96.png" />
 		<Resource Include="Assets\screenshot-48.png" />
 		<Resource Include="Assets\search-48.png" />
 		<Resource Include="Assets\settings-panel-48.png" />
@@ -168,6 +171,7 @@
 		<Resource Include="Assets\start-half-empty-48.png" />
 		<Resource Include="Assets\stopwatch-48.png" />
 		<Resource Include="Assets\tab-control-48.png" />
+		<Resource Include="Assets\tabs-96.png" />
 		<Resource Include="Assets\tag-48.png" />
 		<Resource Include="Assets\termina3-48.png" />
 		<Resource Include="Assets\terminal-48.png" />
@@ -862,6 +866,19 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="Views\Examples\PullToRefreshWrapperExample.xaml.cs">
 			<Link>LinkedSources\PullToRefreshWrapperExample.xaml.cs</Link>
+		</EmbeddedResource>
+
+		<EmbeddedResource Include="Views\Examples\RibbonDemoWindow.xaml">
+			<Link>LinkedSources\RibbonDemoWindow.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\RibbonDemoWindow.xaml.cs">
+			<Link>LinkedSources\RibbonDemoWindow.xaml.cs</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\RibbonExample.xaml">
+			<Link>LinkedSources\RibbonExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\RibbonExample.xaml.cs">
+			<Link>LinkedSources\RibbonExample.xaml.cs</Link>
 		</EmbeddedResource>
 
 		<EmbeddedResource Include="Views\Examples\RadialProgressBarExample.xaml">

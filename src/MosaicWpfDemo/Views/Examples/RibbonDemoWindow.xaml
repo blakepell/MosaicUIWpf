@@ -1,0 +1,756 @@
+<Window
+    x:Class="MosaicWpfDemo.Views.Examples.RibbonDemoWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MosaicWpfDemo.Views.Examples"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mosaic="clr-namespace:Mosaic.UI.Wpf.Controls;assembly=Mosaic.UI.Wpf"
+    xmlns:theme="http://schemas.apexgate.net/wpf/mosaic-ui"
+    xmlns:themes="clr-namespace:Mosaic.UI.Wpf.Themes;assembly=Mosaic.UI.Wpf"
+    Title="Document1 - Mosaic Writer"
+    Width="1280"
+    Height="820"
+    MinWidth="360"
+    MinHeight="240"
+    theme:WindowChromeBehavior.CaptionHeight="0"
+    theme:WindowChromeBehavior.CornerRadius="10"
+    theme:WindowChromeBehavior.GlassFrameThickness="0"
+    theme:WindowChromeBehavior.IsEnabled="True"
+    theme:WindowChromeBehavior.ResizeBorderThickness="5"
+    theme:WindowChromeBehavior.UseAeroCaptionButtons="True"
+    Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.WindowBorderBrush}}"
+    Foreground="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}"
+    Icon="/MosaicWpfDemo;component/Assets/toolbox-48.png"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <!--  File commands are handled by the window, so Ctrl+N/O/S/P work anywhere and the Ribbon and Backstage share them.  -->
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New" Executed="New_Executed" />
+        <CommandBinding Command="ApplicationCommands.Open" Executed="Open_Executed" />
+        <CommandBinding Command="ApplicationCommands.Save" Executed="Save_Executed" />
+        <CommandBinding Command="ApplicationCommands.SaveAs" Executed="SaveAs_Executed" />
+        <CommandBinding Command="ApplicationCommands.Print" Executed="Print_Executed" />
+        <CommandBinding Command="ApplicationCommands.Close" Executed="Close_Executed" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <!--  Style gallery cell: a live text sample of the style plus its name.  -->
+        <DataTemplate x:Key="StyleGalleryItemTemplate" DataType="{x:Type local:RibbonStyleItem}">
+            <Border
+                Padding="4,2"
+                Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                CornerRadius="3">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock
+                        FontSize="{Binding PreviewSize}"
+                        FontStyle="{Binding FontStyle}"
+                        FontWeight="{Binding FontWeight}"
+                        Text="AaBbCc"
+                        TextTrimming="CharacterEllipsis">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding Foreground}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Foreground}" Value="{x:Null}">
+                                        <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock
+                        FontSize="10"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                        Text="{Binding Name}"
+                        TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!--  Flat status bar buttons.  -->
+        <Style x:Key="StatusButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="22" />
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static themes:MosaicTheme.WindowForegroundBrush}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            x:Name="Bd"
+                            Background="Transparent"
+                            CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemHoverBackgroundBrush}}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static themes:MosaicTheme.RibbonItemPressedBackgroundBrush}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  Title bar  -->
+        <mosaic:WindowTitleBar
+            x:Name="TitleBar"
+            Grid.Row="0"
+            IconSource="/MosaicWpfDemo;component/Assets/toolbox-48.png"
+            TitleAlignment="Center"
+            TitleText="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}">
+            <!-- Above-ribbon QAT shares the title bar; ShowIcon=False also reclaims the icon space. -->
+            <mosaic:WindowTitleBar.LeftContent>
+                <ContentControl Margin="4,0" />
+            </mosaic:WindowTitleBar.LeftContent>
+            <mosaic:WindowTitleBar.RightContent>
+                <Button
+                    Width="48"
+                    Click="ToggleTheme_Click"
+                    Content="&#xE793;"
+                    FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
+                    Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
+                    ToolTip="Cycle themes (Light, Dark, Black, Blue, High Contrast)" />
+            </mosaic:WindowTitleBar.RightContent>
+        </mosaic:WindowTitleBar>
+
+        <!--  Ribbon + document. The Backstage covers this panel (not the title bar), as in Office.  -->
+        <mosaic:RibbonContainerPanel Grid.Row="1">
+            <mosaic:Ribbon
+                x:Name="WriterRibbon"
+                QuickAccessToolbarHost="{Binding LeftContent, ElementName=TitleBar}"
+                SelectionChanged="WriterRibbon_SelectionChanged">
+
+                <mosaic:Ribbon.ContextualTabGroups>
+                    <mosaic:RibbonContextualTabGroup
+                        Key="Table"
+                        x:Name="TableContext"
+                        Brush="#FF7A4CC2"
+                        Header="Table Tools" />
+                </mosaic:Ribbon.ContextualTabGroups>
+
+                <mosaic:Ribbon.TabRowToolbarContent>
+                    <StackPanel Orientation="Horizontal">
+                        <mosaic:RibbonButton
+                            Key="CommentsPane"
+                            Padding="4"
+                            Click="NotImplemented_Click"
+                            Glyph="&#xE8BD;"
+                            Label="Comments" />
+                        <mosaic:RibbonButton
+                            Key="Share"
+                            Margin="4,0,0,0"
+                            Padding="4"
+                            Background="{DynamicResource {x:Static themes:MosaicTheme.AccentBrush}}"
+                            Click="NotImplemented_Click"
+                            Foreground="{DynamicResource {x:Static themes:MosaicTheme.SelectionForegroundBrush}}"
+                            Glyph="&#xE72D;"
+                            Label="Share" />
+                    </StackPanel>
+                </mosaic:Ribbon.TabRowToolbarContent>
+
+                <!--  ============================  FILE (BACKSTAGE)  ============================  -->
+                <mosaic:Ribbon.Backstage>
+                    <mosaic:RibbonBackstage x:Name="Backstage">
+                        <mosaic:RibbonBackstageTabItem Glyph="&#xE80F;" Header="Home">
+                            <StackPanel>
+                                <TextBlock
+                                    x:Name="GreetingText"
+                                    FontSize="26"
+                                    FontWeight="Light" />
+                                <TextBlock
+                                    Margin="0,22,0,10"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="New" />
+                                <WrapPanel>
+                                    <Button
+                                        Width="120"
+                                        Height="150"
+                                        Margin="0,0,14,0"
+                                        Command="ApplicationCommands.New"
+                                        Content="Blank document" />
+                                    <Button
+                                        Width="120"
+                                        Height="150"
+                                        Click="NewFromTemplate_Click"
+                                        Content="Welcome tour" />
+                                </WrapPanel>
+                                <TextBlock
+                                    Margin="0,26,0,10"
+                                    FontSize="14"
+                                    FontWeight="SemiBold"
+                                    Text="Open" />
+                                <Button
+                                    Padding="16,6"
+                                    HorizontalAlignment="Left"
+                                    Command="ApplicationCommands.Open"
+                                    Content="Browse for a Rich Text document…" />
+                            </StackPanel>
+                        </mosaic:RibbonBackstageTabItem>
+                        <mosaic:RibbonBackstageTabItem Glyph="&#xE946;" Header="Info">
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="26"
+                                    FontWeight="Light"
+                                    Text="Info" />
+                                <TextBlock
+                                    x:Name="InfoText"
+                                    Margin="0,18,0,0"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </mosaic:RibbonBackstageTabItem>
+                        <Separator />
+                        <mosaic:RibbonBackstageButton
+                            Command="ApplicationCommands.Open"
+                            Content="Open"
+                            Glyph="&#xE8E5;" />
+                        <mosaic:RibbonBackstageButton
+                            Command="ApplicationCommands.Save"
+                            Content="Save"
+                            Glyph="&#xE74E;" />
+                        <mosaic:RibbonBackstageButton
+                            Command="ApplicationCommands.SaveAs"
+                            Content="Save As"
+                            Glyph="&#xE792;" />
+                        <mosaic:RibbonBackstageButton
+                            Command="ApplicationCommands.Print"
+                            Content="Print"
+                            Glyph="&#xE749;" />
+                        <mosaic:RibbonBackstageButton
+                            Command="ApplicationCommands.Close"
+                            Content="Close"
+                            Glyph="&#xE8BB;" />
+                        <Separator />
+                        <mosaic:RibbonBackstageTabItem Glyph="&#xE713;" Header="Options">
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="26"
+                                    FontWeight="Light"
+                                    Text="Options" />
+                                <TextBlock
+                                    Margin="0,22,0,8"
+                                    FontWeight="SemiBold"
+                                    Text="Ribbon layout" />
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton
+                                        x:Name="ClassicOption"
+                                        Margin="0,0,16,0"
+                                        Checked="LayoutOption_Checked"
+                                        Content="Classic" />
+                                    <RadioButton
+                                        x:Name="SimplifiedOption"
+                                        Checked="LayoutOption_Checked"
+                                        Content="Simplified" />
+                                </StackPanel>
+                                <StackPanel Margin="0,14,0,0" Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center"
+                                        Text="Tab underline animation" />
+                                    <ComboBox
+                                        x:Name="TabIndicatorAnimationCombo"
+                                        Width="110"
+                                        SelectedItem="{Binding TabIndicatorAnimation, ElementName=WriterRibbon, Mode=TwoWay}" />
+                                </StackPanel>
+                                <CheckBox
+                                    Margin="0,14,0,0"
+                                    Content="Animate the Backstage"
+                                    IsChecked="{Binding IsAnimationEnabled, ElementName=Backstage, Mode=TwoWay}" />
+                                <CheckBox
+                                    Margin="0,8,0,0"
+                                    Content="Show Quick Access Toolbar command labels"
+                                    IsChecked="{Binding QuickAccessToolbarShowLabels, ElementName=WriterRibbon, Mode=TwoWay}" />
+                                <CheckBox
+                                    Margin="0,8,0,0"
+                                    Content="Check spelling as you type"
+                                    IsChecked="{Binding IsChecked, ElementName=SpellingToggle, Mode=TwoWay}" />
+                                <TextBlock
+                                    x:Name="PreferencesText"
+                                    Margin="0,22,0,0"
+                                    Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </mosaic:RibbonBackstageTabItem>
+                    </mosaic:RibbonBackstage>
+                </mosaic:Ribbon.Backstage>
+
+                <!--  ============================  HOME  ============================  -->
+                <mosaic:RibbonTabItem mosaic:RibbonKeyTipService.KeyTip="H" Header="Home">
+                    <mosaic:RibbonGroup Glyph="&#xE7A7;" Header="Undo">
+                        <mosaic:RibbonButton
+                            Key="Undo"
+                            mosaic:RibbonItem.KeyGestureText="(Ctrl+Z)"
+                            mosaic:RibbonKeyTipService.KeyTip="AZ"
+                            Command="ApplicationCommands.Undo"
+                            Glyph="&#xE7A7;"
+                            Label="Undo" />
+                        <mosaic:RibbonButton
+                            Key="Redo"
+                            mosaic:RibbonItem.KeyGestureText="(Ctrl+Y)"
+                            mosaic:RibbonKeyTipService.KeyTip="AY"
+                            Command="ApplicationCommands.Redo"
+                            Glyph="&#xE7A6;"
+                            Label="Redo" />
+                    </mosaic:RibbonGroup>
+
+                    <mosaic:RibbonGroup Glyph="&#xE77F;" Header="Clipboard">
+                        <mosaic:RibbonSplitButton
+                            Key="Paste"
+                            mosaic:RibbonItem.KeyGestureText="(Ctrl+V)"
+                            mosaic:RibbonKeyTipService.KeyTip="V"
+                            Command="ApplicationCommands.Paste"
+                            Description="Add content from the Clipboard to your document."
+                            Glyph="&#xE77F;"
+                            Label="Paste"
+                            PreferredVariant="Large">
+                            <mosaic:RibbonMenuItem
+                                Command="ApplicationCommands.Paste"
+                                Glyph="&#xE77F;"
+                                Header="Keep Source Formatting" />
+                            <mosaic:RibbonMenuItem
+                                Key="PasteText"
+                                Click="PasteTextOnly_Click"
+                                Glyph="&#xE8D2;"
+                                Header="Keep Text Only" />
+                        </mosaic:RibbonSplitButton>
+                        <mosaic:RibbonButton
+                            Key="Cut"
+                            mosaic:RibbonItem.KeyGestureText="(Ctrl+X)"
+                            mosaic:RibbonKeyTipService.KeyTip="X"
+                            Command="ApplicationCommands.Cut"
+                            Glyph="&#xE8C6;"
+                            Label="Cut" />
+                        <mosaic:RibbonButton
+                            Key="Copy"
+                            mosaic:RibbonItem.KeyGestureText="(Ctrl+C)"
+                            mosaic:RibbonKeyTipService.KeyTip="C"
+                            Command="ApplicationCommands.Copy"
+                            Glyph="&#xE8C8;"
+                            Label="Copy" />
+                    </mosaic:RibbonGroup>
+
+                    <mosaic:RibbonGroup Glyph="&#xE8D2;" Header="Font">
+                        <mosaic:RibbonControlGroup>
+                            <mosaic:RibbonComboBox
+                                Key="FontFamily"
+                                x:Name="FontFamilyCombo"
+                                mosaic:RibbonKeyTipService.KeyTip="FF"
+                                InputWidth="130"
+                                IsEditable="True"
+                                Label="Font"
+                                SelectionChanged="FontFamilyCombo_SelectionChanged"
+                                ShowLabel="False" />
+                            <mosaic:RibbonComboBox
+                                Key="FontSize"
+                                x:Name="FontSizeCombo"
+                                mosaic:RibbonKeyTipService.KeyTip="FS"
+                                InputWidth="52"
+                                IsEditable="True"
+                                Label="Font Size"
+                                SelectionChanged="FontSizeCombo_SelectionChanged"
+                                ShowLabel="False" />
+                            <mosaic:RibbonButton
+                                Key="GrowFont"
+                                Command="EditingCommands.IncreaseFontSize"
+                                Glyph="&#xE8E8;"
+                                Label="Increase Font Size" />
+                            <mosaic:RibbonButton
+                                Key="ShrinkFont"
+                                Command="EditingCommands.DecreaseFontSize"
+                                Glyph="&#xE8E7;"
+                                Label="Decrease Font Size" />
+                        </mosaic:RibbonControlGroup>
+                        <mosaic:RibbonControlGroup>
+                            <mosaic:RibbonToggleButton
+                                Key="Bold"
+                                x:Name="BoldToggle"
+                                mosaic:RibbonItem.KeyGestureText="(Ctrl+B)"
+                                mosaic:RibbonKeyTipService.KeyTip="1"
+                                Command="EditingCommands.ToggleBold"
+                                Glyph="&#xE8DD;"
+                                Label="Bold" />
+                            <mosaic:RibbonToggleButton
+                                Key="Italic"
+                                x:Name="ItalicToggle"
+                                mosaic:RibbonItem.KeyGestureText="(Ctrl+I)"
+                                mosaic:RibbonKeyTipService.KeyTip="2"
+                                Command="EditingCommands.ToggleItalic"
+                                Glyph="&#xE8DB;"
+                                Label="Italic" />
+                            <mosaic:RibbonToggleButton
+                                Key="Underline"
+                                x:Name="UnderlineToggle"
+                                mosaic:RibbonItem.KeyGestureText="(Ctrl+U)"
+                                mosaic:RibbonKeyTipService.KeyTip="3"
+                                Command="EditingCommands.ToggleUnderline"
+                                Glyph="&#xE8DC;"
+                                Label="Underline" />
+                            <mosaic:RibbonMenuButton
+                                Key="FontColor"
+                                mosaic:RibbonKeyTipService.KeyTip="FC"
+                                Glyph="&#xE8D3;"
+                                GlyphBrush="#FFD13438"
+                                Label="Font Color">
+                                <mosaic:RibbonMenuItem Click="FontColor_Click" Header="Automatic" />
+                                <mosaic:RibbonMenuItem
+                                    Click="FontColor_Click"
+                                    Header="Red"
+                                    Tag="#FFD13438" />
+                                <mosaic:RibbonMenuItem
+                                    Click="FontColor_Click"
+                                    Header="Blue"
+                                    Tag="#FF0F6CBD" />
+                                <mosaic:RibbonMenuItem
+                                    Click="FontColor_Click"
+                                    Header="Green"
+                                    Tag="#FF2E9E5B" />
+                            </mosaic:RibbonMenuButton>
+                        </mosaic:RibbonControlGroup>
+                    </mosaic:RibbonGroup>
+
+                    <mosaic:RibbonGroup Glyph="&#xE8E4;" Header="Paragraph">
+                        <mosaic:RibbonControlGroup>
+                            <mosaic:RibbonToggleButton
+                                Key="Bullets"
+                                Command="EditingCommands.ToggleBullets"
+                                Glyph="&#xE8FD;"
+                                Label="Bullets" />
+                            <mosaic:RibbonToggleButton
+                                Key="Numbering"
+                                Command="EditingCommands.ToggleNumbering"
+                                Glyph="&#xE9D5;"
+                                Label="Numbering" />
+                            <mosaic:RibbonButton
+                                Key="Outdent"
+                                Command="EditingCommands.DecreaseIndentation"
+                                Glyph="&#xE76B;"
+                                Label="Decrease Indent" />
+                            <mosaic:RibbonButton
+                                Key="Indent"
+                                Command="EditingCommands.IncreaseIndentation"
+                                Glyph="&#xE76C;"
+                                Label="Increase Indent" />
+                        </mosaic:RibbonControlGroup>
+                        <mosaic:RibbonControlGroup>
+                            <mosaic:RibbonButton
+                                Key="AlignLeft"
+                                Command="EditingCommands.AlignLeft"
+                                Glyph="&#xE8E4;"
+                                Label="Align Left" />
+                            <mosaic:RibbonButton
+                                Key="AlignCenter"
+                                Command="EditingCommands.AlignCenter"
+                                Glyph="&#xE8E3;"
+                                Label="Center" />
+                            <mosaic:RibbonButton
+                                Key="AlignRight"
+                                Command="EditingCommands.AlignRight"
+                                Glyph="&#xE8E2;"
+                                Label="Align Right" />
+                            <mosaic:RibbonButton
+                                Key="Justify"
+                                Command="EditingCommands.AlignJustify"
+                                Glyph="&#xE8E4;"
+                                Label="Justify" />
+                        </mosaic:RibbonControlGroup>
+                    </mosaic:RibbonGroup>
+
+                    <mosaic:RibbonGroup
+                        ChildOverflowTarget="Group"
+                        Glyph="&#xE8D2;"
+                        Header="Styles">
+                        <mosaic:RibbonGallery
+                            Key="Styles"
+                            x:Name="StylesGallery"
+                            mosaic:RibbonKeyTipService.KeyTip="L"
+                            Description="Apply a style to the current paragraph."
+                            Glyph="&#xE8D2;"
+                            InlineColumns="4"
+                            ItemHeight="68"
+                            ItemTemplate="{StaticResource StyleGalleryItemTemplate}"
+                            ItemWidth="82"
+                            Label="Styles"
+                            SelectionChanged="StylesGallery_SelectionChanged" />
+                    </mosaic:RibbonGroup>
+
+                    <mosaic:RibbonGroup Glyph="&#xE721;" Header="Editing">
+                        <mosaic:RibbonButton
+                            Key="SelectAll"
+                            mosaic:RibbonKeyTipService.KeyTip="SL"
+                            Command="ApplicationCommands.SelectAll"
+                            Glyph="&#xE8B3;"
+                            Label="Select All" />
+                    </mosaic:RibbonGroup>
+                </mosaic:RibbonTabItem>
+
+                <!--  ============================  INSERT  ============================  -->
+                <mosaic:RibbonTabItem mosaic:RibbonKeyTipService.KeyTip="N" Header="Insert">
+                    <mosaic:RibbonGroup Glyph="&#xE7C3;" Header="Pages">
+                        <mosaic:RibbonButton
+                            Key="PageBreak"
+                            Click="InsertPageBreak_Click"
+                            Glyph="&#xE8A5;"
+                            Label="Page Break"
+                            PreferredVariant="Large" />
+                    </mosaic:RibbonGroup>
+                    <mosaic:RibbonGroup Glyph="&#xE8A9;" Header="Tables">
+                        <mosaic:RibbonMenuButton
+                            Key="Table"
+                            x:Name="TableMenu"
+                            mosaic:RibbonKeyTipService.KeyTip="T"
+                            Description="Insert a table, then click inside it to show the Table Design tab."
+                            Glyph="&#xE8A9;"
+                            Label="Table"
+                            PreferredVariant="Large">
+                            <mosaic:TableSizePicker Margin="4" TableSizeSelected="TableSizePicker_TableSizeSelected" />
+                        </mosaic:RibbonMenuButton>
+                    </mosaic:RibbonGroup>
+                    <mosaic:RibbonGroup Glyph="&#xE710;" Header="Text">
+                        <mosaic:RibbonButton
+                            Key="DateTime"
+                            Click="InsertText_Click"
+                            Glyph="&#xE787;"
+                            Label="Date &amp; Time"
+                            PreferredVariant="Large"
+                            Tag="date" />
+                        <mosaic:RibbonButton
+                            Key="Symbol"
+                            Click="InsertText_Click"
+                            Glyph="&#xE8A4;"
+                            Label="Symbol"
+                            Tag="§" />
+                        <mosaic:RibbonButton
+                            Key="Emoji"
+                            Click="InsertText_Click"
+                            Glyph="&#xE76E;"
+                            Label="Emoji"
+                            Tag="☺" />
+                    </mosaic:RibbonGroup>
+                    <mosaic:RibbonGroup Glyph="&#xE71B;" Header="Links">
+                        <mosaic:RibbonButton
+                            Key="Link"
+                            Click="InsertLink_Click"
+                            Glyph="&#xE71B;"
+                            Label="Link"
+                            PreferredVariant="Large" />
+                    </mosaic:RibbonGroup>
+                </mosaic:RibbonTabItem>
+
+                <!--  ============================  REVIEW  ============================  -->
+                <mosaic:RibbonTabItem mosaic:RibbonKeyTipService.KeyTip="R" Header="Review">
+                    <mosaic:RibbonGroup Glyph="&#xE8FB;" Header="Proofing">
+                        <mosaic:RibbonToggleButton
+                            Key="Spelling"
+                            x:Name="SpellingToggle"
+                            Checked="Spelling_Changed"
+                            Description="Underline misspelled words as you type."
+                            Glyph="&#xE8FB;"
+                            Label="Spelling"
+                            PreferredVariant="Large"
+                            Unchecked="Spelling_Changed" />
+                        <mosaic:RibbonButton
+                            Key="WordCount"
+                            Click="WordCount_Click"
+                            Glyph="&#xE8EF;"
+                            Label="Word Count" />
+                    </mosaic:RibbonGroup>
+                </mosaic:RibbonTabItem>
+
+                <!--  ============================  VIEW  ============================  -->
+                <mosaic:RibbonTabItem mosaic:RibbonKeyTipService.KeyTip="W" Header="View">
+                    <mosaic:RibbonGroup Glyph="&#xE736;" Header="Views">
+                        <mosaic:RibbonToggleButton
+                            Key="PrintLayout"
+                            x:Name="PrintLayoutToggle"
+                            Checked="ViewMode_Checked"
+                            Glyph="&#xE749;"
+                            Label="Print Layout"
+                            PreferredVariant="Large" />
+                        <mosaic:RibbonToggleButton
+                            Key="WebLayout"
+                            x:Name="WebLayoutToggle"
+                            Checked="ViewMode_Checked"
+                            Glyph="&#xE774;"
+                            Label="Web Layout"
+                            PreferredVariant="Large" />
+                    </mosaic:RibbonGroup>
+                    <mosaic:RibbonGroup Glyph="&#xE71E;" Header="Zoom">
+                        <mosaic:RibbonButton
+                            Key="Zoom100"
+                            Click="Zoom_Click"
+                            Glyph="&#xE8A3;"
+                            Label="100%"
+                            PreferredVariant="Large"
+                            Tag="100" />
+                        <mosaic:RibbonButton
+                            Key="ZoomIn"
+                            Click="Zoom_Click"
+                            Glyph="&#xE8A3;"
+                            Label="Zoom In"
+                            Tag="+" />
+                        <mosaic:RibbonButton
+                            Key="ZoomOut"
+                            Click="Zoom_Click"
+                            Glyph="&#xE71F;"
+                            Label="Zoom Out"
+                            Tag="-" />
+                    </mosaic:RibbonGroup>
+                    <mosaic:RibbonGroup Glyph="&#xE737;" Header="Ribbon">
+                        <mosaic:RibbonButton
+                            Key="SwitchLayout"
+                            Click="ToggleLayoutMode_Click"
+                            Description="Switch between the Classic and Simplified Ribbon."
+                            Glyph="&#xE8A1;"
+                            Label="Switch Layout"
+                            PreferredVariant="Large" />
+                        <mosaic:RibbonButton
+                            Key="CollapseRibbon"
+                            Click="ToggleMinimize_Click"
+                            Description="Show only the tab names (Ctrl+F1)."
+                            Glyph="&#xE70E;"
+                            Label="Collapse Ribbon" />
+                        <!--  Items are generated from RibbonTabIndicatorAnimation in code; the current choice is checked.  -->
+                        <mosaic:RibbonMenuButton
+                            Key="TabAnimation"
+                            x:Name="TabAnimationMenu"
+                            mosaic:RibbonKeyTipService.KeyTip="TA"
+                            Description="Choose how the selected-tab underline animates when you switch tabs."
+                            DropDownOpened="TabAnimationMenu_DropDownOpened"
+                            Glyph="&#xE916;"
+                            Label="Tab Animation" />
+                    </mosaic:RibbonGroup>
+                </mosaic:RibbonTabItem>
+
+                <!--  ============================  CONTEXTUAL: TABLE DESIGN  ============================  -->
+                <mosaic:RibbonTabItem
+                    x:Name="TableDesignTab"
+                    mosaic:RibbonKeyTipService.KeyTip="JT"
+                    ContextualTabGroupKey="Table"
+                    Header="Table Design">
+                    <mosaic:RibbonGroup Glyph="&#xE8A9;" Header="Rows &amp; Columns">
+                        <mosaic:RibbonButton
+                            Key="InsertRowAbove"
+                            Click="InsertRowAbove_Click"
+                            Glyph="&#xE710;"
+                            Label="Insert Above"
+                            PreferredVariant="Large" />
+                        <mosaic:RibbonButton
+                            Key="InsertRowBelow"
+                            Click="InsertRowBelow_Click"
+                            Glyph="&#xE710;"
+                            Label="Insert Below"
+                            PreferredVariant="Large" />
+                        <mosaic:RibbonButton
+                            Key="DeleteRow"
+                            Click="DeleteRow_Click"
+                            Glyph="&#xE738;"
+                            Label="Delete Row" />
+                        <mosaic:RibbonButton
+                            Key="DeleteTable"
+                            Click="DeleteTable_Click"
+                            Glyph="&#xE74D;"
+                            Label="Delete Table" />
+                    </mosaic:RibbonGroup>
+                </mosaic:RibbonTabItem>
+            </mosaic:Ribbon>
+
+            <!--  Document canvas  -->
+            <Grid Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}">
+                <Border
+                    x:Name="Page"
+                    MaxWidth="820"
+                    Margin="24,12,24,12"
+                    Background="{DynamicResource {x:Static themes:MosaicTheme.ControlTextBackgroundBrush}}"
+                    BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+                    BorderThickness="1"
+                    CornerRadius="2">
+                    <Border.LayoutTransform>
+                        <ScaleTransform x:Name="PageZoom" ScaleX="1" ScaleY="1" />
+                    </Border.LayoutTransform>
+                    <RichTextBox
+                        x:Name="Document"
+                        Padding="48,32"
+                        AcceptsTab="True"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CaretBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextForegroundBrush}}"
+                        SelectionChanged="Document_SelectionChanged"
+                        SpellCheck.IsEnabled="False"
+                        TextChanged="Document_TextChanged"
+                        VerticalScrollBarVisibility="Auto" />
+                </Border>
+            </Grid>
+        </mosaic:RibbonContainerPanel>
+
+        <!--  Status bar  -->
+        <Border
+            Grid.Row="2"
+            Padding="10,2"
+            Background="{DynamicResource {x:Static themes:MosaicTheme.WindowBackgroundBrush}}"
+            BorderBrush="{DynamicResource {x:Static themes:MosaicTheme.ControlBorderBrush}}"
+            BorderThickness="0,1,0,0">
+            <DockPanel>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Click="Zoom_Click"
+                        Content="&#xE738;"
+                        Style="{StaticResource StatusButtonStyle}"
+                        Tag="-"
+                        ToolTip="Zoom out" />
+                    <Slider
+                        x:Name="ZoomSlider"
+                        Width="110"
+                        Margin="4,0"
+                        VerticalAlignment="Center"
+                        IsMoveToPointEnabled="True"
+                        Maximum="300"
+                        Minimum="25"
+                        ValueChanged="ZoomSlider_ValueChanged"
+                        Value="100" />
+                    <Button
+                        Click="Zoom_Click"
+                        Content="&#xE710;"
+                        Style="{StaticResource StatusButtonStyle}"
+                        Tag="+"
+                        ToolTip="Zoom in" />
+                    <TextBlock
+                        x:Name="ZoomText"
+                        Width="42"
+                        Margin="6,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="100%"
+                        TextAlignment="Right" />
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock x:Name="WordCountText" Text="0 words" />
+                    <TextBlock
+                        x:Name="StatusText"
+                        Margin="18,0,0,0"
+                        Foreground="{DynamicResource {x:Static themes:MosaicTheme.ControlTextSecondaryForegroundBrush}}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
