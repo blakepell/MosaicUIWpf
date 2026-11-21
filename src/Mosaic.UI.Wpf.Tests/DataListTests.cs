@@ -258,6 +258,36 @@ public class DataListTests
     });
 
     [Fact]
+    public void AlternatingRowsCanBeTurnedOnAndOffFromAScript() => RunStaAsync(async () =>
+    {
+        var list = new DataList(Dispatcher.CurrentDispatcher, "Name");
+        var environment = new ScriptEnvironment();
+        environment.RegisterObject("grid", list);
+        list.Add("c");
+        list.Add("a");
+        list.Add("b");
+
+        var window = new Window { Content = list.CreateHostElement(), Width = 300, Height = 200, ShowActivated = false, WindowStyle = WindowStyle.None };
+        try
+        {
+            window.Show();
+            Assert.False(list.AlternatingRows);
+
+            await environment.ExecuteAsync("grid.AlternatingRows = true; grid.Sort('Name');");
+            window.UpdateLayout();
+            Assert.True(list.AlternatingRows);
+            Assert.Equal(2, list.ListView.AlternationCount);
+            Assert.Equal([0, 1, 0], Enumerable.Range(0, 3).Select(i =>
+                ItemsControl.GetAlternationIndex(list.ListView.ItemContainerGenerator.ContainerFromIndex(i))));
+
+            await environment.ExecuteAsync("grid.AlternatingRows = false;");
+            Assert.False(list.AlternatingRows);
+            Assert.Equal(0, list.ListView.AlternationCount);
+        }
+        finally { window.Close(); }
+    });
+
+    [Fact]
     public void ShowHostsTheListInAWindowThatCanBeReopened() => RunStaAsync(() =>
     {
         var list = new DataList(Dispatcher.CurrentDispatcher, "Name");
