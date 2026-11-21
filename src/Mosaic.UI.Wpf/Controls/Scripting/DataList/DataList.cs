@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Windows.Data;
 using Mosaic.UI.Wpf.Scripting;
+using Mosaic.UI.Wpf.Scripting.API;
 
 namespace Mosaic.UI.Wpf.Controls.Scripting.DataList;
 
@@ -43,6 +44,8 @@ public sealed class DataList
     private double _autoSizePadding = 12;
     private bool _autoSizeOnLoad;
     private bool _autoSizeQueued;
+    private ContextMenu? _contextMenu;
+    private DataListRow? _menuRow;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataList"/> class with the supplied columns.
@@ -392,6 +395,78 @@ public sealed class DataList
     });
 
     /// <summary>
+    /// Occurs when a row context menu item's function throws. When nothing handles it, the error is shown in a message box.
+    /// </summary>
+    /// <remarks>Raised on the list's dispatcher thread.</remarks>
+    public event EventHandler<DataListMenuItemErrorEventArgs>? MenuItemFailed;
+
+    /// <summary>
+    /// Adds an item to the row context menu, or replaces the function of an existing item with the same name,
+    /// so a script can run repeatedly without duplicating items.
+    /// </summary>
+    /// <remarks>
+    /// When the item is clicked, <paramref name="handler"/> runs on a worker thread as
+    /// <c>handler(values, row, rows)</c>: <c>values</c> is an object of the right-clicked row's cells keyed by
+    /// column name (<c>values.x</c>, or <c>values['First Name']</c>), <c>row</c> is that <see cref="DataListRow"/>,
+    /// and <c>rows</c> is every selected row in display order (just <c>row</c> when it is not part of the selection).
+    /// The function may declare fewer parameters. An underscore in the name marks its access key.
+    /// </remarks>
+    /// <param name="name">The menu item text, which also identifies the item.</param>
+    /// <param name="handler">A script function, eg: (values, row, rows) => { ... }.</param>
+    [ScriptModuleMethod(Description = "Adds a row context menu item that calls handler(values, row, rows) when clicked; values.x reads the clicked row's x column and rows holds every selected row. Adding the same name again replaces its handler.",
+        ParameterCount = 2)]
+    public void AddMenuItem(string name, object handler)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("A menu item name cannot be empty.", nameof(name));
+        }
+
+        var function = handler as IScriptFunction
+                       ?? throw new ArgumentException("AddMenuItem expects a function, eg: grid.AddMenuItem('Open', (values, row, rows) => { ... }).", nameof(handler));
+
+        Invoke(() =>
+        {
+            var item = FindMenuItem(name);
+            if (item == null)
+            {
+                item = new MenuItem { Header = name };
+                item.Click += OnMenuItemClick;
+                EnsureContextMenu().Items.Add(item);
+            }
+
+            item.Tag = function;
+        });
+    }
+
+    /// <summary>
+    /// Removes a row context menu item.
+    /// </summary>
+    /// <param name="name">The menu item name.</param>
+    /// <returns>True when an item was removed.</returns>
+    public bool RemoveMenuItem(string name) => Invoke(() =>
+    {
+        var item = FindMenuItem(name);
+        if (item == null)
+        {
+            return false;
+        }
+
+        _contextMenu!.Items.Remove(item);
+        return true;
+    });
+
+    /// <summary>
+    /// Removes every row context menu item.
+    /// </summary>
+    public void ClearMenuItems() => Invoke(() => _contextMenu?.Items.Clear());
+
+    /// <summary>
+    /// Gets the names of the row context menu items, in menu order.
+    /// </summary>
+    public string[] MenuItems => Invoke(() => _contextMenu?.Items.OfType<MenuItem>().Select(i => (string)i.Header).ToArray() ?? []);
+
+    /// <summary>
     /// Shows the list in a themed, non-modal window. Showing it again activates the same window.
     /// </summary>
     /// <param name="title">The window title.</param>
@@ -629,6 +704,114 @@ public sealed class DataList
         if (column is { Sortable: true })
         {
             SortCore(column, ReferenceEquals(column, _sortColumn) && !_sortDescending);
+        }
+    }
+
+    private MenuItem? FindMenuItem(string name)
+    {
+        return _contextMenu?.Items.OfType<MenuItem>().FirstOrDefault(i => string.Equals((string)i.Header, name, StringComparison.Ordinal));
+    }
+
+    private ContextMenu EnsureContextMenu()
+    {
+        if (_contextMenu == null)
+        {
+            // The menu opens in its own popup, so it carries the native menu styles itself instead of relying on
+            // the host having opted into them.
+            var styles = new ResourceDictionary
+            {
+                Source = new Uri("pack://application:,,,/Mosaic.UI.Wpf;component/Themes/Native/Menu.xaml", UriKind.Absolute)
+            };
+
+            _contextMenu = new ContextMenu { Resources = styles, Style = styles[typeof(ContextMenu)] as Style };
+            ListView.ContextMenu = _contextMenu;
+            ListView.ContextMenuOpening += OnContextMenuOpening;
+        }
+
+        return _contextMenu;
+    }
+
+    /// <summary>
+    /// Remembers the row the menu was opened on, and only opens the menu over a row that has items to show.
+    /// </summary>
+    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        var container = e.OriginalSource is DependencyObject source ? ItemsControl.ContainerFromElement(ListView, source) : null;
+        _menuRow = (container as FrameworkElement)?.DataContext as DataListRow;
+        if (_menuRow == null || _contextMenu is not { Items.Count: > 0 })
+        {
+            e.Handled = true;
+        }
+    }
+
+    private void OnMenuItemClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem item && _menuRow != null)
+        {
+            _ = RunMenuItemAsync(item, _menuRow);
+        }
+    }
+
+    /// <summary>
+    /// Runs a menu item for a row exactly as clicking it on that row's context menu does.
+    /// </summary>
+    internal Task RunMenuItemAsync(string name, DataListRow row)
+    {
+        return FindMenuItem(name) is { } item ? RunMenuItemAsync(item, row) : throw new ArgumentException($"There is no menu item named '{name}'.", nameof(name));
+    }
+
+    private Task RunMenuItemAsync(MenuItem item, DataListRow row)
+    {
+        if (item.Tag is not IScriptFunction function || row.Owner == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var selected = ListView.SelectedItems.Cast<DataListRow>().ToList();
+        var rows = selected.Contains(row) ? selected.OrderBy(r => _view.IndexOf(r)).ToArray() : [row];
+        return RunMenuItemAsync((string)item.Header, function, CreateValues(row), row, rows);
+    }
+
+    /// <summary>
+    /// Gets a script object of a row's cells keyed by column name; a name with spaces is also keyed without them.
+    /// </summary>
+    private JsObject CreateValues(DataListRow row)
+    {
+        var values = new JsObject();
+        foreach (var column in Columns)
+        {
+            object? value = row.Cells[column.Index];
+            foreach (string key in new[] { column.Name, new string(column.Name.Where(c => !char.IsWhiteSpace(c)).ToArray()) })
+            {
+                values[key] = value;
+            }
+        }
+
+        return values;
+    }
+
+    /// <summary>
+    /// Runs a menu item's function off the UI thread so a long script does not freeze the list.
+    /// </summary>
+    private async Task RunMenuItemAsync(string name, IScriptFunction function, JsObject values, DataListRow row, DataListRow[] rows)
+    {
+        try
+        {
+            // A script array, so rows.length and rows.forEach work as they do on any script array.
+            var rowArray = new JsArray(rows);
+            await Task.Run(async () => await function.InvokeAsync(CancellationToken.None, values, row, rowArray));
+        }
+        catch (Exception ex)
+        {
+            Invoke(() =>
+            {
+                var args = new DataListMenuItemErrorEventArgs(name, ex);
+                MenuItemFailed?.Invoke(this, args);
+                if (!args.Handled)
+                {
+                    MessageBox.Show(ex.Message, $"{name.Replace("_", string.Empty)} failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            });
         }
     }
 
@@ -872,4 +1055,27 @@ public sealed class DataList
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
+}
+
+/// <summary>
+/// Describes a row context menu item whose function threw.
+/// </summary>
+/// <param name="name">The menu item name.</param>
+/// <param name="exception">The exception the function threw.</param>
+public sealed class DataListMenuItemErrorEventArgs(string name, Exception exception) : EventArgs
+{
+    /// <summary>
+    /// Gets the menu item name.
+    /// </summary>
+    public string Name { get; } = name;
+
+    /// <summary>
+    /// Gets the exception the function threw.
+    /// </summary>
+    public Exception Exception { get; } = exception;
+
+    /// <summary>
+    /// Gets or sets whether the error was handled; when false, the list shows it in a message box.
+    /// </summary>
+    public bool Handled { get; set; }
 }

@@ -203,6 +203,61 @@ public class DataListTests
     });
 
     [Fact]
+    public void ScriptMenuItemsReceiveTheRowValuesAndSelectedRows() => RunStaAsync(async () =>
+    {
+        var list = new DataList(Dispatcher.CurrentDispatcher, "x", "y", "Result Text");
+        var environment = new ScriptEnvironment();
+        environment.RegisterObject("grid", list);
+
+        // Running the setup twice must not duplicate items: the second run replaces the handlers.
+        for (int run = 0; run < 2; run++)
+        {
+            await environment.ExecuteAsync("""
+                if (grid.Count == 0) {
+                    grid.Add(1, 2);
+                    grid.Add(10, 20);
+                    grid.Add(100, 200);
+                }
+
+                grid.AddMenuItem('Sum', (values, row, rows) => {
+                    row['Result Text'] = values.x + values.y;
+                    globals.resultKey = values.ResultText === values['Result Text'];
+                    globals.selected = rows.length;
+                });
+                grid.AddMenuItem('Fail', (values) => { throw 'bad ' + values.x; });
+                """);
+        }
+
+        Assert.Equal(["Sum", "Fail"], list.MenuItems);
+        Assert.Equal(2, list.ListView.ContextMenu.Items.Count);
+
+        // A row that is not selected runs on its own.
+        await list.RunMenuItemAsync("Sum", list[1]);
+        Assert.Equal(30.0, Convert.ToDouble(list[1]["Result Text"]));
+        Assert.Equal(true, environment.Globals["resultKey"]);
+        Assert.Equal(1.0, Convert.ToDouble(environment.Globals["selected"]));
+
+        // A selected row passes the whole selection.
+        list.ListView.SelectedItems.Add(list[0]);
+        list.ListView.SelectedItems.Add(list[2]);
+        await list.RunMenuItemAsync("Sum", list[2]);
+        Assert.Equal(300.0, Convert.ToDouble(list[2]["Result Text"]));
+        Assert.Equal(2.0, Convert.ToDouble(environment.Globals["selected"]));
+
+        DataListMenuItemErrorEventArgs? failure = null;
+        list.MenuItemFailed += (_, e) => { failure = e; e.Handled = true; };
+        await list.RunMenuItemAsync("Fail", list[0]);
+        Assert.Equal("Fail", failure?.Name);
+        Assert.Equal("bad 1", failure!.Exception.Message);
+
+        Assert.True(list.RemoveMenuItem("Fail"));
+        Assert.False(list.RemoveMenuItem("Fail"));
+        Assert.Throws<ArgumentException>(() => list.AddMenuItem("Nope", "not a function"));
+        list.ClearMenuItems();
+        Assert.Empty(list.MenuItems);
+    });
+
+    [Fact]
     public void ShowHostsTheListInAWindowThatCanBeReopened() => RunStaAsync(() =>
     {
         var list = new DataList(Dispatcher.CurrentDispatcher, "Name");
