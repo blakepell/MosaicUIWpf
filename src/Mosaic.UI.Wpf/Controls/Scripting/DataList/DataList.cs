@@ -40,6 +40,9 @@ public sealed class DataList
     private bool _sortDescending;
     private int _updateDepth;
     private long _sequence;
+    private double _autoSizePadding = 12;
+    private bool _autoSizeOnLoad;
+    private bool _autoSizeQueued;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataList"/> class with the supplied columns.
@@ -67,6 +70,7 @@ public sealed class DataList
                 SelectionMode = System.Windows.Controls.SelectionMode.Extended
             };
             ListView.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(OnColumnHeaderClick));
+            ListView.Loaded += OnListViewLoaded;
             _view = (ListCollectionView)CollectionViewSource.GetDefaultView(_rows);
 
             foreach (string column in columns ?? [])
@@ -277,29 +281,92 @@ public sealed class DataList
     });
 
     /// <summary>
-    /// Sizes every column that has no fixed width to fit its header and displayed cells.
+    /// Gets or sets the extra width, in pixels, added to each column when it is auto-sized. Defaults to 12.
+    /// </summary>
+    [ScriptModuleMethod(Description = "Extra pixels added to each column by AutoSize and the auto-size after a sort. Defaults to 12.")]
+    public double AutoSizePadding
+    {
+        get => Invoke(() => _autoSizePadding);
+        set => Invoke(() => _autoSizePadding = double.IsNaN(value) || value < 0 ? 0 : value);
+    }
+
+    /// <summary>
+    /// Sizes every column that has no fixed width to fit its header and displayed cells, plus
+    /// <see cref="AutoSizePadding"/>. Columns are also auto-sized whenever the rows are sorted.
     /// </summary>
     /// <remarks>
     /// Columns given a width (including 0, which hides them) keep it; call the column's own AutoSize
     /// to size it anyway. Only rows that have been displayed are measured, because the list virtualizes.
     /// </remarks>
-    [ScriptModuleMethod(Description = "Sizes every column without a fixed width to fit its header and displayed cells.")]
-    public void AutoSize() => Invoke(() =>
+    [ScriptModuleMethod(Description = "Sizes every column without a fixed width to fit its header and displayed cells, plus AutoSizePadding.")]
+    public void AutoSize() => Invoke(() => AutoSizeColumns(Columns, keepUserWidths: false));
+
+    /// <summary>
+    /// Measures the columns at automatic width and pins each to its measured width plus padding.
+    /// </summary>
+    /// <param name="columns">The columns to size.</param>
+    /// <param name="keepUserWidths">Whether to skip columns the user has resized by dragging.</param>
+    internal void AutoSizeColumns(IEnumerable<DataListColumn> columns, bool keepUserWidths)
     {
-        foreach (var column in Columns)
+        var targets = columns.Where(c => c.CanAutoSize(keepUserWidths)).ToList();
+        if (targets.Count == 0)
         {
-            column.AutoSizeCore();
+            return;
         }
 
-        // Newly added rows are measured on the next layout pass, so size again once it has run.
-        _dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+        foreach (var column in targets)
         {
-            foreach (var column in Columns)
+            column.BeginAutoSize();
+        }
+
+        if (!ListView.IsLoaded)
+        {
+            // Nothing can be measured until the list is displayed; the columns stay automatic until then.
+            _autoSizeOnLoad = true;
+            return;
+        }
+
+        ListView.UpdateLayout();
+        foreach (var column in targets)
+        {
+            column.EndAutoSize(_autoSizePadding);
+        }
+
+        // Rows realized by a later layout pass (new rows, or a sort's regenerated containers) can be
+        // wider, so measure again once that pass has run. Columns sized above still match their
+        // auto width, so they are sized again; anything the user dragged meanwhile is kept.
+        if (!_autoSizeQueued)
+        {
+            _autoSizeQueued = true;
+            _dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
             {
-                column.AutoSizeCore();
-            }
-        });
-    });
+                _autoSizeQueued = false;
+                if (ListView.IsLoaded)
+                {
+                    var again = targets.Where(c => c.CanAutoSize(keepUserWidths: true)).ToList();
+                    foreach (var column in again)
+                    {
+                        column.BeginAutoSize();
+                    }
+
+                    ListView.UpdateLayout();
+                    foreach (var column in again)
+                    {
+                        column.EndAutoSize(_autoSizePadding);
+                    }
+                }
+            });
+        }
+    }
+
+    private void OnListViewLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_autoSizeOnLoad)
+        {
+            _autoSizeOnLoad = false;
+            _dispatcher.BeginInvoke(DispatcherPriority.Loaded, () => AutoSizeColumns(Columns, keepUserWidths: true));
+        }
+    }
 
     /// <summary>
     /// Sorts the rows by a column; clicking a column header does the same.
@@ -537,6 +604,10 @@ public sealed class DataList
         _view.CustomSort = column == null ? null : new RowComparer(column.Index, _sortDescending);
         previous?.UpdateHeader();
         column?.UpdateHeader();
+
+        // Sorting brings different rows (and a wider sorted header) into view, which an automatic
+        // GridViewColumn does not grow to fit, so size the columns again. Resized columns are kept.
+        AutoSizeColumns(Columns, keepUserWidths: true);
     }
 
     /// <summary>

@@ -158,6 +158,51 @@ public class DataListTests
     });
 
     [Fact]
+    public void AutoSizeAddsPaddingAndSortingResizesToTheNewlyVisibleRows() => RunStaAsync(async () =>
+    {
+        var list = new DataList(Dispatcher.CurrentDispatcher, "Name", "Fixed", "Dragged");
+        for (int i = 0; i < 50; i++)
+        {
+            list.Add($"a{i:00}", "x", "y");
+        }
+
+        // Sorts last, so it is scrolled out of view (and not measured) until the sort is reversed.
+        list.Add("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz", "x", "y");
+        list.Columns["Fixed"].Width = 50;
+
+        var window = new Window { Content = list.ListView, Width = 900, Height = 150, ShowActivated = false, WindowStyle = WindowStyle.None };
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var name = list.Columns["Name"];
+            var dragged = list.Columns["Dragged"];
+
+            list.AutoSizePadding = 0;
+            list.AutoSize();
+            double unpadded = name.Width;
+            list.AutoSizePadding = 12;
+            list.AutoSize();
+            Assert.Equal(unpadded + 12, name.Width);
+
+            // A width the user dragged to (set on the GridViewColumn directly) survives a sort; a fixed width always does.
+            dragged.GridColumn.Width = 77;
+            list.Sort("Name", descending: true);
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+
+            Assert.True(name.Width > unpadded + 100, $"Name was {name.Width} after sorting; expected it to grow past {unpadded + 100}.");
+            Assert.Equal(name.GridColumn.ActualWidth, name.Width);
+            Assert.Equal(50, list.Columns["Fixed"].Width);
+            Assert.Equal(77, dragged.Width);
+
+            // An explicit AutoSize still sizes the dragged column.
+            list.AutoSize();
+            Assert.NotEqual(77, dragged.Width);
+        }
+        finally { window.Close(); }
+    });
+
+    [Fact]
     public void ShowHostsTheListInAWindowThatCanBeReopened() => RunStaAsync(() =>
     {
         var list = new DataList(Dispatcher.CurrentDispatcher, "Name");

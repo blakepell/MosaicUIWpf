@@ -27,6 +27,7 @@ public sealed class DataListColumn
     private string? _format;
     private string? _property;
     private bool _fixedWidth;
+    private double _autoWidth = double.NaN;
 
     internal DataListColumn(DataList owner, string name, int index)
     {
@@ -68,16 +69,18 @@ public sealed class DataListColumn
     }
 
     /// <summary>
-    /// Gets or sets the width, or NaN when automatic. A negative value sizes the column automatically
-    /// and 0 hides it. A column given a fixed width is left alone by <see cref="DataList.AutoSize"/>.
+    /// Gets or sets the width, or NaN when automatic and not yet auto-sized. A negative value sizes the
+    /// column automatically and 0 hides it. A column given a fixed width is left alone by
+    /// <see cref="DataList.AutoSize"/> and by the auto-size that follows a sort.
     /// </summary>
-    [ScriptModuleMethod(Description = "The column width. A negative value sizes automatically; 0 hides the column. Fixed widths are kept by grid.AutoSize().")]
+    [ScriptModuleMethod(Description = "The column width. A negative value sizes automatically; 0 hides the column. Fixed widths are kept by grid.AutoSize() and sorting.")]
     public double Width
     {
         get => _owner.Invoke(() => GridColumn.Width);
         set => _owner.Invoke(() =>
         {
             _fixedWidth = value >= 0;
+            _autoWidth = double.NaN;
             GridColumn.Width = _fixedWidth ? value : double.NaN;
         });
     }
@@ -140,24 +143,60 @@ public sealed class DataListColumn
     public bool Sortable { get; set; } = true;
 
     /// <summary>
-    /// Sizes the column to fit its header and displayed cells, replacing any fixed width.
+    /// Sizes the column to fit its header and displayed cells plus <see cref="DataList.AutoSizePadding"/>,
+    /// replacing any fixed width.
     /// </summary>
     public void AutoSize() => _owner.Invoke(() =>
     {
         _fixedWidth = false;
-        AutoSizeCore();
+        _autoWidth = double.NaN;
+        _owner.AutoSizeColumns([this], keepUserWidths: false);
     });
 
-    internal void AutoSizeCore()
+    /// <summary>
+    /// Gets whether the column can be auto-sized. Fixed widths never are; with <paramref name="keepUserWidths"/>,
+    /// a width the user dragged to (one that is neither automatic nor the last auto-sized width) is kept too.
+    /// </summary>
+    internal bool CanAutoSize(bool keepUserWidths)
     {
         if (_fixedWidth)
         {
-            return;
+            return false;
         }
 
-        // Assigning a fixed width resets the measured size so NaN measures again.
-        GridColumn.Width = GridColumn.ActualWidth;
+        double width = GridColumn.Width;
+        return !keepUserWidths || double.IsNaN(width) || width.Equals(_autoWidth);
+    }
+
+    /// <summary>
+    /// Switches the column to automatic width so the next layout pass measures its content again.
+    /// </summary>
+    internal void BeginAutoSize()
+    {
+        if (double.IsNaN(GridColumn.Width))
+        {
+            // Assigning NaN when it is already NaN does nothing, so set a width first to reset the measured size.
+            GridColumn.Width = GridColumn.ActualWidth;
+        }
+
         GridColumn.Width = double.NaN;
+    }
+
+    /// <summary>
+    /// Pins the measured width plus padding once a layout pass has run.
+    /// </summary>
+    /// <returns>False when the column has not been measured yet, such as when the list is not displayed.</returns>
+    internal bool EndAutoSize(double padding)
+    {
+        double measured = GridColumn.ActualWidth;
+        if (double.IsNaN(measured) || measured <= 0)
+        {
+            return false;
+        }
+
+        _autoWidth = Math.Ceiling(measured + padding);
+        GridColumn.Width = _autoWidth;
+        return true;
     }
 
     /// <summary>
