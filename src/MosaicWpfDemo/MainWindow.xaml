@@ -134,10 +134,11 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
-                <mosaic:SideMenuHeader Text="DEBUG" />
+                <mosaic:SideMenuHeader Tag="DebugOnly" Text="DEBUG" />
 
                 <!--  Debug  -->
                 <mosaic:SideMenuItem
+                    Tag="DebugOnly"
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"
                     ImageSource="/Assets/bug-48.png"
@@ -156,6 +157,7 @@
 
                 <!--  Kitchen Sink (new)  -->
                 <mosaic:SideMenuItem
+                    Tag="DebugOnly"
                     Click="SideMenuItem_Click"
                     ContentType="{x:Type views:ShellView}"
                     ContentTypeIsSingleton="True"

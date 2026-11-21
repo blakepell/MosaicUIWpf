@@ -27,10 +27,14 @@ namespace WpfDemo
             TestSideMenu.FocusSearchBoxOnLoad = true;
             TestSideMenu.SelectByIndex(1);
 #if !DEBUG
-            // Makes it easier to search when debugging.
-            TestSideMenu.MenuItems[4].Visibility = Visibility.Collapsed;
-            TestSideMenu.MenuItems[5].Visibility = Visibility.Collapsed;
-            TestSideMenu.MenuItems[6].Visibility = Visibility.Collapsed;
+            // Hide debugging tools in release builds without depending on menu order.
+            foreach (var item in TestSideMenu.MenuItems)
+            {
+                if (item.Tag is "DebugOnly")
+                {
+                    item.Visibility = Visibility.Collapsed;
+                }
+            }
 #endif
         }
 
