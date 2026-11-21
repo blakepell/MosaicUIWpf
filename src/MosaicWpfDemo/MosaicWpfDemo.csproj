@@ -753,6 +753,13 @@
 			<Link>LinkedSources\ScriptEditorExample.xaml.cs</Link>
 		</EmbeddedResource>
 
+		<EmbeddedResource Include="Views\Examples\ScriptReferenceExample.xaml">
+			<Link>LinkedSources\ScriptReferenceExample.xaml</Link>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Views\Examples\ScriptReferenceExample.xaml.cs">
+			<Link>LinkedSources\ScriptReferenceExample.xaml.cs</Link>
+		</EmbeddedResource>
+
 		<EmbeddedResource Include="Views\Examples\SearchBoxExample.xaml">
 			<Link>LinkedSources\SearchBoxExample.xaml</Link>
 		</EmbeddedResource>

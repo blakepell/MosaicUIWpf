@@ -116,6 +116,24 @@
                     </mosaic:SideMenuItem.ParameterCollection>
                 </mosaic:SideMenuItem>
 
+                <!--  Script Reference  -->
+                <mosaic:SideMenuItem
+                    ContentType="{x:Type views:ShellView}"
+                    ContentTypeIsSingleton="True"
+                    ImageSource="/Assets/javascript-48.png"
+                    Text="Script Reference">
+                    <mosaic:SideMenuItem.ParameterCollection>
+                        <mosaic:SideMenuParameterCollection>
+                            <mosaic:SideMenuParameter Key="Title" Value="Script Reference" />
+                            <mosaic:SideMenuParameter Key="XamlFile" Value="MosaicWpfDemo.LinkedSources.ScriptReferenceExample.xaml" />
+                            <mosaic:SideMenuParameter Key="CodeFile" Value="MosaicWpfDemo.LinkedSources.ScriptReferenceExample.xaml.cs" />
+                            <mosaic:SideMenuParameter Key="DocumentationType" Value="{x:Type mosaic:MarkdownViewer}" />
+                            <mosaic:SideMenuParameter Key="ExampleType" Value="{x:Type example:ScriptReferenceExample}" />
+                            <mosaic:SideMenuParameter Key="ImageSource" Value="/Assets/javascript-48.png" />
+                        </mosaic:SideMenuParameterCollection>
+                    </mosaic:SideMenuItem.ParameterCollection>
+                </mosaic:SideMenuItem>
+
                 <mosaic:SideMenuHeader Text="DEBUG" />
 
                 <!--  Debug  -->

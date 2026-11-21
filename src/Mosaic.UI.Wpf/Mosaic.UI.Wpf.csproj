@@ -76,6 +76,7 @@
     <None Remove="Assets\vs-image-32.png" />
     <None Remove="Assets\table-48.png" />
     <None Remove="Assets\text-48.png" />
+    <None Remove="Scripting\Docs\**\*.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -163,7 +164,6 @@
   <ItemGroup>
     <!-- Ship the scripting reference and bundled parser license with the main package. -->
     <None Update="Scripting\README.md" Pack="true" PackagePath="Scripting\README.md" />
-    <None Update="Scripting\Docs\*.md" Pack="true" PackagePath="Scripting\Docs\%(Filename)%(Extension)" />
     <None Update="Scripting\Esprima\LICENSE.txt" Pack="true" PackagePath="3rdParty\Esprima\LICENSE.txt" />
   </ItemGroup>
 
@@ -217,6 +217,7 @@
     <Resource Include="Assets\vs-heading-five-32.png" />
     <Resource Include="Assets\vs-heading-six-32.png" />
     <Resource Include="Assets\vs-image-32.png" />
+    <Resource Include="Scripting\Docs\**\*.md" Pack="true" PackagePath="%(Identity)" />
   </ItemGroup>
 
   <ItemGroup>

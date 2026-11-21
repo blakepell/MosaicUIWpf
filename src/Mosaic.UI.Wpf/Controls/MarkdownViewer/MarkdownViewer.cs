@@ -1257,7 +1257,9 @@ namespace Mosaic.UI.Wpf.Controls
             }
 
             var absolute = ToAbsoluteUri(uri);
-            string? text = absolute == null ? null : ReadSourceText(absolute);
+            // Fragments identify headings within a document, not part of the resource name.
+            var documentUri = absolute == null ? null : new Uri(absolute.GetLeftPart(UriPartial.Query));
+            string? text = documentUri == null ? null : ReadSourceText(documentUri);
 
             if (!_suppressHistory && previous != null && absolute != null && absolute != previous)
             {
@@ -1267,6 +1269,13 @@ namespace Mosaic.UI.Wpf.Controls
 
             _resolvedSource = absolute;
             SetMarkdownFromSource(text ?? $"# Document not found\n\nThe document `{uri.OriginalString}` could not be loaded.");
+
+            // A different fragment can point into the same Markdown text, in which case the
+            // dependency property does not change and no render is triggered.
+            if (absolute != null && !string.IsNullOrEmpty(absolute.Fragment))
+            {
+                ScrollToAnchor(absolute.Fragment);
+            }
         }
 
         /// <summary>
@@ -1422,6 +1431,12 @@ namespace Mosaic.UI.Wpf.Controls
             document.SetBinding(FlowDocument.ForegroundProperty, new Binding(nameof(Foreground)) { Source = _richTextBox });
 
             _richTextBox.Document = document;
+
+            // Source may have been set before the template was applied.
+            if (_resolvedSource != null && !string.IsNullOrEmpty(_resolvedSource.Fragment))
+            {
+                ScrollToAnchor(_resolvedSource.Fragment);
+            }
 
             if (IsFindPanelOpen)
             {
