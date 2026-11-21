@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Windows.Data;
+using Mosaic.UI.Wpf.Common;
 using Mosaic.UI.Wpf.Scripting;
 using Mosaic.UI.Wpf.Scripting.API;
 
@@ -160,6 +161,16 @@ public sealed class DataList
             var mode = ParseEnum<SelectionMode>(value, nameof(SelectionMode));
             Invoke(() => ListView.SelectionMode = mode);
         }
+    }
+
+    /// <summary>
+    /// Gets or sets whether every other row uses the current theme's alternate row background. Off by default.
+    /// </summary>
+    [ScriptModuleMethod(Description = "Shades every other row with the theme's alternate row color: grid.AlternatingRows = true")]
+    public bool AlternatingRows
+    {
+        get => Invoke(() => ListViewHelper.GetIsAlternatingRowsEnabled(ListView));
+        set => Invoke(() => ListViewHelper.SetIsAlternatingRowsEnabled(ListView, value));
     }
 
     /// <summary>
