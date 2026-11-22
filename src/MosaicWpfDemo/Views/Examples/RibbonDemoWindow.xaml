@@ -116,7 +116,7 @@
             IconSource="/MosaicWpfDemo;component/Assets/toolbox-48.png"
             TitleAlignment="Center"
             TitleText="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}">
-            <!-- Above-ribbon QAT shares the title bar; ShowIcon=False also reclaims the icon space. -->
+            <!--  Above-ribbon QAT shares the title bar; ShowIcon=False also reclaims the icon space.  -->
             <mosaic:WindowTitleBar.LeftContent>
                 <ContentControl Margin="4,0" />
             </mosaic:WindowTitleBar.LeftContent>
