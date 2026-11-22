@@ -1,6 +1,6 @@
 # AutoCompleteBox
 
-**Base class:** `Control` (CustomControl)  
+**Base class:** `Selector` (CustomControl)\
 **Namespace:** `Mosaic.UI.Wpf.Controls`  
 **Source:** `src/Mosaic.UI.Wpf/Controls/AutoCompleteBox/AutoCompleteBox.cs`  
 **Example:** `src/MosaicWpfDemo/Views/Examples/AutoCompleteBoxExample.xaml`

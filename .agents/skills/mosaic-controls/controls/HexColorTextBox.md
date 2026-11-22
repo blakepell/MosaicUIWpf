@@ -3,7 +3,7 @@
 **Base class:** `ComboBox`  
 **Namespace:** `Mosaic.UI.Wpf.Controls`  
 **Source:** `src/Mosaic.UI.Wpf/Controls/HexColorTextBox/HexColorTextBox.cs`  
-**Example:** `src/MosaicWpfDemo/Views/Examples/HexColorTextBoxExample.xaml`
+**Example:** `src/MosaicWpfDemo/Views/Examples/ColorPickerExample.xaml`
 
 ## Description
 

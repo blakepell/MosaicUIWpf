@@ -387,3 +387,86 @@ Applies and maintains `System.Windows.Shell.WindowChrome` for a borderless custo
 ## AvalonEdit behaviors
 
 `AvalonTextEditorBindingBehavior`, `AvalonEditPropertiesBehavior`, `AvalonEditVtTerminalBehavior`, and `AvalonEditCopyBehavior` target the AvalonEdit `TextEditor` (or a `Button` copying from one). See [AvalonEditBehaviors.md](AvalonEditBehaviors.md) for full details.
+
+## ImageMouseWheelZoomBehavior
+
+**Base class:** `Behavior<Image>`\
+**Namespace:** `Mosaic.UI.Wpf.Behaviors`\
+**Source:** `src/Mosaic.UI.Wpf/Behaviors/ImageMouseWheelZoomBehavior.cs`
+
+Adds mouse-wheel zooming to an `Image` by applying a render scale transform.
+
+**Demo:** `src/MosaicWpfDemo/Views/Examples/ImageMouseWheelZoomBehaviorExample.xaml`
+
+### API starting points
+
+| Member | Purpose |
+|---|---|
+| `double MinZoom` | Gets or sets the minimum zoom scale. |
+| `double MaxZoom` | Gets or sets the maximum zoom scale. |
+| `double ZoomFactor` | Gets or sets the multiplier applied for each mouse-wheel step. |
+| `bool ResetOnSourceChanged` | Gets or sets a value that indicates whether zoom resets when the image source changes. |
+| `bool RequireCtrl` | Gets or sets a value that indicates whether the Ctrl key must be held to zoom. |
+| `FrameworkElement? ZoomTarget` | Gets or sets the element the zoom transform is applied to. |
+
+
+## OpenFolderBehavior
+
+**Base class:** `Behavior<FrameworkElement>`\
+**Namespace:** `Mosaic.UI.Wpf.Behaviors`\
+**Source:** `src/Mosaic.UI.Wpf/Behaviors/OpenFolderBehavior.cs`
+
+Behavior to open a folder in Windows Explorer when attached to a ButtonBase or MenuItem.
+
+### API starting points
+
+| Member | Purpose |
+|---|---|
+| `string? Folder` | Gets or sets the path of the folder to open. |
+
+
+## VisualCaptureContextMenuBehavior
+
+**Base class:** `Behavior<FrameworkElement>`\
+**Namespace:** `Mosaic.UI.Wpf.Behaviors`\
+**Source:** `src/Mosaic.UI.Wpf/Behaviors/VisualCaptureContextMenuBehavior.cs`
+
+Adds "Copy as Image" and "Save as Image..." items to the context menu of the element the behavior is attached to. When the element has no context menu one is created; when it already has one the items are appended after a separator. By default the attached element itself is captured, but a different element can be chosen with `Target` or `TargetName`. Scrolling elements are captured at their full scroll extent.
+
+### API starting points
+
+| Member | Purpose |
+|---|---|
+| `UIElement? Target` | Gets or sets the element to capture. Defaults to the element the behavior is attached to and takes precedence over `TargetName`. |
+| `string? TargetName` | Gets or sets the x:Name of the element to capture, resolved from the attached element's name scope. |
+| `object CopyHeader` | Gets or sets the header of the copy menu item. |
+| `object SaveHeader` | Gets or sets the header of the save menu item. |
+| `bool ShowCopy` | Gets or sets whether the copy item is shown. |
+| `bool ShowSave` | Gets or sets whether the save item is shown. |
+| `bool InsertSeparator` | Gets or sets whether a separator is inserted before the capture items when they are appended to an existing menu that already has items. |
+| `string? FilePath` | Gets or sets the file the image is saved to. When empty the user is prompted with a save dialog. |
+| `string? DefaultFileName` | Gets or sets the file name pre-populated in the save dialog. |
+| `Brush? CaptureBackground` | Gets or sets a brush painted behind the captured element. Leave `null` to keep unpainted areas transparent. |
+| `bool CaptureScrollExtent` | Gets or sets whether a scrolling target is expanded so its full scroll extent is captured. |
+| `event EventHandler<VisualCapturedEventArgs>? Captured;` | Occurs after the image has been copied or saved. |
+| `event EventHandler<VisualCapturedEventArgs>? CaptureFailed;` | Occurs when the capture could not be completed. |
+| `UIElement? ResolveTarget(…)` | Resolves the element that will be captured. |
+| `bool Capture(…)` | Performs a capture of the resolved target. |
+
+
+## WindowCloseConfirmationBehavior
+
+**Base class:** `Behavior<Window>`\
+**Namespace:** `Mosaic.UI.Wpf.Behaviors`\
+**Source:** `src/Mosaic.UI.Wpf/Behaviors/WindowCloseConfirmationBehavior.cs`
+
+A behavior that prompts the user with a confirmation message when attempting to close a window.
+
+**Demo:** `src/MosaicWpfDemo/Views/Examples/WindowCloseConfirmationBehaviorExample.xaml`
+
+### API starting points
+
+| Member | Purpose |
+|---|---|
+| `string Message` | Gets or sets the confirmation message displayed to the user. |
+| `bool IsEnabled` | Gets or sets if the confirmation is currently enabled. |

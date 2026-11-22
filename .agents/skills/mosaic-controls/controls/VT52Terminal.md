@@ -22,7 +22,7 @@ Because it extends `TextEditor`, it requires the AvalonEdit assembly reference (
 
 ## XAML Namespace
 
-This control lives in a sub-namespace and requires its own xmlns:
+Use the canonical URI with `<mosaic:VT52Terminal>`. A CLR declaration is also available:
 
 ```xml
 xmlns:vt52="clr-namespace:Mosaic.UI.Wpf.Controls.VT52Terminal;assembly=Mosaic.UI.Wpf"
