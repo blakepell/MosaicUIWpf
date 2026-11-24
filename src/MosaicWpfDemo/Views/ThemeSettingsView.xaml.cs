@@ -90,6 +90,14 @@ namespace MosaicWpfDemo.Views
             manager.SystemColors = SystemColorsCheckBox.IsChecked == true;
         }
 
+        private void RoundedButtonsCheckBox_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!_syncingThemeControls && AppServices.GetService<ThemeManager>() is { } manager)
+            {
+                manager.UseRoundedButtons = RoundedButtonsCheckBox.IsChecked == true;
+            }
+        }
+
         private void SyncThemeEditorFromManager()
         {
             var manager = AppServices.GetService<ThemeManager>();
@@ -102,6 +110,7 @@ namespace MosaicWpfDemo.Views
 
             NativeStylesCheckBox.IsChecked = manager.Native;
             SystemColorsCheckBox.IsChecked = manager.SystemColors;
+            RoundedButtonsCheckBox.IsChecked = manager.UseRoundedButtons;
 
             ComboBoxItem? selectedItem = null;
 

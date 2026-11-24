@@ -20,6 +20,7 @@ namespace Mosaic.UI.Wpf.Themes
         public static readonly Uri Dark = new($"{BasePath}/Dark/Dark.xaml", UriKind.Absolute);
         public static readonly Uri Blue = new($"{BasePath}/Blue/Blue.xaml", UriKind.Absolute);
         public static readonly Uri Black = new($"{BasePath}/Black/Black.xaml", UriKind.Absolute);
+        public static readonly Uri Blackest = new($"{BasePath}/Blackest/Blackest.xaml", UriKind.Absolute);
         public static readonly Uri HighContrast = new($"{BasePath}/HighContrast/HighContrast.xaml", UriKind.Absolute);
 
         public static readonly Uri LightSystemColors = new($"{BasePath}/Light/SystemColors.xaml", UriKind.Absolute);
@@ -27,6 +28,23 @@ namespace Mosaic.UI.Wpf.Themes
         public static readonly Uri BlueSystemColors = new($"{BasePath}/Blue/SystemColors.xaml", UriKind.Absolute);
         public static readonly Uri BlackSystemColors = new($"{BasePath}/Black/SystemColors.xaml", UriKind.Absolute);
         public static readonly Uri HighContrastSystemColors = new($"{BasePath}/HighContrast/SystemColors.xaml", UriKind.Absolute);
+
+        private static readonly Uri RoundedButtonsLight = new($"{BasePath}/Buttons/RoundedLight.xaml", UriKind.Absolute);
+        private static readonly Uri RoundedButtonsDark = new($"{BasePath}/Buttons/RoundedDark.xaml", UriKind.Absolute);
+        private static readonly Uri RoundedButtonsBlackest = new($"{BasePath}/Buttons/RoundedBlackest.xaml", UriKind.Absolute);
+        private static readonly Uri RoundedButtonsBlue = new($"{BasePath}/Buttons/RoundedBlue.xaml", UriKind.Absolute);
+
+        public static Uri? GetRoundedButtonPaletteUri(MosaicThemeMode theme)
+        {
+            return theme switch
+            {
+                MosaicThemeMode.Light => RoundedButtonsLight,
+                MosaicThemeMode.Blue => RoundedButtonsBlue,
+                MosaicThemeMode.Blackest => RoundedButtonsBlackest,
+                MosaicThemeMode.HighContrast => null,
+                _ => RoundedButtonsDark
+            };
+        }
 
         public static Uri GetThemeUri(MosaicThemeMode MosaicThemeMode)
         {
@@ -36,6 +54,7 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.Dark => Dark,
                 MosaicThemeMode.Blue => Blue,
                 MosaicThemeMode.Black => Black,
+                MosaicThemeMode.Blackest => Blackest,
                 MosaicThemeMode.HighContrast => HighContrast,
                 _ => Dark
             };
@@ -48,7 +67,7 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.Light => LightSystemColors,
                 MosaicThemeMode.Dark => DarkSystemColors,
                 MosaicThemeMode.Blue => BlueSystemColors,
-                MosaicThemeMode.Black => BlackSystemColors,
+                MosaicThemeMode.Black or MosaicThemeMode.Blackest => BlackSystemColors,
                 MosaicThemeMode.HighContrast => HighContrastSystemColors,
                 _ => DarkSystemColors
             };

@@ -33,6 +33,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="190" />
@@ -54,6 +55,7 @@
                             <ComboBoxItem Content="Light" Tag="Light" />
                             <ComboBoxItem Content="Dark" Tag="Dark" />
                             <ComboBoxItem Content="Black" Tag="Black" />
+                            <ComboBoxItem Content="Blackest" Tag="Blackest" />
                             <ComboBoxItem Content="Blue" Tag="Blue" />
                             <ComboBoxItem Content="High Contrast" Tag="HighContrast" />
                         </ComboBox>
@@ -86,8 +88,23 @@
                             Click="SystemColorsCheckBox_OnClick"
                             Content="Override SystemColors keys" />
 
-                        <Border
+                        <TextBlock
                             Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="0,6,0,0"
+                            VerticalAlignment="Center"
+                            Text="Button Style" />
+                        <CheckBox
+                            x:Name="RoundedButtonsCheckBox"
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="0,6,0,0"
+                            Click="RoundedButtonsCheckBox_OnClick"
+                            Content="Use rounded buttons"
+                            ToolTip="Native WPF buttons use this setting when native styles are enabled." />
+
+                        <Border
+                            Grid.Row="4"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Margin="0,10,0,0"
@@ -95,28 +112,40 @@
                             Background="{DynamicResource {x:Static mosaic:MosaicTheme.ControlBackgroundLightBrush}}"
                             BorderBrush="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
                             BorderThickness="1">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel>
                                 <TextBlock
-                                    Margin="0,0,12,0"
-                                    VerticalAlignment="Center"
+                                    Margin="0,0,0,8"
                                     FontWeight="SemiBold"
-                                    Text="Preview" />
-                                <Button
-                                    MinWidth="110"
-                                    Padding="4"
-                                    Content="Action Button" />
-                                <Button
-                                    Width="72"
-                                    Height="28"
-                                    Margin="4,0,8,0"
-                                    Background="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
-                                    Content="OK"
-                                    IsDefault="True" />
-                                <TextBlock
-                                    Margin="12,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Foreground="{DynamicResource {x:Static mosaic:MosaicTheme.AccentBrush}}"
-                                    Text="Accent" />
+                                    Text="Button Preview" />
+                                <WrapPanel>
+                                    <Button
+                                        MinWidth="92"
+                                        Height="28"
+                                        Margin="0,0,8,4"
+                                        Content="Standard" />
+                                    <Button
+                                        MinWidth="92"
+                                        Height="28"
+                                        Margin="0,0,8,4"
+                                        Content="Disabled"
+                                        IsEnabled="False" />
+                                    <mosaic:AccentButton
+                                        MinWidth="92"
+                                        Height="28"
+                                        Margin="0,0,8,4"
+                                        Content="Accent" />
+                                    <mosaic:SplitButton
+                                        MinWidth="92"
+                                        Height="28"
+                                        Margin="0,0,0,4"
+                                        Content="Split">
+                                        <mosaic:SplitButton.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Sample option" />
+                                            </ContextMenu>
+                                        </mosaic:SplitButton.ContextMenu>
+                                    </mosaic:SplitButton>
+                                </WrapPanel>
                             </StackPanel>
                         </Border>
                     </Grid>

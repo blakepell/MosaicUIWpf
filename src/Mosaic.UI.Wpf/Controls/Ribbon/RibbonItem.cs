@@ -127,6 +127,18 @@ namespace Mosaic.UI.Wpf.Controls
         public static void SetSmallImage(DependencyObject element, ImageSource? value) => element.SetValue(SmallImageProperty, value);
 
         /// <summary>
+        /// Identifies the UseAdaptiveSmallImage attached property.
+        /// </summary>
+        public static readonly DependencyProperty UseAdaptiveSmallImageProperty = DependencyProperty.RegisterAttached(
+            "UseAdaptiveSmallImage", typeof(bool), typeof(RibbonItem), new FrameworkPropertyMetadata(false));
+
+        /// <summary>Gets whether the small image uses <see cref="AdaptiveImage"/>.</summary>
+        public static bool GetUseAdaptiveSmallImage(DependencyObject element) => (bool)element.GetValue(UseAdaptiveSmallImageProperty);
+
+        /// <summary>Sets whether the small image uses <see cref="AdaptiveImage"/>.</summary>
+        public static void SetUseAdaptiveSmallImage(DependencyObject element, bool value) => element.SetValue(UseAdaptiveSmallImageProperty, value);
+
+        /// <summary>
         /// Identifies the Glyph attached property: a font icon (for example a Segoe Fluent Icons code point)
         /// used when no image is assigned.
         /// </summary>

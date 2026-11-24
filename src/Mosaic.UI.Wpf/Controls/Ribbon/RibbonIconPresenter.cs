@@ -61,6 +61,36 @@ namespace Mosaic.UI.Wpf.Controls
         }
 
         /// <summary>
+        /// Identifies the <see cref="UseAdaptiveSource"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty UseAdaptiveSourceProperty = DependencyProperty.Register(
+            nameof(UseAdaptiveSource), typeof(bool), typeof(RibbonIconPresenter), new FrameworkPropertyMetadata(false, OnContentChanged));
+
+        /// <summary>
+        /// Gets or sets whether <see cref="Source"/> is rendered through <see cref="AdaptiveImage"/>.
+        /// </summary>
+        public bool UseAdaptiveSource
+        {
+            get => (bool)GetValue(UseAdaptiveSourceProperty);
+            set => SetValue(UseAdaptiveSourceProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="UseAdaptiveFallbackSource"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty UseAdaptiveFallbackSourceProperty = DependencyProperty.Register(
+            nameof(UseAdaptiveFallbackSource), typeof(bool), typeof(RibbonIconPresenter), new FrameworkPropertyMetadata(false, OnContentChanged));
+
+        /// <summary>
+        /// Gets or sets whether <see cref="FallbackSource"/> is rendered through <see cref="AdaptiveImage"/>.
+        /// </summary>
+        public bool UseAdaptiveFallbackSource
+        {
+            get => (bool)GetValue(UseAdaptiveFallbackSourceProperty);
+            set => SetValue(UseAdaptiveFallbackSourceProperty, value);
+        }
+
+        /// <summary>
         /// Identifies the <see cref="Glyph"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty GlyphProperty = DependencyProperty.Register(
@@ -133,7 +163,12 @@ namespace Mosaic.UI.Wpf.Controls
             var source = Source ?? FallbackSource;
             if (source != null)
             {
-                var image = new Image { Source = source, Stretch = Stretch.Uniform, Width = IconSize, Height = IconSize };
+                var useAdaptiveImage = Source != null ? UseAdaptiveSource : UseAdaptiveFallbackSource;
+                Image image = useAdaptiveImage ? new AdaptiveImage() : new Image();
+                image.Source = source;
+                image.Stretch = Stretch.Uniform;
+                image.Width = IconSize;
+                image.Height = IconSize;
                 RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
                 _child = image;
             }

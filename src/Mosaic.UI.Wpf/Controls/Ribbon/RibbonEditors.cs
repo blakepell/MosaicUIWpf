@@ -29,6 +29,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Identifies the <see cref="SmallImage"/> dependency property.</summary>
         public static readonly DependencyProperty SmallImageProperty = RibbonItem.SmallImageProperty.AddOwner(typeof(RibbonComboBox));
 
+        /// <summary>Identifies the <see cref="UseAdaptiveSmallImage"/> dependency property.</summary>
+        public static readonly DependencyProperty UseAdaptiveSmallImageProperty = RibbonItem.UseAdaptiveSmallImageProperty.AddOwner(typeof(RibbonComboBox));
+
         /// <summary>Identifies the <see cref="Glyph"/> dependency property.</summary>
         public static readonly DependencyProperty GlyphProperty = RibbonItem.GlyphProperty.AddOwner(typeof(RibbonComboBox));
 
@@ -49,6 +52,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Gets or sets the small image shown before the label.</summary>
         [Category("Ribbon")]
         public ImageSource? SmallImage { get => (ImageSource?)GetValue(SmallImageProperty); set => SetValue(SmallImageProperty, value); }
+
+        /// <summary>Gets or sets whether <see cref="SmallImage"/> uses <see cref="AdaptiveImage"/>. The default is <see langword="false"/>.</summary>
+        [Category("Appearance")]
+        public bool UseAdaptiveSmallImage { get => (bool)GetValue(UseAdaptiveSmallImageProperty); set => SetValue(UseAdaptiveSmallImageProperty, value); }
 
         /// <summary>Gets or sets a font glyph shown before the label.</summary>
         [Category("Ribbon")]

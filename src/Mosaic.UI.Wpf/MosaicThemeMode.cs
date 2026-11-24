@@ -24,6 +24,10 @@
         /// <summary>
         /// Black Mode: true black window and text surfaces with gray borders.
         /// </summary>
-        Black
+        Black,
+        /// <summary>
+        /// Uses near-black surfaces and higher-contrast borders for rounded buttons.
+        /// </summary>
+        Blackest
     }
 }

@@ -143,6 +143,7 @@ namespace Mosaic.UI.Wpf.Controls
         {
             Bind(presentation, RibbonItem.LabelProperty, source, RibbonItem.LabelProperty);
             Bind(presentation, RibbonItem.SmallImageProperty, source, RibbonItem.SmallImageProperty);
+            Bind(presentation, RibbonItem.UseAdaptiveSmallImageProperty, source, RibbonItem.UseAdaptiveSmallImageProperty);
             Bind(presentation, RibbonItem.LargeImageProperty, source, RibbonItem.LargeImageProperty);
             Bind(presentation, RibbonItem.GlyphProperty, source, RibbonItem.GlyphProperty);
             Bind(presentation, RibbonItem.GlyphBrushProperty, source, RibbonItem.GlyphBrushProperty);

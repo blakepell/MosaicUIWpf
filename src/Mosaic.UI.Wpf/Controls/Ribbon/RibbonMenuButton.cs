@@ -30,6 +30,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Identifies the <see cref="SmallImage"/> dependency property.</summary>
         public static readonly DependencyProperty SmallImageProperty = RibbonItem.SmallImageProperty.AddOwner(typeof(RibbonMenuItem));
 
+        /// <summary>Identifies the <see cref="UseAdaptiveSmallImage"/> dependency property.</summary>
+        public static readonly DependencyProperty UseAdaptiveSmallImageProperty = RibbonItem.UseAdaptiveSmallImageProperty.AddOwner(typeof(RibbonMenuItem));
+
         /// <summary>Identifies the <see cref="Glyph"/> dependency property.</summary>
         public static readonly DependencyProperty GlyphProperty = RibbonItem.GlyphProperty.AddOwner(typeof(RibbonMenuItem));
 
@@ -50,6 +53,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Gets or sets the 16×16 image.</summary>
         [Category("Ribbon")]
         public ImageSource? SmallImage { get => (ImageSource?)GetValue(SmallImageProperty); set => SetValue(SmallImageProperty, value); }
+
+        /// <summary>Gets or sets whether <see cref="SmallImage"/> uses <see cref="AdaptiveImage"/>. The default is <see langword="false"/>.</summary>
+        [Category("Appearance")]
+        public bool UseAdaptiveSmallImage { get => (bool)GetValue(UseAdaptiveSmallImageProperty); set => SetValue(UseAdaptiveSmallImageProperty, value); }
 
         /// <summary>Gets or sets a font glyph used when no image is assigned.</summary>
         [Category("Ribbon")]
@@ -183,6 +190,9 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Identifies the <see cref="SmallImage"/> dependency property.</summary>
         public static readonly DependencyProperty SmallImageProperty = RibbonItem.SmallImageProperty.AddOwner(typeof(RibbonMenuButton));
 
+        /// <summary>Identifies the <see cref="UseAdaptiveSmallImage"/> dependency property.</summary>
+        public static readonly DependencyProperty UseAdaptiveSmallImageProperty = RibbonItem.UseAdaptiveSmallImageProperty.AddOwner(typeof(RibbonMenuButton));
+
         /// <summary>Identifies the <see cref="Glyph"/> dependency property.</summary>
         public static readonly DependencyProperty GlyphProperty = RibbonItem.GlyphProperty.AddOwner(typeof(RibbonMenuButton));
 
@@ -213,6 +223,10 @@ namespace Mosaic.UI.Wpf.Controls
         /// <summary>Gets or sets the small image.</summary>
         [Category("Ribbon")]
         public ImageSource? SmallImage { get => (ImageSource?)GetValue(SmallImageProperty); set => SetValue(SmallImageProperty, value); }
+
+        /// <summary>Gets or sets whether <see cref="SmallImage"/> uses <see cref="AdaptiveImage"/>. The default is <see langword="false"/>.</summary>
+        [Category("Appearance")]
+        public bool UseAdaptiveSmallImage { get => (bool)GetValue(UseAdaptiveSmallImageProperty); set => SetValue(UseAdaptiveSmallImageProperty, value); }
 
         /// <summary>Gets or sets a font glyph used when no image is assigned.</summary>
         [Category("Ribbon")]

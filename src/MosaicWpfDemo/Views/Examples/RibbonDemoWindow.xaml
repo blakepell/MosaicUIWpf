@@ -127,7 +127,7 @@
                     Content="&#xE793;"
                     FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
                     Style="{DynamicResource {x:Static themes:MosaicTheme.WindowTitleBarButtonStyle}}"
-                    ToolTip="Cycle themes (Light, Dark, Black, Blue, High Contrast)" />
+                    ToolTip="Cycle themes (Light, Dark, Black, Blackest, Blue, High Contrast)" />
             </mosaic:WindowTitleBar.RightContent>
         </mosaic:WindowTitleBar>
 

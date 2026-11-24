@@ -8,6 +8,7 @@
  * @license           : MIT - https://opensource.org/license/mit/
  */
 
+using Argus.Memory;
 using System.IO;
 using System.Runtime.ExceptionServices;
 using System.Windows;
@@ -15,6 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Mosaic.UI.Wpf.Controls;
 using Mosaic.UI.Wpf.Themes;
@@ -169,6 +171,47 @@ namespace Mosaic.UI.Wpf.Tests
         {
             return string.Join("|", Groups(tab).Select(g =>
                 g.Variant + ":" + string.Join(",", g.Items.OfType<UIElement>().Select(i => $"{RibbonItem.GetVariant(i)}{(RibbonItem.GetIsOverflowed(i) ? "*" : string.Empty)}"))));
+        }
+
+        [Fact]
+        public void Small_Image_Opts_Into_Adaptive_Rendering_In_Each_Presentation()
+        {
+            RunSta(() =>
+            {
+                var theme = CreateTheme(MosaicThemeMode.Light);
+                try
+                {
+                    AppServices.AddSingleton(theme);
+                }
+                catch (InvalidOperationException)
+                {
+                    // Another test registered the process-wide theme manager first.
+                }
+
+                var source = new RibbonButton { SmallImage = new DrawingImage() };
+                var mirror = new RibbonMenuItem();
+                RibbonPresentationFactory.BindVisuals(mirror, source);
+                source.Resources.MergedDictionaries.Add(theme);
+                mirror.Resources.MergedDictionaries.Add(theme);
+                source.ApplyTemplate();
+                mirror.ApplyTemplate();
+
+                var smallIcon = (RibbonIconPresenter)source.Template.FindName("SmallIcon", source);
+                var largeIcon = (RibbonIconPresenter)source.Template.FindName("LargeIcon", source);
+                var menuIcon = (RibbonIconPresenter)mirror.Template.FindName("Icon", mirror);
+                Assert.False(source.UseAdaptiveSmallImage);
+                Assert.IsType<Image>(VisualTreeHelper.GetChild(smallIcon, 0));
+
+                source.UseAdaptiveSmallImage = true;
+                Assert.IsType<AdaptiveImage>(VisualTreeHelper.GetChild(smallIcon, 0));
+                Assert.IsType<AdaptiveImage>(VisualTreeHelper.GetChild(largeIcon, 0));
+                Assert.IsType<AdaptiveImage>(VisualTreeHelper.GetChild(menuIcon, 0));
+
+                source.LargeImage = new DrawingImage();
+                Assert.IsType<Image>(VisualTreeHelper.GetChild(largeIcon, 0));
+                source.SmallImage = null;
+                Assert.IsType<Image>(VisualTreeHelper.GetChild(smallIcon, 0));
+            });
         }
 
         [Theory]

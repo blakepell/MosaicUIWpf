@@ -1,0 +1,29 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <LinearGradientBrush x:Key="Button.Static.Background" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#EDF0F2" />
+        <GradientStop Offset="1" Color="#E1E4E8" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Button.Static.Border" Color="#A5ABB3" />
+
+    <LinearGradientBrush x:Key="Button.MouseOver.Background" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#D8EDF9" />
+        <GradientStop Offset="1" Color="#C5E5F6" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#72AFCF" />
+
+    <LinearGradientBrush x:Key="Button.Pressed.Background" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#AEDAF1" />
+        <GradientStop Offset="1" Color="#A2D2ED" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Button.Pressed.Border" Color="#4B98C1" />
+
+    <LinearGradientBrush x:Key="Button.Disabled.Background" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#F2F3F4" />
+        <GradientStop Offset="1" Color="#EDEEF0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Button.Disabled.Border" Color="#C6CBD1" />
+
+</ResourceDictionary>

@@ -53,7 +53,11 @@ Or search for **MosaicUIWpf** in the Visual Studio NuGet Package Manager.
 </wpf:MosaicApp>
 ```
 
-Set `Theme` to `"Light"`, `"Dark"`, `"Black"`, `"Blue"`, or `"HighContrast"`. Set `Native="True"` to restyle built-in WPF controls. Set `SystemColors="True"` to integrate with the OS accent color.
+Set `Theme` to `"Light"`, `"Dark"`, `"Black"`, `"Blackest"`, `"Blue"`, or `"HighContrast"`. Set `Native="True"` to restyle built-in WPF controls. Set `SystemColors="True"` to integrate with the OS accent color.
+
+Set `UseRoundedButtons="True"` on the application’s `ThemeManager` for subtly rounded buttons with a 3-DIP corner radius, a 1-DIP border, and gentle gradients on standard button surfaces. The option covers native buttons styled by Mosaic, Mosaic split buttons, and the shape of accent buttons. High Contrast keeps its existing palette. The default is `False`, and setting the property at runtime updates existing buttons.
+
+Dark and Black share the rounded button fills and borders. Blackest uses darker resting and disabled fills and brighter hover and pressed borders. The demo’s **Theme Settings** page lets you compare the palettes with the rounded button setting on or off.
 
 **2. Update `MainWindow.xaml`** to apply the window chrome behavior and Mosaic theme brushes:
 

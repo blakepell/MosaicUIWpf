@@ -31,6 +31,7 @@ namespace Mosaic.UI.Wpf.Themes
         private bool _systemColors = true;
         private bool _typography = true;
         private bool _controlTemplates = true;
+        private bool _useRoundedButtons;
 
         /// <summary>
         /// Gets or sets the active theme mode.
@@ -68,6 +69,33 @@ namespace Mosaic.UI.Wpf.Themes
                 }
 
                 _native = value;
+
+                if (!_initializing)
+                {
+                    UpdateMergedDictionaries();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether themed buttons use subtle rounding, a one-DIP border, and a softer palette.
+        /// </summary>
+        /// <remarks>
+        /// Set this on the application theme manager to apply the treatment throughout the application.
+        /// Native WPF buttons also require <see cref="Native"/>. High Contrast keeps its original colors.
+        /// </remarks>
+        /// <value><see langword="true"/> to use rounded buttons. The default is <see langword="false"/>.</value>
+        public bool UseRoundedButtons
+        {
+            get => _useRoundedButtons;
+            set
+            {
+                if (_useRoundedButtons == value)
+                {
+                    return;
+                }
+
+                _useRoundedButtons = value;
 
                 if (!_initializing)
                 {
@@ -258,6 +286,11 @@ namespace Mosaic.UI.Wpf.Themes
             dictionaries.Add(CreateDictionary(ThemeDictionaryUris.GetThemeUri(Theme)));
             dictionaries.Add(CreateDictionary(ThemeDictionaryUris.WindowChrome));
 
+            if (UseRoundedButtons)
+            {
+                dictionaries.Add(CreateRoundedButtonDictionary());
+            }
+
             if (ControlTemplates)
             {
                 dictionaries.Add(CreateDictionary(ThemeDictionaryUris.Generic));
@@ -276,6 +309,26 @@ namespace Mosaic.UI.Wpf.Themes
             return new ResourceDictionary { Source = source };
         }
 
+        private ResourceDictionary CreateRoundedButtonDictionary()
+        {
+            var dictionary = new ResourceDictionary
+            {
+                [MosaicTheme.ButtonCornerRadius] = new CornerRadius(3),
+                [MosaicTheme.ButtonBorderThickness] = new Thickness(1)
+            };
+
+            var paletteUri = ThemeDictionaryUris.GetRoundedButtonPaletteUri(Theme);
+            if (paletteUri is not null)
+            {
+                var palette = CreateDictionary(paletteUri);
+                dictionary["SplitButton.Open.Background"] = palette["Button.Pressed.Background"];
+                dictionary["SplitButton.Open.Border"] = palette["Button.Pressed.Border"];
+                dictionary.MergedDictionaries.Add(palette);
+            }
+
+            return dictionary;
+        }
+
         /// <summary>
         /// Toggles between light and dark themes.
         /// </summary>
@@ -286,7 +339,7 @@ namespace Mosaic.UI.Wpf.Themes
                 MosaicThemeMode.Light => MosaicThemeMode.Dark,
                 MosaicThemeMode.Dark => MosaicThemeMode.Light,
                 MosaicThemeMode.Blue => MosaicThemeMode.Light,
-                MosaicThemeMode.Black => MosaicThemeMode.Light,
+                MosaicThemeMode.Black or MosaicThemeMode.Blackest => MosaicThemeMode.Light,
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light
             };
@@ -296,7 +349,7 @@ namespace Mosaic.UI.Wpf.Themes
         }
 
         /// <summary>
-        /// Cycles through Light, Dark, Black, Blue, and HighContrast themes.
+        /// Cycles through Light, Dark, Black, Blackest, Blue, and HighContrast themes.
         /// </summary>
         public void CycleTheme()
         {
@@ -304,7 +357,8 @@ namespace Mosaic.UI.Wpf.Themes
             {
                 MosaicThemeMode.Light => MosaicThemeMode.Dark,
                 MosaicThemeMode.Dark => MosaicThemeMode.Black,
-                MosaicThemeMode.Black => MosaicThemeMode.Blue,
+                MosaicThemeMode.Black => MosaicThemeMode.Blackest,
+                MosaicThemeMode.Blackest => MosaicThemeMode.Blue,
                 MosaicThemeMode.Blue => MosaicThemeMode.HighContrast,
                 MosaicThemeMode.HighContrast => MosaicThemeMode.Light,
                 _ => MosaicThemeMode.Light
