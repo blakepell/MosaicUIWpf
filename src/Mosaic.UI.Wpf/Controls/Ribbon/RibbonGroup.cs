@@ -48,6 +48,22 @@ namespace Mosaic.UI.Wpf.Controls
 
         #region Dependency properties
 
+        /// <summary>
+        /// Identifies the <see cref="SeparatorBrush"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SeparatorBrushProperty = DependencyProperty.Register(
+            nameof(SeparatorBrush), typeof(Brush), typeof(RibbonGroup), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the brush for the vertical separator after the group.
+        /// </summary>
+        [Category("Appearance")]
+        public Brush? SeparatorBrush
+        {
+            get => (Brush?)GetValue(SeparatorBrushProperty);
+            set => SetValue(SeparatorBrushProperty, value);
+        }
+
         /// <summary>Identifies the <see cref="Key"/> dependency property.</summary>
         public static readonly DependencyProperty KeyProperty = RibbonItem.KeyProperty.AddOwner(typeof(RibbonGroup));
 

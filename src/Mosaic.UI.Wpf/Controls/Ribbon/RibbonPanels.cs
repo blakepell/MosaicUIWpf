@@ -690,7 +690,9 @@ namespace Mosaic.UI.Wpf.Controls
                         continue;
                     }
 
-                    total += SimplifiedGroupChrome + inline.Sum(ItemWidth) + (Math.Max(0, inline.Count - 1) * SimplifiedItemGap);
+                    var border = g.BorderThickness;
+                    total += SimplifiedGroupChrome + border.Left + border.Right
+                        + inline.Sum(ItemWidth) + (Math.Max(0, inline.Count - 1) * SimplifiedItemGap);
                     if (groupButton)
                     {
                         total += GroupOverflowButtonWidth;

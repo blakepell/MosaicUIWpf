@@ -135,6 +135,12 @@
         <mosaic:RibbonContainerPanel Grid.Row="1">
             <mosaic:Ribbon
                 x:Name="WriterRibbon"
+                Background="Black"
+                BodyBackground="Black"
+                BodyBorderBrush="#30343A"
+                BodyBorderThickness="0,0,0,1"
+                BodyCornerRadius="0"
+                BodyMargin="0"
                 QuickAccessToolbarHost="{Binding LeftContent, ElementName=TitleBar}"
                 SelectionChanged="WriterRibbon_SelectionChanged">
 

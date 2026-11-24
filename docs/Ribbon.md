@@ -49,6 +49,42 @@ for the complete window layout.
 
 Use `xmlns:mosaic="http://schemas.apexgate.net/wpf/mosaic-ui"` and merge a Mosaic ThemeManager into your resources.
 
+## Command area and group styling
+
+`Ribbon.Background`, `BorderBrush`, and `BorderThickness` style the outer ribbon, including the
+tab strip. Use `BodyBackground`, `BodyBorderBrush`, `BodyBorderThickness`, `BodyMargin`, and
+`BodyCornerRadius` to style the command area below the tabs. The same settings apply when the
+minimized ribbon opens as a popup. The default command area uses the theme's ribbon brushes,
+a one-DIP border, rounded corners, and an inset margin.
+
+`RibbonGroup.Background`, `BorderBrush`, and `BorderThickness` style the group's command
+content, including when that content opens from a collapsed group. `RibbonGroup.SeparatorBrush`
+sets the brush for the vertical line after the group.
+
+With the Black theme active, this gives the ribbon a flat background, a bottom rule, and vertical
+group dividers:
+
+```xml
+<mosaic:Ribbon Background="Black"
+               BodyBackground="Black"
+               BodyBorderBrush="#30343A"
+               BodyBorderThickness="0,0,0,1"
+               BodyCornerRadius="0"
+               BodyMargin="0">
+    <mosaic:Ribbon.Resources>
+        <Style TargetType="{x:Type mosaic:RibbonGroup}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="SeparatorBrush" Value="#30343A" />
+        </Style>
+    </mosaic:Ribbon.Resources>
+    <mosaic:RibbonTabItem Header="Game">
+        <mosaic:RibbonGroup Header="Network">
+            <mosaic:RibbonButton Label="Connect" Glyph="&#xE8CE;" />
+        </mosaic:RibbonGroup>
+    </mosaic:RibbonTabItem>
+</mosaic:Ribbon>
+```
+
 **Commands.** `RibbonButton`, `RibbonToggleButton`, `RibbonCheckBox`, `RibbonMenuButton`, `RibbonSplitButton`, `RibbonMenuItem`, `RibbonComboBox`, `RibbonTextBox`, `RibbonGallery`, plus `RibbonControlGroup` (a row unit such as Bold/Italic/Underline) and `RibbonSeparator`. Give each command a unique, stable `Key`; keys (never labels) are used by the Quick Access Toolbar and persistence, and `Ribbon.ValidateKeys()` reports duplicates. Icons come from `LargeImage`/`SmallImage` or a font `Glyph` (Segoe Fluent Icons). The Ribbon is a focus scope, so routed commands route to the document's focused element, and mouse invocation returns focus to the document.
 
 **MVVM.** Every command surface binds like standard WPF controls, and generated copies (overflow rows and Quick Access Toolbar buttons) share the source's state and command, so `CanExecute` disables all of them together.

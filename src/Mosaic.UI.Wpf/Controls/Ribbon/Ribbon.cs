@@ -455,6 +455,89 @@ namespace Mosaic.UI.Wpf.Controls
             set => SetValue(FooterContentProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the <see cref="BodyBackground"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BodyBackgroundProperty = DependencyProperty.Register(
+            nameof(BodyBackground), typeof(Brush), typeof(Ribbon), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the background brush for the command area below the tab strip.
+        /// </summary>
+        [Category("Appearance")]
+        public Brush? BodyBackground
+        {
+            get => (Brush?)GetValue(BodyBackgroundProperty);
+            set => SetValue(BodyBackgroundProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="BodyBorderBrush"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BodyBorderBrushProperty = DependencyProperty.Register(
+            nameof(BodyBorderBrush), typeof(Brush), typeof(Ribbon), new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the border brush for the command area.
+        /// </summary>
+        [Category("Appearance")]
+        public Brush? BodyBorderBrush
+        {
+            get => (Brush?)GetValue(BodyBorderBrushProperty);
+            set => SetValue(BodyBorderBrushProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="BodyBorderThickness"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BodyBorderThicknessProperty = DependencyProperty.Register(
+            nameof(BodyBorderThickness), typeof(Thickness), typeof(Ribbon), new FrameworkPropertyMetadata(new Thickness(1)),
+            Border.BorderThicknessProperty.IsValidValue);
+
+        /// <summary>
+        /// Gets or sets the border thickness for each edge of the command area.
+        /// </summary>
+        [Category("Appearance")]
+        public Thickness BodyBorderThickness
+        {
+            get => (Thickness)GetValue(BodyBorderThicknessProperty);
+            set => SetValue(BodyBorderThicknessProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="BodyMargin"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BodyMarginProperty = DependencyProperty.Register(
+            nameof(BodyMargin), typeof(Thickness), typeof(Ribbon), new FrameworkPropertyMetadata(new Thickness(6, 0, 6, 6)),
+            MarginProperty.IsValidValue);
+
+        /// <summary>
+        /// Gets or sets the space around the command area.
+        /// </summary>
+        [Category("Appearance")]
+        public Thickness BodyMargin
+        {
+            get => (Thickness)GetValue(BodyMarginProperty);
+            set => SetValue(BodyMarginProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the <see cref="BodyCornerRadius"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty BodyCornerRadiusProperty = DependencyProperty.Register(
+            nameof(BodyCornerRadius), typeof(CornerRadius), typeof(Ribbon), new FrameworkPropertyMetadata(new CornerRadius(8)),
+            Border.CornerRadiusProperty.IsValidValue);
+
+        /// <summary>
+        /// Gets or sets the corner radii of the command area border.
+        /// </summary>
+        [Category("Appearance")]
+        public CornerRadius BodyCornerRadius
+        {
+            get => (CornerRadius)GetValue(BodyCornerRadiusProperty);
+            set => SetValue(BodyCornerRadiusProperty, value);
+        }
+
         /// <summary>Identifies the <see cref="ShowDisplayOptionsButton"/> dependency property.</summary>
         public static readonly DependencyProperty ShowDisplayOptionsButtonProperty = DependencyProperty.Register(
             nameof(ShowDisplayOptionsButton), typeof(bool), typeof(Ribbon), new FrameworkPropertyMetadata(true));

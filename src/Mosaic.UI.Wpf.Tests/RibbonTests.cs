@@ -244,6 +244,64 @@ namespace Mosaic.UI.Wpf.Tests
         }
 
         [Fact]
+        public void Appearance_Overrides_Reach_The_Command_Area_And_Group()
+        {
+            RunSta(() =>
+            {
+                var (window, ribbon) = Host(1600, MosaicThemeMode.Black);
+                try
+                {
+                    var body = (Border)ribbon.Template.FindName("PART_Body", ribbon);
+                    Assert.Same(ribbon.FindResource(MosaicTheme.RibbonBackgroundBrush), body.Background);
+                    Assert.Same(ribbon.FindResource(MosaicTheme.RibbonBorderBrush), body.BorderBrush);
+                    Assert.Equal(new Thickness(1), body.BorderThickness);
+
+                    ribbon.Background = Brushes.Black;
+                    ribbon.BodyBackground = Brushes.Navy;
+                    ribbon.BodyBorderBrush = Brushes.SlateGray;
+                    ribbon.BodyBorderThickness = new Thickness(0, 0, 0, 1);
+                    ribbon.BodyCornerRadius = new CornerRadius(0);
+                    ribbon.BodyMargin = new Thickness(0);
+
+                    var group = Groups(Tab(ribbon, "Home"))[0];
+                    var style = new Style(typeof(RibbonGroup));
+                    style.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.MidnightBlue));
+                    style.Setters.Add(new Setter(Control.BorderBrushProperty, Brushes.Gray));
+                    style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(2)));
+                    style.Setters.Add(new Setter(RibbonGroup.SeparatorBrushProperty, Brushes.SlateGray));
+                    ribbon.Resources.Add(typeof(RibbonGroup), style);
+                    window.UpdateLayout();
+
+                    var root = (Border)ribbon.Template.FindName("Root", ribbon);
+                    Assert.Same(Brushes.Black, root.Background);
+                    Assert.Same(Brushes.Navy, body.Background);
+                    Assert.Same(Brushes.SlateGray, body.BorderBrush);
+                    Assert.Equal(new Thickness(0, 0, 0, 1), body.BorderThickness);
+                    Assert.Equal(new CornerRadius(0), body.CornerRadius);
+                    Assert.Equal(new Thickness(0), body.Margin);
+
+                    var content = (Border)group.Template.FindName("PART_ContentRoot", group);
+                    var separator = (System.Windows.Shapes.Rectangle)group.Template.FindName("Separator", group);
+                    Assert.Same(Brushes.MidnightBlue, content.Background);
+                    Assert.Same(Brushes.Gray, content.BorderBrush);
+                    Assert.Equal(new Thickness(2), content.BorderThickness);
+                    Assert.Same(Brushes.SlateGray, separator.Fill);
+
+                    ribbon.IsMinimized = true;
+                    Click(Tab(ribbon, "Home").TabHeader!);
+                    Pump();
+                    var popupHost = (Decorator)ribbon.Template.FindName("PART_MinimizedPopupHost", ribbon);
+                    Assert.Same(body, popupHost.Child);
+                    Assert.Same(Brushes.Navy, body.Background);
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
+        [Fact]
         public void Classic_Layout_Reduces_Monotonically_And_Is_Path_Independent()
         {
             RunSta(() =>
