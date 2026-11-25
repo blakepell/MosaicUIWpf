@@ -82,6 +82,35 @@ namespace Mosaic.UI.Wpf.Controls
         [ObservableProperty]
         private object? _value;
 
+        /// <summary>
+        /// Gets whether the property's type is a sub object whose own properties can be shown in a nested
+        /// <see cref="PropertyGrid"/>.  This is determined from the declared type of the property.
+        /// </summary>
+        public bool IsExpandable { get; }
+
+        /// <summary>
+        /// Gets whether the property can currently be expanded: it is <see cref="IsExpandable"/> and its value
+        /// is not null.
+        /// </summary>
+        public bool CanExpand => IsExpandable && Value != null;
+
+        /// <summary>
+        /// Gets the text shown in the value cell of a sub object row.  Refreshes when the sub object reports a
+        /// property change, so edits made in the nested grid are reflected in the summary.
+        /// </summary>
+        public string? ValueSummary => Value?.ToString();
+
+        /// <summary>
+        /// The sub object currently being observed for changes that affect <see cref="ValueSummary"/>.
+        /// </summary>
+        private INotifyPropertyChanged? _observedValue;
+
+        /// <summary>
+        /// Gets or sets whether the nested property grid for this sub object is shown.
+        /// </summary>
+        [ObservableProperty]
+        private bool _isExpanded;
+
         private object? _lastValidValue;
         private readonly object _owner;
         private readonly PropertyDescriptor _propertyDescriptor;
@@ -133,6 +162,9 @@ namespace Mosaic.UI.Wpf.Controls
                 EnumValues = Enum.GetValues(pd.PropertyType);
             }
 
+            IsExpandable = DetermineExpandable(pd);
+            ObserveValue();
+
             // Commands - use CommunityToolkit.Mvvm RelayCommand instead of custom DelegateCommand
             OpenEditorCommand = new RelayCommand(OpenEditor, () => HasEditor);
         }
@@ -168,6 +200,87 @@ namespace Mosaic.UI.Wpf.Controls
 
             // No maximum length specified
             return 0;
+        }
+
+        /// <summary>
+        /// Determines whether a property holds a sub object that should be browsable in a nested grid.  A
+        /// property is expandable when its converter is an <see cref="ExpandableObjectConverter"/>, or when it
+        /// is a reference type that cannot be edited as text (no converter from string), is not a collection
+        /// and is not one of the framework types the grid already has a dedicated editor for.
+        /// </summary>
+        /// <param name="pd">The property descriptor.</param>
+        internal static bool DetermineExpandable(PropertyDescriptor pd)
+        {
+            if (pd.Converter is ExpandableObjectConverter)
+            {
+                return true;
+            }
+
+            var type = pd.PropertyType;
+
+            // Value types are copied when read; edits made in a nested grid would never reach the owner.
+            if (type.IsValueType
+                || type == typeof(string)
+                || type == typeof(object)
+                || typeof(Type).IsAssignableFrom(type)
+                || typeof(Delegate).IsAssignableFrom(type)
+                || typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                return false;
+            }
+
+            // Types that round trip through text (FontFamily, Brush, Uri, ICommand...) keep the text editor.
+            return pd.Converter == null || !pd.Converter.CanConvertFrom(typeof(string));
+        }
+
+        /// <summary>
+        /// Keeps <see cref="CanExpand"/> in sync with <see cref="Value"/> no matter which path updated it
+        /// (UI edit, owner change, or a revert), and collapses the row when the value goes away.
+        /// </summary>
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.PropertyName == nameof(Value))
+            {
+                OnPropertyChanged(nameof(CanExpand));
+                OnPropertyChanged(nameof(ValueSummary));
+                ObserveValue();
+
+                if (Value == null && IsExpanded)
+                {
+                    IsExpanded = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Watches an expandable sub object so the summary in the value cell stays current.
+        /// </summary>
+        private void ObserveValue()
+        {
+            var next = IsExpandable ? Value as INotifyPropertyChanged : null;
+            if (ReferenceEquals(next, _observedValue))
+            {
+                return;
+            }
+
+            if (_observedValue != null)
+            {
+                _observedValue.PropertyChanged -= ObservedValuePropertyChanged;
+            }
+
+            _observedValue = next;
+
+            if (_observedValue != null)
+            {
+                _observedValue.PropertyChanged += ObservedValuePropertyChanged;
+            }
+        }
+
+        private void ObservedValuePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(ValueSummary));
         }
 
         /// <summary>
@@ -380,6 +493,12 @@ namespace Mosaic.UI.Wpf.Controls
             if (_owner is INotifyPropertyChanged notifyPropertyChanged)
             {
                 notifyPropertyChanged.PropertyChanged -= OwnerPropertyChanged;
+            }
+
+            if (_observedValue != null)
+            {
+                _observedValue.PropertyChanged -= ObservedValuePropertyChanged;
+                _observedValue = null;
             }
 
             // Detach validation handler if bound element still exists

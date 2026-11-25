@@ -31,7 +31,15 @@ namespace MosaicWpfDemo.Views.Examples
                 Age = 42,
                 Active = true,
                 Color = Colors.Blue,
-                Font = new FontFamily("Courier New")
+                Font = new FontFamily("Courier New"),
+                Address = new Address
+                {
+                    Street = "742 Evergreen Terrace",
+                    City = "Springfield",
+                    State = "IL",
+                    PostalCode = "62704",
+                    IsPrimary = true
+                }
             };
         }
     }
@@ -129,5 +137,44 @@ namespace MosaicWpfDemo.Views.Examples
         [property: Category("Identity")]
         [ObservableProperty]
         private ObservableCollection<string> _nickNames = new();
+
+        /// <summary>
+        /// A sub object: the grid shows a chevron next to it that expands a nested, inset property grid.
+        /// </summary>
+        [property: Category("Contact")]
+        [property: Description("The person's mailing address. Expand it to edit the individual fields.")]
+        [ObservableProperty]
+        private Address? _address;
+    }
+
+    public partial class Address : ObservableObject
+    {
+        [property: Description("The street address.")]
+        [ObservableProperty]
+        private string? _street;
+
+        [property: Description("The city.")]
+        [ObservableProperty]
+        private string? _city;
+
+        [property: PropertyGrid(MaxLength = 2)]
+        [property: Description("The two letter state abbreviation.")]
+        [ObservableProperty]
+        private string? _state;
+
+        [property: DisplayName("Postal Code")]
+        [property: Description("The ZIP or postal code.")]
+        [ObservableProperty]
+        private string? _postalCode;
+
+        [property: DisplayName("Primary Address")]
+        [property: Description("Whether this is the person's primary address.")]
+        [ObservableProperty]
+        private bool _isPrimary;
+
+        /// <summary>
+        /// Shown as the summary in the value cell of the collapsed row.
+        /// </summary>
+        public override string ToString() => $"{Street}, {City}, {State} {PostalCode}";
     }
 }

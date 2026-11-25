@@ -26,7 +26,43 @@ namespace Mosaic.UI.Wpf.Controls
                 new FrameworkPropertyMetadata(typeof(PropertyGrid)));
         }
 
+        /// <summary>
+        /// Set when a nested grid has released its items on unload and needs to rebuild them when it returns.
+        /// </summary>
+        private bool _rebuildOnLoad;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyGrid"/> class.
+        /// </summary>
+        public PropertyGrid()
+        {
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
         #region Public API
+
+        /// <summary>
+        /// Identifies the IsNested dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsNestedProperty =
+            DependencyProperty.Register(nameof(IsNested), typeof(bool), typeof(PropertyGrid),
+                new FrameworkPropertyMetadata(false, OnIsNestedChanged));
+
+        /// <summary>
+        /// Gets or sets whether this grid is displaying a sub object inside another <see cref="PropertyGrid"/>.
+        /// Set by the default template on the grids it creates for expanded sub object properties.  Nested grids
+        /// defer selection to the outermost grid, pass mouse wheel scrolling up to it, and only show category
+        /// headers when the sub object has more than one category.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Whether this grid displays a sub object inside another PropertyGrid.")]
+        [Browsable(false)]
+        public bool IsNested
+        {
+            get => (bool)GetValue(IsNestedProperty);
+            set => SetValue(IsNestedProperty, value);
+        }
 
         /// <summary>
         /// Identifies the Object dependency property.
@@ -178,11 +214,40 @@ namespace Mosaic.UI.Wpf.Controls
 
             element.PreviewMouseLeftButtonDown -= OnSelectOnClickMouseDown;
             element.GotKeyboardFocus -= OnSelectOnClickGotFocus;
+            element.KeyDown -= OnSelectOnClickKeyDown;
 
             if (e.NewValue is true)
             {
                 element.PreviewMouseLeftButtonDown += OnSelectOnClickMouseDown;
                 element.GotKeyboardFocus += OnSelectOnClickGotFocus;
+                element.KeyDown += OnSelectOnClickKeyDown;
+            }
+        }
+
+        /// <summary>
+        /// Keyboard parity for the expand chevron: Right / + expands a sub object, Left / - collapses it.
+        /// </summary>
+        private static void OnSelectOnClickKeyDown(object sender, KeyEventArgs e)
+        {
+            if (sender is not FrameworkElement { DataContext: PropertyItem { CanExpand: true } item })
+            {
+                return;
+            }
+
+            switch (e.Key)
+            {
+                case Key.Right:
+                case Key.Add:
+                case Key.OemPlus:
+                    item.IsExpanded = true;
+                    e.Handled = true;
+                    break;
+                case Key.Left:
+                case Key.Subtract:
+                case Key.OemMinus:
+                    item.IsExpanded = false;
+                    e.Handled = true;
+                    break;
             }
         }
 
@@ -226,7 +291,19 @@ namespace Mosaic.UI.Wpf.Controls
                 return;
             }
 
+            // Nested grids defer to the outermost grid so there is a single selection and description panel.
             var grid = ControlsHelper.FindParent<PropertyGrid>(element);
+            while (grid is { IsNested: true })
+            {
+                var parent = ControlsHelper.FindParent<PropertyGrid>(grid);
+                if (parent == null)
+                {
+                    break;
+                }
+
+                grid = parent;
+            }
+
             if (grid != null)
             {
                 grid.SelectedProperty = item;
@@ -255,6 +332,79 @@ namespace Mosaic.UI.Wpf.Controls
                 e.OldValue as PropertyItem,
                 e.NewValue as PropertyItem,
                 SelectedPropertyChangedEvent));
+        }
+
+        #endregion
+
+        #region Nesting
+
+        /// <summary>
+        /// Re-applies grouping when a grid is flagged as nested after its object was already set.
+        /// </summary>
+        private static void OnIsNestedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var pg = (PropertyGrid)d;
+            if (pg.Properties.Count > 0)
+            {
+                pg.ApplyGroupingAndSorting();
+            }
+        }
+
+        /// <summary>
+        /// Rebuilds a nested grid's items if they were released when it was unloaded.
+        /// </summary>
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_rebuildOnLoad)
+            {
+                _rebuildOnLoad = false;
+                UpdateProperties();
+            }
+        }
+
+        /// <summary>
+        /// Nested grids are created and discarded each time a sub object is expanded and collapsed, so they
+        /// release their owner subscriptions when they leave the tree.
+        /// </summary>
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (!IsNested)
+            {
+                return;
+            }
+
+            foreach (var propertyItem in Properties)
+            {
+                propertyItem.Detach();
+            }
+
+            Properties.Clear();
+            _rebuildOnLoad = true;
+        }
+
+        /// <summary>
+        /// A nested grid sizes to its content and never needs to scroll, but its ScrollViewer would still swallow
+        /// the mouse wheel.  Forward the wheel to the parent so the outer grid scrolls.
+        /// </summary>
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnPreviewMouseWheel(e);
+
+            // Leave popups (open combo box drop downs, etc.) alone; they are not part of this visual tree.
+            if (!IsNested || e.Handled || e.OriginalSource is not Visual source || !IsAncestorOf(source))
+            {
+                return;
+            }
+
+            if (VisualTreeHelper.GetParent(this) is UIElement parent)
+            {
+                e.Handled = true;
+                parent.RaiseEvent(new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                {
+                    RoutedEvent = MouseWheelEvent,
+                    Source = this
+                });
+            }
         }
 
         #endregion
@@ -344,18 +494,38 @@ namespace Mosaic.UI.Wpf.Controls
 
             if (Properties.Any())
             {
-                var view = CollectionViewSource.GetDefaultView(Properties);
-                if (view is { GroupDescriptions.Count: 0 })
-                {
-                    view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
-                }
-
-                // Clear any existing sort descriptions
-                view.SortDescriptions.Clear();
-                // Sort by Category (alphabetically), then by DisplayName (alphabetically)
-                view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
-                view.SortDescriptions.Add(new SortDescription("DisplayName", ListSortDirection.Ascending));
+                ApplyGroupingAndSorting();
             }
+        }
+
+        /// <summary>
+        /// Groups the items by category and sorts them by category then display name.  A nested grid whose sub
+        /// object only has a single category skips the group header, which would just repeat "Misc".
+        /// </summary>
+        private void ApplyGroupingAndSorting()
+        {
+            var view = CollectionViewSource.GetDefaultView(Properties);
+            if (view == null)
+            {
+                return;
+            }
+
+            bool group = !IsNested || Properties.Select(static p => p.Category).Distinct().Skip(1).Any();
+
+            if (group && view.GroupDescriptions.Count == 0)
+            {
+                view.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            }
+            else if (!group && view.GroupDescriptions.Count > 0)
+            {
+                view.GroupDescriptions.Clear();
+            }
+
+            // Clear any existing sort descriptions
+            view.SortDescriptions.Clear();
+            // Sort by Category (alphabetically), then by DisplayName (alphabetically)
+            view.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+            view.SortDescriptions.Add(new SortDescription("DisplayName", ListSortDirection.Ascending));
         }
 
         /// <summary>

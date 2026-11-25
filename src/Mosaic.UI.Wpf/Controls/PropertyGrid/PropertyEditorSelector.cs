@@ -101,6 +101,12 @@ namespace Mosaic.UI.Wpf.Controls
                 return FindTemplate(fe, "FontStyleEditor");
             }
 
+            // Sub objects are edited through their nested grid; the value cell just summarizes them.
+            if (pi.IsExpandable)
+            {
+                return FindTemplate(fe, "ObjectEditor");
+            }
+
             // Fallback to text editor
             return FindTemplate(fe, "TextEditor");
         }
