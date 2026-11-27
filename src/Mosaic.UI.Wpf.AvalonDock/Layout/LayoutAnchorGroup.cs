@@ -49,5 +49,14 @@ namespace Mosaic.UI.Wpf.AvalonDock.Layout
 
         /// <inheritdoc/>
         string? ISerializableLayoutPane.Id { get => _id; set => _id = value; }
+
+        /// <summary>
+        /// Gets a value indicating whether this group is directly hosted in a floating window. An auto-hide
+        /// group is never hosted directly in a floating window, so this is always <c>false</c>. It exists so
+        /// template bindings to <c>Model.Parent.IsDirectlyHostedInFloatingWindow</c> resolve without binding
+        /// errors when an anchorable is auto-hidden.
+        /// </summary>
+        [XmlIgnore]
+        public bool IsDirectlyHostedInFloatingWindow => false;
     }
 }
